@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corr-Replace", "Corr-Replace\Corr-Replace.csproj", "{63CA54D0-2E57-44CD-B9CE-AC4E672CB68D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Return-Replace", "Return-Replace\Return-Replace.csproj", "{722EA912-5374-4F8F-B66F-C68F40FAEE25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corr-SWIFT", "Corr-SWIFT\Corr-SWIFT.csproj", "{FE1985AF-E597-4533-883E-119A129CFA42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwiftTranslator", "SwiftTranslator\SwiftTranslator.csproj", "{4FF69C80-8CB3-4E25-9C34-CC92997DDFE0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63CA54D0-2E57-44CD-B9CE-AC4E672CB68D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63CA54D0-2E57-44CD-B9CE-AC4E672CB68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63CA54D0-2E57-44CD-B9CE-AC4E672CB68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63CA54D0-2E57-44CD-B9CE-AC4E672CB68D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{722EA912-5374-4F8F-B66F-C68F40FAEE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722EA912-5374-4F8F-B66F-C68F40FAEE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722EA912-5374-4F8F-B66F-C68F40FAEE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722EA912-5374-4F8F-B66F-C68F40FAEE25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE1985AF-E597-4533-883E-119A129CFA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE1985AF-E597-4533-883E-119A129CFA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE1985AF-E597-4533-883E-119A129CFA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE1985AF-E597-4533-883E-119A129CFA42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FF69C80-8CB3-4E25-9C34-CC92997DDFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FF69C80-8CB3-4E25-9C34-CC92997DDFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FF69C80-8CB3-4E25-9C34-CC92997DDFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FF69C80-8CB3-4E25-9C34-CC92997DDFE0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {304E7136-3056-4A05-8349-0642B81FA82F}
+	EndGlobalSection
+EndGlobal
