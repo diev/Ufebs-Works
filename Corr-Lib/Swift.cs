@@ -1,6 +1,8 @@
+//2022-04-28
+
 using System.Text;
 
-namespace Lib;
+namespace Corr_Lib;
 
 /// <summary>
 /// SWIFT-RUR
@@ -42,6 +44,39 @@ public static class Swift
         { 'Э', 'e' },
         { 'Ю', 'u' },
         { 'Я', 'a' },
+        { 'а', 'A' },
+        { 'б', 'B' },
+        { 'в', 'V' },
+        { 'г', 'G' },
+        { 'д', 'D' },
+        { 'е', 'E' },
+        { 'ё', 'o' },
+        { 'ж', 'J' },
+        { 'з', 'Z' },
+        { 'и', 'I' },
+        { 'й', 'i' },
+        { 'к', 'K' },
+        { 'л', 'L' },
+        { 'м', 'M' },
+        { 'н', 'N' },
+        { 'о', 'O' },
+        { 'п', 'P' },
+        { 'р', 'R' },
+        { 'с', 'S' },
+        { 'т', 'T' },
+        { 'у', 'U' },
+        { 'ф', 'F' },
+        { 'х', 'H' },
+        { 'ц', 'C' },
+        { 'ч', 'c' },
+        { 'ш', 'Q' },
+        { 'щ', 'q' },
+        { 'ъ', 'x' },
+        { 'ы', 'Y' },
+        { 'ь', 'X' },
+        { 'э', 'e' },
+        { 'ю', 'u' },
+        { 'я', 'a' },
         { '\'', 'j' },
         { '’', 'j' },
         { '‘', 'j' },
@@ -146,36 +181,67 @@ public static class Swift
         }
     }
 
-    public static string Lat(string src)
+    public static string Lat(string text)
     {
-        return Wrap35(string.Concat(src.ToUpper().Select(Lat)));
-    }
+        bool rus = true; // default RU stream
+        var result = new StringBuilder(text.Length);
 
-    public static string Cyr(string src)
-    {
-        string s = src; //.ToUpper();
-
-        if (!s.Contains('\''))
+        foreach (var c in text)
         {
-            return string.Concat(s.Select(Cyr));
-        }
-
-        bool asis = false;
-        var result = new StringBuilder(s.Length);
-
-        for (int i = 0; i < s.Length; i++)
-        {
-            if (s[i] == '\'')
+            if (rus)
             {
-                asis = !asis;
+                if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(c, StringComparison.OrdinalIgnoreCase))
+                {
+                    rus = false;
+                    result.Append('\'').Append(c);
+                }
+                else
+                {
+                    result.Append(Lat(c));
+                }
             }
-            else if (asis)
+            else if (c == '\'')
             {
-                result.Append(s[i]);
+                rus = true;
+                result.Append("\'j");
+            }
+            else if (!"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-?:().,+ ".Contains(c, StringComparison.OrdinalIgnoreCase))
+            {
+                rus = true;
+                result.Append('\'').Append(Lat(c));
             }
             else
             {
-                result.Append(Cyr(s[i]));
+                result.Append(c);
+            }
+        }
+
+        return result.ToString();
+    }
+
+    public static string Cyr(string text)
+    {
+        if (!text.Contains('\'', StringComparison.OrdinalIgnoreCase))
+        {
+            return string.Concat(text.Select(Cyr));
+        }
+
+        bool rus = true; // default RU stream
+        var result = new StringBuilder(text.Length);
+
+        foreach (var c in text)
+        {
+            if (c == '\'')
+            {
+                rus = !rus;
+            }
+            else if (rus)
+            {
+                result.Append(Cyr(c));
+            }
+            else // !rus
+            {
+                result.Append(c);
             }
         }
 

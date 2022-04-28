@@ -8,4 +8,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Release call PostBuild.bat" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Corr-Lib\Corr-Lib.csproj" />
+  </ItemGroup>
+
 </Project>
