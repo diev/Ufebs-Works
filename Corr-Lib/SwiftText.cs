@@ -7,7 +7,7 @@ public class SwiftText
     private const int _startPayer = 4;
     private const int _startPurpose = 10;
     
-    private static readonly Regex _regex = new Regex(@"^:\d{2}\w{0,1}:", RegexOptions.Compiled);
+    private static readonly Regex _regex = new(@"^:\d{2}\w{0,1}:", RegexOptions.Compiled);
 
     public const string CORR = "30109810800010001378";
     public const string INN = "7831001422";

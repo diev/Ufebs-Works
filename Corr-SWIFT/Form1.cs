@@ -29,44 +29,53 @@ public partial class Form1 : Form
 
         //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //enable Windows-1251
         //var xdoc = XDocument.Load(OpenFileDialog.FileName);
-        var xdoc = XDocument.Parse(xml);
-        var ed = xdoc.Root;
+        //var xdoc = XDocument.Parse(xml);
+        //var ed = xdoc.Root;
 
-        if (ed == null)
-        {
-            return;
-        }
-
-        var ns = ed.GetDefaultNamespace();
-
-        if (ed.Name.LocalName != "ED503")
-        {
-            return;
-        }
-
-        //try
+        //if (ed == null)
         //{
-            var container = ed.Element(ns + "SWIFTContainer");
-            var document = container?.Element(ns + "SWIFTDocument");
-            string? value = document?.Value;
+        //    return;
+        //}
 
-            if (value == null)
-            {
-                SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
-                return;
-            }
+        //var ns = ed.GetDefaultNamespace();
 
-            byte[] bytes = Convert.FromBase64String(value);
-            string text = Encoding.ASCII.GetString(bytes);
+        //if (ed.Name.LocalName != "ED503")
+        //{
+        //    return;
+        //}
 
-            SwiftTextBox.Text = text;
-            SwText.Parse(SwiftTextBox.Lines);
-            OutTextBox.Lines = SwText.GetLines();
+        ////try
+        ////{
+        //    var container = ed.Element(ns + "SWIFTContainer");
+        //    var document = container?.Element(ns + "SWIFTDocument");
+        //    string? value = document?.Value;
+
+        //    if (value == null)
+        //    {
+        //        SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
+        //        return;
+        //    }
+
+        //    byte[] bytes = Convert.FromBase64String(value);
+        //    string text = Encoding.ASCII.GetString(bytes);
+
+        string? text = SwiftHelper.GetSwiftDocument(xml);
+
+        if (text == null)
+        {
+            SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
+            return;
+        }
+
+        SwiftTextBox.Text = text;
+        SwText.Parse(SwiftTextBox.Lines);
+        OutTextBox.Lines = SwText.GetLines();
 
         tabControl1.SelectedIndex = tabControl1.TabCount - 1;
 
-        NameTextBox.Text = Swift.Cyr(SwText.PayerName);
-        PurposeTextBox.Text = Swift.Cyr(SwText.Purpose);
+        text = OutTextBox.Text;
+        NameTextBox.Text = SwiftHelper.GetPayerName(text); //Swift.Cyr(SwText.PayerName);
+        PurposeTextBox.Text = SwiftHelper.GetPurpose(text); //Swift.Cyr(SwText.Purpose);
 
         StatusLabel.Text = $"Плательщик: {SwText?.PayerName.Length}/{SwiftText.NameMaxLength}, " +
             $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
@@ -75,15 +84,6 @@ public partial class Form1 : Form
         //{
         //    SwiftTextBox.Text = ex.Message;
         //}
-    }
-
-    private void OutTextBox_TextChanged(object sender, EventArgs e)
-    {
-        //SwText.Parse(OutTextBox.Lines);
-        //StatusLabel.Text = $"Плательщик: {SwText?.PayerName.Length}/{SwiftText.NameMaxLength}, " +
-        //    $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
-        StatusLabel.Text = $"Плательщик: {SwText.PayerName.Length}/{SwiftText.NameMaxLength}, " +
-                $"назначение: {SwText.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
     }
 
     private void ReloadNameMenuItem_Click(object sender, EventArgs e)
@@ -141,6 +141,17 @@ public partial class Form1 : Form
         OutTextBox.Font = FontDialog.Font;
         NameTextBox.Font = FontDialog.Font;
         PurposeTextBox.Font = FontDialog.Font;
+    }
+
+    private void OutTextBox_TextChanged(object sender, EventArgs e)
+    {
+        //SwText.Parse(OutTextBox.Lines);
+        //StatusLabel.Text = $"Плательщик: {SwText?.PayerName.Length}/{SwiftText.NameMaxLength}, " +
+        //    $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
+        //StatusLabel.Text = $"Плательщик: {SwText.PayerName.Length}/{SwiftText.NameMaxLength}, " +
+        //        $"назначение: {SwText.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
+        StatusLabel.Text = $"Плательщик: {SwiftHelper.GetPayerName(OutTextBox.Text).Length}/{SwiftText.NameMaxLength}, " +
+                $"назначение: {SwiftHelper.GetPurpose(OutTextBox.Text).Length}/{SwiftText.PurposeMaxLength} символов";
     }
 
     private void NameTextBox_TextChanged(object sender, EventArgs e)
