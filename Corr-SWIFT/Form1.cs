@@ -7,25 +7,61 @@ namespace Corr_Lib;
 
 public partial class Form1 : Form
 {
-    public SwiftText SwText = new();
+    //public SwiftText SwText = new();
 
     public Form1()
     {
         InitializeComponent();
+
+        string[] args = Environment.GetCommandLineArgs();
+        if (args.Length > 1)
+        {
+            string path = args[1];
+            if (File.Exists(path))
+            {
+                LoadFile(path);
+            }
+            else
+            {
+                MessageBox.Show($"File \"{path}\" not found!");
+            }
+        }
     }
 
     private void OpenMenuItem_Click(object sender, EventArgs e)
     {
-        if (OpenFileDialog.ShowDialog() != DialogResult.OK)
+        if (OpenFileDialog.ShowDialog() == DialogResult.OK)
         {
-            return;
+            LoadFile(OpenFileDialog.FileName);
         }
 
+    }
+
+    private void LoadFile(string path)
+    {
         //string[] lines = File.ReadAllLines(OpenFileDialog.FileName);
         //XmlTextBox.Lines = lines;
 
-        string xml = File.ReadAllText(OpenFileDialog.FileName, Encoding.ASCII);
-        XmlTextBox.Text = xml;
+        string text = File.ReadAllText(path, Encoding.ASCII);
+        string filename = Path.GetFileNameWithoutExtension(path);
+        string ext = Path.GetExtension(path);
+
+        SaveAsFileDialog.FileName = filename + "_";
+
+        if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
+        {
+            XmlTextBox.Text = text;
+            text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
+        }
+        else
+        {
+            XmlTextBox.Text = "No XML file";
+        }    
+
+        SwiftTextBox.Text = text;
+        //SwText.Parse(SwiftTextBox.Lines);
+        //OutTextBox.Lines = SwText.GetLines();
+        OutTextBox.Text = text;
 
         //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //enable Windows-1251
         //var xdoc = XDocument.Load(OpenFileDialog.FileName);
@@ -59,7 +95,7 @@ public partial class Form1 : Form
         //    byte[] bytes = Convert.FromBase64String(value);
         //    string text = Encoding.ASCII.GetString(bytes);
 
-        string? text = SwiftHelper.GetSwiftDocument(xml);
+        //string? text = SwiftHelper.GetSwiftDocument(xml);
 
         if (text == null)
         {
@@ -67,18 +103,21 @@ public partial class Form1 : Form
             return;
         }
 
-        SwiftTextBox.Text = text;
-        SwText.Parse(SwiftTextBox.Lines);
-        OutTextBox.Lines = SwText.GetLines();
-
         tabControl1.SelectedIndex = tabControl1.TabCount - 1;
 
-        text = OutTextBox.Text;
-        NameTextBox.Text = SwiftHelper.GetPayerName(text); //Swift.Cyr(SwText.PayerName);
-        PurposeTextBox.Text = SwiftHelper.GetPurpose(text); //Swift.Cyr(SwText.Purpose);
 
-        StatusLabel.Text = $"Плательщик: {SwText?.PayerName.Length}/{SwiftText.NameMaxLength}, " +
-            $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
+
+        //text = OutTextBox.Text;
+        //NameTextBox.Text = SwiftHelper.GetPayerName(text); //Swift.Cyr(SwText.PayerName);
+        //PurposeTextBox.Text = SwiftHelper.GetPurpose(text); //Swift.Cyr(SwText.Purpose);
+
+        var (OuterText, InnerText) = SwiftHelper.GetSection(SwiftTextBox.Text, "70");
+
+        NameTextBox.Text = InnerText; //Swift.Cyr(SwText.PayerName);
+        PurposeTextBox.Text = OuterText; //Swift.Cyr(SwText.Purpose);
+
+        //StatusLabel.Text = $"Плательщик: {SwText?.PayerName.Length}/{SwiftText.NameMaxLength}, " +
+        //    $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
         //}
         //catch (Exception ex)
         //{
@@ -88,14 +127,14 @@ public partial class Form1 : Form
 
     private void ReloadNameMenuItem_Click(object sender, EventArgs e)
     {
-        SwText.Parse(OutTextBox.Lines);
-        NameTextBox.Text = Swift.Cyr(SwText.PayerName);
+        //SwText.Parse(OutTextBox.Lines);
+        //NameTextBox.Text = Swift.Cyr(SwText.PayerName);
     }
 
     private void ReloadPurposeMenuItem_Click(object sender, EventArgs e)
     {
-        SwText.Parse(OutTextBox.Lines);
-        PurposeTextBox.Text = Swift.Cyr(SwText.Purpose);
+        //SwText.Parse(OutTextBox.Lines);
+        //PurposeTextBox.Text = Swift.Cyr(SwText.Purpose);
     }
 
     private void ExitMenuItem_Click(object sender, EventArgs e)
@@ -150,23 +189,24 @@ public partial class Form1 : Form
         //    $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
         //StatusLabel.Text = $"Плательщик: {SwText.PayerName.Length}/{SwiftText.NameMaxLength}, " +
         //        $"назначение: {SwText.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
-        StatusLabel.Text = $"Плательщик: {SwiftHelper.GetPayerName(OutTextBox.Text).Length}/{SwiftText.NameMaxLength}, " +
-                $"назначение: {SwiftHelper.GetPurpose(OutTextBox.Text).Length}/{SwiftText.PurposeMaxLength} символов";
+        //StatusLabel.Text = $"Плательщик: {SwiftHelper.GetPayerName(OutTextBox.Text).Length}/{SwiftText.NameMaxLength}, " +
+        //        $"назначение: {SwiftHelper.GetPurpose(OutTextBox.Text).Length}/{SwiftText.PurposeMaxLength} символов";
     }
 
     private void NameTextBox_TextChanged(object sender, EventArgs e)
     {
-        NameLabel.Text = $"Плательщик: {NameTextBox.TextLength}/{SwiftText.NameMaxLength}";
+        //NameLabel.Text = $"Плательщик: {NameTextBox.TextLength}/{SwiftText.NameMaxLength}";
 
-        SwText.PayerName = Swift.Lat(NameTextBox.Text);
-        OutTextBox.Lines = SwText.GetLines();
+        //SwText.PayerName = Swift.Lat(NameTextBox.Text);
+        //OutTextBox.Lines = SwText.GetLines();
     }
 
     private void PurposeTextBox_TextChanged(object sender, EventArgs e)
     {
-        PurposeLabel.Text = $"Назначение: {PurposeTextBox.TextLength}/{SwiftText.PurposeMaxLength}";
+        //PurposeLabel.Text = $"Назначение: {PurposeTextBox.TextLength}/{SwiftText.PurposeMaxLength}";
 
-        SwText.Purpose = Swift.Lat(PurposeTextBox.Text);
-        OutTextBox.Lines = SwText.GetLines();
+        //SwText.Purpose = Swift.Lat(PurposeTextBox.Text);
+        //OutTextBox.Lines = SwText.GetLines();
+        OutTextBox.Text = SwiftHelper.ReplacePurpose(OutTextBox.Text, PurposeTextBox.Text);
     }
 }
