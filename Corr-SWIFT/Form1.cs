@@ -111,10 +111,19 @@ public partial class Form1 : Form
         //NameTextBox.Text = SwiftHelper.GetPayerName(text); //Swift.Cyr(SwText.PayerName);
         //PurposeTextBox.Text = SwiftHelper.GetPurpose(text); //Swift.Cyr(SwText.Purpose);
 
-        var (OuterText, InnerText) = SwiftHelper.GetSection(SwiftTextBox.Text, "70");
 
-        NameTextBox.Text = InnerText; //Swift.Cyr(SwText.PayerName);
-        PurposeTextBox.Text = OuterText; //Swift.Cyr(SwText.Purpose);
+        //var (OuterText, InnerText) = SwiftHelper.GetSection(SwiftTextBox.Text, "70");
+
+        //NameTextBox.Text = InnerText; //Swift.Cyr(SwText.PayerName);
+        //PurposeTextBox.Text = OuterText; //Swift.Cyr(SwText.Purpose);
+
+        //string text = SwiftTextBox.Text;
+        var (payerText, acc, inn, kpp, name) = SwiftHelper.GetPayerSection(text);
+        var (purposeText, purpose) = SwiftHelper.GetPurposeSection(text);
+        var (nzpText, nzp) = SwiftHelper.GetNzpSection(text);
+
+        NameTextBox.Text = name;
+        PurposeTextBox.Text = purpose + nzp;
 
         //StatusLabel.Text = $"Плательщик: {SwText?.PayerName.Length}/{SwiftText.NameMaxLength}, " +
         //    $"назначение: {SwText?.Purpose.Length}/{SwiftText.PurposeMaxLength} символов";
