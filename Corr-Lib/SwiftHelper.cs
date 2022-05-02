@@ -6,20 +6,22 @@ namespace Corr_Lib;
 
 public static class SwiftHelper
 {
-    private const string _payerPattern = @"^:50K:/(\d*)\r\nINN(\d*)(|.KPP(\d*))\r\n((.|\r\n)*?)\r\n(:\d{2}\w?:)";
-    private const string _payerNamePattern = @"^:50K:/\d*\r\nINN\d*(|.KPP\d*)\r\n((.|\r\n)*?)\r\n(:\d{2}\w?:)";
-    //private const string _purposePattern = @"^:70:((.|\n)*?)\n:\d{2}\w?:(.|\n)*\n/NZP/((.|\n)*?)\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
-    private const string _purpose1Pattern = @"^:70:((.|\r\n)*?)\r\n(:\d{2}\w?:)";
-    private const string _purpose2Pattern = @"^:72:((.|\r\n)*?)/NZP/((.|\r\n)*?)\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
-    private const string _purpose3Pattern = @"^:72:(.|\r\n)*?\r\n(:\d{2}\w?:|-})";
+    private const string VALUE = @"(?<Value>(.|\n)*?)";
 
-    private static readonly RegexOptions _regexOptions = RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled;
+    //private const string _payerPattern = @"^:50K:/(\d*)\r\nINN(\d*)(|.KPP(\d*))\r\n((.|\r\n)*?)\r\n(:\d{2}\w?:)";
+    //private const string _payerNamePattern = @"^:50K:/\d*\r\nINN\d*(|.KPP\d*)\r\n((.|\r\n)*?)\r\n(:\d{2}\w?:)";
+    ////private const string _purposePattern = @"^:70:((.|\n)*?)\n:\d{2}\w?:(.|\n)*\n/NZP/((.|\n)*?)\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
+    //private const string _purpose1Pattern = @"^:70:((.|\r\n)*?)\r\n(:\d{2}\w?:)";
+    //private const string _purpose2Pattern = @"^:72:((.|\r\n)*?)/NZP/((.|\r\n)*?)\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
+    //private const string _purpose3Pattern = @"^:72:(.|\r\n)*?\r\n(:\d{2}\w?:|-})";
 
-    private static string? _payerEndCode;
-    private static string? _purpose1EndCode;
-    private static string? _purpose2StartCode;
-    private static string? _purpose2EndCode;
-    private static bool _purposeNzp;
+    //private static readonly RegexOptions _regexOptions = RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled;
+
+    //private static string? _payerEndCode;
+    //private static string? _purpose1EndCode;
+    //private static string? _purpose2StartCode;
+    //private static string? _purpose2EndCode;
+    //private static bool _purposeNzp;
 
     public static string? GetSwiftDocument(string xml)
     {
@@ -60,13 +62,14 @@ public static class SwiftHelper
 
     public static bool HasTax(string input)
     {
-        string pattern = @"^:26T:S\d{2}$";
+        //string pattern = @"^:26T:S\d{2}$";
+        string pattern = @"^:26T:";
         return Regex.IsMatch(input, pattern, RegexOptions.Multiline);
     }
 
     public static (string OuterText, string InnerText) GetSection(string input, string field)
     {
-        string pattern = $"^:{field}:" + @"(?<Value>(.|\n)*?)\n(:\d{2}\w?:|-})";
+        string pattern = $"^:{field}:" + VALUE + @"\n(:\d{2}\w?:|-})";
         Match m = Regex.Match(input, pattern, RegexOptions.Multiline);
 
         return (m.Value, m.Groups["Value"].Value);
@@ -74,7 +77,7 @@ public static class SwiftHelper
 
     public static string SetSection(string input, string field, string value)
     {
-        string pattern = $"(?<=^:{field}:)" + @"(?<Value>(.|\n)*?)(?=\r?\n(:\d{2}\w?:|-}))";
+        string pattern = $"(?<=^:{field}:)" + VALUE + @"(?=\r?\n(:\d{2}\w?:|-}))";
         return Regex.Replace(input, pattern, value, RegexOptions.Multiline);
     }
 
@@ -92,83 +95,98 @@ public static class SwiftHelper
 
     public static string SetPayerSection(string input, string acc, string inn, string kpp, string name)
     {
-        var s = new StringBuilder(210);
-        s.AppendLine($":50K:/{acc}")
+        var s = new StringBuilder(256);
+
+        s.AppendLine($"/{acc}")
             .Append($"INN{inn}");
 
-        if (inn.Length < 12)
+        if (inn.Length < 12 && kpp.Length == 9)
         {
             s.Append($".KPP{kpp}");
         }
 
         s.AppendLine()
-            .AppendLine(Swift.Wrap35(Swift.Lat(name)));
+            .Append(Swift.Wrap35(Swift.Lat(name)));
 
-        return SetSection(input, "70", s.ToString());
+        //return SetSection(input, "50K", s.ToString());
+        string pattern = "(?<=^:50K:)" + VALUE + @"(?=\r?\n(:\d{2}\w?:|-}))";
+        string value = s.ToString();
+
+        return Regex.Replace(input, pattern, value, RegexOptions.Multiline);
+
     }
 
     public static string GetPurposeSection(string input)
     {
-        const string pattern = @"^:70:(?<Purpose>(.|\n)*?)\n:\d{2}\w?:";
+        string pattern = "^:70:" + VALUE + @"\n:\d{2}\w?:";
         Match m = Regex.Match(input, pattern, RegexOptions.Multiline);
 
-        return Swift.Cyr(m.Groups["Purpose"].Value.ReplaceLineEndings(string.Empty));
+        return Swift.Cyr(m.Groups["Value"].Value.ReplaceLineEndings(string.Empty));
     }
 
     public static string GetNzpSection(string input)
     {
         if (input.Contains("/NZP/", StringComparison.Ordinal))
         {
-            const string pattern = @"^:72:(|(.|\n)*?\n)/NZP/(?<NZP>(.|\n)*?)\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
+            string pattern = @"^:72:(|(.|\n)*?\n)/NZP/" + VALUE + @"\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
             Match m = Regex.Match(input, pattern, RegexOptions.Multiline);
 
-            return Swift.Cyr(m.Groups["NZP"].Value
+            return Swift.Cyr(m.Groups["Value"].Value
                 .Replace("\n//", string.Empty)
-                .ReplaceLineEndings(string.Empty)));
+                .ReplaceLineEndings(string.Empty));
         }
 
         return string.Empty;
     }
 
-    public static string GetPayerName(string input)
+    public static (string Value, int Length) GetPayerName(string input)
     {
-        const string pattern = @"^:50K:/\d*\r?\nINN\d*(|.KPP\d*)\r?\n(?<Name>(.|\n)*?)\n:\d{2}\w?:";
+        string pattern = @"^:50K:/\d*\r?\nINN\d*(|.KPP\d*)\r?\n" + VALUE + @"\n:\d{2}\w?:";
         Match m = Regex.Match(input, pattern, RegexOptions.Multiline);
 
-        return Swift.Cyr(m.Groups["Name"].Value.ReplaceLineEndings(string.Empty));
+        //return Swift.Cyr(m.Groups["Name"].Value.ReplaceLineEndings(string.Empty));
+        string result = m.Groups["Value"].Value.ReplaceLineEndings(string.Empty);
+        string value = Swift.Cyr(result);
+        int length = result.Length;
+
+        return (value, length);
     }
 
     public static string SetPayerName(string input, string value)
     {
-        const string pattern = @"(?<=^:50K:/\d*\r?\nINN\d*(|.KPP\d*)\r?\n)(?<Name>(.|\n)*?)(?=\r?\n:\d{2}\w?:)";
+        string pattern = @"(?<=^:50K:/\d*\r?\nINN\d*(|.KPP\d*)\r?\n)" + VALUE + @"(?=\r?\n:\d{2}\w?:)";
         string replacement = Swift.Wrap35(Swift.Lat(value));
 
         return Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
     }
 
-    public static string GetPurpose(string input)
+    public static (string Value, int Length) GetPurpose(string input)
     {
         //return GetPurposeSection(input) + GetNzpSection(input);
 
-        string pattern = @"^:70:(?<Purpose>(.|\n)*?)\n:\d{2}\w?:";
+        string pattern = "^:70:" + VALUE + @"\n:\d{2}\w?:";
         Match m = Regex.Match(input, pattern, RegexOptions.Multiline);
-        string result = m.Groups["Purpose"].Value.ReplaceLineEndings(string.Empty);
+        string result = m.Groups["Value"].Value.ReplaceLineEndings(string.Empty);
 
         if (input.Contains("/NZP/", StringComparison.Ordinal))
         {
-            pattern = @"^:72:(|(.|\n)*?\n)/NZP/(?<NZP>(.|\n)*?)\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
+            pattern = @"^:72:(|(.|\n)*?\n)/NZP/" + VALUE + @"\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-})";
             m = Regex.Match(input, pattern, RegexOptions.Multiline);
-            result += m.Groups["NZP"].Value
+            result += m.Groups["Value"].Value
                 .Replace("\n//", string.Empty)
                 .ReplaceLineEndings(string.Empty);
         }
 
-        return Swift.Cyr(result);
+        string value = Swift.Cyr(result);
+        int length = result.Length;
+
+        //return Swift.Cyr(result);
+        return (value, length);
     }
 
     public static string SetPurpose(string input, string value)
     {
-        string pattern = @"(?<=^:70:)(?<Purpose>(.|\n)*?)(?=\r?\n:\d{2}\w?:)";
+        string pattern = "(?<=^:70:)" + VALUE + @"(?=\r?\n:\d{2}\w?:)";
         string replacement;
         value = Swift.Lat(value);
 
@@ -181,10 +199,10 @@ public static class SwiftHelper
         replacement = Swift.Wrap35(value[..140]);
         string result = Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
 
-        pattern = @"(?<=^:72:(|(.|\n)*?\n)/NZP/)(?<NZP>(.|\n)*?)(?=\r?\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-}))";
+        pattern = @"(?<=^:72:(|(.|\n)*?\n)/NZP/)" + VALUE + @"(?=\r?\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-}))";
         replacement = Swift.Wrap35(value[140..]).Replace("\n", "\n//");
 
-        return result + Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
+        return Regex.Replace(result, pattern, replacement, RegexOptions.Multiline);
     }
 
     //------------------------------------------------------------------------------------------

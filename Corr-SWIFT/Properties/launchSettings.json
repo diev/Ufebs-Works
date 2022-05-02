@@ -2,7 +2,7 @@
   "profiles": {
     "Corr-SWIFT": {
       "commandName": "Project",
-      "commandLineArgs": "r270422800010089.txt"
+      "commandLineArgs": "out\\r270422800010089*.txt"
     }
   }
 }

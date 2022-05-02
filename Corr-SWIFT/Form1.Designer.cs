@@ -32,10 +32,12 @@
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.NameLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.PurposeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TaxLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.SaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,6 +54,9 @@
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
             this.OutPage = new System.Windows.Forms.TabPage();
             this.OutTextBox = new System.Windows.Forms.TextBox();
+            this.NextButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.PurposeTextBox = new System.Windows.Forms.TextBox();
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -74,30 +79,40 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.NameLabel,
-            this.PurposeLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.PurposeLabel,
+            this.TaxLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 426);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(800, 24);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // StatusLabel
             // 
+            this.StatusLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.StatusLabel.Name = "StatusLabel";
-            this.StatusLabel.Size = new System.Drawing.Size(93, 17);
+            this.StatusLabel.Size = new System.Drawing.Size(97, 19);
             this.StatusLabel.Text = "Выберите файл";
             // 
             // NameLabel
             // 
+            this.NameLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.NameLabel.Name = "NameLabel";
-            this.NameLabel.Size = new System.Drawing.Size(77, 17);
+            this.NameLabel.Size = new System.Drawing.Size(81, 19);
             this.NameLabel.Text = "Плательщик";
             // 
             // PurposeLabel
             // 
+            this.PurposeLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.PurposeLabel.Name = "PurposeLabel";
-            this.PurposeLabel.Size = new System.Drawing.Size(73, 17);
+            this.PurposeLabel.Size = new System.Drawing.Size(77, 19);
             this.PurposeLabel.Text = "Назначение";
+            // 
+            // TaxLabel
+            // 
+            this.TaxLabel.Name = "TaxLabel";
+            this.TaxLabel.Size = new System.Drawing.Size(49, 19);
+            this.TaxLabel.Text = "Платеж";
             // 
             // menuStrip1
             // 
@@ -116,6 +131,7 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenMenuItem,
             this.toolStripMenuItem2,
+            this.SaveMenuItem,
             this.SaveAsMenuItem,
             this.toolStripSeparator1,
             this.ExitMenuItem});
@@ -126,31 +142,40 @@
             // OpenMenuItem
             // 
             this.OpenMenuItem.Name = "OpenMenuItem";
-            this.OpenMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.OpenMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.OpenMenuItem.Size = new System.Drawing.Size(173, 22);
             this.OpenMenuItem.Text = "Открыть...";
             this.OpenMenuItem.Click += new System.EventHandler(this.OpenMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(160, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(170, 6);
+            // 
+            // SaveMenuItem
+            // 
+            this.SaveMenuItem.Name = "SaveMenuItem";
+            this.SaveMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.SaveMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.SaveMenuItem.Text = "Сохранить";
+            this.SaveMenuItem.Click += new System.EventHandler(this.SaveMenuItem_Click);
             // 
             // SaveAsMenuItem
             // 
             this.SaveAsMenuItem.Name = "SaveAsMenuItem";
-            this.SaveAsMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.SaveAsMenuItem.Size = new System.Drawing.Size(173, 22);
             this.SaveAsMenuItem.Text = "Сохранить как...";
             this.SaveAsMenuItem.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(160, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(170, 6);
             // 
             // ExitMenuItem
             // 
             this.ExitMenuItem.Name = "ExitMenuItem";
-            this.ExitMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.ExitMenuItem.Size = new System.Drawing.Size(173, 22);
             this.ExitMenuItem.Text = "Выход";
             this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
             // 
@@ -169,14 +194,12 @@
             this.ReloadNameMenuItem.Name = "ReloadNameMenuItem";
             this.ReloadNameMenuItem.Size = new System.Drawing.Size(207, 22);
             this.ReloadNameMenuItem.Text = "Перечитать Получателя";
-            this.ReloadNameMenuItem.Click += new System.EventHandler(this.ReloadNameMenuItem_Click);
             // 
             // ReloadPurposeMenuItem
             // 
             this.ReloadPurposeMenuItem.Name = "ReloadPurposeMenuItem";
             this.ReloadPurposeMenuItem.Size = new System.Drawing.Size(207, 22);
             this.ReloadPurposeMenuItem.Text = "Перечитать Назначение";
-            this.ReloadPurposeMenuItem.Click += new System.EventHandler(this.ReloadPurposeMenuItem_Click);
             // 
             // видToolStripMenuItem
             // 
@@ -205,9 +228,12 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.NextButton);
+            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.PurposeTextBox);
             this.splitContainer1.Panel2.Controls.Add(this.NameTextBox);
-            this.splitContainer1.Size = new System.Drawing.Size(800, 404);
+            this.splitContainer1.Size = new System.Drawing.Size(800, 402);
             this.splitContainer1.SplitterDistance = 530;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -220,7 +246,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(530, 404);
+            this.tabControl1.Size = new System.Drawing.Size(530, 402);
             this.tabControl1.TabIndex = 0;
             // 
             // XmlPage
@@ -229,7 +255,7 @@
             this.XmlPage.Location = new System.Drawing.Point(4, 24);
             this.XmlPage.Name = "XmlPage";
             this.XmlPage.Padding = new System.Windows.Forms.Padding(3);
-            this.XmlPage.Size = new System.Drawing.Size(522, 376);
+            this.XmlPage.Size = new System.Drawing.Size(522, 374);
             this.XmlPage.TabIndex = 0;
             this.XmlPage.Text = "XML";
             this.XmlPage.UseVisualStyleBackColor = true;
@@ -244,7 +270,7 @@
             this.XmlTextBox.Name = "XmlTextBox";
             this.XmlTextBox.ReadOnly = true;
             this.XmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.XmlTextBox.Size = new System.Drawing.Size(516, 370);
+            this.XmlTextBox.Size = new System.Drawing.Size(516, 368);
             this.XmlTextBox.TabIndex = 2;
             this.XmlTextBox.Text = "Исходный файл XML не указан.";
             this.XmlTextBox.WordWrap = false;
@@ -255,7 +281,7 @@
             this.SwiftPage.Location = new System.Drawing.Point(4, 24);
             this.SwiftPage.Name = "SwiftPage";
             this.SwiftPage.Padding = new System.Windows.Forms.Padding(3);
-            this.SwiftPage.Size = new System.Drawing.Size(522, 376);
+            this.SwiftPage.Size = new System.Drawing.Size(522, 374);
             this.SwiftPage.TabIndex = 1;
             this.SwiftPage.Text = "SWIFT";
             this.SwiftPage.UseVisualStyleBackColor = true;
@@ -270,7 +296,7 @@
             this.SwiftTextBox.Name = "SwiftTextBox";
             this.SwiftTextBox.ReadOnly = true;
             this.SwiftTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.SwiftTextBox.Size = new System.Drawing.Size(516, 370);
+            this.SwiftTextBox.Size = new System.Drawing.Size(516, 368);
             this.SwiftTextBox.TabIndex = 1;
             this.SwiftTextBox.Text = "Документ не имеет тип ED503.";
             this.SwiftTextBox.WordWrap = false;
@@ -281,7 +307,7 @@
             this.OutPage.Location = new System.Drawing.Point(4, 24);
             this.OutPage.Name = "OutPage";
             this.OutPage.Padding = new System.Windows.Forms.Padding(3);
-            this.OutPage.Size = new System.Drawing.Size(522, 376);
+            this.OutPage.Size = new System.Drawing.Size(522, 374);
             this.OutPage.TabIndex = 2;
             this.OutPage.Text = "К отправке";
             this.OutPage.UseVisualStyleBackColor = true;
@@ -294,11 +320,39 @@
             this.OutTextBox.Multiline = true;
             this.OutTextBox.Name = "OutTextBox";
             this.OutTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.OutTextBox.Size = new System.Drawing.Size(516, 370);
+            this.OutTextBox.Size = new System.Drawing.Size(516, 368);
             this.OutTextBox.TabIndex = 2;
             this.OutTextBox.Text = "Нечего отправлять.";
             this.OutTextBox.WordWrap = false;
             this.OutTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
+            // 
+            // NextButton
+            // 
+            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.NextButton.Location = new System.Drawing.Point(143, 367);
+            this.NextButton.Name = "NextButton";
+            this.NextButton.Size = new System.Drawing.Size(75, 23);
+            this.NextButton.TabIndex = 4;
+            this.NextButton.Text = "Дальше >>";
+            this.NextButton.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 193);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(125, 15);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Назначение платежа:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(80, 15);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Плательщик:";
             // 
             // PurposeTextBox
             // 
@@ -306,11 +360,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PurposeTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PurposeTextBox.Location = new System.Drawing.Point(6, 187);
+            this.PurposeTextBox.Location = new System.Drawing.Point(6, 211);
             this.PurposeTextBox.Multiline = true;
             this.PurposeTextBox.Name = "PurposeTextBox";
             this.PurposeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.PurposeTextBox.Size = new System.Drawing.Size(254, 170);
+            this.PurposeTextBox.Size = new System.Drawing.Size(254, 144);
             this.PurposeTextBox.TabIndex = 1;
             this.PurposeTextBox.TextChanged += new System.EventHandler(this.PurposeTextBox_TextChanged);
             // 
@@ -319,11 +373,11 @@
             this.NameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.NameTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NameTextBox.Location = new System.Drawing.Point(6, 11);
+            this.NameTextBox.Location = new System.Drawing.Point(6, 27);
             this.NameTextBox.Multiline = true;
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.NameTextBox.Size = new System.Drawing.Size(254, 170);
+            this.NameTextBox.Size = new System.Drawing.Size(254, 154);
             this.NameTextBox.TabIndex = 0;
             this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
             // 
@@ -406,5 +460,10 @@
         private ToolStripMenuItem ReloadPurposeMenuItem;
         private ToolStripMenuItem FontMenuItem;
         private FontDialog FontDialog;
+        private Label label2;
+        private Label label1;
+        private ToolStripStatusLabel TaxLabel;
+        private ToolStripMenuItem SaveMenuItem;
+        private Button NextButton;
     }
 }
