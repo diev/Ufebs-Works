@@ -353,7 +353,19 @@ public partial class Form1 : Form
 
     private void AboutMenuItem_Click(object sender, EventArgs e)
     {
-        MessageBox.Show($"Программа дооформления документов из УФЭБС в SWIFT.\nВерсия {Application.ProductVersion}",
-            Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        string config = Path.ChangeExtension(Application.ExecutablePath, "runtime.json");
+        string text =
+            $@"Программа дооформления документов из УФЭБС в SWIFT.
+
+Версия {Application.ProductVersion}
+
+Задайте параметры в файле:
+{config}
+
+или укажите в командной строке:
+
+Input\[*.xml] [Output\[*_.txt]]";
+
+        MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 }
