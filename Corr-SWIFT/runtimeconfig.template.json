@@ -1,0 +1,8 @@
+{
+  "configProperties": {
+    "openDirectory": "G:/BANK/TEST/OUT",
+    "openMask": "r*.xml",
+    "saveDirectory": "G:/BANK/TEST/CLI",
+    "saveMask": "*_.txt"
+  }
+}

@@ -54,6 +54,7 @@
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
             this.OutPage = new System.Windows.Forms.TabPage();
             this.OutTextBox = new System.Windows.Forms.TextBox();
+            this.ForwardButton = new System.Windows.Forms.Button();
             this.NextButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -62,6 +63,8 @@
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
+            this.справкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -119,7 +122,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
             this.правкаToolStripMenuItem,
-            this.видToolStripMenuItem});
+            this.видToolStripMenuItem,
+            this.справкаToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -228,6 +232,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.ForwardButton);
             this.splitContainer1.Panel2.Controls.Add(this.NextButton);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
@@ -326,15 +331,29 @@
             this.OutTextBox.WordWrap = false;
             this.OutTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
             // 
+            // ForwardButton
+            // 
+            this.ForwardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ForwardButton.Enabled = false;
+            this.ForwardButton.Location = new System.Drawing.Point(220, 367);
+            this.ForwardButton.Name = "ForwardButton";
+            this.ForwardButton.Size = new System.Drawing.Size(34, 23);
+            this.ForwardButton.TabIndex = 6;
+            this.ForwardButton.Text = ">>";
+            this.ForwardButton.UseVisualStyleBackColor = true;
+            this.ForwardButton.Click += new System.EventHandler(this.ForwardButton_Click);
+            // 
             // NextButton
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.NextButton.Enabled = false;
             this.NextButton.Location = new System.Drawing.Point(143, 367);
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(75, 23);
             this.NextButton.TabIndex = 4;
-            this.NextButton.Text = "Дальше >>";
+            this.NextButton.Text = "Дальше";
             this.NextButton.UseVisualStyleBackColor = true;
+            this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // label2
             // 
@@ -386,16 +405,38 @@
             this.OpenFileDialog.DefaultExt = "xml";
             this.OpenFileDialog.Filter = "XML|*.xml|TXT|*.txt|Все файлы|*.*";
             this.OpenFileDialog.InitialDirectory = "G:\\BANK\\TEST\\OUT";
+            this.OpenFileDialog.Multiselect = true;
             this.OpenFileDialog.ReadOnlyChecked = true;
-            this.OpenFileDialog.Title = "Открыть файл";
+            this.OpenFileDialog.SupportMultiDottedExtensions = true;
+            this.OpenFileDialog.Title = "Открыть файл(ы)";
+            this.OpenFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.OpenFileDialog_FileOk);
             // 
             // SaveAsFileDialog
             // 
             this.SaveAsFileDialog.CreatePrompt = true;
             this.SaveAsFileDialog.DefaultExt = "txt";
-            this.SaveAsFileDialog.Filter = "XML|*.xml|TXT|*.txt|Все файлы|*.*";
-            this.SaveAsFileDialog.FilterIndex = 2;
+            this.SaveAsFileDialog.Filter = "TXT|*.txt|XML|*.xml|Все файлы|*.*";
             this.SaveAsFileDialog.Title = "Сохранить файл";
+            this.SaveAsFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveAsFileDialog_FileOk);
+            // 
+            // FontDialog
+            // 
+            this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
+            // 
+            // справкаToolStripMenuItem
+            // 
+            this.справкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AboutMenuItem});
+            this.справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
+            this.справкаToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
+            this.справкаToolStripMenuItem.Text = "Справка";
+            // 
+            // AboutMenuItem
+            // 
+            this.AboutMenuItem.Name = "AboutMenuItem";
+            this.AboutMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.AboutMenuItem.Text = "О программе";
+            this.AboutMenuItem.Click += new System.EventHandler(this.AboutMenuItem_Click);
             // 
             // Form1
             // 
@@ -408,6 +449,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Corr-SWIFT";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -465,5 +507,8 @@
         private ToolStripStatusLabel TaxLabel;
         private ToolStripMenuItem SaveMenuItem;
         private Button NextButton;
+        private Button ForwardButton;
+        private ToolStripMenuItem справкаToolStripMenuItem;
+        private ToolStripMenuItem AboutMenuItem;
     }
 }
