@@ -1,8 +1,17 @@
 {
   "configProperties": {
-    "openDirectory": "G:/BANK/TEST/OUT",
-    "openMask": "r*.xml",
-    "saveDirectory": "G:/BANK/TEST/CLI",
-    "saveMask": "*_.txt"
+    "Open.Dir": "G:/BANK/TEST/OUT",
+    "Open.Mask": "r*.xml",
+    "Save": {
+      "Dir": "G:/BANK/TEST/CLI",
+      "Mask": "*_.txt"
+    },
+    "Bank": {
+      "Account": "30109810800010001378",
+      "INN": "7831001422",
+      "KPP": "784101001",
+      "PayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
+      "PurposeTemplate": "//7831001422//784101001//{name}//{purpose}"
+    }
   }
 }

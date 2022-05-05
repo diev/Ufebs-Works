@@ -1,3 +1,6 @@
+using Corr_SWIFT;
+
+using System.Linq;
 using System.Text;
 
 namespace Corr_Lib;
@@ -17,32 +20,22 @@ public partial class Form1 : Form
     private string? _saveFileName;
     private string _saveMaskName = "*";
 
+    private ConfigProperties _config;
+
     public Form1()
     {
         InitializeComponent();
-        Size = new Size((int)(Screen.PrimaryScreen.WorkingArea.Width * 0.8), 
-            (int)(Screen.PrimaryScreen.WorkingArea.Height * 0.8));
 
-        // default
+        int w = Screen.PrimaryScreen.WorkingArea.Width;
+        int h = Screen.PrimaryScreen.WorkingArea.Height;
 
-        string openDirectory = Directory.GetCurrentDirectory();
-        string openMask = "r*.xml";
-        string saveDirectory = openDirectory;
-        string saveMask = "*_.txt";
+        SetBounds(
+            (int)(w * 0.1), (int)(h * 0.15),
+            (int)(w * 0.8), (int)(h * 0.75));
 
         // runtimeconfig.template.json > App.runtime.json
 
-        if (AppContext.GetData(nameof(openDirectory)) is string od)
-            openDirectory = od.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-
-        if (AppContext.GetData(nameof(saveDirectory)) is string sd)
-            saveDirectory = sd.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-
-        if (AppContext.GetData(nameof(openMask)) is string om)
-            openMask = om;
-
-        if (AppContext.GetData(nameof(saveMask)) is string sm)
-            saveMask = sm;
+        _config = new ConfigProperties();
 
         // exe G:\BANK\TEST\OUT\r*.xml G:\BANK\TEST\CLI\*_.txt
 
@@ -55,11 +48,11 @@ public partial class Form1 : Form
 
             var x = Path.GetDirectoryName(arg);
             if (!string.IsNullOrEmpty(x))
-                openDirectory = x;
+                _config.Open.Dir = x;
 
             x = Path.GetFileName(arg);
             if (!string.IsNullOrEmpty(x))
-                openMask = x;
+                _config.Open.Mask = x;
 
             if (argc > 1) // 2:Output
             {
@@ -67,27 +60,34 @@ public partial class Form1 : Form
 
                 x = Path.GetDirectoryName(arg);
                 if (!string.IsNullOrEmpty(x))
-                    saveDirectory = x;
+                    _config.Save.Dir = x;
 
                 x = Path.GetFileName(arg);
                 if (!string.IsNullOrEmpty(x))
-                    saveMask = x;
+                    _config.Save.Mask = x;
             }
         }
 
-        OpenFileDialog.InitialDirectory = openDirectory;
-        OpenFileDialog.Filter = $"УФЭБС|{openMask}|{OpenFileDialog.Filter}";
+        OpenFileDialog.InitialDirectory = _config.Open.Dir;
+        OpenFileDialog.Filter = $"УФЭБС|{_config.Open.Mask}|{OpenFileDialog.Filter}";
 
-        SaveAsFileDialog.InitialDirectory = saveDirectory;
-        SaveAsFileDialog.Filter = $"SWIFT|{saveMask}|{SaveAsFileDialog.Filter}";
-        SaveAsFileDialog.DefaultExt = Path.GetExtension(saveMask);
+        SaveAsFileDialog.InitialDirectory = _config.Save.Dir;
+        SaveAsFileDialog.Filter = $"SWIFT|{_config.Save.Mask}|{SaveAsFileDialog.Filter}";
+        SaveAsFileDialog.DefaultExt = Path.GetExtension(_config.Save.Mask);
 
-        _saveMaskName = Path.GetFileName(saveMask);
-        _files = Directory.GetFiles(openDirectory, openMask);
+        _saveMaskName = Path.GetFileName(_config.Save.Mask);
+        _files = Directory.GetFiles(_config.Open.Dir, _config.Open.Mask);
+
+        FilesListBox.Items.Clear();
+        FilesListBox.Items.AddRange(_files);
 
         if (_files.Length > 0)
         {
             LoadFile(_files[_fileIndex]);
+        }
+        else
+        {
+            XmlTextBox.Text += $" Проверьте настройку \"Open.Dir\"";
         }
     }
 
@@ -133,11 +133,15 @@ public partial class Form1 : Form
 
         var (acc, inn, kpp, name) = SwiftHelper.GetPayerSection(text);
 
-        bool bank = inn == "7831001422";
-        string acc2 = "30109810800010001378";
+        bool bank = inn == _config.Bank.INN; // "7831001422";
+        string acc2 = _config.Bank.Account; // "30109810800010001378";
+
+        // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
         string name2 = bank
             ? name
-            : $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+            : _config.Bank.PayerTemplate
+            .Replace("{name}", name)
+            .Replace("{acc}", acc);
 
         _isValid = _isValid && name2.Length <= MAX_UFEBS_NAME;
 
@@ -147,7 +151,11 @@ public partial class Form1 : Form
 
         if (!bank && SwiftHelper.HasTax(text))
         {
-            purpose = $"//7831001422//784101001//{name}//{purpose}";
+            // $"//7831001422//784101001//{name}//{purpose}";
+            purpose = _config.Bank.PurposeTemplate
+                .Replace("{name}", name)
+                .Replace("{purpose}", purpose);
+
             text = SwiftHelper.SetPurpose(text, purpose).Text;
         }
 
@@ -249,6 +257,9 @@ public partial class Form1 : Form
         _files = OpenFileDialog.FileNames;
         _fileIndex = 0;
 
+        FilesListBox.Items.Clear();
+        FilesListBox.Items.AddRange(_files);
+
         LoadFile(_files[_fileIndex]);
     }
 
@@ -282,8 +293,11 @@ public partial class Form1 : Form
 
     private void SaveFile(string? text = null)
     {
-        File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
-        _saved = true;
+        if (_saveFileName != null)
+        {
+            File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
+            _saved = true;
+        }
     }
 
     private void ForwardButton_Click(object sender, EventArgs e)
@@ -301,14 +315,19 @@ public partial class Form1 : Form
         switch (tabControl1.SelectedIndex)
         {
             case 0:
+                SaveFile(string.Join(Environment.NewLine,
+                    FilesListBox.Items.OfType<string>().ToArray()));
+                return;
+
+            case 1:
                 SaveFile(XmlTextBox.Text);
                 break;
 
-            case 1:
+            case 2:
                 SaveFile(SwiftTextBox.Text);
                 break;
 
-            case 2:
+            case 3:
                 SaveFile();
                 break;
         }
@@ -320,6 +339,7 @@ public partial class Form1 : Form
     {
         var font = ((FontDialog)sender).Font;
 
+        FilesListBox.Font = font;
         XmlTextBox.Font = font;
         SwiftTextBox.Font = font;
         OutTextBox.Font = font;
@@ -367,5 +387,16 @@ public partial class Form1 : Form
 Input\[*.xml] [Output\[*_.txt]]";
 
         MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void FilesListBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var list = (ListBox)sender;
+
+        if (list.SelectedItem is string file && File.Exists(file))
+        {
+            _fileIndex = list.SelectedIndex;
+            LoadFile(file);
+        }
     }
 }

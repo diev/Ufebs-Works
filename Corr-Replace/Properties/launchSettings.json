@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Corr-Replace": {
-      "commandName": "Project",
-      "commandLineArgs": "p104-2.xml"
+      "commandName": "Project"
     }
   }
 }

@@ -46,8 +46,12 @@
             this.ReloadPurposeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.видToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FontMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.справкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.FilesPage = new System.Windows.Forms.TabPage();
+            this.FilesListBox = new System.Windows.Forms.ListBox();
             this.XmlPage = new System.Windows.Forms.TabPage();
             this.XmlTextBox = new System.Windows.Forms.TextBox();
             this.SwiftPage = new System.Windows.Forms.TabPage();
@@ -63,8 +67,6 @@
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
-            this.справкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -72,6 +74,7 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.FilesPage.SuspendLayout();
             this.XmlPage.SuspendLayout();
             this.SwiftPage.SuspendLayout();
             this.OutPage.SuspendLayout();
@@ -220,6 +223,21 @@
             this.FontMenuItem.Text = "Шрифт...";
             this.FontMenuItem.Click += new System.EventHandler(this.FontMenuItem_Click);
             // 
+            // справкаToolStripMenuItem
+            // 
+            this.справкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AboutMenuItem});
+            this.справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
+            this.справкаToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
+            this.справкаToolStripMenuItem.Text = "Справка";
+            // 
+            // AboutMenuItem
+            // 
+            this.AboutMenuItem.Name = "AboutMenuItem";
+            this.AboutMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.AboutMenuItem.Text = "О программе";
+            this.AboutMenuItem.Click += new System.EventHandler(this.AboutMenuItem_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -244,6 +262,7 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.FilesPage);
             this.tabControl1.Controls.Add(this.XmlPage);
             this.tabControl1.Controls.Add(this.SwiftPage);
             this.tabControl1.Controls.Add(this.OutPage);
@@ -253,6 +272,28 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(530, 402);
             this.tabControl1.TabIndex = 0;
+            // 
+            // FilesPage
+            // 
+            this.FilesPage.Controls.Add(this.FilesListBox);
+            this.FilesPage.Location = new System.Drawing.Point(4, 24);
+            this.FilesPage.Name = "FilesPage";
+            this.FilesPage.Padding = new System.Windows.Forms.Padding(3);
+            this.FilesPage.Size = new System.Drawing.Size(522, 374);
+            this.FilesPage.TabIndex = 3;
+            this.FilesPage.Text = "Файлы";
+            this.FilesPage.UseVisualStyleBackColor = true;
+            // 
+            // FilesListBox
+            // 
+            this.FilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FilesListBox.FormattingEnabled = true;
+            this.FilesListBox.ItemHeight = 15;
+            this.FilesListBox.Location = new System.Drawing.Point(3, 3);
+            this.FilesListBox.Name = "FilesListBox";
+            this.FilesListBox.Size = new System.Drawing.Size(516, 368);
+            this.FilesListBox.TabIndex = 0;
+            this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);
             // 
             // XmlPage
             // 
@@ -277,7 +318,7 @@
             this.XmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.XmlTextBox.Size = new System.Drawing.Size(516, 368);
             this.XmlTextBox.TabIndex = 2;
-            this.XmlTextBox.Text = "Исходный файл XML не указан.";
+            this.XmlTextBox.Text = "Исходные файлы XML не найдены.";
             this.XmlTextBox.WordWrap = false;
             // 
             // SwiftPage
@@ -423,21 +464,6 @@
             // 
             this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
             // 
-            // справкаToolStripMenuItem
-            // 
-            this.справкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AboutMenuItem});
-            this.справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
-            this.справкаToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
-            this.справкаToolStripMenuItem.Text = "Справка";
-            // 
-            // AboutMenuItem
-            // 
-            this.AboutMenuItem.Name = "AboutMenuItem";
-            this.AboutMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.AboutMenuItem.Text = "О программе";
-            this.AboutMenuItem.Click += new System.EventHandler(this.AboutMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -448,6 +474,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Corr-SWIFT";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.statusStrip1.ResumeLayout(false);
@@ -460,6 +487,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.FilesPage.ResumeLayout(false);
             this.XmlPage.ResumeLayout(false);
             this.XmlPage.PerformLayout();
             this.SwiftPage.ResumeLayout(false);
@@ -510,5 +538,7 @@
         private Button ForwardButton;
         private ToolStripMenuItem справкаToolStripMenuItem;
         private ToolStripMenuItem AboutMenuItem;
+        private TabPage FilesPage;
+        private ListBox FilesListBox;
     }
 }
