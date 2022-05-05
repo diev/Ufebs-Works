@@ -15,7 +15,12 @@ public partial class Form1 : Form
 
     private string[] _files = Array.Empty<string>();
     private int _fileIndex = 0;
-    private bool _isValid = false;
+
+    private bool _isSwift50Valid = false;
+    private bool _isSwift72Valid = false;
+    private bool _isNameValid = false;
+    private bool _isPurposeValid = false;
+
     private bool _saved = false;
     private string? _saveFileName;
     private string _saveMaskName = "*";
@@ -68,6 +73,68 @@ public partial class Form1 : Form
             }
         }
 
+        StringBuilder err = new();
+        
+        if (string.IsNullOrEmpty(_config.Open.Dir) || !Directory.Exists(_config.Open.Dir))
+        {
+            err.AppendLine($"Папка Open.Dir не существует!");
+            _config.Open.Dir = Directory.GetCurrentDirectory();
+        }
+
+        if (string.IsNullOrEmpty(_config.Open.Mask))
+        {
+            err.AppendLine($"Маска Open.Mask не указана!");
+            _config.Open.Mask = "r*.xml";
+        }
+
+        if (string.IsNullOrEmpty(_config.Save.Dir) || !Directory.Exists(_config.Save.Dir))
+        {
+            err.AppendLine($"Папка Save.Dir не существует!");
+            _config.Save.Dir = _config.Open.Dir;
+        }
+
+        if (string.IsNullOrEmpty(_config.Save.Mask))
+        {
+            err.AppendLine($"Маска Save.Mask не указана!");
+            _config.Save.Mask = "*_.txt";
+        }
+
+        if (string.IsNullOrEmpty(_config.Bank.Account))
+        {
+            err.AppendLine($"Счет Банка не указан!");
+            _config.Bank.Account = "12345678901234567890";
+        }
+
+        if (string.IsNullOrEmpty(_config.Bank.INN))
+        {
+            err.AppendLine($"ИНН Банка не указан!");
+            _config.Bank.INN = "7831001422";
+        }
+
+        if (string.IsNullOrEmpty(_config.Bank.KPP))
+        {
+            err.AppendLine($"КПП Банка не указан!");
+            _config.Bank.KPP = "783101001";
+        }
+
+        if (string.IsNullOrEmpty(_config.Bank.PayerTemplate))
+        {
+            err.AppendLine($"Шаблон за клиента Банка не указан!");
+            _config.Bank.PayerTemplate = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+        }
+
+        if (string.IsNullOrEmpty(_config.Bank.PurposeTemplate))
+        {
+            err.AppendLine($"Шаблон назначения за третье лицо не указан!");
+            _config.Bank.PurposeTemplate = "//7831001422//783101001//{name}//{purpose}";
+        }
+
+        if (err.Length > 0)
+        {
+            MessageBox.Show($"Проверьте настройки:\n\n{err}\nПереход в демо-режим.", Application.ProductName,
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         OpenFileDialog.InitialDirectory = _config.Open.Dir;
         OpenFileDialog.Filter = $"УФЭБС|{_config.Open.Mask}|{OpenFileDialog.Filter}";
 
@@ -85,10 +152,6 @@ public partial class Form1 : Form
         {
             LoadFile(_files[_fileIndex]);
         }
-        else
-        {
-            XmlTextBox.Text += $" Проверьте настройку \"Open.Dir\"";
-        }
     }
 
     private void OpenMenuItem_Click(object sender, EventArgs e)
@@ -98,7 +161,6 @@ public partial class Form1 : Form
 
     private bool LoadFile(string path)
     {
-        _isValid = false;
         _saved = false;
 
         string text = File.ReadAllText(path, Encoding.ASCII);
@@ -125,11 +187,9 @@ public partial class Form1 : Form
         if (text == null)
         {
             SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
-            return _isValid;
         }
 
         tabControl1.SelectedIndex = tabControl1.TabCount - 1;
-        _isValid = true;
 
         var (acc, inn, kpp, name) = SwiftHelper.GetPayerSection(text);
 
@@ -143,7 +203,7 @@ public partial class Form1 : Form
             .Replace("{name}", name)
             .Replace("{acc}", acc);
 
-        _isValid = _isValid && name2.Length <= MAX_UFEBS_NAME;
+        _isNameValid = name2.Length <= MAX_UFEBS_NAME;
 
         text = SwiftHelper.SetPayerSection(text, acc2, inn, kpp, name2).Value;
 
@@ -163,12 +223,14 @@ public partial class Form1 : Form
         NameTextBox.Text = name2;
         PurposeTextBox.Text = purpose;
 
-        TaxLabel.Text = $"{_fileIndex + 1}/{_files.Length} " + (SwiftHelper.HasTax(text)
-            ? "Бюджет" : "Платеж");
+        TaxLabel.Text = SwiftHelper.HasTax(text)
+            ? "Бюджет" : "Платеж";
 
-        CheckNextEnabled();
+        ProgressBar.Value = _fileIndex + 1;
+        ProgressBar.Maximum = _files.Length;
+        DoneLabel.Text = $"Сделано: {ProgressBar.Value}/{ProgressBar.Maximum}";
 
-        return _isValid;
+        return CheckNextEnabled();
     }
 
     private void ExitMenuItem_Click(object sender, EventArgs e)
@@ -200,12 +262,17 @@ public partial class Form1 : Form
             PurposeTextBox.Text = PurposeValue;
         }
 
-        bool valid = NameLength <= MAX_SWIFT_NAME && PurposeLength <= MAX_SWIFT_PURPOSE;
-        StatusLabel.Text = $"SWIFT: {NameLength}/{MAX_SWIFT_NAME}, {PurposeLength}/{MAX_SWIFT_PURPOSE}";
-        StatusLabel.ForeColor = valid
+        _isSwift50Valid = NameLength <= MAX_SWIFT_NAME;
+        _isSwift72Valid = PurposeLength <= MAX_SWIFT_PURPOSE;
+        
+        Swift50Label.Text = $"SWIFT 50K: {NameLength}/{MAX_SWIFT_NAME}";
+        Swift50Label.ForeColor = _isSwift50Valid
             ? ForeColor : Color.Red;
 
-        _isValid = _isValid && valid;
+        Swift72Label.Text = $"SWIFT 70,72: {PurposeLength}/{MAX_SWIFT_PURPOSE}";
+        Swift72Label.ForeColor = _isSwift72Valid
+            ? ForeColor : Color.Red;
+
         CheckNextEnabled();
     }
 
@@ -213,13 +280,13 @@ public partial class Form1 : Form
     {
         string text = NameTextBox.Text;
         int length = text.Length;
-        bool valid = length <= MAX_UFEBS_NAME;
+        
+        _isNameValid = length <= MAX_UFEBS_NAME;
 
-        NameLabel.Text = $"Плательщик: {length}/{MAX_UFEBS_NAME}";
-        NameLabel.ForeColor = valid
+        NameEditLabel.Text = $"Плательщик {length}/{MAX_UFEBS_NAME}:";
+        NameEditLabel.ForeColor = _isNameValid
             ? ForeColor : Color.Red;
 
-        _isValid = _isValid && valid;
         CheckNextEnabled();
 
         if (NameTextBox.Focused)
@@ -232,13 +299,13 @@ public partial class Form1 : Form
     {
         string text = PurposeTextBox.Text;
         int length = text.Length;
-        bool valid = length <= MAX_UFEBS_PURPOSE;
+        
+        _isPurposeValid = length <= MAX_UFEBS_PURPOSE;
 
-        PurposeLabel.Text = $"Назначение: {length}/{MAX_SWIFT_PURPOSE}";
-        PurposeLabel.ForeColor = valid
+        PurposeEditLabel.Text = $"Назначение {length}/{MAX_SWIFT_PURPOSE}:";
+        PurposeEditLabel.ForeColor = _isPurposeValid
             ? ForeColor : Color.Red;
 
-        _isValid = _isValid && valid;
         CheckNextEnabled();
 
         if (PurposeTextBox.Focused)
@@ -263,12 +330,19 @@ public partial class Form1 : Form
         LoadFile(_files[_fileIndex]);
     }
 
-    private void CheckNextEnabled()
+    private bool CheckNextEnabled()
     {
-        bool enabled = _isValid && _fileIndex + 1 < _files.Length;
+        bool enabled = 
+            _isSwift50Valid && 
+            _isSwift72Valid &&
+            _isNameValid &&
+            _isPurposeValid &&
+            _fileIndex < _files.Length;
 
         NextButton.Enabled = enabled;
         ForwardButton.Enabled = enabled;
+
+        return enabled;
     }
 
     private void NextButton_Click(object sender, EventArgs e)
@@ -302,7 +376,12 @@ public partial class Form1 : Form
 
     private void ForwardButton_Click(object sender, EventArgs e)
     {
-        while (_isValid && _fileIndex < _files.Length)
+        while (
+            _isSwift50Valid &&
+            _isSwift72Valid &&
+            _isNameValid &&
+            _isPurposeValid &&
+            _fileIndex < _files.Length)
         {
             GoNext();
         }

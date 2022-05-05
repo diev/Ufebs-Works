@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Corr-SWIFT": {
-      "commandName": "Project",
-      "commandLineArgs": ".\\*.xml"
+      "commandName": "Project"
     }
   }
 }

@@ -29,24 +29,25 @@
         private void InitializeComponent()
         {
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.NameLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.PurposeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Swift50Label = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Swift72Label = new System.Windows.Forms.ToolStripStatusLabel();
             this.TaxLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.DoneLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.SaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.правкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.EditMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReloadNameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReloadPurposeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.видToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ViewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FontMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.справкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.HelpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -60,8 +61,8 @@
             this.OutTextBox = new System.Windows.Forms.TextBox();
             this.ForwardButton = new System.Windows.Forms.Button();
             this.NextButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.PurposeEditLabel = new System.Windows.Forms.Label();
+            this.NameEditLabel = new System.Windows.Forms.Label();
             this.PurposeTextBox = new System.Windows.Forms.TextBox();
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -83,68 +84,75 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.StatusLabel,
-            this.NameLabel,
-            this.PurposeLabel,
-            this.TaxLabel});
+            this.Swift50Label,
+            this.Swift72Label,
+            this.TaxLabel,
+            this.DoneLabel,
+            this.ProgressBar});
             this.statusStrip1.Location = new System.Drawing.Point(0, 426);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 24);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // StatusLabel
+            // Swift50Label
             // 
-            this.StatusLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.StatusLabel.Name = "StatusLabel";
-            this.StatusLabel.Size = new System.Drawing.Size(97, 19);
-            this.StatusLabel.Text = "Выберите файл";
+            this.Swift50Label.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.Swift50Label.Name = "Swift50Label";
+            this.Swift50Label.Size = new System.Drawing.Size(97, 19);
+            this.Swift50Label.Text = "Выберите файл";
             // 
-            // NameLabel
+            // Swift72Label
             // 
-            this.NameLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.NameLabel.Name = "NameLabel";
-            this.NameLabel.Size = new System.Drawing.Size(81, 19);
-            this.NameLabel.Text = "Плательщик";
-            // 
-            // PurposeLabel
-            // 
-            this.PurposeLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.PurposeLabel.Name = "PurposeLabel";
-            this.PurposeLabel.Size = new System.Drawing.Size(77, 19);
-            this.PurposeLabel.Text = "Назначение";
+            this.Swift72Label.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.Swift72Label.Name = "Swift72Label";
+            this.Swift72Label.Size = new System.Drawing.Size(43, 19);
+            this.Swift72Label.Text = "SWIFT";
             // 
             // TaxLabel
             // 
+            this.TaxLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.TaxLabel.Name = "TaxLabel";
-            this.TaxLabel.Size = new System.Drawing.Size(49, 19);
+            this.TaxLabel.Size = new System.Drawing.Size(53, 19);
             this.TaxLabel.Text = "Платеж";
+            // 
+            // DoneLabel
+            // 
+            this.DoneLabel.Name = "DoneLabel";
+            this.DoneLabel.Size = new System.Drawing.Size(66, 19);
+            this.DoneLabel.Text = "Сделано: 0";
+            // 
+            // ProgressBar
+            // 
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(100, 18);
+            this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.правкаToolStripMenuItem,
-            this.видToolStripMenuItem,
-            this.справкаToolStripMenuItem});
+            this.FileMenuItem,
+            this.EditMenuItem,
+            this.ViewMenuItem,
+            this.HelpMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // toolStripMenuItem1
+            // FileMenuItem
             // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.FileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenMenuItem,
             this.toolStripMenuItem2,
             this.SaveMenuItem,
             this.SaveAsMenuItem,
             this.toolStripSeparator1,
             this.ExitMenuItem});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
-            this.toolStripMenuItem1.Text = "&Файл";
+            this.FileMenuItem.Name = "FileMenuItem";
+            this.FileMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.FileMenuItem.Text = "&Файл";
             // 
             // OpenMenuItem
             // 
@@ -186,15 +194,15 @@
             this.ExitMenuItem.Text = "Выход";
             this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
             // 
-            // правкаToolStripMenuItem
+            // EditMenuItem
             // 
-            this.правкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EditMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ReloadNameMenuItem,
             this.ReloadPurposeMenuItem});
-            this.правкаToolStripMenuItem.Enabled = false;
-            this.правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
-            this.правкаToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
-            this.правкаToolStripMenuItem.Text = "&Правка";
+            this.EditMenuItem.Enabled = false;
+            this.EditMenuItem.Name = "EditMenuItem";
+            this.EditMenuItem.Size = new System.Drawing.Size(59, 20);
+            this.EditMenuItem.Text = "&Правка";
             // 
             // ReloadNameMenuItem
             // 
@@ -208,13 +216,13 @@
             this.ReloadPurposeMenuItem.Size = new System.Drawing.Size(207, 22);
             this.ReloadPurposeMenuItem.Text = "Перечитать Назначение";
             // 
-            // видToolStripMenuItem
+            // ViewMenuItem
             // 
-            this.видToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ViewMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FontMenuItem});
-            this.видToolStripMenuItem.Name = "видToolStripMenuItem";
-            this.видToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-            this.видToolStripMenuItem.Text = "&Вид";
+            this.ViewMenuItem.Name = "ViewMenuItem";
+            this.ViewMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.ViewMenuItem.Text = "&Вид";
             // 
             // FontMenuItem
             // 
@@ -223,13 +231,13 @@
             this.FontMenuItem.Text = "Шрифт...";
             this.FontMenuItem.Click += new System.EventHandler(this.FontMenuItem_Click);
             // 
-            // справкаToolStripMenuItem
+            // HelpMenuItem
             // 
-            this.справкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.HelpMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AboutMenuItem});
-            this.справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
-            this.справкаToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
-            this.справкаToolStripMenuItem.Text = "Справка";
+            this.HelpMenuItem.Name = "HelpMenuItem";
+            this.HelpMenuItem.Size = new System.Drawing.Size(65, 20);
+            this.HelpMenuItem.Text = "Справка";
             // 
             // AboutMenuItem
             // 
@@ -252,8 +260,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.ForwardButton);
             this.splitContainer1.Panel2.Controls.Add(this.NextButton);
-            this.splitContainer1.Panel2.Controls.Add(this.label2);
-            this.splitContainer1.Panel2.Controls.Add(this.label1);
+            this.splitContainer1.Panel2.Controls.Add(this.PurposeEditLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.NameEditLabel);
             this.splitContainer1.Panel2.Controls.Add(this.PurposeTextBox);
             this.splitContainer1.Panel2.Controls.Add(this.NameTextBox);
             this.splitContainer1.Size = new System.Drawing.Size(800, 402);
@@ -396,23 +404,23 @@
             this.NextButton.UseVisualStyleBackColor = true;
             this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
-            // label2
+            // PurposeEditLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 193);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(125, 15);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Назначение платежа:";
+            this.PurposeEditLabel.AutoSize = true;
+            this.PurposeEditLabel.Location = new System.Drawing.Point(6, 193);
+            this.PurposeEditLabel.Name = "PurposeEditLabel";
+            this.PurposeEditLabel.Size = new System.Drawing.Size(125, 15);
+            this.PurposeEditLabel.TabIndex = 3;
+            this.PurposeEditLabel.Text = "Назначение платежа:";
             // 
-            // label1
+            // NameEditLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 15);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Плательщик:";
+            this.NameEditLabel.AutoSize = true;
+            this.NameEditLabel.Location = new System.Drawing.Point(6, 9);
+            this.NameEditLabel.Name = "NameEditLabel";
+            this.NameEditLabel.Size = new System.Drawing.Size(80, 15);
+            this.NameEditLabel.TabIndex = 2;
+            this.NameEditLabel.Text = "Плательщик:";
             // 
             // PurposeTextBox
             // 
@@ -503,17 +511,17 @@
 
         private StatusStrip statusStrip1;
         private MenuStrip menuStrip1;
-        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem FileMenuItem;
         private ToolStripMenuItem OpenMenuItem;
         private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem SaveAsMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem ExitMenuItem;
-        private ToolStripMenuItem правкаToolStripMenuItem;
+        private ToolStripMenuItem EditMenuItem;
         private SplitContainer splitContainer1;
         private OpenFileDialog OpenFileDialog;
         private SaveFileDialog SaveAsFileDialog;
-        private ToolStripMenuItem видToolStripMenuItem;
+        private ToolStripMenuItem ViewMenuItem;
         private TabControl tabControl1;
         private TabPage XmlPage;
         private TextBox XmlTextBox;
@@ -521,24 +529,25 @@
         private TextBox SwiftTextBox;
         private TabPage OutPage;
         private TextBox OutTextBox;
-        private ToolStripStatusLabel StatusLabel;
+        private ToolStripStatusLabel Swift50Label;
         private TextBox PurposeTextBox;
         private TextBox NameTextBox;
-        private ToolStripStatusLabel NameLabel;
-        private ToolStripStatusLabel PurposeLabel;
         private ToolStripMenuItem ReloadNameMenuItem;
         private ToolStripMenuItem ReloadPurposeMenuItem;
         private ToolStripMenuItem FontMenuItem;
         private FontDialog FontDialog;
-        private Label label2;
-        private Label label1;
+        private Label PurposeEditLabel;
+        private Label NameEditLabel;
         private ToolStripStatusLabel TaxLabel;
         private ToolStripMenuItem SaveMenuItem;
         private Button NextButton;
         private Button ForwardButton;
-        private ToolStripMenuItem справкаToolStripMenuItem;
+        private ToolStripMenuItem HelpMenuItem;
         private ToolStripMenuItem AboutMenuItem;
         private TabPage FilesPage;
         private ListBox FilesListBox;
+        private ToolStripProgressBar ProgressBar;
+        private ToolStripStatusLabel Swift72Label;
+        private ToolStripStatusLabel DoneLabel;
     }
 }
