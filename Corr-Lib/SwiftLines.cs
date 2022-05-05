@@ -2,10 +2,12 @@
 
 namespace Corr_Lib;
 
-internal class SwiftLines
+public class SwiftLines
 {
     private const string NZP = "/NZP/";
     private const string NZZ = "//";
+
+    private string[] _lines;
 
     public bool Translit { get; set; } = false;
     public bool Tax { get; set; } = false;
@@ -13,7 +15,9 @@ internal class SwiftLines
     public string INN { get; set; } = string.Empty;
     public string KPP { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public int NameLength { get; set; } = 0;
     public string? Purpose { get; set; } = string.Empty;
+    public int PurposeLength { get; set; } = 0;
 
     public string[] Lines
     {
@@ -21,14 +25,36 @@ internal class SwiftLines
         set => SetLines(value); 
     }
 
-    public void SetLines(string[] value)
+    public string Text
     {
+        get => string.Join(Environment.NewLine, GetLines());
+        set => SetLines(value.Split(Environment.NewLine));
+    }
+
+    public SwiftLines()
+    { }
+
+    public SwiftLines(string[] lines)
+    {
+        Lines = lines;
+    }
+
+    public SwiftLines(string text)
+    {
+        Lines = text.Split(Environment.NewLine);
+    }
+
+    private void SetLines(string[] value)
+    {
+        _lines = value;
+
         bool field50 = false;
         bool field70 = false;
         bool field72 = false;
+
         bool nzpFound = false;
 
-        foreach (var line in value)
+        foreach (string line in _lines)
         {
             var m = Regex.Match(line, @"^(:\d{2}\w?:|-})", RegexOptions.Compiled);
             if (m.Success)
@@ -65,6 +91,9 @@ internal class SwiftLines
                         {
                             Purpose += line[9..]; // :72:/NZP/...
                         }
+                        break;
+
+                    case "-}": // eof
                         break;
 
                     default:
@@ -110,6 +139,9 @@ internal class SwiftLines
             }
         }
 
+        NameLength = Name.Length;
+        PurposeLength = Purpose.Length;
+
         if (Translit)
         {
             Name = Swift.Cyr(Name);
@@ -117,16 +149,17 @@ internal class SwiftLines
         }
     }
 
-    public string[] GetLines()
+    private string[] GetLines()
     {
         List<string> list = new();
 
         bool skipUntilNextField = false;
         bool field72 = false;
+        bool field72found = false;
         bool nzpFound = false;
         string text = string.Empty;
 
-        foreach (string line in Lines)
+        foreach (string line in _lines)
         {
             var m = Regex.Match(line, @"^(:\d{2}\w?:|-})", RegexOptions.Compiled);
             if (m.Success)
@@ -215,6 +248,7 @@ internal class SwiftLines
                                 else
                                 {
                                     list.Add(text);
+                                    text = string.Empty;
                                     break;
                                 }
                             }
@@ -228,6 +262,7 @@ internal class SwiftLines
 
                     case ":72:":
                         field72 = true;
+                        field72found = true;
                         if (line.StartsWith(field + NZP)) // вариант /NZP/ впереди других
                         {
                             nzpFound = true;
@@ -252,6 +287,35 @@ internal class SwiftLines
                                 text = string.Empty;
                             }
                         }
+                        break;
+
+                    case "-}": // eof
+                        if (!field72found && text.Length > 0)
+                        {
+                            if (text.Length > 35)
+                            {
+                                list.Add(":72:" + NZP + text[..35]);
+                                text = text[35..];
+                                while (text.Length > 35)
+                                {
+                                    list.Add(NZZ + text[..35]);
+                                    text = text[35..];
+                                }
+                                if (text.Length > 0)
+                                {
+                                    list.Add(NZZ + text);
+                                    text = string.Empty;
+                                }
+                            }
+                            else
+                            {
+                                list.Add(":72:" + NZP + text);
+                                text = string.Empty;
+                            }
+
+                            field72found = true;
+                        }
+                        list.Add(line);
                         break;
 
                     default:

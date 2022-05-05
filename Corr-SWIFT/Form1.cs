@@ -191,7 +191,13 @@ public partial class Form1 : Form
 
         tabControl1.SelectedIndex = tabControl1.TabCount - 1;
 
-        var (acc, inn, kpp, name) = SwiftHelper.GetPayerSection(text);
+        var swiftLines = new SwiftLines(text);
+        var acc = swiftLines.Acc;
+        var inn = swiftLines.INN;
+        var kpp = swiftLines.KPP;
+        var name = swiftLines.Name;
+
+        //var (acc, inn, kpp, name) = SwiftHelper.GetPayerSection(text);
 
         bool bank = inn == _config.Bank.INN; // "7831001422";
         string acc2 = _config.Bank.Account; // "30109810800010001378";
@@ -205,25 +211,38 @@ public partial class Form1 : Form
 
         _isNameValid = name2.Length <= MAX_UFEBS_NAME;
 
-        text = SwiftHelper.SetPayerSection(text, acc2, inn, kpp, name2).Value;
+        swiftLines.Acc = acc2;
+        swiftLines.Name = name2;
+        //text = swiftLines.Text;
 
-        string purpose = SwiftHelper.GetPurpose(text).Value;
+        //text = SwiftHelper.SetPayerSection(text, acc2, inn, kpp, name2).Value;
 
-        if (!bank && SwiftHelper.HasTax(text))
+        string purpose = swiftLines.Purpose;
+
+        //string purpose = SwiftHelper.GetPurpose(text).Value;
+
+        if (!bank && swiftLines.Tax)
+
+        //if (!bank && SwiftHelper.HasTax(text))
         {
             // $"//7831001422//784101001//{name}//{purpose}";
             purpose = _config.Bank.PurposeTemplate
                 .Replace("{name}", name)
                 .Replace("{purpose}", purpose);
 
-            text = SwiftHelper.SetPurpose(text, purpose).Text;
+            swiftLines.Purpose = purpose;
+            //text = swiftLines.Text;
+
+            //text = SwiftHelper.SetPurpose(text, purpose).Text;
         }
 
-        OutTextBox.Text = text;
+        OutTextBox.Lines = swiftLines.Lines; //.Text = text;
         NameTextBox.Text = name2;
         PurposeTextBox.Text = purpose;
 
-        TaxLabel.Text = SwiftHelper.HasTax(text)
+        TaxLabel.Text = swiftLines.Tax
+
+        //TaxLabel.Text = SwiftHelper.HasTax(text)
             ? "Бюджет" : "Платеж";
 
         ProgressBar.Value = _fileIndex + 1;
@@ -251,25 +270,30 @@ public partial class Form1 : Form
 
     private void OutTextBox_TextChanged(object sender, EventArgs e)
     {
-        string text = OutTextBox.Text;
+        //string text = OutTextBox.Text;
 
-        var (NameValue, NameLength) = SwiftHelper.GetPayerName(text);
-        var (PurposeValue, PurposeLength) = SwiftHelper.GetPurpose(text);
+        var swiftLines = new SwiftLines(OutTextBox.Lines);
+
+        //var (NameValue, NameLength) = SwiftHelper.GetPayerName(text);
+        //var (PurposeValue, PurposeLength) = SwiftHelper.GetPurpose(text);
 
         if (OutTextBox.Focused)
         {
-            NameTextBox.Text = NameValue;
-            PurposeTextBox.Text = PurposeValue;
+            //NameTextBox.Text = NameValue;
+            //PurposeTextBox.Text = PurposeValue;
+
+            NameTextBox.Text = swiftLines.Name;
+            PurposeTextBox.Text = swiftLines.Purpose;
         }
 
-        _isSwift50Valid = NameLength <= MAX_SWIFT_NAME;
-        _isSwift72Valid = PurposeLength <= MAX_SWIFT_PURPOSE;
+        _isSwift50Valid = swiftLines.NameLength <= MAX_SWIFT_NAME;
+        _isSwift72Valid = swiftLines.PurposeLength <= MAX_SWIFT_PURPOSE;
         
-        Swift50Label.Text = $"SWIFT 50K: {NameLength}/{MAX_SWIFT_NAME}";
+        Swift50Label.Text = $"SWIFT 50K: {swiftLines.NameLength}/{MAX_SWIFT_NAME}";
         Swift50Label.ForeColor = _isSwift50Valid
             ? ForeColor : Color.Red;
 
-        Swift72Label.Text = $"SWIFT 70,72: {PurposeLength}/{MAX_SWIFT_PURPOSE}";
+        Swift72Label.Text = $"SWIFT 70,72: {swiftLines.PurposeLength}/{MAX_SWIFT_PURPOSE}";
         Swift72Label.ForeColor = _isSwift72Valid
             ? ForeColor : Color.Red;
 
@@ -278,9 +302,19 @@ public partial class Form1 : Form
 
     private void NameTextBox_TextChanged(object sender, EventArgs e)
     {
-        string text = NameTextBox.Text;
-        int length = text.Length;
-        
+        //string text = NameTextBox.Text;
+
+        if (NameTextBox.Focused)
+        {
+            //OutTextBox.Text = SwiftHelper.SetPayerName(OutTextBox.Text, text).Text;
+
+            var swiftLines = new SwiftLines(OutTextBox.Lines);
+            swiftLines.Name = NameTextBox.Text;
+            OutTextBox.Lines = swiftLines.Lines;
+        }
+
+        int length = NameTextBox.TextLength;
+
         _isNameValid = length <= MAX_UFEBS_NAME;
 
         NameEditLabel.Text = $"Плательщик {length}/{MAX_UFEBS_NAME}:";
@@ -288,18 +322,23 @@ public partial class Form1 : Form
             ? ForeColor : Color.Red;
 
         CheckNextEnabled();
-
-        if (NameTextBox.Focused)
-        {
-            OutTextBox.Text = SwiftHelper.SetPayerName(OutTextBox.Text, text).Text;
-        }
     }
 
     private void PurposeTextBox_TextChanged(object sender, EventArgs e)
     {
-        string text = PurposeTextBox.Text;
-        int length = text.Length;
-        
+        //string text = PurposeTextBox.Text;
+
+        if (PurposeTextBox.Focused)
+        {
+            //OutTextBox.Text = SwiftHelper.SetPurpose(OutTextBox.Text, text).Text;
+
+            var swiftLines = new SwiftLines(OutTextBox.Lines);
+            swiftLines.Purpose = PurposeTextBox.Text;
+            OutTextBox.Lines = swiftLines.Lines;
+        }
+
+        int length = PurposeTextBox.TextLength;
+
         _isPurposeValid = length <= MAX_UFEBS_PURPOSE;
 
         PurposeEditLabel.Text = $"Назначение {length}/{MAX_SWIFT_PURPOSE}:";
@@ -307,11 +346,6 @@ public partial class Form1 : Form
             ? ForeColor : Color.Red;
 
         CheckNextEnabled();
-
-        if (PurposeTextBox.Focused)
-        {
-            OutTextBox.Text = SwiftHelper.SetPurpose(OutTextBox.Text, text).Text;
-        }
     }
 
     private void SaveMenuItem_Click(object sender, EventArgs e)
