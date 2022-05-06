@@ -1,7 +1,7 @@
 {
   "configProperties": {
     "Open.Dir": "G:/BANK/TEST/OUT",
-    "Open.Mask": "r*.xml",
+    "Open.Mask": "ural_*.txt",
     "Save.Dir": "G:/BANK/TEST/CLI",
     "Save.Mask": "*_.txt",
     "Bank.Account": "30109810800010001378",

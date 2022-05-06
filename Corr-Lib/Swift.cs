@@ -1,5 +1,3 @@
-//2022-04-28
-
 using System.Text;
 
 namespace Corr_Lib;
@@ -157,6 +155,11 @@ public static class Swift
         { 'f', '*' }
     };
 
+    /// <summary>
+    /// Транслитерация по правилам SWIFT-RUR
+    /// </summary>
+    /// <param name="c">Символ на кирилице</param>
+    /// <returns>Символ на латинице</returns>
     public static char Lat(char c)
     {
         if (TRANSLAT.TryGetValue(c, out char result))
@@ -169,6 +172,11 @@ public static class Swift
         }
     }
 
+    /// <summary>
+    /// Транслитерация по правилам SWIFT-RUR
+    /// </summary>
+    /// <param name="c">Символ на латинице</param>
+    /// <returns>Символ на кирилице</returns>
     public static char Cyr(char c)
     {
         if (TRANSCYR.TryGetValue(c, out char result))
@@ -181,6 +189,11 @@ public static class Swift
         }
     }
 
+    /// <summary>
+    /// Транслитерация по правилам SWIFT-RUR
+    /// </summary>
+    /// <param name="text">Строка на кирилице</param>
+    /// <returns>Строка на латинице</returns>
     public static string Lat(string text)
     {
         bool rus = true; // default RU stream
@@ -219,6 +232,11 @@ public static class Swift
         return result.ToString();
     }
 
+    /// <summary>
+    /// Транслитерация по правилам SWIFT-RUR
+    /// </summary>
+    /// <param name="text">Строка на латинице</param>
+    /// <returns>Строка на кирилице</returns>
     public static string Cyr(string text)
     {
         if (!text.Contains('\'', StringComparison.OrdinalIgnoreCase))
@@ -248,6 +266,11 @@ public static class Swift
         return result.ToString();
     }
 
+    /// <summary>
+    /// Разбиение строки на текст по 35 символов в строке
+    /// </summary>
+    /// <param name="src">Строка</param>
+    /// <returns>Текст по 35 символов в строке</returns>
     public static string Wrap35(string src)
     {
         var result = new StringBuilder(220);

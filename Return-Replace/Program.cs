@@ -204,13 +204,30 @@ public static class Program
                 // Файл выписки _150422_ED211_30109810300000000063.xml
                 // Для обработки файлов выписки по корсчёту нужно модифицировать следующим образом:
                 // 1. В случае отсутствия кредитового оборота по корсчёту (CreditSum= "0" в элементе ED211 – заголовок выписки) атрибут целиком удаляем.
+                // 1a. В случае отсутствия дебитового оборота по корсчёту (DebetSum= "0" в элементе ED211 – заголовок выписки) атрибут целиком удаляем.
                 // 2. Добавить проверку на наличие атрибута " EDAuthor="4030702000" в каждом элементе TransInfo. Если его нет, то добавить.
+                // 3. Установить атрибут EDDate = AbstractDate.
 
                 XAttribute? CreditSum = root.Attribute(nameof(CreditSum));
 
                 if (CreditSum != null && CreditSum.Value == "0")
                 {
                     CreditSum.Remove();
+                }
+
+                XAttribute? DebetSum = root.Attribute(nameof(DebetSum));
+
+                if (DebetSum != null && DebetSum.Value == "0")
+                {
+                    DebetSum.Remove();
+                }
+
+                XAttribute? EDDate = root.Attribute(nameof(EDDate));
+                XAttribute? AbstractDate = root.Attribute(nameof(AbstractDate));
+
+                if (EDDate != null && AbstractDate != null && EDDate.Value != AbstractDate.Value)
+                {
+                    EDDate.Value = AbstractDate.Value;
                 }
 
                 node = root.FirstNode;
