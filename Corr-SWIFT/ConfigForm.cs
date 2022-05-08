@@ -20,25 +20,61 @@ namespace CorrSWIFT;
 
 public partial class ConfigForm : Form
 {
-    private ConfigProperties _config;
-
     public ConfigForm()
     {
         InitializeComponent();
 
-        _config = new ConfigProperties();
+        LoadConfig();
+    }
 
-        OpenDirText.Text = _config.Open.Dir;
-        OpenMaskText.Text = _config.Open.Mask;
+    private void LoadConfig()
+    {
+        OpenDirText.Text = ConfigProperties.OpenDir;
+        OpenMaskText.Text = ConfigProperties.OpenMask;
 
-        SaveDirText.Text = _config.Save.Dir;
-        SaveMaskText.Text = _config.Save.Mask;
+        SaveDirText.Text = ConfigProperties.SaveDir;
+        SaveMaskText.Text = ConfigProperties.SaveMask;
 
-        BankAccountText.Text = _config.Bank.Account;
-        BankINNText.Text = _config.Bank.INN;
-        BankKPPText.Text = _config.Bank.KPP;
-        BankPayerText.Text = _config.Bank.PayerTemplate;
-        BankPurposeText.Text = _config.Bank.PurposeTemplate;
+        BankAccountText.Text = ConfigProperties.BankAccount;
+        BankINNText.Text = ConfigProperties.BankINN;
+        BankKPPText.Text = ConfigProperties.BankKPP;
+        BankPayerText.Text = ConfigProperties.BankPayerTemplate;
+        BankPurposeText.Text = ConfigProperties.BankPurposeTemplate;
+    }
+
+    private void ResetConfig()
+    {
+        OpenDirText.Text = @"C:\TEMP";
+        OpenMaskText.Text = "r*.xml";
+
+        SaveDirText.Text = @"C:\TEMP";
+        SaveMaskText.Text = "*_.txt";
+
+        BankAccountText.Text = "30101810600000000702";
+        BankINNText.Text = "7831001422";
+        BankKPPText.Text = "784101001";
+        BankPayerText.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+        BankPurposeText.Text = "//7831001422//784101001//{name}//{purpose}";
+    }
+
+    private void SaveConfig()
+    {
+        ConfigProperties.OpenDir = OpenDirText.Text;
+        ConfigProperties.OpenMask = OpenMaskText.Text;
+
+        ConfigProperties.SaveDir = SaveDirText.Text;
+        ConfigProperties.SaveMask = SaveMaskText.Text;
+
+        ConfigProperties.BankAccount = BankAccountText.Text;
+        ConfigProperties.BankINN = BankINNText.Text;
+        ConfigProperties.BankKPP = BankKPPText.Text;
+        ConfigProperties.BankPayerTemplate = BankPayerText.Text;
+        ConfigProperties.BankPurposeTemplate = BankPurposeText.Text;
+
+        ConfigProperties.Save();
+
+        MessageBox.Show("Параметры сохранены.", Application.ProductName,
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void OpenDirButton_Click(object sender, EventArgs e)
@@ -63,37 +99,12 @@ public partial class ConfigForm : Form
 
     private void ResetButton_Click(object sender, EventArgs e)
     {
-        OpenDirText.Text = @"C:\TEMP";
-        OpenMaskText.Text = "r*.xml";
-
-        SaveDirText.Text = @"C:\TEMP";
-        SaveMaskText.Text = "*_.txt";
-
-        BankAccountText.Text = "30101810600000000702";
-        BankINNText.Text = "7831001422";
-        BankKPPText.Text = "784101001";
-        BankPayerText.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        BankPurposeText.Text = "//7831001422//784101001//{name}//{purpose}";
+        ResetConfig();
     }
 
     private void AcceptButton_Click(object sender, EventArgs e)
     {
-        _config.Open.Dir = OpenDirText.Text;
-        _config.Open.Mask = OpenMaskText.Text;
-
-        _config.Save.Dir = SaveDirText.Text;
-        _config.Save.Mask = SaveMaskText.Text;
-
-        _config.Bank.Account = BankAccountText.Text;
-        _config.Bank.INN = BankINNText.Text;
-        _config.Bank.KPP = BankKPPText.Text;
-        _config.Bank.PayerTemplate = BankPayerText.Text;
-        _config.Bank.PurposeTemplate = BankPurposeText.Text;
-
-        _config.Flush(); //TODO Убрать требование перезапуска после переделки чтения JSON
-        MessageBox.Show("Параметры сохранены.\nПерезапустите программу.", Application.ProductName,
-            MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+        SaveConfig();
         Close();
     }
 

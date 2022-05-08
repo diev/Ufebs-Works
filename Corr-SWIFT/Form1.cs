@@ -37,7 +37,6 @@ public partial class Form1 : Form
     private string? _saveFileName;
     private string _saveMaskName = "*";
 
-    private ConfigProperties _config;
     private SwiftLines? _swift;
 
     public Form1()
@@ -75,8 +74,6 @@ public partial class Form1 : Form
 
         // runtimeconfig.template.json > App.runtime.json
 
-        _config = new ConfigProperties();
-
         // exe G:\BANK\TEST\OUT\r*.xml G:\BANK\TEST\CLI\*_.txt
 
         string[] args = Environment.GetCommandLineArgs(); // 0:exe 1:[Input|*] 2:[Output_|\]
@@ -85,14 +82,14 @@ public partial class Form1 : Form
         if (argc > 0) // 1:Input
         {
             string arg = Path.GetFullPath(args[1]);
-            _config.Open.Dir = Path.GetDirectoryName(arg);
-            _config.Open.Mask = Path.GetFileName(arg);
+            ConfigProperties.OpenDir = Path.GetDirectoryName(arg);
+            ConfigProperties.OpenMask = Path.GetFileName(arg);
 
             if (argc > 1) // 2:Output
             {
                 arg = Path.GetFullPath(args[2]);
-                _config.Save.Dir = Path.GetDirectoryName(arg);
-                _config.Save.Mask = Path.GetFileName(arg);
+                ConfigProperties.SaveDir = Path.GetDirectoryName(arg);
+                ConfigProperties.SaveMask = Path.GetFileName(arg);
             }
         }
 
@@ -103,77 +100,79 @@ public partial class Form1 : Form
     {
         StringBuilder err = new();
 
-        if (string.IsNullOrEmpty(_config.Open.Dir) || !Directory.Exists(_config.Open.Dir))
+        if (string.IsNullOrEmpty(ConfigProperties.OpenDir) || !Directory.Exists(ConfigProperties.OpenDir))
         {
             err.AppendLine($"Папка Open.Dir не существует!");
-            _config.Open.Dir = Directory.GetCurrentDirectory();
+            //ConfigProperties.OpenDir = Directory.GetCurrentDirectory();
         }
 
-        if (string.IsNullOrEmpty(_config.Open.Mask))
+        if (string.IsNullOrEmpty(ConfigProperties.OpenMask))
         {
             err.AppendLine($"Маска Open.Mask не указана!");
-            _config.Open.Mask = "r*.xml";
+            //ConfigProperties.OpenMask = "r*.xml";
         }
 
-        if (string.IsNullOrEmpty(_config.Save.Dir) || !Directory.Exists(_config.Save.Dir))
+        if (string.IsNullOrEmpty(ConfigProperties.SaveDir) || !Directory.Exists(ConfigProperties.SaveDir))
         {
             err.AppendLine($"Папка Save.Dir не существует!");
-            _config.Save.Dir = _config.Open.Dir;
+            //ConfigProperties.SaveDir = ConfigProperties.OpenDir;
         }
 
-        if (string.IsNullOrEmpty(_config.Save.Mask))
+        if (string.IsNullOrEmpty(ConfigProperties.SaveMask))
         {
             err.AppendLine($"Маска Save.Mask не указана!");
-            _config.Save.Mask = "*_.txt";
+            //ConfigProperties.SaveMask = "*_.txt";
         }
 
-        if (string.IsNullOrEmpty(_config.Bank.Account))
+        if (string.IsNullOrEmpty(ConfigProperties.BankAccount))
         {
             err.AppendLine($"Счет Банка не указан!");
-            _config.Bank.Account = "12345678901234567890";
+            //ConfigProperties.BankAccount = "12345678901234567890";
         }
 
-        if (string.IsNullOrEmpty(_config.Bank.INN))
+        if (string.IsNullOrEmpty(ConfigProperties.BankINN))
         {
             err.AppendLine($"ИНН Банка не указан!");
-            _config.Bank.INN = "7831001422";
+            //ConfigProperties.BankINN = "7831001422";
         }
 
-        if (string.IsNullOrEmpty(_config.Bank.KPP))
+        if (string.IsNullOrEmpty(ConfigProperties.BankKPP))
         {
             err.AppendLine($"КПП Банка не указан!");
-            _config.Bank.KPP = "783101001";
+            //ConfigProperties.BankKPP = "783101001";
         }
 
-        if (string.IsNullOrEmpty(_config.Bank.PayerTemplate))
+        if (string.IsNullOrEmpty(ConfigProperties.BankPayerTemplate))
         {
             err.AppendLine($"Шаблон за клиента Банка не указан!");
-            _config.Bank.PayerTemplate = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+            //ConfigProperties.BankPayerTemplate = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
         }
 
-        if (string.IsNullOrEmpty(_config.Bank.PurposeTemplate))
+        if (string.IsNullOrEmpty(ConfigProperties.BankPurposeTemplate))
         {
             err.AppendLine($"Шаблон назначения за третье лицо не указан!");
-            _config.Bank.PurposeTemplate = "//7831001422//783101001//{name}//{purpose}";
+            //ConfigProperties.BankPurposeTemplate = "//7831001422//783101001//{name}//{purpose}";
         }
 
         if (err.Length > 0)
         {
-            MessageBox.Show($"Проверьте настройки:\n\n{err}\nПереход в демо-режим.", Application.ProductName,
+            MessageBox.Show($"Проверьте настройки:\n\n{err}", Application.ProductName,
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            ConfigMenuItem.PerformClick();
         }
 
-        OpenFileDialog.InitialDirectory = _config.Open.Dir;
-        OpenFileDialog.Filter = $"УФЭБС|{_config.Open.Mask}|{OpenFileDialog.Filter}";
+        OpenFileDialog.InitialDirectory = ConfigProperties.OpenDir;
+        OpenFileDialog.Filter = $"УФЭБС|{ConfigProperties.OpenMask}|{OpenFileDialog.Filter}";
 
-        SaveAsFileDialog.InitialDirectory = _config.Save.Dir;
-        SaveAsFileDialog.Filter = $"SWIFT|{_config.Save.Mask}|{SaveAsFileDialog.Filter}";
-        SaveAsFileDialog.DefaultExt = Path.GetExtension(_config.Save.Mask);
+        SaveAsFileDialog.InitialDirectory = ConfigProperties.SaveDir;
+        SaveAsFileDialog.Filter = $"SWIFT|{ConfigProperties.SaveMask}|{SaveAsFileDialog.Filter}";
+        SaveAsFileDialog.DefaultExt = Path.GetExtension(ConfigProperties.SaveMask);
 
-        _saveMaskName = Path.GetFileName(_config.Save.Mask);
+        _saveMaskName = Path.GetFileName(ConfigProperties.SaveMask);
 
         FilesListBox.Items.Clear();
-        FilesListBox.Items.AddRange(Directory.GetFiles(_config.Open.Dir, _config.Open.Mask));
+        FilesListBox.Items.AddRange(Directory.GetFiles(ConfigProperties.OpenDir, ConfigProperties.OpenMask));
 
         if (FilesListBox.Items.Count > 0)
         {
@@ -219,13 +218,13 @@ public partial class Form1 : Form
         var kpp = _swift.KPP;
         var name = _swift.Name;
 
-        bool bank = inn == _config.Bank.INN; // "7831001422";
-        string acc2 = _config.Bank.Account; // "30109810800010001378";
+        bool bank = inn == ConfigProperties.BankINN; // "7831001422";
+        string acc2 = ConfigProperties.BankAccount; // "30109810800010001378";
 
         // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
         string name2 = bank
             ? name
-            : _config.Bank.PayerTemplate
+            : ConfigProperties.BankPayerTemplate
             .Replace("{name}", name)
             .Replace("{acc}", acc);
 
@@ -239,7 +238,7 @@ public partial class Form1 : Form
         if (!bank && _swift.Tax)
         {
             // $"//7831001422//784101001//{name}//{purpose}";
-            purpose = _config.Bank.PurposeTemplate
+            purpose = ConfigProperties.BankPurposeTemplate
                 .Replace("{name}", name)
                 .Replace("{purpose}", purpose);
 
@@ -676,7 +675,6 @@ public partial class Form1 : Form
         ConfigForm configForm = new();
         configForm.ShowDialog();
 
-        _config = new ConfigProperties();
         ReInitForm();
     }
 }

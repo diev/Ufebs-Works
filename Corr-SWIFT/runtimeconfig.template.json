@@ -1,13 +1,13 @@
 {
   "configProperties": {
-    "Open.Dir": "G:/BANK/TEST/OUT",
-    "Open.Mask": "*.xml",
-    "Save.Dir": "G:/BANK/TEST/CLI",
-    "Save.Mask": "*_.txt",
-    "Bank.Account": "30101810600000000702",
-    "Bank.INN": "7831001422",
-    "Bank.KPP": "784101001",
-    "Bank.PayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
-    "Bank.PurposeTemplate": "//7831001422//784101001//{name}//{purpose}"
+    "OpenDir": "G:\\BANK\\TEST\\OUT",
+    "OpenMask": "*.xml",
+    "SaveDir": "G:\\BANK\\TEST\\CLI",
+    "SaveMask": "*_.txt",
+    "BankAccount": "30101810600000000702",
+    "BankINN": "7831001422",
+    "BankKPP": "784101001",
+    "BankPayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
+    "BankPurposeTemplate": "//7831001422//784101001//{name}//{purpose}"
   }
 }

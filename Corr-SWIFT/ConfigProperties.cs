@@ -21,84 +21,88 @@ using System.Text.Json.Nodes;
 
 namespace CorrSWIFT;
 
-internal class ConfigProperties
+internal static class ConfigProperties
 {
-    internal class OpenProperties
-    {
-        public string? Dir { get; set; }
-        public string? Mask { get; set; }
+    private const string runtimeOptions = nameof(runtimeOptions);
+    private const string configProperties = nameof(configProperties);
 
-        public OpenProperties()
-        {
-            Dir = (AppContext.GetData("Open.Dir") as string)?
-                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            Mask = AppContext.GetData("Open.Mask") as string;
-        }
+    // AppContext.SetData(string name, object? data); // available from .NET 7+
+    // See a lifehack at
+    // https://www.strathweb.com/2019/12/runtime-host-configuration-options-and-appcontext-data-in-net-core/
+
+    public static string OpenDir
+    {
+        get => AppContext.GetData(nameof(OpenDir)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(OpenDir), value);
     }
 
-    internal class SaveProperties
+    public static string OpenMask
     {
-        public string? Dir { get; set; }
-        public string? Mask { get; set; }
-
-        public SaveProperties()
-        {
-            Dir = (AppContext.GetData("Save.Dir") as string)?
-                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            Mask = AppContext.GetData("Save.Mask") as string;
-        }
+        get => AppContext.GetData(nameof(OpenMask)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(OpenMask), value);
     }
 
-    internal class BankProperties
+    public static string SaveDir
     {
-        public string? Account { get; set; }
-        public string? INN { get; set; }
-        public string? KPP { get; set; }
-        public string? PayerTemplate { get; set; }
-        public string? PurposeTemplate { get; set; }
-
-        public BankProperties()
-        {
-            Account = AppContext.GetData("Bank.Account") as string;
-            INN = AppContext.GetData("Bank.INN") as string;
-            KPP = AppContext.GetData("Bank.KPP") as string;
-            PayerTemplate = AppContext.GetData("Bank.PayerTemplate") as string;
-            PurposeTemplate = AppContext.GetData("Bank.PurposeTemplate") as string;
-        }
+        get => AppContext.GetData(nameof(SaveDir)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(SaveDir), value);
     }
 
-    public OpenProperties Open { get; set; }
-    public SaveProperties Save { get; set; }
-    public BankProperties Bank { get; set; }
-
-    public ConfigProperties()
+    public static string SaveMask
     {
-        Open = new OpenProperties();
-        Save = new SaveProperties();
-        Bank = new BankProperties();
+        get => AppContext.GetData(nameof(SaveMask)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(SaveMask), value);
     }
 
-    public void Flush()
+    public static string BankAccount
     {
-        //AppContext.SetData(string name, object? data); //.NET 7+ only
+        get => AppContext.GetData(nameof(BankAccount)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(BankAccount), value);
+    }
 
+    public static string BankINN
+    {
+        get => AppContext.GetData(nameof(BankINN)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(BankINN), value);
+    }
+
+    public static string BankKPP
+    {
+        get => AppContext.GetData(nameof(BankKPP)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(BankKPP), value);
+    }
+
+    public static string BankPayerTemplate
+    {
+        get => AppContext.GetData(nameof(BankPayerTemplate)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(BankPayerTemplate), value);
+    }
+
+    public static string BankPurposeTemplate
+    {
+        get => AppContext.GetData(nameof(BankPurposeTemplate)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(BankPurposeTemplate), value);
+    }
+
+    public static void Save()
+    {
         string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
         string json = File.ReadAllText(config);
 
         var configNode = JsonNode.Parse(json);
-        var properties = configNode!["runtimeOptions"]!["configProperties"];
+        var properties = configNode![runtimeOptions]![configProperties];
 
-        properties!["Open.Dir"] = Open.Dir;
-        properties!["Open.Mask"] = Open.Mask;
+        properties![nameof(OpenDir)] = OpenDir;
+        properties![nameof(OpenMask)] = OpenMask;
 
-        properties!["Save.Dir"] = Save.Dir;
-        properties!["Save.Mask"] = Save.Mask;
+        properties![nameof(SaveDir)] = SaveDir;
+        properties![nameof(SaveMask)] = SaveMask;
 
-        properties!["Bank.Account"] = Bank.Account;
-        properties!["Bank.INN"] = Bank.INN;
-        properties!["Bank.KPP"] = Bank.KPP;
-        properties!["Bank.PayerTemplate"] = Bank.PayerTemplate;
-        properties!["Bank.PurposeTemplate"] = Bank.PurposeTemplate;
+        properties![nameof(BankAccount)] = BankAccount;
+        properties![nameof(BankINN)] = BankINN;
+        properties![nameof(BankKPP)] = BankKPP;
+        properties![nameof(BankPayerTemplate)] = BankPayerTemplate;
+        properties![nameof(BankPurposeTemplate)] = BankPurposeTemplate;
 
         var options = new JsonSerializerOptions { WriteIndented = true };
         json = configNode.ToJsonString(options);
