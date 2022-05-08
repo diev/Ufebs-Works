@@ -1,8 +1,27 @@
-using Corr_SWIFT;
+#region License
+/*
+Copyright 2022 Dmitrii Evdokimov
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+using CorrLib;
+
+using System.Drawing.Printing;
 using System.Text;
 
-namespace Corr_Lib;
+namespace CorrSWIFT;
 
 public partial class Form1 : Form
 {
@@ -18,13 +37,35 @@ public partial class Form1 : Form
     private string? _saveFileName;
     private string _saveMaskName = "*";
 
-    private readonly ConfigProperties _config;
+    private ConfigProperties _config;
     private SwiftLines? _swift;
 
     public Form1()
     {
         InitializeComponent();
+        InitForm();
+    }
 
+    private static void About()
+    {
+        string config = Path.ChangeExtension(Application.ExecutablePath, "runtime.json");
+        string text =
+            $@"Программа дооформления документов из УФЭБС в SWIFT.
+
+Версия {Application.ProductVersion}
+
+Задайте параметры в меню Файл\Параметры...
+Сохраняются они в файле
+{config}
+
+Также пути можно переопределить в командной строке:
+    Input\[*.xml] [Output\[*_.txt]]";
+
+        MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void InitForm()
+    {
         int w = Screen.PrimaryScreen.WorkingArea.Width;
         int h = Screen.PrimaryScreen.WorkingArea.Height;
 
@@ -55,8 +96,13 @@ public partial class Form1 : Form
             }
         }
 
+        ReInitForm();
+    }
+
+    private void ReInitForm()
+    {
         StringBuilder err = new();
-        
+
         if (string.IsNullOrEmpty(_config.Open.Dir) || !Directory.Exists(_config.Open.Dir))
         {
             err.AppendLine($"Папка Open.Dir не существует!");
@@ -135,11 +181,6 @@ public partial class Form1 : Form
         }
     }
 
-    private void OpenMenuItem_Click(object sender, EventArgs e)
-    {
-        OpenFileDialog.ShowDialog();
-    }
-
     private bool LoadFile(string path)
     {
         _saved = false;
@@ -166,12 +207,12 @@ public partial class Form1 : Form
         SwiftTextBox.Text = text;
         _swift = new SwiftLines(SwiftTextBox.Lines);
 
-        if (text == null)
+        if (text is null)
         {
             SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
         }
 
-        tabControl1.SelectedIndex = tabControl1.TabCount - 1;
+        Tabs.SelectedIndex = Tabs.TabCount - 1;
 
         var acc = _swift.Acc;
         var inn = _swift.INN;
@@ -209,9 +250,101 @@ public partial class Form1 : Form
         NameTextBox.Text = name2;
         PurposeTextBox.Text = purpose;
 
-        TaxLabel.Text = _swift.Tax ? "Бюджет" : "Платеж";
+        TaxValue.Text = _swift.Tax ? "Бюджет" : "Платеж";
 
         return CheckNextEnabled();
+    }
+
+    private void GoNext()
+    {
+        SaveFile();
+
+        if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
+        {
+            FilesListBox.SelectedIndex++;
+        }
+        else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+        {
+            Close();
+        }
+    }
+
+    private void GoForward()
+    {
+        while (
+            _isSwift50Valid &&
+            _isSwift72Valid &&
+            _isNameValid &&
+            _isPurposeValid &&
+            FilesListBox.SelectedIndex < FilesListBox.Items.Count)
+        {
+            GoNext();
+        }
+    }
+
+    private void GoPrev()
+    {
+        if (!_saved)
+        {
+            var reply = MessageBox.Show($"Сохранить файл\n{_saveFileName}\nперед шагом назад?",
+                Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
+
+            if (reply == DialogResult.Yes)
+            {
+                SaveFile();
+            }
+            else if (reply == DialogResult.Cancel)
+            {
+                return;
+            }
+        }
+
+        if (FilesListBox.SelectedIndex > 0)
+        {
+            FilesListBox.SelectedIndex--;
+        }
+    }
+
+    private void SaveFile(string? text = null)
+    {
+        if (_saveFileName != null)
+        {
+            File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
+            _saved = true;
+        }
+    }
+    private void PrintPage(PrintPageEventArgs e)
+    {
+        string documentContents = OutTextBox.Text;
+        string stringToPrint = documentContents;
+
+        // Sets the value of charactersOnPage to the number of characters
+        // of stringToPrint that will fit within the bounds of the page.
+        e.Graphics.MeasureString(stringToPrint, this.Font,
+            e.MarginBounds.Size, StringFormat.GenericTypographic,
+            out int charactersOnPage, out int linesPerPage);
+
+        // Draws the string within the bounds of the page.
+        e.Graphics.DrawString(stringToPrint, this.Font, Brushes.Black,
+        e.MarginBounds, StringFormat.GenericTypographic);
+
+        // Remove the portion of the string that has been printed.
+        stringToPrint = stringToPrint.Substring(charactersOnPage);
+
+        // Check to see if more pages are to be printed.
+        e.HasMorePages = (stringToPrint.Length > 0);
+
+        // If there are no more pages, reset the string to be printed.
+        if (!e.HasMorePages)
+        {
+            stringToPrint = documentContents;
+        }
+    }
+
+    private void OpenMenuItem_Click(object sender, EventArgs e)
+    {
+        OpenFileDialog.ShowDialog();
     }
 
     private void ExitMenuItem_Click(object sender, EventArgs e)
@@ -241,14 +374,14 @@ public partial class Form1 : Form
             PurposeTextBox.Text = _swift.Purpose;
         }
 
-        _isSwift50Valid = _swift.NameLength <= MAX_NAME;
+        _isSwift50Valid = _swift.NameLength <= MAX_NAME; //TODO ошибка если нет строки ИНН
         _isSwift72Valid = _swift.PurposeLength <= MAX_PURPOSE;
         
-        Swift50Label.Text = $"SWIFT 50K: {_swift.NameLength}/{MAX_NAME}";
-        Swift50Label.ForeColor = _isSwift50Valid ? ForeColor : Color.Red;
+        Swift50Value.Text = $"{_swift.NameLength}/{MAX_NAME}";
+        Swift50Value.ForeColor = _isSwift50Valid ? ForeColor : Color.Red;
 
-        Swift72Label.Text = $"SWIFT 70,72: {_swift.PurposeLength}/{MAX_PURPOSE}";
-        Swift72Label.ForeColor = _isSwift72Valid ? ForeColor : Color.Red;
+        Swift72Value.Text = $"{_swift.PurposeLength}/{MAX_PURPOSE}";
+        Swift72Value.ForeColor = _isSwift72Valid ? ForeColor : Color.Red;
 
         CheckNextEnabled();
     }
@@ -327,66 +460,6 @@ public partial class Form1 : Form
         GoNext();
     }
 
-    private void GoNext()
-    {
-        SaveFile();
-
-        if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
-        {
-            FilesListBox.SelectedIndex++;
-        }
-        else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-        {
-            Close();
-        }
-    }
-
-    private void GoForward()
-    {
-        while (
-            _isSwift50Valid &&
-            _isSwift72Valid &&
-            _isNameValid &&
-            _isPurposeValid &&
-            FilesListBox.SelectedIndex < FilesListBox.Items.Count)
-        {
-            GoNext();
-        }
-    }
-
-    private void GoPrev()
-    {
-        if (!_saved)
-        {
-            var reply = MessageBox.Show($"Сохранить файл \"{_saveFileName}\"\nперед шагом назад?",
-                Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
-
-            if (reply == DialogResult.Yes)
-            {
-                SaveFile();
-            }
-            else if (reply == DialogResult.Cancel)
-            {
-                return;
-            }
-        }
-
-        if (FilesListBox.SelectedIndex > 0)
-        {
-            FilesListBox.SelectedIndex--;
-        }
-    }
-
-    private void SaveFile(string? text = null)
-    {
-        if (_saveFileName != null)
-        {
-            File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
-            _saved = true;
-        }
-    }
-
     private void ForwardButton_Click(object sender, EventArgs e)
     {
         GoForward();
@@ -394,9 +467,9 @@ public partial class Form1 : Form
 
     private void SaveAsFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
     {
-        _saveFileName = ((SaveFileDialog)sender).FileName;
+        _saveFileName = SaveAsFileDialog.FileName;
 
-        switch (tabControl1.SelectedIndex)
+        switch (Tabs.SelectedIndex)
         {
             case 0:
                 SaveFile(string.Join(Environment.NewLine,
@@ -416,6 +489,8 @@ public partial class Form1 : Form
                 break;
         }
 
+        //FilesListBox.Items[FilesListBox.SelectedIndex] = _saveFileName;
+        //FilesListBox.SelectedItem = _saveFileName;
         _saved = true;
     }
 
@@ -435,7 +510,7 @@ public partial class Form1 : Form
     {
         if (!_saved && _saveFileName != null)
         {
-            var reply = MessageBox.Show($"Сохранить файл \"{_saveFileName}\"\nперед выходом?", 
+            var reply = MessageBox.Show($"Сохранить файл \n{_saveFileName}\nперед выходом?", 
                 Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
 
             switch (reply)
@@ -457,20 +532,7 @@ public partial class Form1 : Form
 
     private void AboutMenuItem_Click(object sender, EventArgs e)
     {
-        string config = Path.ChangeExtension(Application.ExecutablePath, "runtime.json");
-        string text =
-            $@"Программа дооформления документов из УФЭБС в SWIFT.
-
-Версия {Application.ProductVersion}
-
-Задайте параметры в файле:
-{config}
-
-или укажите пути в командной строке:
-
-Input\[*.xml] [Output\[*_.txt]]";
-
-        MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        About();
     }
 
     private void FilesListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -486,9 +548,11 @@ Input\[*.xml] [Output\[*_.txt]]";
 
             ProgressBar.Value = index;
             ProgressBar.Maximum = total;
-            DoneLabel.Text = $"Сделано: {index}/{total}";
 
-            FilesPage.Text = $"Файлы {index}/{total}";
+            string s = $"{index}/{total}";
+            DoneValue.Text = s;
+
+            FilesPage.Text = $"Файлы {s}";
         }
     }
 
@@ -516,12 +580,13 @@ Input\[*.xml] [Output\[*_.txt]]";
 
     private void PrintMenuItem_Click(object sender, EventArgs e)
     {
-
+        PrintDocument.Print();
     }
 
     private void PrintPreviewMenuItem_Click(object sender, EventArgs e)
     {
-
+        PrintDocument.DocumentName = _saveFileName;
+        PrintPreviewDialog.ShowDialog();
     }
 
     private void UndoMenuItem_Click(object sender, EventArgs e)
@@ -571,19 +636,47 @@ Input\[*.xml] [Output\[*_.txt]]";
 
     private void ChangeMenuItem_Click(object sender, EventArgs e)
     {
-        var item = (ToolStripMenuItem)sender;
-        item.Checked = !item.Checked;
-        
-        OutEditCheck.Checked = item.Checked;
+        ChangeMenuItem.Checked = !ChangeMenuItem.Checked;
+        OutEditCheck.Checked = ChangeMenuItem.Checked;
     }
 
-    private void SettingsMenuItem_Click(object sender, EventArgs e)
+    private void WrapMenuItem_Click(object sender, EventArgs e)
     {
-        string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
+        WrapMenuItem.Checked = !WrapMenuItem.Checked;
+        OutTextBox.WordWrap = WrapMenuItem.Checked;
+    }
 
-        if (File.Exists(config))
-        {
-            System.Diagnostics.Process.Start("notepad.exe", config);
-        }
+    private void OutTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        int i = OutTextBox.SelectionStart;
+        int r = OutTextBox.GetLineFromCharIndex(i) + 1;
+        int c = OutTextBox.GetFirstCharIndexFromLine(r) + 1;
+
+        RowValue.Text = r.ToString();
+        ColValue.Text = c.ToString();
+    }
+
+    private void OutTextBox_MouseDown(object sender, MouseEventArgs e)
+    {
+        int i = OutTextBox.SelectionStart;
+        int r = OutTextBox.GetLineFromCharIndex(i) + 1;
+        int c = OutTextBox.GetFirstCharIndexFromLine(r) + 1;
+
+        RowValue.Text = r.ToString();
+        ColValue.Text = c.ToString();
+    }
+
+    private void PrintDocument_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+    {
+        PrintPage(e);
+    }
+
+    private void ConfigMenuItem_Click(object sender, EventArgs e)
+    {
+        ConfigForm configForm = new();
+        configForm.ShowDialog();
+
+        _config = new ConfigProperties();
+        ReInitForm();
     }
 }

@@ -1,4 +1,4 @@
-using Corr_Lib;
+using CorrLib;
 
 namespace SwiftTranslator;
 
@@ -20,7 +20,7 @@ public partial class Form1 : Form
     {
         ColorizeLength();
 
-        string s = Swift.Lat(RusSourceText.Text);
+        string s = SwiftTranslit.Lat(RusSourceText.Text);
         SwiftDestText35.Text = string.Empty;
         
         while (s.Length > 35)
@@ -34,7 +34,7 @@ public partial class Form1 : Form
 
     private void SwiftSourceText35_TextChanged(object sender, EventArgs e)
     {
-        RusDestText.Text = Swift.Cyr(SwiftSourceText35.Text.ReplaceLineEndings(string.Empty));
+        RusDestText.Text = SwiftTranslit.Cyr(SwiftSourceText35.Text.ReplaceLineEndings(string.Empty));
     }
 
     private void ColorizeLength()

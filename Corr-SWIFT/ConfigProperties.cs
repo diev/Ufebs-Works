@@ -1,4 +1,25 @@
-﻿namespace Corr_SWIFT;
+﻿#region License
+/*
+Copyright 2022 Dmitrii Evdokimov
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+namespace CorrSWIFT;
 
 internal class ConfigProperties
 {
@@ -55,5 +76,33 @@ internal class ConfigProperties
         Open = new OpenProperties();
         Save = new SaveProperties();
         Bank = new BankProperties();
+    }
+
+    public void Flush()
+    {
+        //AppContext.SetData(string name, object? data); //.NET 7+ only
+
+        string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
+        string json = File.ReadAllText(config);
+
+        var configNode = JsonNode.Parse(json);
+        var properties = configNode!["runtimeOptions"]!["configProperties"];
+
+        properties!["Open.Dir"] = Open.Dir;
+        properties!["Open.Mask"] = Open.Mask;
+
+        properties!["Save.Dir"] = Save.Dir;
+        properties!["Save.Mask"] = Save.Mask;
+
+        properties!["Bank.Account"] = Bank.Account;
+        properties!["Bank.INN"] = Bank.INN;
+        properties!["Bank.KPP"] = Bank.KPP;
+        properties!["Bank.PayerTemplate"] = Bank.PayerTemplate;
+        properties!["Bank.PurposeTemplate"] = Bank.PurposeTemplate;
+
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        json = configNode.ToJsonString(options);
+
+        File.WriteAllText(config, json);
     }
 }

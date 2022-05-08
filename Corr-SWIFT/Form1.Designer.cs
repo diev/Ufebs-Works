@@ -1,39 +1,46 @@
-﻿namespace Corr_Lib
+﻿namespace CorrSWIFT;
+
+partial class Form1
 {
-    partial class Form1
+    /// <summary>
+    ///  Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
+
+    /// <summary>
+    ///  Clean up any resources being used.
+    /// </summary>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing)
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        if (disposing && (components != null))
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
+            components.Dispose();
         }
+        base.Dispose(disposing);
+    }
 
-        #region Windows Form Designer generated code
+    #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+    /// <summary>
+    ///  Required method for Designer support - do not modify
+    ///  the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.Swift50Label = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Swift50Value = new System.Windows.Forms.ToolStripStatusLabel();
             this.Swift72Label = new System.Windows.Forms.ToolStripStatusLabel();
-            this.TaxLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Swift72Value = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TaxValue = new System.Windows.Forms.ToolStripStatusLabel();
+            this.RowLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.RowValue = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ColLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ColValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.DoneLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.DoneValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.ProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,7 +53,7 @@
             this.PrintMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PrintPreviewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,10 +74,11 @@
             this.ForwardMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FontMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.WrapMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.Tabs = new System.Windows.Forms.TabControl();
             this.FilesPage = new System.Windows.Forms.TabPage();
             this.FilesListBox = new System.Windows.Forms.ListBox();
             this.XmlPage = new System.Windows.Forms.TabPage();
@@ -79,7 +87,6 @@
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
             this.OutPage = new System.Windows.Forms.TabPage();
             this.OutTextBox = new System.Windows.Forms.TextBox();
-            this.OutEditCheck = new System.Windows.Forms.CheckBox();
             this.PrevButton = new System.Windows.Forms.Button();
             this.ForwardButton = new System.Windows.Forms.Button();
             this.NextButton = new System.Windows.Forms.Button();
@@ -87,67 +94,124 @@
             this.NameEditLabel = new System.Windows.Forms.Label();
             this.PurposeTextBox = new System.Windows.Forms.TextBox();
             this.NameTextBox = new System.Windows.Forms.TextBox();
+            this.OutEditCheck = new System.Windows.Forms.CheckBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
-            this.statusStrip1.SuspendLayout();
+            this.PrintPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
+            this.PrintDocument = new System.Drawing.Printing.PrintDocument();
+            this.PrintDialog = new System.Windows.Forms.PrintDialog();
+            this.process1 = new System.Diagnostics.Process();
+            this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.Tabs.SuspendLayout();
             this.FilesPage.SuspendLayout();
             this.XmlPage.SuspendLayout();
             this.SwiftPage.SuspendLayout();
             this.OutPage.SuspendLayout();
             this.SuspendLayout();
             // 
-            // statusStrip1
+            // StatusBar
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Swift50Label,
+            this.Swift50Value,
             this.Swift72Label,
-            this.TaxLabel,
+            this.Swift72Value,
+            this.TaxValue,
+            this.RowLabel,
+            this.RowValue,
+            this.ColLabel,
+            this.ColValue,
             this.DoneLabel,
+            this.DoneValue,
             this.ProgressBar});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 426);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(930, 24);
-            this.statusStrip1.TabIndex = 0;
-            this.statusStrip1.Text = "statusStrip1";
+            this.StatusBar.Location = new System.Drawing.Point(0, 424);
+            this.StatusBar.Name = "StatusBar";
+            this.StatusBar.Size = new System.Drawing.Size(930, 26);
+            this.StatusBar.TabIndex = 0;
+            this.StatusBar.Text = "statusStrip1";
             // 
             // Swift50Label
             // 
-            this.Swift50Label.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.Swift50Label.Name = "Swift50Label";
-            this.Swift50Label.Size = new System.Drawing.Size(97, 19);
-            this.Swift50Label.Text = "Выберите файл";
+            this.Swift50Label.Size = new System.Drawing.Size(64, 21);
+            this.Swift50Label.Text = "SWIFT 50K:";
+            // 
+            // Swift50Value
+            // 
+            this.Swift50Value.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.Swift50Value.Name = "Swift50Value";
+            this.Swift50Value.Size = new System.Drawing.Size(17, 21);
+            this.Swift50Value.Text = "0";
             // 
             // Swift72Label
             // 
-            this.Swift72Label.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.Swift72Label.Name = "Swift72Label";
-            this.Swift72Label.Size = new System.Drawing.Size(43, 19);
-            this.Swift72Label.Text = "SWIFT";
+            this.Swift72Label.Size = new System.Drawing.Size(72, 21);
+            this.Swift72Label.Text = "SWIFT 70,72:";
             // 
-            // TaxLabel
+            // Swift72Value
             // 
-            this.TaxLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.TaxLabel.Name = "TaxLabel";
-            this.TaxLabel.Size = new System.Drawing.Size(53, 19);
-            this.TaxLabel.Text = "Платеж";
+            this.Swift72Value.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.Swift72Value.Name = "Swift72Value";
+            this.Swift72Value.Size = new System.Drawing.Size(17, 21);
+            this.Swift72Value.Text = "0";
+            // 
+            // TaxValue
+            // 
+            this.TaxValue.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.TaxValue.Name = "TaxValue";
+            this.TaxValue.Size = new System.Drawing.Size(53, 21);
+            this.TaxValue.Text = "Платеж";
+            // 
+            // RowLabel
+            // 
+            this.RowLabel.Name = "RowLabel";
+            this.RowLabel.Size = new System.Drawing.Size(46, 21);
+            this.RowLabel.Text = "Строка";
+            // 
+            // RowValue
+            // 
+            this.RowValue.Name = "RowValue";
+            this.RowValue.Size = new System.Drawing.Size(13, 21);
+            this.RowValue.Text = "0";
+            // 
+            // ColLabel
+            // 
+            this.ColLabel.Name = "ColLabel";
+            this.ColLabel.Size = new System.Drawing.Size(54, 21);
+            this.ColLabel.Text = "Столбец";
+            // 
+            // ColValue
+            // 
+            this.ColValue.Name = "ColValue";
+            this.ColValue.Size = new System.Drawing.Size(13, 21);
+            this.ColValue.Text = "0";
             // 
             // DoneLabel
             // 
             this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(66, 19);
-            this.DoneLabel.Text = "Сделано: 0";
+            this.DoneLabel.Size = new System.Drawing.Size(437, 21);
+            this.DoneLabel.Spring = true;
+            this.DoneLabel.Text = "Сделано:";
+            this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // DoneValue
+            // 
+            this.DoneValue.Name = "DoneValue";
+            this.DoneValue.Size = new System.Drawing.Size(13, 21);
+            this.DoneValue.Text = "0";
             // 
             // ProgressBar
             // 
+            this.ProgressBar.Margin = new System.Windows.Forms.Padding(1, 7, 15, 7);
             this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(100, 18);
+            this.ProgressBar.Size = new System.Drawing.Size(100, 12);
             this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // MainMenu
@@ -176,7 +240,7 @@
             this.PrintMenuItem,
             this.PrintPreviewMenuItem,
             this.toolStripSeparator3,
-            this.SettingsMenuItem,
+            this.ConfigMenuItem,
             this.toolStripSeparator1,
             this.ExitMenuItem});
             this.FileMenu.Name = "FileMenu";
@@ -254,12 +318,12 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(239, 6);
             // 
-            // SettingsMenuItem
+            // ConfigMenuItem
             // 
-            this.SettingsMenuItem.Name = "SettingsMenuItem";
-            this.SettingsMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.SettingsMenuItem.Text = "П&араметры...";
-            this.SettingsMenuItem.Click += new System.EventHandler(this.SettingsMenuItem_Click);
+            this.ConfigMenuItem.Name = "ConfigMenuItem";
+            this.ConfigMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.ConfigMenuItem.Text = "П&араметры...";
+            this.ConfigMenuItem.Click += new System.EventHandler(this.ConfigMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -318,6 +382,7 @@
             this.RedoMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
             this.RedoMenuItem.Size = new System.Drawing.Size(184, 22);
             this.RedoMenuItem.Text = "&Повторить";
+            this.RedoMenuItem.Visible = false;
             this.RedoMenuItem.Click += new System.EventHandler(this.RedoMenuItem_Click);
             // 
             // toolStripSeparator4
@@ -411,7 +476,8 @@
             // ViewMenu
             // 
             this.ViewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.FontMenuItem});
+            this.FontMenuItem,
+            this.WrapMenuItem});
             this.ViewMenu.Name = "ViewMenu";
             this.ViewMenu.Size = new System.Drawing.Size(39, 20);
             this.ViewMenu.Text = "&Вид";
@@ -419,9 +485,16 @@
             // FontMenuItem
             // 
             this.FontMenuItem.Name = "FontMenuItem";
-            this.FontMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FontMenuItem.Size = new System.Drawing.Size(183, 22);
             this.FontMenuItem.Text = "&Шрифт...";
             this.FontMenuItem.Click += new System.EventHandler(this.FontMenuItem_Click);
+            // 
+            // WrapMenuItem
+            // 
+            this.WrapMenuItem.Name = "WrapMenuItem";
+            this.WrapMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.WrapMenuItem.Text = "Перенос по словам";
+            this.WrapMenuItem.Click += new System.EventHandler(this.WrapMenuItem_Click);
             // 
             // HelpMenu
             // 
@@ -441,18 +514,18 @@
             // 
             // splitContainer1
             // 
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel1.Controls.Add(this.Tabs);
             this.splitContainer1.Panel1.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.OutEditCheck);
             this.splitContainer1.Panel2.Controls.Add(this.PrevButton);
             this.splitContainer1.Panel2.Controls.Add(this.ForwardButton);
             this.splitContainer1.Panel2.Controls.Add(this.NextButton);
@@ -460,22 +533,24 @@
             this.splitContainer1.Panel2.Controls.Add(this.NameEditLabel);
             this.splitContainer1.Panel2.Controls.Add(this.PurposeTextBox);
             this.splitContainer1.Panel2.Controls.Add(this.NameTextBox);
-            this.splitContainer1.Size = new System.Drawing.Size(930, 402);
+            this.splitContainer1.Panel2.Controls.Add(this.OutEditCheck);
+            this.splitContainer1.Size = new System.Drawing.Size(930, 400);
             this.splitContainer1.SplitterDistance = 616;
+            this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 2;
             // 
-            // tabControl1
+            // Tabs
             // 
-            this.tabControl1.Controls.Add(this.FilesPage);
-            this.tabControl1.Controls.Add(this.XmlPage);
-            this.tabControl1.Controls.Add(this.SwiftPage);
-            this.tabControl1.Controls.Add(this.OutPage);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 4);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(616, 398);
-            this.tabControl1.TabIndex = 0;
+            this.Tabs.Controls.Add(this.FilesPage);
+            this.Tabs.Controls.Add(this.XmlPage);
+            this.Tabs.Controls.Add(this.SwiftPage);
+            this.Tabs.Controls.Add(this.OutPage);
+            this.Tabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Tabs.Location = new System.Drawing.Point(0, 4);
+            this.Tabs.Name = "Tabs";
+            this.Tabs.SelectedIndex = 0;
+            this.Tabs.Size = new System.Drawing.Size(612, 392);
+            this.Tabs.TabIndex = 0;
             // 
             // FilesPage
             // 
@@ -483,7 +558,7 @@
             this.FilesPage.Location = new System.Drawing.Point(4, 24);
             this.FilesPage.Name = "FilesPage";
             this.FilesPage.Padding = new System.Windows.Forms.Padding(3);
-            this.FilesPage.Size = new System.Drawing.Size(608, 370);
+            this.FilesPage.Size = new System.Drawing.Size(604, 364);
             this.FilesPage.TabIndex = 3;
             this.FilesPage.Text = "Файлы";
             this.FilesPage.UseVisualStyleBackColor = true;
@@ -497,7 +572,7 @@
             this.FilesListBox.Location = new System.Drawing.Point(3, 3);
             this.FilesListBox.Name = "FilesListBox";
             this.FilesListBox.ScrollAlwaysVisible = true;
-            this.FilesListBox.Size = new System.Drawing.Size(602, 364);
+            this.FilesListBox.Size = new System.Drawing.Size(598, 358);
             this.FilesListBox.TabIndex = 0;
             this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);
             // 
@@ -507,7 +582,7 @@
             this.XmlPage.Location = new System.Drawing.Point(4, 24);
             this.XmlPage.Name = "XmlPage";
             this.XmlPage.Padding = new System.Windows.Forms.Padding(3);
-            this.XmlPage.Size = new System.Drawing.Size(608, 370);
+            this.XmlPage.Size = new System.Drawing.Size(604, 364);
             this.XmlPage.TabIndex = 0;
             this.XmlPage.Text = "XML";
             this.XmlPage.UseVisualStyleBackColor = true;
@@ -520,11 +595,11 @@
             this.XmlTextBox.Location = new System.Drawing.Point(3, 3);
             this.XmlTextBox.Multiline = true;
             this.XmlTextBox.Name = "XmlTextBox";
+            this.XmlTextBox.PlaceholderText = "Исходные файлы XML не найдены.";
             this.XmlTextBox.ReadOnly = true;
             this.XmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.XmlTextBox.Size = new System.Drawing.Size(602, 364);
+            this.XmlTextBox.Size = new System.Drawing.Size(598, 358);
             this.XmlTextBox.TabIndex = 2;
-            this.XmlTextBox.Text = "Исходные файлы XML не найдены.";
             this.XmlTextBox.WordWrap = false;
             // 
             // SwiftPage
@@ -533,7 +608,7 @@
             this.SwiftPage.Location = new System.Drawing.Point(4, 24);
             this.SwiftPage.Name = "SwiftPage";
             this.SwiftPage.Padding = new System.Windows.Forms.Padding(3);
-            this.SwiftPage.Size = new System.Drawing.Size(608, 370);
+            this.SwiftPage.Size = new System.Drawing.Size(604, 364);
             this.SwiftPage.TabIndex = 1;
             this.SwiftPage.Text = "SWIFT";
             this.SwiftPage.UseVisualStyleBackColor = true;
@@ -546,11 +621,11 @@
             this.SwiftTextBox.Location = new System.Drawing.Point(3, 3);
             this.SwiftTextBox.Multiline = true;
             this.SwiftTextBox.Name = "SwiftTextBox";
+            this.SwiftTextBox.PlaceholderText = "Документ не имеет тип ED503.";
             this.SwiftTextBox.ReadOnly = true;
             this.SwiftTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.SwiftTextBox.Size = new System.Drawing.Size(602, 364);
+            this.SwiftTextBox.Size = new System.Drawing.Size(598, 358);
             this.SwiftTextBox.TabIndex = 1;
-            this.SwiftTextBox.Text = "Документ не имеет тип ED503.";
             this.SwiftTextBox.WordWrap = false;
             // 
             // OutPage
@@ -559,7 +634,7 @@
             this.OutPage.Location = new System.Drawing.Point(4, 24);
             this.OutPage.Name = "OutPage";
             this.OutPage.Padding = new System.Windows.Forms.Padding(3);
-            this.OutPage.Size = new System.Drawing.Size(608, 370);
+            this.OutPage.Size = new System.Drawing.Size(604, 364);
             this.OutPage.TabIndex = 2;
             this.OutPage.Text = "К отправке";
             this.OutPage.UseVisualStyleBackColor = true;
@@ -571,31 +646,21 @@
             this.OutTextBox.Location = new System.Drawing.Point(3, 3);
             this.OutTextBox.Multiline = true;
             this.OutTextBox.Name = "OutTextBox";
+            this.OutTextBox.PlaceholderText = "Нечего отправлять.";
             this.OutTextBox.ReadOnly = true;
             this.OutTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.OutTextBox.Size = new System.Drawing.Size(602, 364);
+            this.OutTextBox.Size = new System.Drawing.Size(598, 358);
             this.OutTextBox.TabIndex = 2;
-            this.OutTextBox.Text = "Нечего отправлять.";
             this.OutTextBox.WordWrap = false;
             this.OutTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
-            // 
-            // OutEditCheck
-            // 
-            this.OutEditCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.OutEditCheck.AutoSize = true;
-            this.OutEditCheck.Location = new System.Drawing.Point(6, 370);
-            this.OutEditCheck.Name = "OutEditCheck";
-            this.OutEditCheck.Size = new System.Drawing.Size(80, 19);
-            this.OutEditCheck.TabIndex = 6;
-            this.OutEditCheck.Text = "Изменить";
-            this.OutEditCheck.UseVisualStyleBackColor = true;
-            this.OutEditCheck.CheckedChanged += new System.EventHandler(this.OutEditCheck_CheckedChanged);
+            this.OutTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OutTextBox_KeyDown);
+            this.OutTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutTextBox_MouseDown);
             // 
             // PrevButton
             // 
             this.PrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.PrevButton.Enabled = false;
-            this.PrevButton.Location = new System.Drawing.Point(106, 367);
+            this.PrevButton.Location = new System.Drawing.Point(112, 361);
             this.PrevButton.Name = "PrevButton";
             this.PrevButton.Size = new System.Drawing.Size(75, 23);
             this.PrevButton.TabIndex = 3;
@@ -607,7 +672,7 @@
             // 
             this.ForwardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ForwardButton.Enabled = false;
-            this.ForwardButton.Location = new System.Drawing.Point(264, 367);
+            this.ForwardButton.Location = new System.Drawing.Point(270, 361);
             this.ForwardButton.Name = "ForwardButton";
             this.ForwardButton.Size = new System.Drawing.Size(34, 23);
             this.ForwardButton.TabIndex = 5;
@@ -619,7 +684,7 @@
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.NextButton.Enabled = false;
-            this.NextButton.Location = new System.Drawing.Point(187, 367);
+            this.NextButton.Location = new System.Drawing.Point(193, 361);
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(75, 23);
             this.NextButton.TabIndex = 4;
@@ -655,7 +720,7 @@
             this.PurposeTextBox.Multiline = true;
             this.PurposeTextBox.Name = "PurposeTextBox";
             this.PurposeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.PurposeTextBox.Size = new System.Drawing.Size(298, 144);
+            this.PurposeTextBox.Size = new System.Drawing.Size(304, 138);
             this.PurposeTextBox.TabIndex = 1;
             this.PurposeTextBox.TextChanged += new System.EventHandler(this.PurposeTextBox_TextChanged);
             // 
@@ -668,9 +733,21 @@
             this.NameTextBox.Multiline = true;
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.NameTextBox.Size = new System.Drawing.Size(298, 154);
+            this.NameTextBox.Size = new System.Drawing.Size(304, 154);
             this.NameTextBox.TabIndex = 0;
             this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
+            // 
+            // OutEditCheck
+            // 
+            this.OutEditCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.OutEditCheck.AutoSize = true;
+            this.OutEditCheck.Location = new System.Drawing.Point(6, 364);
+            this.OutEditCheck.Name = "OutEditCheck";
+            this.OutEditCheck.Size = new System.Drawing.Size(80, 19);
+            this.OutEditCheck.TabIndex = 6;
+            this.OutEditCheck.Text = "Изменить";
+            this.OutEditCheck.UseVisualStyleBackColor = true;
+            this.OutEditCheck.CheckedChanged += new System.EventHandler(this.OutEditCheck_CheckedChanged);
             // 
             // OpenFileDialog
             // 
@@ -695,21 +772,51 @@
             // 
             this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
             // 
+            // PrintPreviewDialog
+            // 
+            this.PrintPreviewDialog.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.PrintPreviewDialog.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.PrintPreviewDialog.ClientSize = new System.Drawing.Size(400, 300);
+            this.PrintPreviewDialog.Document = this.PrintDocument;
+            this.PrintPreviewDialog.Enabled = true;
+            this.PrintPreviewDialog.Icon = ((System.Drawing.Icon)(resources.GetObject("PrintPreviewDialog.Icon")));
+            this.PrintPreviewDialog.Name = "PrintPreviewDialog";
+            this.PrintPreviewDialog.Visible = false;
+            // 
+            // PrintDocument
+            // 
+            this.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.PrintDocument_PrintPage);
+            // 
+            // PrintDialog
+            // 
+            this.PrintDialog.UseEXDialog = true;
+            // 
+            // process1
+            // 
+            this.process1.StartInfo.Domain = "";
+            this.process1.StartInfo.LoadUserProfile = false;
+            this.process1.StartInfo.Password = null;
+            this.process1.StartInfo.StandardErrorEncoding = null;
+            this.process1.StartInfo.StandardInputEncoding = null;
+            this.process1.StartInfo.StandardOutputEncoding = null;
+            this.process1.StartInfo.UserName = "";
+            this.process1.SynchronizingObject = this;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(930, 450);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.StatusBar);
             this.Controls.Add(this.MainMenu);
             this.MainMenuStrip = this.MainMenu;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Corr-SWIFT";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
+            this.StatusBar.ResumeLayout(false);
+            this.StatusBar.PerformLayout();
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -717,7 +824,7 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
+            this.Tabs.ResumeLayout(false);
             this.FilesPage.ResumeLayout(false);
             this.XmlPage.ResumeLayout(false);
             this.XmlPage.PerformLayout();
@@ -728,70 +835,81 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        #endregion
-
-        private StatusStrip statusStrip1;
-        private MenuStrip MainMenu;
-        private SplitContainer splitContainer1;
-        private OpenFileDialog OpenFileDialog;
-        private SaveFileDialog SaveAsFileDialog;
-        private ToolStripMenuItem ViewMenu;
-        private TabControl tabControl1;
-        private TabPage XmlPage;
-        private TextBox XmlTextBox;
-        private TabPage SwiftPage;
-        private TextBox SwiftTextBox;
-        private TabPage OutPage;
-        private TextBox OutTextBox;
-        private ToolStripStatusLabel Swift50Label;
-        private TextBox PurposeTextBox;
-        private TextBox NameTextBox;
-        private ToolStripMenuItem FontMenuItem;
-        private FontDialog FontDialog;
-        private Label PurposeEditLabel;
-        private Label NameEditLabel;
-        private ToolStripStatusLabel TaxLabel;
-        private Button NextButton;
-        private Button ForwardButton;
-        private TabPage FilesPage;
-        private ListBox FilesListBox;
-        private ToolStripProgressBar ProgressBar;
-        private ToolStripStatusLabel Swift72Label;
-        private ToolStripStatusLabel DoneLabel;
-        private Button PrevButton;
-        private CheckBox OutEditCheck;
-        private ToolStripMenuItem FileMenu;
-        private ToolStripMenuItem NewFileMenuItem;
-        private ToolStripMenuItem OpenFileMenuItem;
-        private ToolStripSeparator toolStripSeparator;
-        private ToolStripMenuItem SaveMenuItem;
-        private ToolStripMenuItem SaveAsMenuItem;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem PrintMenuItem;
-        private ToolStripMenuItem PrintPreviewMenuItem;
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem ExitMenuItem;
-        private ToolStripMenuItem EditMenu;
-        private ToolStripMenuItem UndoMenuItem;
-        private ToolStripMenuItem RedoMenuItem;
-        private ToolStripSeparator toolStripSeparator4;
-        private ToolStripMenuItem CutMenuItem;
-        private ToolStripMenuItem CopyMenuItem;
-        private ToolStripMenuItem PasteMenuItem;
-        private ToolStripSeparator toolStripSeparator5;
-        private ToolStripMenuItem SelectAllMenuItem;
-        private ToolStripMenuItem GoMenu;
-        private ToolStripMenuItem PrevMenuItem;
-        private ToolStripSeparator toolStripMenuItem1;
-        private ToolStripMenuItem NextMenuItem;
-        private ToolStripMenuItem ForwardMenuItem;
-        private ToolStripMenuItem HelpMenu;
-        private ToolStripMenuItem AboutMenuItem;
-        private ToolStripMenuItem SettingsMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem ChangeMenuItem;
-        private ToolStripSeparator toolStripSeparator6;
     }
+
+    #endregion
+
+    private StatusStrip StatusBar;
+    private MenuStrip MainMenu;
+    private SplitContainer splitContainer1;
+    private OpenFileDialog OpenFileDialog;
+    private SaveFileDialog SaveAsFileDialog;
+    private ToolStripMenuItem ViewMenu;
+    private TabControl Tabs;
+    private TabPage XmlPage;
+    private TextBox XmlTextBox;
+    private TabPage SwiftPage;
+    private TextBox SwiftTextBox;
+    private TabPage OutPage;
+    private TextBox OutTextBox;
+    private ToolStripStatusLabel Swift50Label;
+    private TextBox PurposeTextBox;
+    private TextBox NameTextBox;
+    private ToolStripMenuItem FontMenuItem;
+    private FontDialog FontDialog;
+    private Label PurposeEditLabel;
+    private Label NameEditLabel;
+    private ToolStripStatusLabel TaxValue;
+    private Button NextButton;
+    private Button ForwardButton;
+    private TabPage FilesPage;
+    private ListBox FilesListBox;
+    private ToolStripProgressBar ProgressBar;
+    private ToolStripStatusLabel Swift72Label;
+    private ToolStripStatusLabel DoneLabel;
+    private Button PrevButton;
+    private CheckBox OutEditCheck;
+    private ToolStripMenuItem FileMenu;
+    private ToolStripMenuItem NewFileMenuItem;
+    private ToolStripMenuItem OpenFileMenuItem;
+    private ToolStripSeparator toolStripSeparator;
+    private ToolStripMenuItem SaveMenuItem;
+    private ToolStripMenuItem SaveAsMenuItem;
+    private ToolStripSeparator toolStripSeparator2;
+    private ToolStripMenuItem PrintMenuItem;
+    private ToolStripMenuItem PrintPreviewMenuItem;
+    private ToolStripSeparator toolStripSeparator3;
+    private ToolStripMenuItem ExitMenuItem;
+    private ToolStripMenuItem EditMenu;
+    private ToolStripMenuItem UndoMenuItem;
+    private ToolStripMenuItem RedoMenuItem;
+    private ToolStripSeparator toolStripSeparator4;
+    private ToolStripMenuItem CutMenuItem;
+    private ToolStripMenuItem CopyMenuItem;
+    private ToolStripMenuItem PasteMenuItem;
+    private ToolStripSeparator toolStripSeparator5;
+    private ToolStripMenuItem SelectAllMenuItem;
+    private ToolStripMenuItem GoMenu;
+    private ToolStripMenuItem PrevMenuItem;
+    private ToolStripSeparator toolStripMenuItem1;
+    private ToolStripMenuItem NextMenuItem;
+    private ToolStripMenuItem ForwardMenuItem;
+    private ToolStripMenuItem HelpMenu;
+    private ToolStripMenuItem AboutMenuItem;
+    private ToolStripMenuItem ConfigMenuItem;
+    private ToolStripSeparator toolStripSeparator1;
+    private ToolStripMenuItem ChangeMenuItem;
+    private ToolStripSeparator toolStripSeparator6;
+    private ToolStripStatusLabel DoneValue;
+    private ToolStripStatusLabel RowLabel;
+    private ToolStripStatusLabel RowValue;
+    private ToolStripStatusLabel ColLabel;
+    private ToolStripStatusLabel ColValue;
+    private ToolStripStatusLabel Swift50Value;
+    private ToolStripStatusLabel Swift72Value;
+    private ToolStripMenuItem WrapMenuItem;
+    private PrintPreviewDialog PrintPreviewDialog;
+    private System.Drawing.Printing.PrintDocument PrintDocument;
+    private PrintDialog PrintDialog;
+    private System.Diagnostics.Process process1;
 }

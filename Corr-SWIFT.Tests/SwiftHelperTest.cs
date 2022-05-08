@@ -1,4 +1,4 @@
-﻿using static Corr_Lib.SwiftHelper;
+﻿using static CorrLib.SwiftHelper;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Corr_SWIFT.Tests;
+namespace CorrSWIFT.Tests;
 
 [TestClass]
 internal class SwiftHelperTest

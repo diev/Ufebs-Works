@@ -1,6 +1,24 @@
-﻿using System.Text.RegularExpressions;
+﻿#region License
+/*
+Copyright 2022 Dmitrii Evdokimov
 
-namespace Corr_Lib;
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+using System.Text.RegularExpressions;
+
+namespace CorrLib;
 
 public class SwiftLines
 {
@@ -136,7 +154,7 @@ public class SwiftLines
                     case ":50K:":
                         field50 = true; // Начало раздела плательщика
 
-                        if (line.StartsWith(":50K/"))
+                        if (line.StartsWith(":50K:/"))
                         {
                             // Счет плательщика
                             Acc = line[6..]; // После ":50K:/"
@@ -232,14 +250,14 @@ public class SwiftLines
         }
 
         // Длина символьных строк на латинице формата SWIFT
-        NameLength = Name.Length;
+        NameLength = Name.Length; //TODO ошибка если нет строки ИНН
         PurposeLength = Purpose.Length;
 
         if (Translit)
         {
             // Перевод на кирилицу
-            Name = Swift.Cyr(Name);
-            Purpose = Swift.Cyr(Purpose);
+            Name = SwiftTranslit.Cyr(Name);
+            Purpose = SwiftTranslit.Cyr(Purpose);
         }
     }
 
@@ -303,12 +321,12 @@ public class SwiftLines
                         list.Add(":50K:/" + Acc);
 
                         // Строка ИНН и КПП, если они есть
-                        if (INN != null)
+                        if (INN.Length > 0)
                         {
                             string inn = "INN" + INN;
 
                             // КПП только у юрлиц
-                            if (INN.Length == 10 && KPP != null)
+                            if (INN.Length == 10 && KPP.Length > 0)
                             {
                                 inn += ".KPP" + KPP;
                             }
@@ -317,7 +335,7 @@ public class SwiftLines
                         }
 
                         // Перекодировка наименования плательщика
-                        string textName = Translit ? Swift.Lat(Name) : Name;
+                        string textName = Translit ? SwiftTranslit.Lat(Name) : Name;
 
                         // До трех строк наименования плательщика
                         for (int i = 0; i < 3; i++)
@@ -346,7 +364,7 @@ public class SwiftLines
 
                     case ":70:":
                         // Перекодировка назначения платежа
-                        textPurpose = Translit ? Swift.Lat(Purpose) : Purpose;
+                        textPurpose = Translit ? SwiftTranslit.Lat(Purpose) : Purpose;
 
                         // Если назначение платежа обрезается по лимиту
                         if (textPurpose.Length > 210)

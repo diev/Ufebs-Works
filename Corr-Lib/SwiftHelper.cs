@@ -1,8 +1,26 @@
-﻿using System.Text;
+﻿#region License
+/*
+Copyright 2022 Dmitrii Evdokimov
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace Corr_Lib;
+namespace CorrLib;
 
 public static class SwiftHelper
 {
@@ -88,7 +106,7 @@ public static class SwiftHelper
 
         if (HasTranslit(input))
         {
-            name = Swift.Cyr(name);
+            name = SwiftTranslit.Cyr(name);
         }
 
         return (acc, inn, kpp, name);
@@ -107,7 +125,7 @@ public static class SwiftHelper
         }
 
         s.AppendLine()
-            .Append(Swift.Wrap35(Swift.Lat(name)));
+            .Append(SwiftTranslit.Wrap35(SwiftTranslit.Lat(name)));
 
         //return SetSection(input, "50K", s.ToString());
         string pattern = "(?<=^:50K:)" + SETVALUE + @"(?=\r?\n(:\d{2}\w?:|-}))";
@@ -129,7 +147,7 @@ public static class SwiftHelper
 
         if (HasTranslit(input))
         {
-            result = Swift.Cyr(result);
+            result = SwiftTranslit.Cyr(result);
         }
 
         return result;
@@ -144,7 +162,7 @@ public static class SwiftHelper
             string pattern = @"/NZP/" + GETVALUE + @"\n(|/DAS/|/RPO/|/RPP/|/UIP/)";
             Match m = Regex.Match(section, pattern, RegexOptions.Multiline);
 
-            return Swift.Cyr(m.Groups["Value"].Value
+            return SwiftTranslit.Cyr(m.Groups["Value"].Value
                 .Replace("\n//", string.Empty)
                 .ReplaceLineEndings(string.Empty));
         }
@@ -161,7 +179,7 @@ public static class SwiftHelper
 
         //return Swift.Cyr(m.Groups["Name"].Value.ReplaceLineEndings(string.Empty));
         string result = m.Groups["Value"].Value.ReplaceLineEndings(string.Empty);
-        string value = Swift.Cyr(result);
+        string value = SwiftTranslit.Cyr(result);
         int length = result.Length;
 
         return (value, length);
@@ -170,7 +188,7 @@ public static class SwiftHelper
     public static (string Text, int Length) SetPayerName(string input, string value)
     {
         string pattern = @"(?<=^:50K:/\d*\r?\nINN\d*(|.KPP\d*)\r?\n)" + SETVALUE + @"(?=\r?\n:\d{2}\w?:)";
-        string replacement = Swift.Wrap35(Swift.Lat(value));
+        string replacement = SwiftTranslit.Wrap35(SwiftTranslit.Lat(value));
         int length = replacement.ReplaceLineEndings(string.Empty).Length;
         string text = Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
 
@@ -199,7 +217,7 @@ public static class SwiftHelper
                 .ReplaceLineEndings(string.Empty);
         }
 
-        string value = Swift.Cyr(result);
+        string value = SwiftTranslit.Cyr(result);
         int length = result.Length;
 
         //return Swift.Cyr(result);
@@ -210,30 +228,30 @@ public static class SwiftHelper
     {
         string pattern = "(?<=^:70:)" + SETVALUE + @"(?=\r?\n:\d{2}\w?:)";
         string replacement, text;
-        value = Swift.Lat(value);
+        value = SwiftTranslit.Lat(value);
         int length = value.ReplaceLineEndings(string.Empty).Length;
 
         if (length <= 140) //3x35
         {
-            replacement = Swift.Wrap35(value);
+            replacement = SwiftTranslit.Wrap35(value);
             text = Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
 
             return (text, length);
         }
 
-        replacement = Swift.Wrap35(value[..140]);
+        replacement = SwiftTranslit.Wrap35(value[..140]);
         length = 140; // replacement.ReplaceLineEndings(string.Empty).Length;
         text = Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
 
         if (text.Contains("/NZP/", StringComparison.Ordinal))
         {
             pattern = @"(?<=^:72:(|(.|\n)*?\n)/NZP/)" + SETVALUE + @"(?=\r?\n(/DAS/|/RPO/|/RPP/|/UIP/|:\d{2}\w?:|-}))";
-            replacement = Swift.Wrap35(value[140..]).Replace("\n", "\n//");
+            replacement = SwiftTranslit.Wrap35(value[140..]).Replace("\n", "\n//");
         }
         else
         {
             pattern = @"(?<=^:72:(.|\n)*?)" + SETVALUE + @"(?=\r?\n(:\d{2}\w?:|-}))";
-            replacement = Swift.Wrap35("/NZP/" + value[140..]).Replace("\n", "\n//") + "\n";
+            replacement = SwiftTranslit.Wrap35("/NZP/" + value[140..]).Replace("\n", "\n//") + "\n";
         }
 
         length += replacement.ReplaceLineEndings(string.Empty).Length;

@@ -1,10 +1,10 @@
 {
   "configProperties": {
     "Open.Dir": "G:/BANK/TEST/OUT",
-    "Open.Mask": "ural_*.txt",
+    "Open.Mask": "*.xml",
     "Save.Dir": "G:/BANK/TEST/CLI",
     "Save.Mask": "*_.txt",
-    "Bank.Account": "30109810800010001378",
+    "Bank.Account": "30101810600000000702",
     "Bank.INN": "7831001422",
     "Bank.KPP": "784101001",
     "Bank.PayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
