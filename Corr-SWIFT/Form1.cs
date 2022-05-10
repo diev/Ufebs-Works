@@ -28,8 +28,6 @@ public partial class Form1 : Form
     private const int MAX_NAME = 3 * 35;
     private const int MAX_PURPOSE = 210;
 
-    private bool _isSwift50Valid = false;
-    private bool _isSwift72Valid = false;
     private bool _isNameValid = false;
     private bool _isPurposeValid = false;
 
@@ -47,7 +45,7 @@ public partial class Form1 : Form
 
     private static void About()
     {
-        string config = Path.ChangeExtension(Application.ExecutablePath, "runtime.json");
+        string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
         string text =
             $@"Программа дооформления документов из УФЭБС в SWIFT.
 
@@ -72,7 +70,7 @@ public partial class Form1 : Form
             (int)(w * 0.1), (int)(h * 0.15),
             (int)(w * 0.8), (int)(h * 0.75));
 
-        // runtimeconfig.template.json > App.runtime.json
+        // runtimeconfig.template.json > App.runtimeconfig.json
 
         // exe G:\BANK\TEST\OUT\r*.xml G:\BANK\TEST\CLI\*_.txt
 
@@ -82,13 +80,13 @@ public partial class Form1 : Form
         if (argc > 0) // 1:Input
         {
             string arg = Path.GetFullPath(args[1]);
-            ConfigProperties.OpenDir = Path.GetDirectoryName(arg);
+            ConfigProperties.OpenDir = Path.GetDirectoryName(arg) ?? @"C:\";
             ConfigProperties.OpenMask = Path.GetFileName(arg);
 
             if (argc > 1) // 2:Output
             {
                 arg = Path.GetFullPath(args[2]);
-                ConfigProperties.SaveDir = Path.GetDirectoryName(arg);
+                ConfigProperties.SaveDir = Path.GetDirectoryName(arg) ?? @"C:\";
                 ConfigProperties.SaveMask = Path.GetFileName(arg);
             }
         }
@@ -102,25 +100,25 @@ public partial class Form1 : Form
 
         if (string.IsNullOrEmpty(ConfigProperties.OpenDir) || !Directory.Exists(ConfigProperties.OpenDir))
         {
-            err.AppendLine($"Папка Open.Dir не существует!");
+            err.AppendLine($"Папка OpenDir не существует!");
             //ConfigProperties.OpenDir = Directory.GetCurrentDirectory();
         }
 
         if (string.IsNullOrEmpty(ConfigProperties.OpenMask))
         {
-            err.AppendLine($"Маска Open.Mask не указана!");
+            err.AppendLine($"Маска OpenMask не указана!");
             //ConfigProperties.OpenMask = "r*.xml";
         }
 
         if (string.IsNullOrEmpty(ConfigProperties.SaveDir) || !Directory.Exists(ConfigProperties.SaveDir))
         {
-            err.AppendLine($"Папка Save.Dir не существует!");
+            err.AppendLine($"Папка SaveDir не существует!");
             //ConfigProperties.SaveDir = ConfigProperties.OpenDir;
         }
 
         if (string.IsNullOrEmpty(ConfigProperties.SaveMask))
         {
-            err.AppendLine($"Маска Save.Mask не указана!");
+            err.AppendLine($"Маска SaveMask не указана!");
             //ConfigProperties.SaveMask = "*_.txt";
         }
 
@@ -183,6 +181,7 @@ public partial class Form1 : Form
     private bool LoadFile(string path)
     {
         _saved = false;
+        SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
 
         string text = File.ReadAllText(path, Encoding.ASCII);
         string filename = Path.GetFileNameWithoutExtension(path);
@@ -213,9 +212,9 @@ public partial class Form1 : Form
 
         Tabs.SelectedIndex = Tabs.TabCount - 1;
 
-        var acc = _swift.Acc;
+        var acc = _swift.Account;
         var inn = _swift.INN;
-        var kpp = _swift.KPP;
+        //var kpp = _swift.KPP;
         var name = _swift.Name;
 
         bool bank = inn == ConfigProperties.BankINN; // "7831001422";
@@ -230,7 +229,7 @@ public partial class Form1 : Form
 
         _isNameValid = name2.Length <= MAX_NAME;
 
-        _swift.Acc = acc2;
+        _swift.Account = acc2;
         _swift.Name = name2;
 
         string purpose = _swift.Purpose;
@@ -272,8 +271,6 @@ public partial class Form1 : Form
     private void GoForward()
     {
         while (
-            _isSwift50Valid &&
-            _isSwift72Valid &&
             _isNameValid &&
             _isPurposeValid &&
             FilesListBox.SelectedIndex < FilesListBox.Items.Count)
@@ -301,7 +298,7 @@ public partial class Form1 : Form
 
         if (FilesListBox.SelectedIndex > 0)
         {
-            FilesListBox.SelectedIndex--;
+            FilesListBox.SelectedIndex--; //TODO почему не срабатывает событие смены?
         }
     }
 
@@ -310,7 +307,17 @@ public partial class Form1 : Form
         if (_saveFileName != null)
         {
             File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
-            _saved = true;
+            _saved = File.Exists(_saveFileName);
+            SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
+
+            var item = FilesListBox.SelectedItem.ToString();
+
+            if (!item.Contains(" > "))
+            {
+                item += " > " + _saveFileName;
+                //FilesListBox.SelectedItem = item; // not work
+                FilesListBox.Items[FilesListBox.SelectedIndex] = item;
+            }
         }
     }
     private void PrintPage(PrintPageEventArgs e)
@@ -373,15 +380,6 @@ public partial class Form1 : Form
             PurposeTextBox.Text = _swift.Purpose;
         }
 
-        _isSwift50Valid = _swift.NameLength <= MAX_NAME; //TODO ошибка если нет строки ИНН
-        _isSwift72Valid = _swift.PurposeLength <= MAX_PURPOSE;
-        
-        Swift50Value.Text = $"{_swift.NameLength}/{MAX_NAME}";
-        Swift50Value.ForeColor = _isSwift50Valid ? ForeColor : Color.Red;
-
-        Swift72Value.Text = $"{_swift.PurposeLength}/{MAX_PURPOSE}";
-        Swift72Value.ForeColor = _isSwift72Valid ? ForeColor : Color.Red;
-
         CheckNextEnabled();
     }
 
@@ -439,8 +437,6 @@ public partial class Form1 : Form
         PrevButton.Enabled = enabled;
 
         enabled = 
-            _isSwift50Valid && 
-            _isSwift72Valid &&
             _isNameValid &&
             _isPurposeValid &&
             FilesListBox.SelectedIndex < FilesListBox.Items.Count;
@@ -491,6 +487,7 @@ public partial class Form1 : Form
         //FilesListBox.Items[FilesListBox.SelectedIndex] = _saveFileName;
         //FilesListBox.SelectedItem = _saveFileName;
         _saved = true;
+        SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
     }
 
     private void FontDialog_Apply(object sender, EventArgs e)
@@ -643,26 +640,6 @@ public partial class Form1 : Form
     {
         WrapMenuItem.Checked = !WrapMenuItem.Checked;
         OutTextBox.WordWrap = WrapMenuItem.Checked;
-    }
-
-    private void OutTextBox_KeyDown(object sender, KeyEventArgs e)
-    {
-        int i = OutTextBox.SelectionStart;
-        int r = OutTextBox.GetLineFromCharIndex(i) + 1;
-        int c = OutTextBox.GetFirstCharIndexFromLine(r) + 1;
-
-        RowValue.Text = r.ToString();
-        ColValue.Text = c.ToString();
-    }
-
-    private void OutTextBox_MouseDown(object sender, MouseEventArgs e)
-    {
-        int i = OutTextBox.SelectionStart;
-        int r = OutTextBox.GetLineFromCharIndex(i) + 1;
-        int c = OutTextBox.GetFirstCharIndexFromLine(r) + 1;
-
-        RowValue.Text = r.ToString();
-        ColValue.Text = c.ToString();
     }
 
     private void PrintDocument_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)

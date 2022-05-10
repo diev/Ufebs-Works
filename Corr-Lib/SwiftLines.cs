@@ -37,7 +37,7 @@ public class SwiftLines
     /// <summary>
     /// Счет плательщика / корсчет Банка
     /// </summary>
-    public string Acc { get; set; } = string.Empty;
+    public string Account { get; set; } = string.Empty;
 
     /// <summary>
     /// ИНН плательщика
@@ -55,19 +55,9 @@ public class SwiftLines
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Длина наименования плательщика на транслите
-    /// </summary>
-    public int NameLength { get; set; } = 0;
-
-    /// <summary>
     /// Назначение платежа
     /// </summary>
     public string Purpose { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Длина назначения платежа на транслите
-    /// </summary>
-    public int PurposeLength { get; set; } = 0;
 
     /// <summary>
     /// Массив строк документа
@@ -157,7 +147,7 @@ public class SwiftLines
                         if (line.StartsWith(":50K:/"))
                         {
                             // Счет плательщика
-                            Acc = line[6..]; // После ":50K:/"
+                            Account = line[6..]; // После ":50K:/"
                         }
                         break;
 
@@ -249,10 +239,6 @@ public class SwiftLines
             }
         }
 
-        // Длина символьных строк на латинице формата SWIFT
-        NameLength = Name.Length; //TODO ошибка если нет строки ИНН
-        PurposeLength = Purpose.Length;
-
         if (Translit)
         {
             // Перевод на кирилицу
@@ -301,7 +287,7 @@ public class SwiftLines
                             list.Add("//" + textPurpose);
                         }
                     }
-                    else
+                    else if (textPurpose.Length > 0)
                     {
                         // Продолжение влезает на одну строку
                         list.Add("/NZP/" + textPurpose);
@@ -318,7 +304,7 @@ public class SwiftLines
                 {
                     case ":50K:":
                         // Строка счета
-                        list.Add(":50K:/" + Acc);
+                        list.Add(":50K:/" + Account);
 
                         // Строка ИНН и КПП, если они есть
                         if (INN.Length > 0)
@@ -377,6 +363,8 @@ public class SwiftLines
                         {
                             // Первая строка
                             list.Add(":70:" + textPurpose[..35]);
+
+                            // Остаток за вычетом первой строки
                             textPurpose = textPurpose[35..];
 
                             // Следующие три строки
@@ -386,12 +374,16 @@ public class SwiftLines
                                 {
                                     // Продолжение на новую строку
                                     list.Add(textPurpose[..35]);
+
+                                    // Остаток за вычетом очередной строки
                                     textPurpose = textPurpose[35..];
                                 }
                                 else
                                 {
                                     // Остаток текста
                                     list.Add(textPurpose);
+
+                                    // Обнуление остатка
                                     textPurpose = string.Empty;
                                     break;
                                 }

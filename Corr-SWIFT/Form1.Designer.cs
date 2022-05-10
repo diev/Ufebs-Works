@@ -30,15 +30,8 @@ partial class Form1
     {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.StatusBar = new System.Windows.Forms.StatusStrip();
-            this.Swift50Label = new System.Windows.Forms.ToolStripStatusLabel();
-            this.Swift50Value = new System.Windows.Forms.ToolStripStatusLabel();
-            this.Swift72Label = new System.Windows.Forms.ToolStripStatusLabel();
-            this.Swift72Value = new System.Windows.Forms.ToolStripStatusLabel();
             this.TaxValue = new System.Windows.Forms.ToolStripStatusLabel();
-            this.RowLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.RowValue = new System.Windows.Forms.ToolStripStatusLabel();
-            this.ColLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.ColValue = new System.Windows.Forms.ToolStripStatusLabel();
+            this.SavedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.DoneLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.DoneValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.ProgressBar = new System.Windows.Forms.ToolStripProgressBar();
@@ -118,15 +111,8 @@ partial class Form1
             // StatusBar
             // 
             this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Swift50Label,
-            this.Swift50Value,
-            this.Swift72Label,
-            this.Swift72Value,
             this.TaxValue,
-            this.RowLabel,
-            this.RowValue,
-            this.ColLabel,
-            this.ColValue,
+            this.SavedLabel,
             this.DoneLabel,
             this.DoneValue,
             this.ProgressBar});
@@ -136,32 +122,6 @@ partial class Form1
             this.StatusBar.TabIndex = 0;
             this.StatusBar.Text = "statusStrip1";
             // 
-            // Swift50Label
-            // 
-            this.Swift50Label.Name = "Swift50Label";
-            this.Swift50Label.Size = new System.Drawing.Size(64, 21);
-            this.Swift50Label.Text = "SWIFT 50K:";
-            // 
-            // Swift50Value
-            // 
-            this.Swift50Value.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.Swift50Value.Name = "Swift50Value";
-            this.Swift50Value.Size = new System.Drawing.Size(17, 21);
-            this.Swift50Value.Text = "0";
-            // 
-            // Swift72Label
-            // 
-            this.Swift72Label.Name = "Swift72Label";
-            this.Swift72Label.Size = new System.Drawing.Size(72, 21);
-            this.Swift72Label.Text = "SWIFT 70,72:";
-            // 
-            // Swift72Value
-            // 
-            this.Swift72Value.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.Swift72Value.Name = "Swift72Value";
-            this.Swift72Value.Size = new System.Drawing.Size(17, 21);
-            this.Swift72Value.Text = "0";
-            // 
             // TaxValue
             // 
             this.TaxValue.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
@@ -169,34 +129,16 @@ partial class Form1
             this.TaxValue.Size = new System.Drawing.Size(53, 21);
             this.TaxValue.Text = "Платеж";
             // 
-            // RowLabel
+            // SavedLabel
             // 
-            this.RowLabel.Name = "RowLabel";
-            this.RowLabel.Size = new System.Drawing.Size(46, 21);
-            this.RowLabel.Text = "Строка";
-            // 
-            // RowValue
-            // 
-            this.RowValue.Name = "RowValue";
-            this.RowValue.Size = new System.Drawing.Size(13, 21);
-            this.RowValue.Text = "0";
-            // 
-            // ColLabel
-            // 
-            this.ColLabel.Name = "ColLabel";
-            this.ColLabel.Size = new System.Drawing.Size(54, 21);
-            this.ColLabel.Text = "Столбец";
-            // 
-            // ColValue
-            // 
-            this.ColValue.Name = "ColValue";
-            this.ColValue.Size = new System.Drawing.Size(13, 21);
-            this.ColValue.Text = "0";
+            this.SavedLabel.Name = "SavedLabel";
+            this.SavedLabel.Size = new System.Drawing.Size(77, 21);
+            this.SavedLabel.Text = "Не сохранен";
             // 
             // DoneLabel
             // 
             this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(437, 21);
+            this.DoneLabel.Size = new System.Drawing.Size(625, 21);
             this.DoneLabel.Spring = true;
             this.DoneLabel.Text = "Сделано:";
             this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -653,14 +595,12 @@ partial class Form1
             this.OutTextBox.TabIndex = 2;
             this.OutTextBox.WordWrap = false;
             this.OutTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
-            this.OutTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OutTextBox_KeyDown);
-            this.OutTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutTextBox_MouseDown);
             // 
             // PrevButton
             // 
             this.PrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.PrevButton.Enabled = false;
-            this.PrevButton.Location = new System.Drawing.Point(112, 361);
+            this.PrevButton.Location = new System.Drawing.Point(114, 361);
             this.PrevButton.Name = "PrevButton";
             this.PrevButton.Size = new System.Drawing.Size(75, 23);
             this.PrevButton.TabIndex = 3;
@@ -672,7 +612,7 @@ partial class Form1
             // 
             this.ForwardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ForwardButton.Enabled = false;
-            this.ForwardButton.Location = new System.Drawing.Point(270, 361);
+            this.ForwardButton.Location = new System.Drawing.Point(272, 361);
             this.ForwardButton.Name = "ForwardButton";
             this.ForwardButton.Size = new System.Drawing.Size(34, 23);
             this.ForwardButton.TabIndex = 5;
@@ -684,7 +624,7 @@ partial class Form1
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.NextButton.Enabled = false;
-            this.NextButton.Location = new System.Drawing.Point(193, 361);
+            this.NextButton.Location = new System.Drawing.Point(195, 361);
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(75, 23);
             this.NextButton.TabIndex = 4;
@@ -720,7 +660,7 @@ partial class Form1
             this.PurposeTextBox.Multiline = true;
             this.PurposeTextBox.Name = "PurposeTextBox";
             this.PurposeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.PurposeTextBox.Size = new System.Drawing.Size(304, 138);
+            this.PurposeTextBox.Size = new System.Drawing.Size(306, 138);
             this.PurposeTextBox.TabIndex = 1;
             this.PurposeTextBox.TextChanged += new System.EventHandler(this.PurposeTextBox_TextChanged);
             // 
@@ -733,7 +673,7 @@ partial class Form1
             this.NameTextBox.Multiline = true;
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.NameTextBox.Size = new System.Drawing.Size(304, 154);
+            this.NameTextBox.Size = new System.Drawing.Size(306, 154);
             this.NameTextBox.TabIndex = 0;
             this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
             // 
@@ -852,7 +792,6 @@ partial class Form1
     private TextBox SwiftTextBox;
     private TabPage OutPage;
     private TextBox OutTextBox;
-    private ToolStripStatusLabel Swift50Label;
     private TextBox PurposeTextBox;
     private TextBox NameTextBox;
     private ToolStripMenuItem FontMenuItem;
@@ -865,7 +804,6 @@ partial class Form1
     private TabPage FilesPage;
     private ListBox FilesListBox;
     private ToolStripProgressBar ProgressBar;
-    private ToolStripStatusLabel Swift72Label;
     private ToolStripStatusLabel DoneLabel;
     private Button PrevButton;
     private CheckBox OutEditCheck;
@@ -901,15 +839,10 @@ partial class Form1
     private ToolStripMenuItem ChangeMenuItem;
     private ToolStripSeparator toolStripSeparator6;
     private ToolStripStatusLabel DoneValue;
-    private ToolStripStatusLabel RowLabel;
-    private ToolStripStatusLabel RowValue;
-    private ToolStripStatusLabel ColLabel;
-    private ToolStripStatusLabel ColValue;
-    private ToolStripStatusLabel Swift50Value;
-    private ToolStripStatusLabel Swift72Value;
     private ToolStripMenuItem WrapMenuItem;
     private PrintPreviewDialog PrintPreviewDialog;
     private System.Drawing.Printing.PrintDocument PrintDocument;
     private PrintDialog PrintDialog;
     private System.Diagnostics.Process process1;
+    private ToolStripStatusLabel SavedLabel;
 }
