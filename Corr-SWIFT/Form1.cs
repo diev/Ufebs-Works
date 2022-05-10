@@ -49,7 +49,7 @@ public partial class Form1 : Form
         string text =
             $@"Программа дооформления документов из УФЭБС в SWIFT.
 
-Версия {Application.ProductVersion}
+Версия {Application.ProductVersion} (2022-05-10)
 
 Задайте параметры в меню Файл\Параметры...
 Сохраняются они в файле

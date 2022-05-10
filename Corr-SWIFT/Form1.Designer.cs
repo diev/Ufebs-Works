@@ -138,7 +138,7 @@ partial class Form1
             // DoneLabel
             // 
             this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(625, 21);
+            this.DoneLabel.Size = new System.Drawing.Size(656, 21);
             this.DoneLabel.Spring = true;
             this.DoneLabel.Text = "Сделано:";
             this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -191,13 +191,13 @@ partial class Form1
             // 
             // NewFileMenuItem
             // 
-            this.NewFileMenuItem.Enabled = false;
             this.NewFileMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("NewFileMenuItem.Image")));
             this.NewFileMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.NewFileMenuItem.Name = "NewFileMenuItem";
             this.NewFileMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.NewFileMenuItem.Size = new System.Drawing.Size(242, 22);
             this.NewFileMenuItem.Text = "&Создать";
+            this.NewFileMenuItem.Visible = false;
             this.NewFileMenuItem.Click += new System.EventHandler(this.NewFileMenuItem_Click);
             // 
             // OpenFileMenuItem
@@ -309,6 +309,7 @@ partial class Form1
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator6.Visible = false;
             // 
             // UndoMenuItem
             // 
@@ -316,6 +317,7 @@ partial class Form1
             this.UndoMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.UndoMenuItem.Size = new System.Drawing.Size(184, 22);
             this.UndoMenuItem.Text = "&Отменить";
+            this.UndoMenuItem.Visible = false;
             this.UndoMenuItem.Click += new System.EventHandler(this.UndoMenuItem_Click);
             // 
             // RedoMenuItem
@@ -331,6 +333,7 @@ partial class Form1
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator4.Visible = false;
             // 
             // CutMenuItem
             // 
@@ -340,6 +343,7 @@ partial class Form1
             this.CutMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.CutMenuItem.Size = new System.Drawing.Size(184, 22);
             this.CutMenuItem.Text = "В&ырезать";
+            this.CutMenuItem.Visible = false;
             this.CutMenuItem.Click += new System.EventHandler(this.CutMenuItem_Click);
             // 
             // CopyMenuItem
@@ -350,6 +354,7 @@ partial class Form1
             this.CopyMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.CopyMenuItem.Size = new System.Drawing.Size(184, 22);
             this.CopyMenuItem.Text = "&Копировать";
+            this.CopyMenuItem.Visible = false;
             this.CopyMenuItem.Click += new System.EventHandler(this.CopyMenuItem_Click);
             // 
             // PasteMenuItem
@@ -360,12 +365,14 @@ partial class Form1
             this.PasteMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.PasteMenuItem.Size = new System.Drawing.Size(184, 22);
             this.PasteMenuItem.Text = "&Вставить";
+            this.PasteMenuItem.Visible = false;
             this.PasteMenuItem.Click += new System.EventHandler(this.PasteMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(181, 6);
+            this.toolStripSeparator5.Visible = false;
             // 
             // SelectAllMenuItem
             // 
@@ -373,6 +380,7 @@ partial class Form1
             this.SelectAllMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
             this.SelectAllMenuItem.Size = new System.Drawing.Size(184, 22);
             this.SelectAllMenuItem.Text = "Выбрать &все";
+            this.SelectAllMenuItem.Visible = false;
             this.SelectAllMenuItem.Click += new System.EventHandler(this.SelectAllMenuItem_Click);
             // 
             // GoMenu
@@ -600,7 +608,7 @@ partial class Form1
             // 
             this.PrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.PrevButton.Enabled = false;
-            this.PrevButton.Location = new System.Drawing.Point(114, 361);
+            this.PrevButton.Location = new System.Drawing.Point(115, 361);
             this.PrevButton.Name = "PrevButton";
             this.PrevButton.Size = new System.Drawing.Size(75, 23);
             this.PrevButton.TabIndex = 3;
@@ -612,7 +620,7 @@ partial class Form1
             // 
             this.ForwardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ForwardButton.Enabled = false;
-            this.ForwardButton.Location = new System.Drawing.Point(272, 361);
+            this.ForwardButton.Location = new System.Drawing.Point(273, 361);
             this.ForwardButton.Name = "ForwardButton";
             this.ForwardButton.Size = new System.Drawing.Size(34, 23);
             this.ForwardButton.TabIndex = 5;
@@ -624,7 +632,7 @@ partial class Form1
             // 
             this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.NextButton.Enabled = false;
-            this.NextButton.Location = new System.Drawing.Point(195, 361);
+            this.NextButton.Location = new System.Drawing.Point(196, 361);
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(75, 23);
             this.NextButton.TabIndex = 4;
@@ -660,7 +668,7 @@ partial class Form1
             this.PurposeTextBox.Multiline = true;
             this.PurposeTextBox.Name = "PurposeTextBox";
             this.PurposeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.PurposeTextBox.Size = new System.Drawing.Size(306, 138);
+            this.PurposeTextBox.Size = new System.Drawing.Size(307, 138);
             this.PurposeTextBox.TabIndex = 1;
             this.PurposeTextBox.TextChanged += new System.EventHandler(this.PurposeTextBox_TextChanged);
             // 
@@ -673,7 +681,7 @@ partial class Form1
             this.NameTextBox.Multiline = true;
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.NameTextBox.Size = new System.Drawing.Size(306, 154);
+            this.NameTextBox.Size = new System.Drawing.Size(307, 154);
             this.NameTextBox.TabIndex = 0;
             this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
             // 
