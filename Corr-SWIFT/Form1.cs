@@ -25,7 +25,9 @@ namespace CorrSWIFT;
 
 public partial class Form1 : Form
 {
-    private const int MAX_NAME = 3 * 35;
+    private const string VersionDate = "2022-05-11";
+
+    // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) или 160 (УФЭБС)?
     private const int MAX_PURPOSE = 210;
 
     private bool _isNameValid = false;
@@ -35,30 +37,13 @@ public partial class Form1 : Form
     private string? _saveFileName;
     private string _saveMaskName = "*";
 
-    private SwiftLines? _swift;
+    private SwiftLines _swift = new();
 
+    #region Init
     public Form1()
     {
         InitializeComponent();
         InitForm();
-    }
-
-    private static void About()
-    {
-        string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
-        string text =
-            $@"Программа дооформления документов из УФЭБС в SWIFT.
-
-Версия {Application.ProductVersion} (2022-05-10)
-
-Задайте параметры в меню Файл\Параметры...
-Сохраняются они в файле
-{config}
-
-Также пути можно переопределить в командной строке:
-    Input\[*.xml] [Output\[*_.txt]]";
-
-        MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void InitForm()
@@ -176,291 +161,34 @@ public partial class Form1 : Form
         {
             FilesListBox.SelectedIndex = 0;
         }
-    }
 
-    private bool LoadFile(string path)
-    {
-        _saved = false;
-        SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
+        var saved = Directory.GetFiles(ConfigProperties.SaveDir, ConfigProperties.SaveMask);
 
-        string text = File.ReadAllText(path, Encoding.ASCII);
-        string filename = Path.GetFileNameWithoutExtension(path);
-        string ext = Path.GetExtension(path);
-
-        SaveAsFileDialog.FileName = _saveMaskName.Replace("*", filename);
-        _saveFileName = Path.Combine(SaveAsFileDialog.InitialDirectory, SaveAsFileDialog.FileName);
-
-        Text = $"{Application.ProductName} | {path} > {_saveFileName}";
-
-        if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
+        if (saved.Length > 0)
         {
-            XmlTextBox.Text = text;
-            text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
-        }
-        else
-        {
-            XmlTextBox.Text = "No XML file";
-        }
-
-        SwiftTextBox.Text = text;
-        _swift = new SwiftLines(SwiftTextBox.Lines);
-
-        if (text is null)
-        {
-            SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
-        }
-
-        Tabs.SelectedIndex = Tabs.TabCount - 1;
-
-        var acc = _swift.Account;
-        var inn = _swift.INN;
-        //var kpp = _swift.KPP;
-        var name = _swift.Name;
-
-        bool bank = inn == ConfigProperties.BankINN; // "7831001422";
-        string acc2 = ConfigProperties.BankAccount; // "30109810800010001378";
-
-        // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        string name2 = bank
-            ? name
-            : ConfigProperties.BankPayerTemplate
-            .Replace("{name}", name)
-            .Replace("{acc}", acc);
-
-        _isNameValid = name2.Length <= MAX_NAME;
-
-        _swift.Account = acc2;
-        _swift.Name = name2;
-
-        string purpose = _swift.Purpose;
-
-        if (!bank && _swift.Tax)
-        {
-            // $"//7831001422//784101001//{name}//{purpose}";
-            purpose = ConfigProperties.BankPurposeTemplate
-                .Replace("{name}", name)
-                .Replace("{purpose}", purpose);
-
-            _swift.Purpose = purpose;
-        }
-
-        OutTextBox.Lines = _swift.Lines;
-        NameTextBox.Text = name2;
-        PurposeTextBox.Text = purpose;
-
-        TaxValue.Text = _swift.Tax ? "Бюджет" : "Платеж";
-
-        return CheckNextEnabled();
-    }
-
-    private void GoNext()
-    {
-        SaveFile();
-
-        if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
-        {
-            FilesListBox.SelectedIndex++;
-        }
-        else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-        {
-            Close();
-        }
-    }
-
-    private void GoForward()
-    {
-        while (
-            _isNameValid &&
-            _isPurposeValid &&
-            FilesListBox.SelectedIndex < FilesListBox.Items.Count)
-        {
-            GoNext();
-        }
-    }
-
-    private void GoPrev()
-    {
-        if (!_saved)
-        {
-            var reply = MessageBox.Show($"Сохранить файл\n{_saveFileName}\nперед шагом назад?",
-                Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
+            var reply = MessageBox.Show($"В выходной директории\n{ConfigProperties.SaveDir}\nуже есть {saved.Length} файлов {ConfigProperties.SaveMask}.\n\nОни будут перезаписаны при сохранениях!\nУдалить их?",
+                Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
             if (reply == DialogResult.Yes)
             {
-                SaveFile();
-            }
-            else if (reply == DialogResult.Cancel)
-            {
-                return;
-            }
-        }
-
-        if (FilesListBox.SelectedIndex > 0)
-        {
-            FilesListBox.SelectedIndex--; //TODO почему не срабатывает событие смены?
-        }
-    }
-
-    private void SaveFile(string? text = null)
-    {
-        if (_saveFileName != null)
-        {
-            File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
-            _saved = File.Exists(_saveFileName);
-            SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
-
-            var item = FilesListBox.SelectedItem.ToString();
-
-            if (!item.Contains(" > "))
-            {
-                item += " > " + _saveFileName;
-                //FilesListBox.SelectedItem = item; // not work
-                FilesListBox.Items[FilesListBox.SelectedIndex] = item;
+                foreach (var file in saved)
+                {
+                    File.Delete(file);
+                }
             }
         }
     }
-    private void PrintPage(PrintPageEventArgs e)
-    {
-        string documentContents = OutTextBox.Text;
-        string stringToPrint = documentContents;
+    #endregion Init
 
-        // Sets the value of charactersOnPage to the number of characters
-        // of stringToPrint that will fit within the bounds of the page.
-        e.Graphics.MeasureString(stringToPrint, this.Font,
-            e.MarginBounds.Size, StringFormat.GenericTypographic,
-            out int charactersOnPage, out int linesPerPage);
-
-        // Draws the string within the bounds of the page.
-        e.Graphics.DrawString(stringToPrint, this.Font, Brushes.Black,
-        e.MarginBounds, StringFormat.GenericTypographic);
-
-        // Remove the portion of the string that has been printed.
-        stringToPrint = stringToPrint.Substring(charactersOnPage);
-
-        // Check to see if more pages are to be printed.
-        e.HasMorePages = (stringToPrint.Length > 0);
-
-        // If there are no more pages, reset the string to be printed.
-        if (!e.HasMorePages)
-        {
-            stringToPrint = documentContents;
-        }
-    }
-
-    private void OpenMenuItem_Click(object sender, EventArgs e)
-    {
-        OpenFileDialog.ShowDialog();
-    }
-
-    private void ExitMenuItem_Click(object sender, EventArgs e)
-    {
-        Close();
-    }
-
-    private void SaveAsMenuItem_Click(object sender, EventArgs e)
-    {
-        SaveAsFileDialog.ShowDialog();
-    }
-
-    private void FontMenuItem_Click(object sender, EventArgs e)
-    {
-        FontDialog.Font = OutTextBox.Font;
-        FontDialog.ShowDialog();
-    }
-
-    private void OutTextBox_TextChanged(object sender, EventArgs e)
-    {
-        if (OutTextBox.Focused && OutEditCheck.Checked)
-        {
-            _swift.Lines = OutTextBox.Lines;
-            //OutTextBox.Lines = _swift.Lines;
-
-            NameTextBox.Text = _swift.Name;
-            PurposeTextBox.Text = _swift.Purpose;
-        }
-
-        CheckNextEnabled();
-    }
-
-    private void NameTextBox_TextChanged(object sender, EventArgs e)
-    {
-        if (NameTextBox.Focused && !OutEditCheck.Checked)
-        {
-            _swift.Name = NameTextBox.Text;
-            OutTextBox.Lines = _swift.Lines;
-        }
-
-        int length = NameTextBox.TextLength;
-        _isNameValid = length <= MAX_NAME;
-
-        NameEditLabel.Text = $"Плательщик {length}/{MAX_NAME}:";
-        NameEditLabel.ForeColor = _isNameValid ? ForeColor : Color.Red;
-
-        CheckNextEnabled();
-    }
-
-    private void PurposeTextBox_TextChanged(object sender, EventArgs e)
-    {
-        if (PurposeTextBox.Focused && !OutEditCheck.Checked)
-        {
-            _swift.Purpose = PurposeTextBox.Text;
-            OutTextBox.Lines = _swift.Lines;
-        }
-
-        int length = PurposeTextBox.TextLength;
-        _isPurposeValid = length <= MAX_PURPOSE;
-
-        PurposeEditLabel.Text = $"Назначение {length}/{MAX_PURPOSE}:";
-        PurposeEditLabel.ForeColor = _isPurposeValid ? ForeColor : Color.Red;
-
-        CheckNextEnabled();
-    }
-
-    private void SaveMenuItem_Click(object sender, EventArgs e)
-    {
-        SaveFile();
-    }
-
-    private void OpenFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+    #region Dialogs
+    private void OpenFilesOK()
     {
         FilesListBox.Items.Clear();
         FilesListBox.Items.AddRange(OpenFileDialog.FileNames);
         FilesListBox.SelectedIndex = 0;
     }
 
-    private bool CheckNextEnabled()
-    {
-        bool enabled = FilesListBox.SelectedIndex > 0;
-
-        PrevMenuItem.Enabled = enabled;
-        PrevButton.Enabled = enabled;
-
-        enabled = 
-            _isNameValid &&
-            _isPurposeValid &&
-            FilesListBox.SelectedIndex < FilesListBox.Items.Count;
-
-        NextMenuItem.Enabled = enabled;
-        ForwardMenuItem.Enabled = enabled;
-
-        NextButton.Enabled = enabled;
-        ForwardButton.Enabled = enabled;
-
-        return enabled;
-    }
-
-    private void NextButton_Click(object sender, EventArgs e)
-    {
-        GoNext();
-    }
-
-    private void ForwardButton_Click(object sender, EventArgs e)
-    {
-        GoForward();
-    }
-
-    private void SaveAsFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+    private void SaveFileOK()
     {
         _saveFileName = SaveAsFileDialog.FileName;
 
@@ -490,9 +218,9 @@ public partial class Form1 : Form
         SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
     }
 
-    private void FontDialog_Apply(object sender, EventArgs e)
+    private void FontOK()
     {
-        var font = ((FontDialog)sender).Font;
+        var font = FontDialog.Font;
 
         FilesListBox.Font = font;
         XmlTextBox.Font = font;
@@ -501,12 +229,238 @@ public partial class Form1 : Form
         NameTextBox.Font = font;
         PurposeTextBox.Font = font;
     }
+    #endregion Dialogs
 
-    private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+    #region Actions
+    private void FileSelected()
+    {
+        var list = FilesListBox;
+        var selected = list.SelectedItem;
+
+        if (selected is null)
+        {
+            return;
+        }
+
+        string? file = list.SelectedItem.ToString();
+
+        if (file is null)
+        {
+            return;
+        }
+
+        if (file.Contains('>'))
+        {
+            file = file.Split('>')[0].Trim();
+        }
+
+        if (File.Exists(file))
+        {
+            LoadFile(file);
+
+            int index = list.SelectedIndex + 1;
+            int total = list.Items.Count;
+
+            ProgressBar.Value = index;
+            ProgressBar.Maximum = total;
+
+            string s = $"{index}/{total}";
+            DoneValue.Text = s;
+
+            FilesPage.Text = $"Файлы {s}";
+        }
+    }
+
+    private bool LoadFile(string path)
+    {
+        string text = File.ReadAllText(path, Encoding.ASCII);
+        string filename = Path.GetFileNameWithoutExtension(path);
+        string ext = Path.GetExtension(path);
+
+        SaveAsFileDialog.FileName = _saveMaskName.Replace("*", filename);
+        _saveFileName = Path.Combine(SaveAsFileDialog.InitialDirectory, SaveAsFileDialog.FileName);
+        MarkSaved();
+
+        // Заголовок окна
+
+        Text = $"{Application.ProductName} | {path}";
+
+        // Исходный текст XML
+
+        if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
+        {
+            XmlTextBox.Text = text;
+            text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
+        }
+        else
+        {
+            XmlTextBox.Text = "No XML file";
+        }
+
+        // Исходный текст документа SWIFT
+
+        SwiftTextBox.Text = text;
+        _swift = new SwiftLines(SwiftTextBox.Lines);
+
+        if (text is null)
+        {
+            SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
+        }
+
+        // Переключаемся на последнюю закладку "К отправке"
+
+        Tabs.SelectedIndex = Tabs.TabCount - 1;
+
+        // Читаем значения из текста формата документа SWIFT-RUR
+
+        var acc = _swift.Account;
+        var inn = _swift.INN;
+        //var kpp = _swift.KPP;
+        var name = _swift.Name;
+
+        // Если ИНН плательщика наш (как в Параметрах), то это платеж от нашего Банка самого
+
+        bool bank = inn == ConfigProperties.BankINN; // "7831001422";
+
+        // Берем из Параметров номер корсчета
+
+        string acc2 = ConfigProperties.BankAccount; // "30109810800010001378";
+
+        // Подставляем новые значения плательщика в шаблон, если не Банк сам за себя
+
+        // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+        string name2 = bank
+            ? name
+            : ConfigProperties.BankPayerTemplate
+            .Replace("{name}", name)
+            .Replace("{acc}", acc);
+
+        // Длина не превышает предельную?
+
+        _isNameValid = name2.Length <= ConfigProperties.BankPayerLimit; // MAX_NAME;
+
+        // Присваиваем новые значения для генерации нового теста документа
+
+        _swift.Account = acc2;
+        _swift.Name = name2;
+
+        // Берем назначение из документа
+
+        string purpose = _swift.Purpose;
+
+        // Если не Банк сам и есть признак платежа в бюджет
+
+        if (!bank && _swift.Tax)
+        {
+            // Подставляем новые значения назначения в шаблон платежа за третье лицо
+
+            // $"//7831001422//784101001//{name}//{purpose}";
+            purpose = ConfigProperties.BankPurposeTemplate
+                .Replace("{name}", name)
+                .Replace("{purpose}", purpose);
+
+            _swift.Purpose = purpose;
+        }
+
+        // Заполняем текстбоксы
+
+        OutTextBox.Lines = _swift.Lines; // Новый текст документа SWIFT
+        NameTextBox.Text = name2; // Текст наименования плательщика
+        PurposeTextBox.Text = purpose; // Текст назначения платежа
+
+        // Пишем в статусную строку тип платежа
+
+        TaxValue.Text = _swift.Tax ? "Бюджет" : "Платеж";
+
+        // Выставляем доступность пунктов меню и кнопок
+
+        return CheckItemsEnabled();
+    }
+
+    private void SaveFile(string? text = null)
+    {
+        if (_saveFileName != null)
+        {
+            File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
+            MarkSaved();
+        }
+    }
+
+    private void MarkSaved()
+    {
+        _saved = File.Exists(_saveFileName);
+
+        SavedLabel.Text = _saved
+            ? $"Сохранен в {_saveFileName}"
+            : $"Не сохранен (в {_saveFileName})";
+
+        var item = FilesListBox.SelectedItem.ToString();
+
+        if (item != null && !item.Contains(" > "))
+        {
+            item += " > " + _saveFileName;
+            //FilesListBox.SelectedItem = item; // not work
+            FilesListBox.Items[FilesListBox.SelectedIndex] = item;
+        }
+    }
+
+    private void PrintPage(PrintPageEventArgs e)
+    {
+        string documentContents = OutTextBox.Text;
+        string stringToPrint = documentContents;
+
+        if (e.Graphics != null)
+        {
+            // Sets the value of charactersOnPage to the number of characters
+            // of stringToPrint that will fit within the bounds of the page.
+            e.Graphics.MeasureString(stringToPrint, Font,
+                e.MarginBounds.Size, StringFormat.GenericTypographic,
+                out int charactersOnPage, out int linesPerPage);
+
+            // Draws the string within the bounds of the page.
+            e.Graphics.DrawString(stringToPrint, Font, Brushes.Black,
+            e.MarginBounds, StringFormat.GenericTypographic);
+
+            // Remove the portion of the string that has been printed.
+            stringToPrint = stringToPrint[charactersOnPage..];
+
+            // Check to see if more pages are to be printed.
+            e.HasMorePages = (stringToPrint.Length > 0);
+
+            // If there are no more pages, reset the string to be printed.
+            if (!e.HasMorePages)
+            {
+                stringToPrint = documentContents;
+            }
+        }
+    }
+
+    private bool CheckItemsEnabled()
+    {
+        bool enabled = FilesListBox.SelectedIndex > 0;
+
+        PrevMenuItem.Enabled = enabled;
+        PrevButton.Enabled = enabled;
+
+        enabled =
+            _isNameValid &&
+            _isPurposeValid &&
+            FilesListBox.SelectedIndex < FilesListBox.Items.Count;
+
+        NextMenuItem.Enabled = enabled;
+        NextButton.Enabled = enabled;
+
+        ForwardMenuItem.Enabled = enabled;
+        ForwardButton.Enabled = enabled;
+
+        return enabled;
+    }
+
+    private void TryClose(ref FormClosingEventArgs e)
     {
         if (!_saved && _saveFileName != null)
         {
-            var reply = MessageBox.Show($"Сохранить файл \n{_saveFileName}\nперед выходом?", 
+            var reply = MessageBox.Show($"Сохранить файл \n{_saveFileName}\nперед выходом?",
                 Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
 
             switch (reply)
@@ -525,6 +479,210 @@ public partial class Form1 : Form
             }
         }
     }
+    private static void About()
+    {
+        string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
+        string text =
+            $@"Программа дооформления документов из УФЭБС в SWIFT.
+
+Версия {Application.ProductVersion} ({VersionDate})
+
+Задайте параметры в меню Файл\Параметры...
+Сохраняются они в файле
+{config}
+
+Также пути можно переопределить в командной строке:
+    Input\[*.xml] [Output\[*_.txt]]";
+
+        MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    #endregion Actions
+
+    #region TextEdits
+    private void OutputChanged()
+    {
+        int limit = ConfigProperties.BankPayerLimit; // MAX_NAME;
+
+        //if (OutTextBox.Focused && OutEditCheck.Checked)
+        if (ChangeMenuItem.Checked)
+        {
+            _swift.Lines = OutTextBox.Lines;
+            _swift.NameLimit = limit;
+            //OutTextBox.Lines = _swift.Lines;
+
+            NameTextBox.Text = _swift.Name;
+            PurposeTextBox.Text = _swift.Purpose;
+        }
+
+        CheckItemsEnabled();
+    }
+
+    private void NameChanged()
+    {
+        int limit = ConfigProperties.BankPayerLimit; // MAX_NAME;
+
+        //if (NameTextBox.Focused && !OutEditCheck.Checked)
+        if (!ChangeMenuItem.Checked)
+        {
+            _swift.Name = NameTextBox.Text;
+            _swift.NameLimit = limit;
+            OutTextBox.Lines = _swift.Lines;
+        }
+
+        int length = NameTextBox.TextLength;
+        _isNameValid = length <= limit;
+
+        NameEditLabel.Text = $"Плательщик {length}/{limit}:";
+        NameEditLabel.ForeColor = _isNameValid ? ForeColor : Color.Red;
+
+        CheckItemsEnabled();
+    }
+
+    private void PurposeChanged()
+    {
+        //if (PurposeTextBox.Focused && !ChangeMenuItem.Checked)
+        if (!ChangeMenuItem.Checked)
+        {
+            _swift.Purpose = PurposeTextBox.Text;
+            OutTextBox.Lines = _swift.Lines;
+        }
+
+        int length = PurposeTextBox.TextLength;
+        _isPurposeValid = length <= MAX_PURPOSE;
+
+        PurposeEditLabel.Text = $"Назначение {length}/{MAX_PURPOSE}:";
+        PurposeEditLabel.ForeColor = _isPurposeValid ? ForeColor : Color.Red;
+
+        CheckItemsEnabled();
+    }
+    #endregion TextEdits
+
+    #region Buttons
+    private void GoPrev()
+    {
+        if (!_saved)
+        {
+            var reply = MessageBox.Show($"Сохранить файл\n{_saveFileName}\nперед шагом назад?",
+                Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
+
+            if (reply == DialogResult.Yes)
+            {
+                SaveFile();
+            }
+            else if (reply == DialogResult.Cancel)
+            {
+                return;
+            }
+        }
+
+        if (FilesListBox.SelectedIndex > 0)
+        {
+            FilesListBox.SelectedIndex--; //TODO почему не срабатывает событие смены?
+        }
+    }
+
+    private void GoNext()
+    {
+        SaveFile();
+
+        if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
+        {
+            FilesListBox.SelectedIndex++;
+        }
+        else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+        {
+            Close();
+        }
+    }
+
+    private void GoForward()
+    {
+        while (
+            _isNameValid &&
+            _isPurposeValid &&
+            FilesListBox.SelectedIndex < FilesListBox.Items.Count)
+        {
+            //GoNext(); //зацикливается и не завершает программу!
+
+            SaveFile();
+
+            if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
+            {
+                FilesListBox.SelectedIndex++;
+            }
+            else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+            {
+                Close();
+                break;
+            }
+        }
+    }
+    #endregion Buttons
+
+    #region UI
+    private void OpenMenuItem_Click(object sender, EventArgs e)
+    {
+        OpenFileDialog.ShowDialog();
+    }
+
+    private void ExitMenuItem_Click(object sender, EventArgs e)
+    {
+        Close();
+    }
+
+    private void SaveAsMenuItem_Click(object sender, EventArgs e)
+    {
+        SaveAsFileDialog.ShowDialog();
+    }
+
+    private void FontMenuItem_Click(object sender, EventArgs e)
+    {
+        FontDialog.Font = OutTextBox.Font;
+        FontDialog.ShowDialog();
+    }
+
+    private void OutTextBox_TextChanged(object sender, EventArgs e)
+    {
+        OutputChanged();
+    }
+
+    private void NameTextBox_TextChanged(object sender, EventArgs e)
+    {
+        NameChanged();
+    }
+
+    private void PurposeTextBox_TextChanged(object sender, EventArgs e)
+    {
+        PurposeChanged();
+    }
+
+    private void SaveMenuItem_Click(object sender, EventArgs e)
+    {
+        SaveFile();
+    }
+
+    private void OpenFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        OpenFilesOK();
+    }
+
+    private void SaveAsFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        SaveFileOK();
+    }
+
+    private void FontDialog_Apply(object sender, EventArgs e)
+    {
+        FontOK();
+    }
+
+    private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        TryClose(ref e);
+    }
 
     private void AboutMenuItem_Click(object sender, EventArgs e)
     {
@@ -533,45 +691,12 @@ public partial class Form1 : Form
 
     private void FilesListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var list = (ListBox)sender;
-
-        if (list.SelectedItem is string file && File.Exists(file))
-        {
-            LoadFile(file);
-
-            int index = list.SelectedIndex + 1;
-            int total = list.Items.Count;
-
-            ProgressBar.Value = index;
-            ProgressBar.Maximum = total;
-
-            string s = $"{index}/{total}";
-            DoneValue.Text = s;
-
-            FilesPage.Text = $"Файлы {s}";
-        }
-    }
-
-    private void PrevButton_Click(object sender, EventArgs e)
-    {
-        GoPrev();
-    }
-
-    private void OutEditCheck_CheckedChanged(object sender, EventArgs e)
-    {
-        bool check = ((CheckBox)sender).Checked;
-
-        ChangeMenuItem.Checked = check;
-
-        OutTextBox.ReadOnly = !check;
-
-        NameTextBox.ReadOnly = check;
-        PurposeTextBox.ReadOnly = check;
+        FileSelected();
     }
 
     private void NewFileMenuItem_Click(object sender, EventArgs e)
     {
-
+        //TODO
     }
 
     private void PrintMenuItem_Click(object sender, EventArgs e)
@@ -581,7 +706,7 @@ public partial class Form1 : Form
 
     private void PrintPreviewMenuItem_Click(object sender, EventArgs e)
     {
-        PrintDocument.DocumentName = _saveFileName;
+        PrintDocument.DocumentName = _saveFileName ?? "Файл для печати";
         PrintPreviewDialog.ShowDialog();
     }
 
@@ -592,7 +717,7 @@ public partial class Form1 : Form
 
     private void RedoMenuItem_Click(object sender, EventArgs e)
     {
-        //OutTextBox.
+        //TODO
     }
 
     private void CutMenuItem_Click(object sender, EventArgs e)
@@ -654,4 +779,13 @@ public partial class Form1 : Form
 
         ReInitForm();
     }
+
+    private void ChangeMenuItem_CheckedChanged(object sender, EventArgs e)
+    {
+        bool check = ChangeMenuItem.Checked;
+        OutTextBox.ReadOnly = !check;
+        NameTextBox.ReadOnly = check;
+        PurposeTextBox.ReadOnly = check;
+    }
+    #endregion UI
 }

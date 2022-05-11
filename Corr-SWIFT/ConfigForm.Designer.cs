@@ -53,9 +53,11 @@
             this.BankINNLabel = new System.Windows.Forms.Label();
             this.BankAccountText = new System.Windows.Forms.TextBox();
             this.BankAccountLabel = new System.Windows.Forms.Label();
-            this.AcceptButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
-            this.ResetButton = new System.Windows.Forms.Button();
+            this.AcceptConfigButton = new System.Windows.Forms.Button();
+            this.CancelConfigButton = new System.Windows.Forms.Button();
+            this.ResetConfigButton = new System.Windows.Forms.Button();
+            this.BankPayerLimitText = new System.Windows.Forms.TextBox();
+            this.BankPayerLimitLabel = new System.Windows.Forms.Label();
             this.OpenBox.SuspendLayout();
             this.SaveBox.SuspendLayout();
             this.BankBox.SuspendLayout();
@@ -193,6 +195,8 @@
             // 
             // BankBox
             // 
+            this.BankBox.Controls.Add(this.BankPayerLimitText);
+            this.BankBox.Controls.Add(this.BankPayerLimitLabel);
             this.BankBox.Controls.Add(this.BankPurposeText);
             this.BankBox.Controls.Add(this.BankPurposeLabel);
             this.BankBox.Controls.Add(this.BankPayerText);
@@ -305,49 +309,68 @@
             this.BankAccountLabel.TabIndex = 0;
             this.BankAccountLabel.Text = "Счет:";
             // 
-            // AcceptButton
+            // AcceptConfigButton
             // 
-            this.AcceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AcceptButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.AcceptButton.Location = new System.Drawing.Point(408, 366);
-            this.AcceptButton.Name = "AcceptButton";
-            this.AcceptButton.Size = new System.Drawing.Size(75, 23);
-            this.AcceptButton.TabIndex = 3;
-            this.AcceptButton.Text = "Сохранить";
-            this.AcceptButton.UseVisualStyleBackColor = true;
-            this.AcceptButton.Click += new System.EventHandler(this.AcceptButton_Click);
+            this.AcceptConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AcceptConfigButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.AcceptConfigButton.Location = new System.Drawing.Point(408, 366);
+            this.AcceptConfigButton.Name = "AcceptConfigButton";
+            this.AcceptConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.AcceptConfigButton.TabIndex = 3;
+            this.AcceptConfigButton.Text = "Сохранить";
+            this.AcceptConfigButton.UseVisualStyleBackColor = true;
+            this.AcceptConfigButton.Click += new System.EventHandler(this.AcceptButton_Click);
             // 
-            // CancelButton
+            // CancelConfigButton
             // 
-            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(489, 366);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 4;
-            this.CancelButton.Text = "Отмена";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            this.CancelConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.CancelConfigButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CancelConfigButton.Location = new System.Drawing.Point(489, 366);
+            this.CancelConfigButton.Name = "CancelConfigButton";
+            this.CancelConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.CancelConfigButton.TabIndex = 4;
+            this.CancelConfigButton.Text = "Отмена";
+            this.CancelConfigButton.UseVisualStyleBackColor = true;
+            this.CancelConfigButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
-            // ResetButton
+            // ResetConfigButton
             // 
-            this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ResetButton.Location = new System.Drawing.Point(115, 366);
-            this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(75, 23);
-            this.ResetButton.TabIndex = 5;
-            this.ResetButton.Text = "Сброс";
-            this.ResetButton.UseVisualStyleBackColor = true;
-            this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+            this.ResetConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ResetConfigButton.Location = new System.Drawing.Point(115, 366);
+            this.ResetConfigButton.Name = "ResetConfigButton";
+            this.ResetConfigButton.Size = new System.Drawing.Size(75, 23);
+            this.ResetConfigButton.TabIndex = 5;
+            this.ResetConfigButton.Text = "Сброс";
+            this.ResetConfigButton.UseVisualStyleBackColor = true;
+            this.ResetConfigButton.Click += new System.EventHandler(this.ResetButton_Click);
+            // 
+            // BankPayerLimitText
+            // 
+            this.BankPayerLimitText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BankPayerLimitText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BankPayerLimitText.Location = new System.Drawing.Point(482, 77);
+            this.BankPayerLimitText.Name = "BankPayerLimitText";
+            this.BankPayerLimitText.Size = new System.Drawing.Size(73, 22);
+            this.BankPayerLimitText.TabIndex = 12;
+            // 
+            // BankPayerLimitLabel
+            // 
+            this.BankPayerLimitLabel.AutoSize = true;
+            this.BankPayerLimitLabel.Location = new System.Drawing.Point(264, 80);
+            this.BankPayerLimitLabel.Name = "BankPayerLimitLabel";
+            this.BankPayerLimitLabel.Size = new System.Drawing.Size(209, 15);
+            this.BankPayerLimitLabel.TabIndex = 11;
+            this.BankPayerLimitLabel.Text = "Предел наименования (105 или 160):";
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 399);
-            this.Controls.Add(this.ResetButton);
-            this.Controls.Add(this.CancelButton);
-            this.Controls.Add(this.AcceptButton);
+            this.Controls.Add(this.ResetConfigButton);
+            this.Controls.Add(this.CancelConfigButton);
+            this.Controls.Add(this.AcceptConfigButton);
             this.Controls.Add(this.BankBox);
             this.Controls.Add(this.SaveBox);
             this.Controls.Add(this.OpenBox);
@@ -391,8 +414,10 @@
         private Label BankINNLabel;
         private TextBox BankAccountText;
         private Label BankAccountLabel;
-        private Button AcceptButton;
-        private Button CancelButton;
-        private Button ResetButton;
+        private Button AcceptConfigButton;
+        private Button CancelConfigButton;
+        private Button ResetConfigButton;
+        private TextBox BankPayerLimitText;
+        private Label BankPayerLimitLabel;
     }
 }

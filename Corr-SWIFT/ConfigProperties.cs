@@ -84,6 +84,12 @@ internal static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(BankPurposeTemplate), value);
     }
 
+    public static int BankPayerLimit
+    {
+        get => int.Parse(AppContext.GetData(nameof(BankPayerLimit)) as string ?? "105");
+        set => AppDomain.CurrentDomain.SetData(nameof(BankPayerLimit), value.ToString());
+    }
+
     public static void Save()
     {
         string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
@@ -103,6 +109,8 @@ internal static class ConfigProperties
         properties![nameof(BankKPP)] = BankKPP;
         properties![nameof(BankPayerTemplate)] = BankPayerTemplate;
         properties![nameof(BankPurposeTemplate)] = BankPurposeTemplate;
+
+        properties![nameof(BankPayerLimit)] = BankPayerLimit;
 
         var options = new JsonSerializerOptions { WriteIndented = true };
         json = configNode.ToJsonString(options);

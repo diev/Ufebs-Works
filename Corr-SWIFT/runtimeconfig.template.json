@@ -8,6 +8,7 @@
     "BankINN": "7831001422",
     "BankKPP": "784101001",
     "BankPayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
-    "BankPurposeTemplate": "//7831001422//784101001//{name}//{purpose}"
+    "BankPurposeTemplate": "//7831001422//784101001//{name}//{purpose}",
+    "BankPayerLimit": 160
   }
 }

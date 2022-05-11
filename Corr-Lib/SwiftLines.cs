@@ -22,6 +22,8 @@ namespace CorrLib;
 
 public class SwiftLines
 {
+    //private const int _max_line = 35; // SWIFT-RUR
+
     private string[] _lines = Array.Empty<string>();
 
     /// <summary>
@@ -53,6 +55,11 @@ public class SwiftLines
     /// Наименование плательщика
     /// </summary>
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Ограничение длина наименования плательщика (105 или 160)
+    /// </summary>
+    public int NameLimit { get; set; } = 105;
 
     /// <summary>
     /// Назначение платежа
@@ -323,25 +330,30 @@ public class SwiftLines
                         // Перекодировка наименования плательщика
                         string textName = Translit ? SwiftTranslit.Lat(Name) : Name;
 
-                        // До трех строк наименования плательщика
-                        for (int i = 0; i < 3; i++)
+                        // До трех строк наименования плательщика (вариант SWIFT-RUR)
+                        // До 160 символов (неполных 5 строк - вариант УФЭБС)
+                        if (NameLimit == 105 && textName.Length > 105)
                         {
-                            if (textName.Length > 35)
-                            {
-                                list.Add(textName[..35]);
-                                textName = textName[35..];
-                            }
-                            else
-                            {
-                                list.Add(textName);
-                                break;
-                            }
+                            textName = textName[..105];
                         }
-
-                        // Если наименование плательщика не влезло в три строки
-                        if (textName.Length > 0)
+                        else if (NameLimit == 160 && textName.Length > 160)
+                        {
+                            textName = textName[..160];
+                        }
+                        else
                         {
                             //TODO alarm!
+                        }
+
+                        while (textName.Length > 35)
+                        {
+                            list.Add(textName[..35]);
+                            textName = textName[35..];
+                        }
+
+                        if (textName.Length > 0)
+                        {
+                            list.Add(textName);
                             textName = string.Empty;
                         }
 

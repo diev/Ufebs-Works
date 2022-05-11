@@ -40,6 +40,8 @@ public partial class ConfigForm : Form
         BankKPPText.Text = ConfigProperties.BankKPP;
         BankPayerText.Text = ConfigProperties.BankPayerTemplate;
         BankPurposeText.Text = ConfigProperties.BankPurposeTemplate;
+
+        BankPayerLimitText.Text = ConfigProperties.BankPayerLimit.ToString();
     }
 
     private void ResetConfig()
@@ -55,6 +57,8 @@ public partial class ConfigForm : Form
         BankKPPText.Text = "784101001";
         BankPayerText.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
         BankPurposeText.Text = "//7831001422//784101001//{name}//{purpose}";
+
+        BankPayerLimitText.Text = "105"; // 105 = три строки по стандарту SWIFT-RUR или 160 (= 4.5 строки) по стандару УФЭБС
     }
 
     private void SaveConfig()
@@ -70,6 +74,8 @@ public partial class ConfigForm : Form
         ConfigProperties.BankKPP = BankKPPText.Text;
         ConfigProperties.BankPayerTemplate = BankPayerText.Text;
         ConfigProperties.BankPurposeTemplate = BankPurposeText.Text;
+
+        ConfigProperties.BankPayerLimit = int.Parse(BankPayerLimitText.Text);
 
         ConfigProperties.Save();
 

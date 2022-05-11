@@ -80,13 +80,19 @@ partial class Form1
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
             this.OutPage = new System.Windows.Forms.TabPage();
             this.OutTextBox = new System.Windows.Forms.TextBox();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.NameTextBox = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.NameEditLabel = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.PurposeTextBox = new System.Windows.Forms.TextBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.PurposeEditLabel = new System.Windows.Forms.Label();
+            this.ButtonsPanel = new System.Windows.Forms.Panel();
             this.PrevButton = new System.Windows.Forms.Button();
             this.ForwardButton = new System.Windows.Forms.Button();
             this.NextButton = new System.Windows.Forms.Button();
-            this.PurposeEditLabel = new System.Windows.Forms.Label();
-            this.NameEditLabel = new System.Windows.Forms.Label();
-            this.PurposeTextBox = new System.Windows.Forms.TextBox();
-            this.NameTextBox = new System.Windows.Forms.TextBox();
             this.OutEditCheck = new System.Windows.Forms.CheckBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -94,7 +100,6 @@ partial class Form1
             this.PrintPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
             this.PrintDocument = new System.Drawing.Printing.PrintDocument();
             this.PrintDialog = new System.Windows.Forms.PrintDialog();
-            this.process1 = new System.Diagnostics.Process();
             this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -106,6 +111,15 @@ partial class Form1
             this.XmlPage.SuspendLayout();
             this.SwiftPage.SuspendLayout();
             this.OutPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            this.panel3.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.ButtonsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusBar
@@ -126,19 +140,19 @@ partial class Form1
             // 
             this.TaxValue.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.TaxValue.Name = "TaxValue";
-            this.TaxValue.Size = new System.Drawing.Size(53, 21);
-            this.TaxValue.Text = "Платеж";
+            this.TaxValue.Size = new System.Drawing.Size(251, 21);
+            this.TaxValue.Text = "Выберите файл(ы) в меню Файл\\Открыть...";
             // 
             // SavedLabel
             // 
             this.SavedLabel.Name = "SavedLabel";
-            this.SavedLabel.Size = new System.Drawing.Size(77, 21);
-            this.SavedLabel.Text = "Не сохранен";
+            this.SavedLabel.Size = new System.Drawing.Size(131, 21);
+            this.SavedLabel.Text = "Результат не сохранен";
             // 
             // DoneLabel
             // 
             this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(656, 21);
+            this.DoneLabel.Size = new System.Drawing.Size(395, 21);
             this.DoneLabel.Spring = true;
             this.DoneLabel.Text = "Сделано:";
             this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -151,7 +165,7 @@ partial class Form1
             // 
             // ProgressBar
             // 
-            this.ProgressBar.Margin = new System.Windows.Forms.Padding(1, 7, 15, 7);
+            this.ProgressBar.Margin = new System.Windows.Forms.Padding(10, 7, 15, 7);
             this.ProgressBar.Name = "ProgressBar";
             this.ProgressBar.Size = new System.Drawing.Size(100, 12);
             this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -303,6 +317,7 @@ partial class Form1
             this.ChangeMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.ChangeMenuItem.Size = new System.Drawing.Size(184, 22);
             this.ChangeMenuItem.Text = "&Изменить";
+            this.ChangeMenuItem.CheckedChanged += new System.EventHandler(this.ChangeMenuItem_CheckedChanged);
             this.ChangeMenuItem.Click += new System.EventHandler(this.ChangeMenuItem_Click);
             // 
             // toolStripSeparator6
@@ -476,14 +491,7 @@ partial class Form1
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.PrevButton);
-            this.splitContainer1.Panel2.Controls.Add(this.ForwardButton);
-            this.splitContainer1.Panel2.Controls.Add(this.NextButton);
-            this.splitContainer1.Panel2.Controls.Add(this.PurposeEditLabel);
-            this.splitContainer1.Panel2.Controls.Add(this.NameEditLabel);
-            this.splitContainer1.Panel2.Controls.Add(this.PurposeTextBox);
-            this.splitContainer1.Panel2.Controls.Add(this.NameTextBox);
-            this.splitContainer1.Panel2.Controls.Add(this.OutEditCheck);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(930, 400);
             this.splitContainer1.SplitterDistance = 616;
             this.splitContainer1.SplitterWidth = 3;
@@ -604,50 +612,59 @@ partial class Form1
             this.OutTextBox.WordWrap = false;
             this.OutTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
             // 
-            // PrevButton
+            // splitContainer2
             // 
-            this.PrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.PrevButton.Enabled = false;
-            this.PrevButton.Location = new System.Drawing.Point(115, 361);
-            this.PrevButton.Name = "PrevButton";
-            this.PrevButton.Size = new System.Drawing.Size(75, 23);
-            this.PrevButton.TabIndex = 3;
-            this.PrevButton.Text = "Назад";
-            this.PrevButton.UseVisualStyleBackColor = true;
-            this.PrevButton.Click += new System.EventHandler(this.PrevButton_Click);
+            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // ForwardButton
+            // splitContainer2.Panel1
             // 
-            this.ForwardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ForwardButton.Enabled = false;
-            this.ForwardButton.Location = new System.Drawing.Point(273, 361);
-            this.ForwardButton.Name = "ForwardButton";
-            this.ForwardButton.Size = new System.Drawing.Size(34, 23);
-            this.ForwardButton.TabIndex = 5;
-            this.ForwardButton.Text = ">>";
-            this.ForwardButton.UseVisualStyleBackColor = true;
-            this.ForwardButton.Click += new System.EventHandler(this.ForwardButton_Click);
+            this.splitContainer2.Panel1.Controls.Add(this.panel3);
+            this.splitContainer2.Panel1.Controls.Add(this.panel1);
             // 
-            // NextButton
+            // splitContainer2.Panel2
             // 
-            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.NextButton.Enabled = false;
-            this.NextButton.Location = new System.Drawing.Point(196, 361);
-            this.NextButton.Name = "NextButton";
-            this.NextButton.Size = new System.Drawing.Size(75, 23);
-            this.NextButton.TabIndex = 4;
-            this.NextButton.Text = "Дальше";
-            this.NextButton.UseVisualStyleBackColor = true;
-            this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
+            this.splitContainer2.Panel2.Controls.Add(this.panel4);
+            this.splitContainer2.Panel2.Controls.Add(this.panel2);
+            this.splitContainer2.Panel2.Controls.Add(this.ButtonsPanel);
+            this.splitContainer2.Size = new System.Drawing.Size(311, 400);
+            this.splitContainer2.SplitterDistance = 162;
+            this.splitContainer2.SplitterWidth = 3;
+            this.splitContainer2.TabIndex = 7;
             // 
-            // PurposeEditLabel
+            // panel3
             // 
-            this.PurposeEditLabel.AutoSize = true;
-            this.PurposeEditLabel.Location = new System.Drawing.Point(6, 193);
-            this.PurposeEditLabel.Name = "PurposeEditLabel";
-            this.PurposeEditLabel.Size = new System.Drawing.Size(125, 15);
-            this.PurposeEditLabel.TabIndex = 3;
-            this.PurposeEditLabel.Text = "Назначение платежа:";
+            this.panel3.Controls.Add(this.NameTextBox);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3.Location = new System.Drawing.Point(0, 30);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(307, 128);
+            this.panel3.TabIndex = 6;
+            // 
+            // NameTextBox
+            // 
+            this.NameTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NameTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.NameTextBox.Location = new System.Drawing.Point(0, 0);
+            this.NameTextBox.Multiline = true;
+            this.NameTextBox.Name = "NameTextBox";
+            this.NameTextBox.PlaceholderText = "3 строки по 35.";
+            this.NameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.NameTextBox.Size = new System.Drawing.Size(307, 128);
+            this.NameTextBox.TabIndex = 4;
+            this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.NameEditLabel);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(307, 30);
+            this.panel1.TabIndex = 5;
             // 
             // NameEditLabel
             // 
@@ -655,47 +672,107 @@ partial class Form1
             this.NameEditLabel.Location = new System.Drawing.Point(6, 9);
             this.NameEditLabel.Name = "NameEditLabel";
             this.NameEditLabel.Size = new System.Drawing.Size(80, 15);
-            this.NameEditLabel.TabIndex = 2;
+            this.NameEditLabel.TabIndex = 5;
             this.NameEditLabel.Text = "Плательщик:";
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.PurposeTextBox);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel4.Location = new System.Drawing.Point(0, 30);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(307, 161);
+            this.panel4.TabIndex = 13;
             // 
             // PurposeTextBox
             // 
-            this.PurposeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PurposeTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PurposeTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PurposeTextBox.Location = new System.Drawing.Point(6, 211);
+            this.PurposeTextBox.Location = new System.Drawing.Point(0, 0);
             this.PurposeTextBox.Multiline = true;
             this.PurposeTextBox.Name = "PurposeTextBox";
+            this.PurposeTextBox.PlaceholderText = "4+2 строки по 35.";
             this.PurposeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.PurposeTextBox.Size = new System.Drawing.Size(307, 138);
-            this.PurposeTextBox.TabIndex = 1;
+            this.PurposeTextBox.Size = new System.Drawing.Size(307, 161);
+            this.PurposeTextBox.TabIndex = 5;
             this.PurposeTextBox.TextChanged += new System.EventHandler(this.PurposeTextBox_TextChanged);
             // 
-            // NameTextBox
+            // panel2
             // 
-            this.NameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.NameTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NameTextBox.Location = new System.Drawing.Point(6, 27);
-            this.NameTextBox.Multiline = true;
-            this.NameTextBox.Name = "NameTextBox";
-            this.NameTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.NameTextBox.Size = new System.Drawing.Size(307, 154);
-            this.NameTextBox.TabIndex = 0;
-            this.NameTextBox.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
+            this.panel2.Controls.Add(this.PurposeEditLabel);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(307, 30);
+            this.panel2.TabIndex = 12;
+            // 
+            // PurposeEditLabel
+            // 
+            this.PurposeEditLabel.AutoSize = true;
+            this.PurposeEditLabel.Location = new System.Drawing.Point(6, 9);
+            this.PurposeEditLabel.Name = "PurposeEditLabel";
+            this.PurposeEditLabel.Size = new System.Drawing.Size(125, 15);
+            this.PurposeEditLabel.TabIndex = 6;
+            this.PurposeEditLabel.Text = "Назначение платежа:";
+            // 
+            // ButtonsPanel
+            // 
+            this.ButtonsPanel.Controls.Add(this.PrevButton);
+            this.ButtonsPanel.Controls.Add(this.ForwardButton);
+            this.ButtonsPanel.Controls.Add(this.NextButton);
+            this.ButtonsPanel.Controls.Add(this.OutEditCheck);
+            this.ButtonsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.ButtonsPanel.Location = new System.Drawing.Point(0, 191);
+            this.ButtonsPanel.Name = "ButtonsPanel";
+            this.ButtonsPanel.Size = new System.Drawing.Size(307, 40);
+            this.ButtonsPanel.TabIndex = 11;
+            // 
+            // PrevButton
+            // 
+            this.PrevButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PrevButton.Enabled = false;
+            this.PrevButton.Location = new System.Drawing.Point(108, 6);
+            this.PrevButton.Name = "PrevButton";
+            this.PrevButton.Size = new System.Drawing.Size(75, 23);
+            this.PrevButton.TabIndex = 11;
+            this.PrevButton.Text = "Назад";
+            this.PrevButton.UseVisualStyleBackColor = true;
+            this.PrevButton.Click += new System.EventHandler(this.PrevMenuItem_Click);
+            // 
+            // ForwardButton
+            // 
+            this.ForwardButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ForwardButton.Enabled = false;
+            this.ForwardButton.Location = new System.Drawing.Point(270, 6);
+            this.ForwardButton.Name = "ForwardButton";
+            this.ForwardButton.Size = new System.Drawing.Size(34, 23);
+            this.ForwardButton.TabIndex = 13;
+            this.ForwardButton.Text = ">>";
+            this.ForwardButton.UseVisualStyleBackColor = true;
+            this.ForwardButton.Click += new System.EventHandler(this.ForwardMenuItem_Click);
+            // 
+            // NextButton
+            // 
+            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.NextButton.Enabled = false;
+            this.NextButton.Location = new System.Drawing.Point(189, 6);
+            this.NextButton.Name = "NextButton";
+            this.NextButton.Size = new System.Drawing.Size(75, 23);
+            this.NextButton.TabIndex = 12;
+            this.NextButton.Text = "Дальше";
+            this.NextButton.UseVisualStyleBackColor = true;
+            this.NextButton.Click += new System.EventHandler(this.NextMenuItem_Click);
             // 
             // OutEditCheck
             // 
-            this.OutEditCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.OutEditCheck.AutoSize = true;
-            this.OutEditCheck.Location = new System.Drawing.Point(6, 364);
+            this.OutEditCheck.Location = new System.Drawing.Point(6, 9);
             this.OutEditCheck.Name = "OutEditCheck";
             this.OutEditCheck.Size = new System.Drawing.Size(80, 19);
-            this.OutEditCheck.TabIndex = 6;
+            this.OutEditCheck.TabIndex = 14;
             this.OutEditCheck.Text = "Изменить";
             this.OutEditCheck.UseVisualStyleBackColor = true;
-            this.OutEditCheck.CheckedChanged += new System.EventHandler(this.OutEditCheck_CheckedChanged);
+            this.OutEditCheck.CheckedChanged += new System.EventHandler(this.ChangeMenuItem_Click);
             // 
             // OpenFileDialog
             // 
@@ -739,17 +816,6 @@ partial class Form1
             // 
             this.PrintDialog.UseEXDialog = true;
             // 
-            // process1
-            // 
-            this.process1.StartInfo.Domain = "";
-            this.process1.StartInfo.LoadUserProfile = false;
-            this.process1.StartInfo.Password = null;
-            this.process1.StartInfo.StandardErrorEncoding = null;
-            this.process1.StartInfo.StandardInputEncoding = null;
-            this.process1.StartInfo.StandardOutputEncoding = null;
-            this.process1.StartInfo.UserName = "";
-            this.process1.SynchronizingObject = this;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -769,7 +835,6 @@ partial class Form1
             this.MainMenu.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.Tabs.ResumeLayout(false);
@@ -780,6 +845,20 @@ partial class Form1
             this.SwiftPage.PerformLayout();
             this.OutPage.ResumeLayout(false);
             this.OutPage.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.ButtonsPanel.ResumeLayout(false);
+            this.ButtonsPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -800,21 +879,13 @@ partial class Form1
     private TextBox SwiftTextBox;
     private TabPage OutPage;
     private TextBox OutTextBox;
-    private TextBox PurposeTextBox;
-    private TextBox NameTextBox;
     private ToolStripMenuItem FontMenuItem;
     private FontDialog FontDialog;
-    private Label PurposeEditLabel;
-    private Label NameEditLabel;
     private ToolStripStatusLabel TaxValue;
-    private Button NextButton;
-    private Button ForwardButton;
     private TabPage FilesPage;
     private ListBox FilesListBox;
     private ToolStripProgressBar ProgressBar;
     private ToolStripStatusLabel DoneLabel;
-    private Button PrevButton;
-    private CheckBox OutEditCheck;
     private ToolStripMenuItem FileMenu;
     private ToolStripMenuItem NewFileMenuItem;
     private ToolStripMenuItem OpenFileMenuItem;
@@ -851,6 +922,19 @@ partial class Form1
     private PrintPreviewDialog PrintPreviewDialog;
     private System.Drawing.Printing.PrintDocument PrintDocument;
     private PrintDialog PrintDialog;
-    private System.Diagnostics.Process process1;
     private ToolStripStatusLabel SavedLabel;
+    private SplitContainer splitContainer2;
+    private Panel ButtonsPanel;
+    private Button PrevButton;
+    private Button ForwardButton;
+    private Button NextButton;
+    private CheckBox OutEditCheck;
+    private Panel panel3;
+    private TextBox NameTextBox;
+    private Panel panel1;
+    private Label NameEditLabel;
+    private Panel panel4;
+    private TextBox PurposeTextBox;
+    private Panel panel2;
+    private Label PurposeEditLabel;
 }
