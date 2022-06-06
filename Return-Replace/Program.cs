@@ -122,9 +122,16 @@ public static class Program
                 // Для обработки файлов входящих платёжных документов их нужно модифицировать следующим образом:
                 // 1. Поменять значение всех атрибутов EDAuthor="4030702000" на EDAuthor="4525769000"
                 // 2. Поменять значение всех атрибутов EDReceiver="4525769000" на EDReceiver="4030702000"
-                // 3. Добавить в элементPacketEPD атрибут SystemCode="02 для получения следующего вида <PacketEPD xmlns="urn:cbr-ru:ed:v2.0" EDNo="20" EDDate="2022-04-14" EDAuthor="4525769000" EDQuantity="6" Sum="4502602317" SystemCode="02">
+                // 3. Добавить в элементPacketEPD атрибут SystemCode="02 для получения следующего вида
+                // <PacketEPD xmlns="urn:cbr-ru:ed:v2.0" EDNo="20" EDDate="2022-04-14" EDAuthor="4525769000" EDQuantity="6" Sum="4502602317" SystemCode="02">
                 // 4. Добавить в каждый элемент ED101 за атрибутом Sum="Sum_In_Kopecks" атрибут PaymentPrecedence="79"
                 // 5. Добавить в каждый элемент ED101 за атрибутом ChargeOffDate="YYYY-MM-DD" атрибут SystemCode="02"
+
+                // 2022-06-06
+                // 1. Заменять значение всех атрибутов PaytKind="4" на PaytKind="0"
+                // 2. Заменять в элементе PacketEPD атрибут EDDate="YYYY-MM-DD" для получения следующего вида
+                // <PacketEPD xmlns="urn:cbr-ru:ed:v2.0" EDNo="20" EDDate="2022-04-14" EDAuthor="4525769000" EDQuantity="6" Sum="4502602317" SystemCode="02">
+                // в соответствии с датой набора документов, указанной в наименовании файла.
 
                 node = root;
                 e = (XElement)node;
@@ -141,6 +148,14 @@ public static class Program
                 if (EDReceiver != null && EDReceiver.Value == CorUIC)
                 {
                     EDReceiver.Value = OurUIC;
+                }
+
+                string date = GetFileNameDate(inFile);
+                XAttribute? EDDate = e.Attribute(nameof(EDDate));
+
+                if (EDDate != null && EDDate.Value != date)
+                {
+                    EDDate.Value = date;
                 }
 
                 e.Add(new XAttribute("SystemCode", "02"));
@@ -164,6 +179,13 @@ public static class Program
                         EDReceiver.Value = OurUIC;
                     }
 
+                    XAttribute? PaytKind = e?.Attribute(nameof(PaytKind));
+
+                    if (PaytKind != null && PaytKind.Value == "4")
+                    {
+                        PaytKind.Value = "0";
+                    }
+
                     e?.Add(new XAttribute("PaymentPrecedence", "79"));
                     e?.Add(new XAttribute("SystemCode", "02"));
 
@@ -181,6 +203,24 @@ public static class Program
 
                 node = root.FirstNode;
                 string TransTime = File.GetLastWriteTime(inFile).ToString("HH:mm:ss");
+
+                // 2022-06-06
+                // 1. Заменять в элементе PacketEPD атрибут EDDate="YYYY-MM-DD" для получения следующего вида
+                // <PacketEPD xmlns="urn:cbr-ru:ed:v2.0" EDNo="20" EDDate="2022-04-14" EDAuthor="4525769000" EDQuantity="6" Sum="4502602317" SystemCode="02">
+                // в соответствии с датой набора документов, указанной в наименовании файла.
+
+                if (node != null)
+                {
+                    e = (XElement)node;
+
+                    date = GetFileNameDate(inFile);
+                    EDDate = e.Attribute(nameof(EDDate));
+
+                    if (EDDate != null && EDDate.Value != date)
+                    {
+                        EDDate.Value = date;
+                    }
+                }
 
                 do
                 {
@@ -222,12 +262,25 @@ public static class Program
                     DebetSum.Remove();
                 }
 
-                XAttribute? EDDate = root.Attribute(nameof(EDDate));
+                EDDate = root.Attribute(nameof(EDDate));
                 XAttribute? AbstractDate = root.Attribute(nameof(AbstractDate));
 
                 if (EDDate != null && AbstractDate != null && EDDate.Value != AbstractDate.Value)
                 {
                     EDDate.Value = AbstractDate.Value;
+                }
+
+                // 2022-06-06
+                // 1. Установить атрибут EndTime = (EndTime – 04:00H) в элементе ED211
+
+                XAttribute? EndTime = root.Attribute(nameof(EndTime));
+
+                if (EndTime != null)
+                {
+                    var time = DateTime.Parse(EndTime.Value);
+                    time = time.AddHours(-4.0);
+
+                    EndTime.Value = time.ToString("hh:MM:ss");
                 }
 
                 node = root.FirstNode;
@@ -259,6 +312,18 @@ public static class Program
         Console.WriteLine();
         Console.WriteLine($"[Output \"{outFile}\" done. Press Spacebar.]");
         Console.WriteLine();
+    }
+
+    static string GetFileNameDate(string fileName)
+    {
+        var file = new FileInfo(fileName); // _020622_EPD_30109810300000000063.xml
+
+        string name = file.Name;
+        string dd = name.Substring(1, 2);
+        string mm = name.Substring(3, 2);
+        string yy = name.Substring(5, 2);
+        
+        return $"20{yy}-{mm}-{dd}";
     }
 }
 

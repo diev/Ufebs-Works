@@ -20,6 +20,7 @@ using CorrLib;
 
 using System.Drawing.Printing;
 using System.Text;
+using System.Xml.Linq;
 
 namespace CorrSWIFT;
 
@@ -289,7 +290,21 @@ public partial class Form1 : Form
 
         if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
         {
-            XmlTextBox.Text = text;
+            //XmlTextBox.Text = text; //no 1251!
+
+            var xdoc = XDocument.Load(path);
+            var root = xdoc.Root;
+
+            if (root == null)
+            {
+                XmlTextBox.Text = "Not XML file";
+            }
+            else
+            {
+                XNamespace ns = root.GetDefaultNamespace();
+                XmlTextBox.Text = xdoc.ToString();
+            }
+
             text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
         }
         else
@@ -764,6 +779,7 @@ public partial class Form1 : Form
     private void WrapMenuItem_Click(object sender, EventArgs e)
     {
         WrapMenuItem.Checked = !WrapMenuItem.Checked;
+        XmlTextBox.WordWrap = WrapMenuItem.Checked;
         OutTextBox.WordWrap = WrapMenuItem.Checked;
     }
 
