@@ -292,7 +292,7 @@ public static class ED100Ex
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
-        string s = SwiftTranslit.Lat(ed.PayerName);
+        string s = ed.PayerName.L();
         int n = 0;
 
         while (s.Length > 35 && ++n <= 3) // не более 3 строк - остальное отбрасывается
@@ -349,7 +349,7 @@ public static class ED100Ex
             sb.AppendLine();
         }
 
-        s = SwiftTranslit.Lat(ed.PayeeName);
+        s = ed.PayeeName.L();
         n = 0;
 
         while (s.Length > 35 && ++n <= 3) // не более 3 строк - остальное отбрасывается
@@ -383,7 +383,7 @@ public static class ED100Ex
         // ‘(VO10010)’OPLATA PO DOGOVORU
         // ‘(VO10040PS04060001/0001/0000/1/0)’OPLATA PO DOGOVORU
         sb.Append(":70:");
-        s = SwiftTranslit.Lat(ed.Purpose);
+        s = ed.Purpose.L();
         n = 0;
 
         while (s.Length > 35 && ++n <= 4) // не более 4 строк - остальное идет в поле 72
@@ -469,8 +469,8 @@ public static class ED100Ex
 
         if (ed.Tax)
         {
-            sb.AppendLine($":77B:/N10/{SwiftTranslit.Lat(ed.TaxPaytKind)}/N4/{ed.CBC}") // ??
-                .AppendLine($"/N5/{ed.OKATO}/N6/{SwiftTranslit.Lat(ed.PaytReason)}/N7/{SwiftTranslit.Lat(ed.TaxPeriod)}")
+            sb.AppendLine($":77B:/N10/{ed.TaxPaytKind.L()}/N4/{ed.CBC}") // ??
+                .AppendLine($"/N5/{ed.OKATO}/N6/{ed.PaytReason.L()}/N7/{ed.TaxPeriod.L()}")
                 .AppendLine($"/N8/{ed.DocNo}/N9/{ed.DocDate}");
         }
 

@@ -251,6 +251,11 @@ public static class SwiftTranslit
         return result.ToString();
     }
 
+    public static string L(this string value)
+    {
+        return Lat(value);
+    }
+
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
     /// </summary>
