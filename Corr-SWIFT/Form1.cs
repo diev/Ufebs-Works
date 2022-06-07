@@ -6,7 +6,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ namespace CorrSWIFT;
 
 public partial class Form1 : Form
 {
-    private const string VersionDate = "2022-05-11";
+    private const string VersionDate = "2022-06-07";
 
     // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) или 160 (УФЭБС)?
     private const int MAX_PURPOSE = 210;
@@ -156,12 +156,16 @@ public partial class Form1 : Form
         _saveMaskName = Path.GetFileName(ConfigProperties.SaveMask);
 
         FilesListBox.Items.Clear();
-        FilesListBox.Items.AddRange(Directory.GetFiles(ConfigProperties.OpenDir, ConfigProperties.OpenMask));
+        //FilesListBox.Items.AddRange(Directory.GetFiles(ConfigProperties.OpenDir, ConfigProperties.OpenMask));
 
-        if (FilesListBox.Items.Count > 0)
+        foreach (string file in Directory.GetFiles(ConfigProperties.OpenDir, ConfigProperties.OpenMask))
         {
-            FilesListBox.SelectedIndex = 0;
+            var item = new ListViewItem(file);
+            item.SubItems.Add("-");
+            FilesListBox.Items.Add(item);
         }
+
+        FilesListBox.SelectFirst();
 
         var saved = Directory.GetFiles(ConfigProperties.SaveDir, ConfigProperties.SaveMask);
 
@@ -185,8 +189,16 @@ public partial class Form1 : Form
     private void OpenFilesOK()
     {
         FilesListBox.Items.Clear();
-        FilesListBox.Items.AddRange(OpenFileDialog.FileNames);
-        FilesListBox.SelectedIndex = 0;
+        //FilesListBox.Items.AddRange(OpenFileDialog.FileNames);
+
+        foreach (string file in OpenFileDialog.FileNames)
+        {
+            var item = new ListViewItem(file);
+            item.SubItems.Add("-");
+            FilesListBox.Items.Add(item);
+        }
+
+        FilesListBox.SelectFirst();
     }
 
     private void SaveFileOK()
@@ -236,37 +248,37 @@ public partial class Form1 : Form
     private void FileSelected()
     {
         var list = FilesListBox;
-        var selected = list.SelectedItem;
+        var selected = list.SelectedItem();
 
         if (selected is null)
         {
             return;
         }
 
-        string? file = list.SelectedItem.ToString();
+        string? file = selected.Text;
 
         if (file is null)
         {
             return;
         }
 
-        if (file.Contains('>'))
-        {
-            file = file.Split('>')[0].Trim();
-        }
+        //if (file.Contains('>'))
+        //{
+        //    file = file.Split('>')[0].Trim();
+        //}
 
         if (File.Exists(file))
         {
             LoadFile(file);
 
-            int index = list.SelectedIndex + 1;
+            int index = list.SelectedIndex() + 1;
             int total = list.Items.Count;
 
-            ProgressBar.Value = index;
-            ProgressBar.Maximum = total;
+            FilesDoneBar.Value = index;
+            FilesDoneBar.Maximum = total;
 
             string s = $"{index}/{total}";
-            DoneValue.Text = s;
+            FilesDoneValue.Text = s;
 
             FilesPage.Text = $"Файлы {s}";
         }
@@ -303,6 +315,61 @@ public partial class Form1 : Form
             {
                 XNamespace ns = root.GetDefaultNamespace();
                 XmlTextBox.Text = xdoc.ToString();
+
+                foreach (var node in root.Elements())
+                {
+                    #region Get Values
+                    // <ED101 ... EDDate="2022-04-13" EDNo="10442" Sum="164839" TransKind="01" xmlns="urn:cbr-ru:ed:v2.0">
+                    var ED = (XElement)node;
+                    XAttribute? EDNo = ED.Attribute(nameof(EDNo));
+                    XAttribute? Sum = ED.Attribute(nameof(Sum));
+                    XAttribute? TransKind = ED.Attribute(nameof(TransKind));
+
+                    // <AccDoc AccDocDate="2022-04-12" AccDocNo="1517"/>
+                    XElement? AccDoc = ED.Element(ns + nameof(AccDoc));
+                    XAttribute? AccDocNo = AccDoc?.Attribute(nameof(AccDocNo));
+
+                    // <Payer INN="470608634408" KPP="470301001" PersonalAcc="30109810300000000063">
+                    XElement? Payer = ED.Element(ns + nameof(Payer));
+                    XAttribute? INN = Payer?.Attribute(nameof(INN));
+                    XAttribute? KPP = Payer?.Attribute(nameof(KPP));
+                    XAttribute? PersonalAcc = Payer?.Attribute(nameof(PersonalAcc));
+
+                    // <Name>Ван ден Бринк Виллеке</Name>
+                    XElement? Name = Payer?.Element(ns + nameof(Name));
+
+                    // <Bank BIC="044525769" CorrespAcc="30109810300000000063"/>
+                    XElement? Bank = Payer?.Element(ns + nameof(Bank));
+
+                    XAttribute? BIC = Bank?.Attribute(nameof(BIC));
+                    XAttribute? CorrespAcc = Bank?.Attribute(nameof(CorrespAcc));
+
+                    // <Payee INN="470608634408" KPP="470301001" PersonalAcc="30109810300000000063">
+                    XElement? Payee = ED.Element(ns + nameof(Payee));
+                    XAttribute? PayeeINN = Payee?.Attribute(nameof(INN));
+                    XAttribute? PayeeKPP = Payee?.Attribute(nameof(KPP));
+                    //XAttribute? PayeePersonalAcc = Payee?.Attribute(nameof(PersonalAcc));
+                    
+                    XElement? PayeeName = Payee?.Element(ns + nameof(Name));
+
+                    // <Purpose>Взносы по страхованию...</Purpose>
+                    XElement? Purpose = ED.Element(ns + nameof(Purpose));
+
+                    // <DepartmentalInfo CBC="39310202050071000160" DocDate="0" DocNo="0" DrawerStatus="13" OKATO="41625156" PaytReason="0" TaxPaytKind="0" TaxPeriod="0"/>
+                    XElement? DepartmentalInfo = ED.Element(ns + nameof(DepartmentalInfo));
+                    XAttribute? TaxPaytKind = DepartmentalInfo?.Attribute(nameof(TaxPaytKind));
+                    #endregion Get Values
+
+                    var item = new ListViewItem(ED.Name.LocalName);
+                    
+                    item.SubItems.Add(Sum.Value);
+                    item.SubItems.Add(Name.Value);
+                    item.SubItems.Add(PayeeName.Value);
+                    item.SubItems.Add(Purpose.Value);
+
+                    DocsListBox.Items.Add(item);
+                    OutDocsListBox.Items.Add((ListViewItem)item.Clone());
+                }
             }
 
             text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
@@ -409,14 +476,8 @@ public partial class Form1 : Form
             ? $"Сохранен в {_saveFileName}"
             : $"Не сохранен (в {_saveFileName})";
 
-        var item = FilesListBox.SelectedItem.ToString();
-
-        if (item != null && !item.Contains(" > "))
-        {
-            item += " > " + _saveFileName;
-            //FilesListBox.SelectedItem = item; // not work
-            FilesListBox.Items[FilesListBox.SelectedIndex] = item;
-        }
+        var item = FilesListBox.SelectedItem();
+        item.SubItems[1].Text = _saveFileName;
     }
 
     private void PrintPage(PrintPageEventArgs e)
@@ -452,7 +513,7 @@ public partial class Form1 : Form
 
     private bool CheckItemsEnabled()
     {
-        bool enabled = FilesListBox.SelectedIndex > 0;
+        bool enabled = FilesListBox.PrevEnabled();
 
         PrevMenuItem.Enabled = enabled;
         PrevButton.Enabled = enabled;
@@ -460,7 +521,7 @@ public partial class Form1 : Form
         enabled =
             _isNameValid &&
             _isPurposeValid &&
-            FilesListBox.SelectedIndex < FilesListBox.Items.Count;
+            FilesListBox.NextEnabled();
 
         NextMenuItem.Enabled = enabled;
         NextButton.Enabled = enabled;
@@ -591,21 +652,15 @@ public partial class Form1 : Form
             }
         }
 
-        if (FilesListBox.SelectedIndex > 0)
-        {
-            FilesListBox.SelectedIndex--; //TODO почему не срабатывает событие смены?
-        }
+        FilesListBox.SelectPrev();
     }
 
     private void GoNext()
     {
         SaveFile();
 
-        if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
-        {
-            FilesListBox.SelectedIndex++;
-        }
-        else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
+        if (!FilesListBox.SelectNext() &&
+            MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
         {
             Close();
@@ -617,17 +672,14 @@ public partial class Form1 : Form
         while (
             _isNameValid &&
             _isPurposeValid &&
-            FilesListBox.SelectedIndex < FilesListBox.Items.Count)
+            FilesListBox.NextEnabled())
         {
             //GoNext(); //зацикливается и не завершает программу!
 
             SaveFile();
 
-            if (FilesListBox.SelectedIndex + 1 < FilesListBox.Items.Count)
-            {
-                FilesListBox.SelectedIndex++;
-            }
-            else if (MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
+            if (!FilesListBox.SelectNext() &&
+                MessageBox.Show($"Сделано: {FilesListBox.Items.Count}.\nЗакрыть программу?", Application.ProductName,
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
                 Close();
@@ -804,4 +856,21 @@ public partial class Form1 : Form
         PurposeTextBox.ReadOnly = check;
     }
     #endregion UI
+
+    private void FilesListBox_SizeChanged(object sender, EventArgs e)
+    {
+        var width = FilesListBox.ClientSize.Width / 2;
+        InColumn.Width = width;
+        OutColumn.Width = width;
+    }
+
+    private void Tabs_Selected(object sender, TabControlEventArgs e)
+    {
+
+    }
+
+    private void FilesListBox_Click(object sender, EventArgs e)
+    {
+        FileSelected();
+    }
 }

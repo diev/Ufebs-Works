@@ -33,8 +33,10 @@ partial class Form1
             this.TaxValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.SavedLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.DoneLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.DoneValue = new System.Windows.Forms.ToolStripStatusLabel();
-            this.ProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.FilesDoneValue = new System.Windows.Forms.ToolStripStatusLabel();
+            this.FilesDoneBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.DocsDoneValue = new System.Windows.Forms.ToolStripStatusLabel();
+            this.DocsDoneBar = new System.Windows.Forms.ToolStripProgressBar();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.NewFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,12 +75,28 @@ partial class Form1
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Tabs = new System.Windows.Forms.TabControl();
             this.FilesPage = new System.Windows.Forms.TabPage();
-            this.FilesListBox = new System.Windows.Forms.ListBox();
+            this.FilesListBox = new System.Windows.Forms.ListView();
+            this.InColumn = new System.Windows.Forms.ColumnHeader();
+            this.OutColumn = new System.Windows.Forms.ColumnHeader();
             this.XmlPage = new System.Windows.Forms.TabPage();
             this.XmlTextBox = new System.Windows.Forms.TextBox();
+            this.EdPage = new System.Windows.Forms.TabPage();
+            this.DocsListBox = new System.Windows.Forms.ListView();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            this.OutEdPage = new System.Windows.Forms.TabPage();
+            this.OutDocsListBox = new System.Windows.Forms.ListView();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
             this.SwiftPage = new System.Windows.Forms.TabPage();
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
-            this.OutPage = new System.Windows.Forms.TabPage();
+            this.OutSwiftPage = new System.Windows.Forms.TabPage();
             this.OutTextBox = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -109,8 +127,10 @@ partial class Form1
             this.Tabs.SuspendLayout();
             this.FilesPage.SuspendLayout();
             this.XmlPage.SuspendLayout();
+            this.EdPage.SuspendLayout();
+            this.OutEdPage.SuspendLayout();
             this.SwiftPage.SuspendLayout();
-            this.OutPage.SuspendLayout();
+            this.OutSwiftPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -128,8 +148,10 @@ partial class Form1
             this.TaxValue,
             this.SavedLabel,
             this.DoneLabel,
-            this.DoneValue,
-            this.ProgressBar});
+            this.FilesDoneValue,
+            this.FilesDoneBar,
+            this.DocsDoneValue,
+            this.DocsDoneBar});
             this.StatusBar.Location = new System.Drawing.Point(0, 424);
             this.StatusBar.Name = "StatusBar";
             this.StatusBar.Size = new System.Drawing.Size(930, 26);
@@ -152,23 +174,40 @@ partial class Form1
             // DoneLabel
             // 
             this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(395, 21);
+            this.DoneLabel.Size = new System.Drawing.Size(257, 21);
             this.DoneLabel.Spring = true;
             this.DoneLabel.Text = "Сделано:";
             this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // DoneValue
+            // FilesDoneValue
             // 
-            this.DoneValue.Name = "DoneValue";
-            this.DoneValue.Size = new System.Drawing.Size(13, 21);
-            this.DoneValue.Text = "0";
+            this.FilesDoneValue.Name = "FilesDoneValue";
+            this.FilesDoneValue.Size = new System.Drawing.Size(13, 21);
+            this.FilesDoneValue.Text = "0";
+            this.FilesDoneValue.ToolTipText = "Файлы";
             // 
-            // ProgressBar
+            // FilesDoneBar
             // 
-            this.ProgressBar.Margin = new System.Windows.Forms.Padding(10, 7, 15, 7);
-            this.ProgressBar.Name = "ProgressBar";
-            this.ProgressBar.Size = new System.Drawing.Size(100, 12);
-            this.ProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.FilesDoneBar.Margin = new System.Windows.Forms.Padding(10, 7, 15, 7);
+            this.FilesDoneBar.Name = "FilesDoneBar";
+            this.FilesDoneBar.Size = new System.Drawing.Size(100, 12);
+            this.FilesDoneBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.FilesDoneBar.ToolTipText = "Файлы";
+            // 
+            // DocsDoneValue
+            // 
+            this.DocsDoneValue.Name = "DocsDoneValue";
+            this.DocsDoneValue.Size = new System.Drawing.Size(13, 21);
+            this.DocsDoneValue.Text = "0";
+            this.DocsDoneValue.ToolTipText = "Документы";
+            // 
+            // DocsDoneBar
+            // 
+            this.DocsDoneBar.Margin = new System.Windows.Forms.Padding(10, 7, 15, 7);
+            this.DocsDoneBar.Name = "DocsDoneBar";
+            this.DocsDoneBar.Size = new System.Drawing.Size(100, 12);
+            this.DocsDoneBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.DocsDoneBar.ToolTipText = "Документы";
             // 
             // MainMenu
             // 
@@ -501,14 +540,17 @@ partial class Form1
             // 
             this.Tabs.Controls.Add(this.FilesPage);
             this.Tabs.Controls.Add(this.XmlPage);
+            this.Tabs.Controls.Add(this.EdPage);
+            this.Tabs.Controls.Add(this.OutEdPage);
             this.Tabs.Controls.Add(this.SwiftPage);
-            this.Tabs.Controls.Add(this.OutPage);
+            this.Tabs.Controls.Add(this.OutSwiftPage);
             this.Tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Tabs.Location = new System.Drawing.Point(0, 4);
             this.Tabs.Name = "Tabs";
             this.Tabs.SelectedIndex = 0;
             this.Tabs.Size = new System.Drawing.Size(612, 392);
             this.Tabs.TabIndex = 0;
+            this.Tabs.Selected += new System.Windows.Forms.TabControlEventHandler(this.Tabs_Selected);
             // 
             // FilesPage
             // 
@@ -523,16 +565,29 @@ partial class Form1
             // 
             // FilesListBox
             // 
+            this.FilesListBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.InColumn,
+            this.OutColumn});
             this.FilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FilesListBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.FilesListBox.FormattingEnabled = true;
-            this.FilesListBox.ItemHeight = 16;
+            this.FilesListBox.FullRowSelect = true;
+            this.FilesListBox.GridLines = true;
             this.FilesListBox.Location = new System.Drawing.Point(3, 3);
+            this.FilesListBox.MultiSelect = false;
             this.FilesListBox.Name = "FilesListBox";
-            this.FilesListBox.ScrollAlwaysVisible = true;
             this.FilesListBox.Size = new System.Drawing.Size(598, 358);
             this.FilesListBox.TabIndex = 0;
-            this.FilesListBox.SelectedIndexChanged += new System.EventHandler(this.FilesListBox_SelectedIndexChanged);
+            this.FilesListBox.UseCompatibleStateImageBehavior = false;
+            this.FilesListBox.View = System.Windows.Forms.View.Details;
+            this.FilesListBox.SizeChanged += new System.EventHandler(this.FilesListBox_SizeChanged);
+            this.FilesListBox.Click += new System.EventHandler(this.FilesListBox_Click);
+            // 
+            // InColumn
+            // 
+            this.InColumn.Text = "Входной файл";
+            // 
+            // OutColumn
+            // 
+            this.OutColumn.Text = "Выходной файл";
             // 
             // XmlPage
             // 
@@ -560,6 +615,114 @@ partial class Form1
             this.XmlTextBox.TabIndex = 2;
             this.XmlTextBox.WordWrap = false;
             // 
+            // EdPage
+            // 
+            this.EdPage.Controls.Add(this.DocsListBox);
+            this.EdPage.Location = new System.Drawing.Point(4, 24);
+            this.EdPage.Name = "EdPage";
+            this.EdPage.Padding = new System.Windows.Forms.Padding(3);
+            this.EdPage.Size = new System.Drawing.Size(604, 364);
+            this.EdPage.TabIndex = 4;
+            this.EdPage.Text = "ED";
+            this.EdPage.UseVisualStyleBackColor = true;
+            // 
+            // DocsListBox
+            // 
+            this.DocsListBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader5,
+            this.columnHeader4});
+            this.DocsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DocsListBox.FullRowSelect = true;
+            this.DocsListBox.GridLines = true;
+            this.DocsListBox.Location = new System.Drawing.Point(3, 3);
+            this.DocsListBox.Name = "DocsListBox";
+            this.DocsListBox.Size = new System.Drawing.Size(598, 358);
+            this.DocsListBox.TabIndex = 0;
+            this.DocsListBox.UseCompatibleStateImageBehavior = false;
+            this.DocsListBox.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "ED";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Сумма";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader2.Width = 80;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Плательщик";
+            this.columnHeader3.Width = 160;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Получатель";
+            this.columnHeader5.Width = 160;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Назначение";
+            this.columnHeader4.Width = 320;
+            // 
+            // OutEdPage
+            // 
+            this.OutEdPage.Controls.Add(this.OutDocsListBox);
+            this.OutEdPage.Location = new System.Drawing.Point(4, 24);
+            this.OutEdPage.Name = "OutEdPage";
+            this.OutEdPage.Padding = new System.Windows.Forms.Padding(3);
+            this.OutEdPage.Size = new System.Drawing.Size(604, 364);
+            this.OutEdPage.TabIndex = 5;
+            this.OutEdPage.Text = "К отправке ED";
+            this.OutEdPage.UseVisualStyleBackColor = true;
+            // 
+            // OutDocsListBox
+            // 
+            this.OutDocsListBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader6,
+            this.columnHeader7,
+            this.columnHeader8,
+            this.columnHeader9,
+            this.columnHeader10});
+            this.OutDocsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OutDocsListBox.FullRowSelect = true;
+            this.OutDocsListBox.GridLines = true;
+            this.OutDocsListBox.Location = new System.Drawing.Point(3, 3);
+            this.OutDocsListBox.Name = "OutDocsListBox";
+            this.OutDocsListBox.Size = new System.Drawing.Size(598, 358);
+            this.OutDocsListBox.TabIndex = 1;
+            this.OutDocsListBox.UseCompatibleStateImageBehavior = false;
+            this.OutDocsListBox.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "ED";
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Сумма";
+            this.columnHeader7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader7.Width = 80;
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Плательщик";
+            this.columnHeader8.Width = 260;
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Получатель";
+            this.columnHeader9.Width = 160;
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Назначение";
+            this.columnHeader10.Width = 400;
+            // 
             // SwiftPage
             // 
             this.SwiftPage.Controls.Add(this.SwiftTextBox);
@@ -586,16 +749,16 @@ partial class Form1
             this.SwiftTextBox.TabIndex = 1;
             this.SwiftTextBox.WordWrap = false;
             // 
-            // OutPage
+            // OutSwiftPage
             // 
-            this.OutPage.Controls.Add(this.OutTextBox);
-            this.OutPage.Location = new System.Drawing.Point(4, 24);
-            this.OutPage.Name = "OutPage";
-            this.OutPage.Padding = new System.Windows.Forms.Padding(3);
-            this.OutPage.Size = new System.Drawing.Size(604, 364);
-            this.OutPage.TabIndex = 2;
-            this.OutPage.Text = "К отправке";
-            this.OutPage.UseVisualStyleBackColor = true;
+            this.OutSwiftPage.Controls.Add(this.OutTextBox);
+            this.OutSwiftPage.Location = new System.Drawing.Point(4, 24);
+            this.OutSwiftPage.Name = "OutSwiftPage";
+            this.OutSwiftPage.Padding = new System.Windows.Forms.Padding(3);
+            this.OutSwiftPage.Size = new System.Drawing.Size(604, 364);
+            this.OutSwiftPage.TabIndex = 2;
+            this.OutSwiftPage.Text = "К отправке SWIFT";
+            this.OutSwiftPage.UseVisualStyleBackColor = true;
             // 
             // OutTextBox
             // 
@@ -841,10 +1004,12 @@ partial class Form1
             this.FilesPage.ResumeLayout(false);
             this.XmlPage.ResumeLayout(false);
             this.XmlPage.PerformLayout();
+            this.EdPage.ResumeLayout(false);
+            this.OutEdPage.ResumeLayout(false);
             this.SwiftPage.ResumeLayout(false);
             this.SwiftPage.PerformLayout();
-            this.OutPage.ResumeLayout(false);
-            this.OutPage.PerformLayout();
+            this.OutSwiftPage.ResumeLayout(false);
+            this.OutSwiftPage.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -877,14 +1042,13 @@ partial class Form1
     private TextBox XmlTextBox;
     private TabPage SwiftPage;
     private TextBox SwiftTextBox;
-    private TabPage OutPage;
+    private TabPage OutSwiftPage;
     private TextBox OutTextBox;
     private ToolStripMenuItem FontMenuItem;
     private FontDialog FontDialog;
     private ToolStripStatusLabel TaxValue;
     private TabPage FilesPage;
-    private ListBox FilesListBox;
-    private ToolStripProgressBar ProgressBar;
+    private ToolStripProgressBar FilesDoneBar;
     private ToolStripStatusLabel DoneLabel;
     private ToolStripMenuItem FileMenu;
     private ToolStripMenuItem NewFileMenuItem;
@@ -917,7 +1081,7 @@ partial class Form1
     private ToolStripSeparator toolStripSeparator1;
     private ToolStripMenuItem ChangeMenuItem;
     private ToolStripSeparator toolStripSeparator6;
-    private ToolStripStatusLabel DoneValue;
+    private ToolStripStatusLabel FilesDoneValue;
     private ToolStripMenuItem WrapMenuItem;
     private PrintPreviewDialog PrintPreviewDialog;
     private System.Drawing.Printing.PrintDocument PrintDocument;
@@ -937,4 +1101,23 @@ partial class Form1
     private TextBox PurposeTextBox;
     private Panel panel2;
     private Label PurposeEditLabel;
+    private TabPage EdPage;
+    private ListView DocsListBox;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+    private ColumnHeader columnHeader3;
+    private ColumnHeader columnHeader4;
+    private ToolStripStatusLabel DocsDoneValue;
+    private ToolStripProgressBar DocsDoneBar;
+    private ListView FilesListBox;
+    private ColumnHeader InColumn;
+    private ColumnHeader OutColumn;
+    private ColumnHeader columnHeader5;
+    private TabPage OutEdPage;
+    private ListView OutDocsListBox;
+    private ColumnHeader columnHeader6;
+    private ColumnHeader columnHeader7;
+    private ColumnHeader columnHeader8;
+    private ColumnHeader columnHeader9;
+    private ColumnHeader columnHeader10;
 }
