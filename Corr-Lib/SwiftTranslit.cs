@@ -1,12 +1,13 @@
 #region License
 /*
 Copyright 2022 Dmitrii Evdokimov
+Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -313,7 +314,9 @@ public static class SwiftTranslit
     }
 
     /// <summary>
-    /// Преобразование суммы из формата УФЭБС XML в SWIFT-RUR
+    /// Преобразование суммы из формата УФЭБС XML в SWIFT-RUR.
+    /// Целая часть должна содержать, по крайней мере, одну цифру.
+    /// Дробная часть может отсутствовать, но запятая между целой и дробной частью всегда должна присутствовать.
     /// </summary>
     /// <param name="src">РКК</param>
     /// <returns>Р,КК</returns>
@@ -321,6 +324,11 @@ public static class SwiftTranslit
     {
         if (src.Length > 2)
         {
+            if (src.EndsWith("00"))
+            {
+                return src[..^2] + ",";
+            }
+
             return src.Insert(src.Length - 2, ",");
         }
         else if (src.Length == 2)

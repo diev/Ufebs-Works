@@ -84,55 +84,56 @@ public partial class Form1 : Form
     {
         StringBuilder err = new();
 
-        if (string.IsNullOrEmpty(ConfigProperties.OpenDir) || !Directory.Exists(ConfigProperties.OpenDir))
+        //if (string.IsNullOrEmpty(ConfigProperties.OpenDir) || !Directory.Exists(ConfigProperties.OpenDir))
+        if (ConfigProperties.OpenDir.Empty() || !Directory.Exists(ConfigProperties.OpenDir))
         {
             err.AppendLine($"Папка OpenDir не существует!");
             //ConfigProperties.OpenDir = Directory.GetCurrentDirectory();
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.OpenMask))
+        if (ConfigProperties.OpenMask.Empty())
         {
             err.AppendLine($"Маска OpenMask не указана!");
             //ConfigProperties.OpenMask = "r*.xml";
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.SaveDir) || !Directory.Exists(ConfigProperties.SaveDir))
+        if (ConfigProperties.SaveDir.Empty() || !Directory.Exists(ConfigProperties.SaveDir))
         {
             err.AppendLine($"Папка SaveDir не существует!");
             //ConfigProperties.SaveDir = ConfigProperties.OpenDir;
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.SaveMask))
+        if (ConfigProperties.SaveMask.Empty())
         {
             err.AppendLine($"Маска SaveMask не указана!");
             //ConfigProperties.SaveMask = "*_.txt";
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.BankAccount))
+        if (ConfigProperties.BankAccount.Empty())
         {
             err.AppendLine($"Счет Банка не указан!");
             //ConfigProperties.BankAccount = "12345678901234567890";
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.BankINN))
+        if (ConfigProperties.BankINN.Empty())
         {
             err.AppendLine($"ИНН Банка не указан!");
             //ConfigProperties.BankINN = "7831001422";
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.BankKPP))
+        if (ConfigProperties.BankKPP.Empty())
         {
             err.AppendLine($"КПП Банка не указан!");
             //ConfigProperties.BankKPP = "783101001";
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.BankPayerTemplate))
+        if (ConfigProperties.BankPayerTemplate.Empty())
         {
             err.AppendLine($"Шаблон за клиента Банка не указан!");
             //ConfigProperties.BankPayerTemplate = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
         }
 
-        if (string.IsNullOrEmpty(ConfigProperties.BankPurposeTemplate))
+        if (ConfigProperties.BankPurposeTemplate.Empty())
         {
             err.AppendLine($"Шаблон назначения за третье лицо не указан!");
             //ConfigProperties.BankPurposeTemplate = "//7831001422//783101001//{name}//{purpose}";
@@ -171,7 +172,8 @@ public partial class Form1 : Form
 
         if (saved.Length > 0)
         {
-            var reply = MessageBox.Show($"В выходной директории\n{ConfigProperties.SaveDir}\nуже есть {saved.Length} файлов {ConfigProperties.SaveMask}.\n\nОни будут перезаписаны при сохранениях!\nУдалить их?",
+            var reply = MessageBox.Show(
+                $"В выходной директории\n{ConfigProperties.SaveDir}\nуже есть {saved.Length} файлов {ConfigProperties.SaveMask}.\n\nОни будут перезаписаны при сохранениях!\nУдалить их?",
                 Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
             if (reply == DialogResult.Yes)
@@ -237,8 +239,11 @@ public partial class Form1 : Form
 
         FilesListBox.Font = font;
         XmlTextBox.Font = font;
+        DocsListBox.Font = font;
+        //OutDocsListBox.Font = font;
         SwiftTextBox.Font = font;
-        OutTextBox.Font = font;
+        OutSwiftTextBox.Font = font;
+
         NameTextBox.Font = font;
         PurposeTextBox.Font = font;
     }
@@ -286,9 +291,9 @@ public partial class Form1 : Form
 
     private bool LoadFile(string path)
     {
-        string text = File.ReadAllText(path, Encoding.ASCII);
         string filename = Path.GetFileNameWithoutExtension(path);
         string ext = Path.GetExtension(path);
+        bool problems = false;
 
         SaveAsFileDialog.FileName = _saveMaskName.Replace("*", filename);
         _saveFileName = Path.Combine(SaveAsFileDialog.InitialDirectory, SaveAsFileDialog.FileName);
@@ -298,9 +303,11 @@ public partial class Form1 : Form
 
         Text = $"{Application.ProductName} | {path}";
 
-        // Исходный текст XML
-
-        if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
+        if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+        {
+            //string text = File.ReadAllText(path, Encoding.ASCII);
+        }
+        else if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
         {
             //XmlTextBox.Text = text; //no 1251!
 
@@ -313,146 +320,143 @@ public partial class Form1 : Form
             }
             else
             {
-                XNamespace ns = root.GetDefaultNamespace();
                 XmlTextBox.Text = xdoc.ToString();
 
-                foreach (var node in root.Elements())
+                //XNamespace ns = root.GetDefaultNamespace();
+                //XNode? node;
+                //XElement ed;
+
+                switch (root.Name.LocalName)
                 {
-                    #region Get Values
-                    // <ED101 ... EDDate="2022-04-13" EDNo="10442" Sum="164839" TransKind="01" xmlns="urn:cbr-ru:ed:v2.0">
-                    var ED = (XElement)node;
-                    XAttribute? EDNo = ED.Attribute(nameof(EDNo));
-                    XAttribute? Sum = ED.Attribute(nameof(Sum));
-                    XAttribute? TransKind = ED.Attribute(nameof(TransKind));
+                    case "ED503": // SWIFT
+                        {
+                            string text = File.ReadAllText(path, Encoding.ASCII);
+                            text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
 
-                    // <AccDoc AccDocDate="2022-04-12" AccDocNo="1517"/>
-                    XElement? AccDoc = ED.Element(ns + nameof(AccDoc));
-                    XAttribute? AccDocNo = AccDoc?.Attribute(nameof(AccDocNo));
 
-                    // <Payer INN="470608634408" KPP="470301001" PersonalAcc="30109810300000000063">
-                    XElement? Payer = ED.Element(ns + nameof(Payer));
-                    XAttribute? INN = Payer?.Attribute(nameof(INN));
-                    XAttribute? KPP = Payer?.Attribute(nameof(KPP));
-                    XAttribute? PersonalAcc = Payer?.Attribute(nameof(PersonalAcc));
+                            // Исходный текст документа SWIFT
 
-                    // <Name>Ван ден Бринк Виллеке</Name>
-                    XElement? Name = Payer?.Element(ns + nameof(Name));
+                            SwiftTextBox.Text = text;
+                            _swift = new SwiftLines(SwiftTextBox.Lines);
 
-                    // <Bank BIC="044525769" CorrespAcc="30109810300000000063"/>
-                    XElement? Bank = Payer?.Element(ns + nameof(Bank));
+                            if (text is null)
+                            {
+                                SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
+                            }
 
-                    XAttribute? BIC = Bank?.Attribute(nameof(BIC));
-                    XAttribute? CorrespAcc = Bank?.Attribute(nameof(CorrespAcc));
+                            // Переключаемся на последнюю закладку "К отправке"
 
-                    // <Payee INN="470608634408" KPP="470301001" PersonalAcc="30109810300000000063">
-                    XElement? Payee = ED.Element(ns + nameof(Payee));
-                    XAttribute? PayeeINN = Payee?.Attribute(nameof(INN));
-                    XAttribute? PayeeKPP = Payee?.Attribute(nameof(KPP));
-                    //XAttribute? PayeePersonalAcc = Payee?.Attribute(nameof(PersonalAcc));
-                    
-                    XElement? PayeeName = Payee?.Element(ns + nameof(Name));
+                            Tabs.SelectedIndex = Tabs.TabCount - 1;
 
-                    // <Purpose>Взносы по страхованию...</Purpose>
-                    XElement? Purpose = ED.Element(ns + nameof(Purpose));
+                            // Читаем значения из текста формата документа SWIFT-RUR
 
-                    // <DepartmentalInfo CBC="39310202050071000160" DocDate="0" DocNo="0" DrawerStatus="13" OKATO="41625156" PaytReason="0" TaxPaytKind="0" TaxPeriod="0"/>
-                    XElement? DepartmentalInfo = ED.Element(ns + nameof(DepartmentalInfo));
-                    XAttribute? TaxPaytKind = DepartmentalInfo?.Attribute(nameof(TaxPaytKind));
-                    #endregion Get Values
+                            var acc = _swift.Account;
+                            var inn = _swift.INN;
+                            //var kpp = _swift.KPP;
+                            var name = _swift.Name;
 
-                    var item = new ListViewItem(ED.Name.LocalName);
-                    
-                    item.SubItems.Add(Sum.Value);
-                    item.SubItems.Add(Name.Value);
-                    item.SubItems.Add(PayeeName.Value);
-                    item.SubItems.Add(Purpose.Value);
+                            // Если ИНН плательщика наш (как в Параметрах), то это платеж от нашего Банка самого
 
-                    DocsListBox.Items.Add(item);
-                    OutDocsListBox.Items.Add((ListViewItem)item.Clone());
+                            bool bank = inn == ConfigProperties.BankINN; // "7831001422";
+
+                            // Берем из Параметров номер корсчета
+
+                            string acc2 = ConfigProperties.BankAccount; // "30109810800010001378";
+
+                            // Подставляем новые значения плательщика в шаблон, если не Банк сам за себя
+
+                            // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+                            string name2 = bank
+                                ? name
+                                : ConfigProperties.BankPayerTemplate
+                                .Replace("{name}", name)
+                                .Replace("{acc}", acc);
+
+                            // Длина не превышает предельную?
+
+                            _isNameValid = name2.Length <= ConfigProperties.BankPayerLimit; // MAX_NAME;
+
+                            // Присваиваем новые значения для генерации нового теста документа
+
+                            _swift.Account = acc2;
+                            _swift.Name = name2;
+
+                            // Берем назначение из документа
+
+                            string purpose = _swift.Purpose;
+
+                            // Если не Банк сам и есть признак платежа в бюджет
+
+                            if (!bank && _swift.Tax)
+                            {
+                                // Подставляем новые значения назначения в шаблон платежа за третье лицо
+
+                                // $"//7831001422//784101001//{name}//{purpose}";
+                                purpose = ConfigProperties.BankPurposeTemplate
+                                    .Replace("{name}", name)
+                                    .Replace("{purpose}", purpose);
+
+                                _swift.Purpose = purpose;
+                            }
+
+                            // Заполняем текстбоксы
+
+                            OutSwiftTextBox.Lines = _swift.Lines; // Новый текст документа SWIFT
+                            NameTextBox.Text = name2; // Текст наименования плательщика
+                            PurposeTextBox.Text = purpose; // Текст назначения платежа
+
+                            // Пишем в статусную строку тип платежа
+
+                            TaxValue.Text = _swift.Tax ? "Бюджет" : "Платеж";
+
+                        }
+                        break;
+
+                    case "PacketEPD":
+                        var packet = new PacketEPD(root);
+
+                        //var node = root.FirstNode;
+                        //do
+                        //{
+                        //    var ed = new ED100(node);
+
+                        //    node = node.NextNode;
+                        //}
+                        //while (node != null);
+
+                        foreach (var node in root.Elements())
+                        {
+                            var ed = new ED100(node);
+                            DocsListBox.AddItem(ed);
+
+                            var corr = ed.CorrClone();
+                            OutDocsListBox.AddItem(corr);
+
+                            //Test
+                            OutSwiftTextBox.Text = corr.ToSWIFT();
+                        }
+                        break;
+
+                    case "ED101":
+                    case "ED103":
+                    case "ED104":
+                    case "ED108":
+                        var sed = new ED100(root);
+                        DocsListBox.AddItem(sed);
+                        OutDocsListBox.AddItem(sed.CorrClone());
+                        break;
+
+                    default:
+                        break;
                 }
             }
 
-            text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
+            //text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
         }
         else
         {
             XmlTextBox.Text = "No XML file";
         }
-
-        // Исходный текст документа SWIFT
-
-        SwiftTextBox.Text = text;
-        _swift = new SwiftLines(SwiftTextBox.Lines);
-
-        if (text is null)
-        {
-            SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
-        }
-
-        // Переключаемся на последнюю закладку "К отправке"
-
-        Tabs.SelectedIndex = Tabs.TabCount - 1;
-
-        // Читаем значения из текста формата документа SWIFT-RUR
-
-        var acc = _swift.Account;
-        var inn = _swift.INN;
-        //var kpp = _swift.KPP;
-        var name = _swift.Name;
-
-        // Если ИНН плательщика наш (как в Параметрах), то это платеж от нашего Банка самого
-
-        bool bank = inn == ConfigProperties.BankINN; // "7831001422";
-
-        // Берем из Параметров номер корсчета
-
-        string acc2 = ConfigProperties.BankAccount; // "30109810800010001378";
-
-        // Подставляем новые значения плательщика в шаблон, если не Банк сам за себя
-
-        // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        string name2 = bank
-            ? name
-            : ConfigProperties.BankPayerTemplate
-            .Replace("{name}", name)
-            .Replace("{acc}", acc);
-
-        // Длина не превышает предельную?
-
-        _isNameValid = name2.Length <= ConfigProperties.BankPayerLimit; // MAX_NAME;
-
-        // Присваиваем новые значения для генерации нового теста документа
-
-        _swift.Account = acc2;
-        _swift.Name = name2;
-
-        // Берем назначение из документа
-
-        string purpose = _swift.Purpose;
-
-        // Если не Банк сам и есть признак платежа в бюджет
-
-        if (!bank && _swift.Tax)
-        {
-            // Подставляем новые значения назначения в шаблон платежа за третье лицо
-
-            // $"//7831001422//784101001//{name}//{purpose}";
-            purpose = ConfigProperties.BankPurposeTemplate
-                .Replace("{name}", name)
-                .Replace("{purpose}", purpose);
-
-            _swift.Purpose = purpose;
-        }
-
-        // Заполняем текстбоксы
-
-        OutTextBox.Lines = _swift.Lines; // Новый текст документа SWIFT
-        NameTextBox.Text = name2; // Текст наименования плательщика
-        PurposeTextBox.Text = purpose; // Текст назначения платежа
-
-        // Пишем в статусную строку тип платежа
-
-        TaxValue.Text = _swift.Tax ? "Бюджет" : "Платеж";
 
         // Выставляем доступность пунктов меню и кнопок
 
@@ -463,7 +467,7 @@ public partial class Form1 : Form
     {
         if (_saveFileName != null)
         {
-            File.WriteAllText(_saveFileName, text ?? OutTextBox.Text, Encoding.ASCII);
+            File.WriteAllText(_saveFileName, text ?? OutSwiftTextBox.Text, Encoding.ASCII);
             MarkSaved();
         }
     }
@@ -482,7 +486,7 @@ public partial class Form1 : Form
 
     private void PrintPage(PrintPageEventArgs e)
     {
-        string documentContents = OutTextBox.Text;
+        string documentContents = OutSwiftTextBox.Text;
         string stringToPrint = documentContents;
 
         if (e.Graphics != null)
@@ -583,7 +587,7 @@ public partial class Form1 : Form
         //if (OutTextBox.Focused && OutEditCheck.Checked)
         if (ChangeMenuItem.Checked)
         {
-            _swift.Lines = OutTextBox.Lines;
+            _swift.Lines = OutSwiftTextBox.Lines;
             _swift.NameLimit = limit;
             //OutTextBox.Lines = _swift.Lines;
 
@@ -603,7 +607,7 @@ public partial class Form1 : Form
         {
             _swift.Name = NameTextBox.Text;
             _swift.NameLimit = limit;
-            OutTextBox.Lines = _swift.Lines;
+            OutSwiftTextBox.Lines = _swift.Lines;
         }
 
         int length = NameTextBox.TextLength;
@@ -621,7 +625,7 @@ public partial class Form1 : Form
         if (!ChangeMenuItem.Checked)
         {
             _swift.Purpose = PurposeTextBox.Text;
-            OutTextBox.Lines = _swift.Lines;
+            OutSwiftTextBox.Lines = _swift.Lines;
         }
 
         int length = PurposeTextBox.TextLength;
@@ -707,7 +711,7 @@ public partial class Form1 : Form
 
     private void FontMenuItem_Click(object sender, EventArgs e)
     {
-        FontDialog.Font = OutTextBox.Font;
+        FontDialog.Font = OutSwiftTextBox.Font;
         FontDialog.ShowDialog();
     }
 
@@ -779,7 +783,7 @@ public partial class Form1 : Form
 
     private void UndoMenuItem_Click(object sender, EventArgs e)
     {
-        OutTextBox.Undo();
+        OutSwiftTextBox.Undo();
     }
 
     private void RedoMenuItem_Click(object sender, EventArgs e)
@@ -789,22 +793,22 @@ public partial class Form1 : Form
 
     private void CutMenuItem_Click(object sender, EventArgs e)
     {
-        OutTextBox.Cut();
+        OutSwiftTextBox.Cut();
     }
 
     private void CopyMenuItem_Click(object sender, EventArgs e)
     {
-        OutTextBox.Copy();
+        OutSwiftTextBox.Copy();
     }
 
     private void PasteMenuItem_Click(object sender, EventArgs e)
     {
-        OutTextBox.Paste();
+        OutSwiftTextBox.Paste();
     }
 
     private void SelectAllMenuItem_Click(object sender, EventArgs e)
     {
-        OutTextBox.SelectAll();
+        OutSwiftTextBox.SelectAll();
     }
 
     private void PrevMenuItem_Click(object sender, EventArgs e)
@@ -832,7 +836,7 @@ public partial class Form1 : Form
     {
         WrapMenuItem.Checked = !WrapMenuItem.Checked;
         XmlTextBox.WordWrap = WrapMenuItem.Checked;
-        OutTextBox.WordWrap = WrapMenuItem.Checked;
+        OutSwiftTextBox.WordWrap = WrapMenuItem.Checked;
     }
 
     private void PrintDocument_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
@@ -851,7 +855,7 @@ public partial class Form1 : Form
     private void ChangeMenuItem_CheckedChanged(object sender, EventArgs e)
     {
         bool check = ChangeMenuItem.Checked;
-        OutTextBox.ReadOnly = !check;
+        OutSwiftTextBox.ReadOnly = !check;
         NameTextBox.ReadOnly = check;
         PurposeTextBox.ReadOnly = check;
     }

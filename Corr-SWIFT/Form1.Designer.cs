@@ -97,7 +97,7 @@ partial class Form1
             this.SwiftPage = new System.Windows.Forms.TabPage();
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
             this.OutSwiftPage = new System.Windows.Forms.TabPage();
-            this.OutTextBox = new System.Windows.Forms.TextBox();
+            this.OutSwiftTextBox = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.panel3 = new System.Windows.Forms.Panel();
             this.NameTextBox = new System.Windows.Forms.TextBox();
@@ -569,6 +569,7 @@ partial class Form1
             this.InColumn,
             this.OutColumn});
             this.FilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FilesListBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FilesListBox.FullRowSelect = true;
             this.FilesListBox.GridLines = true;
             this.FilesListBox.Location = new System.Drawing.Point(3, 3);
@@ -751,7 +752,7 @@ partial class Form1
             // 
             // OutSwiftPage
             // 
-            this.OutSwiftPage.Controls.Add(this.OutTextBox);
+            this.OutSwiftPage.Controls.Add(this.OutSwiftTextBox);
             this.OutSwiftPage.Location = new System.Drawing.Point(4, 24);
             this.OutSwiftPage.Name = "OutSwiftPage";
             this.OutSwiftPage.Padding = new System.Windows.Forms.Padding(3);
@@ -760,20 +761,20 @@ partial class Form1
             this.OutSwiftPage.Text = "К отправке SWIFT";
             this.OutSwiftPage.UseVisualStyleBackColor = true;
             // 
-            // OutTextBox
+            // OutSwiftTextBox
             // 
-            this.OutTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OutTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OutTextBox.Location = new System.Drawing.Point(3, 3);
-            this.OutTextBox.Multiline = true;
-            this.OutTextBox.Name = "OutTextBox";
-            this.OutTextBox.PlaceholderText = "Нечего отправлять.";
-            this.OutTextBox.ReadOnly = true;
-            this.OutTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.OutTextBox.Size = new System.Drawing.Size(598, 358);
-            this.OutTextBox.TabIndex = 2;
-            this.OutTextBox.WordWrap = false;
-            this.OutTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
+            this.OutSwiftTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OutSwiftTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.OutSwiftTextBox.Location = new System.Drawing.Point(3, 3);
+            this.OutSwiftTextBox.Multiline = true;
+            this.OutSwiftTextBox.Name = "OutSwiftTextBox";
+            this.OutSwiftTextBox.PlaceholderText = "Нечего отправлять.";
+            this.OutSwiftTextBox.ReadOnly = true;
+            this.OutSwiftTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.OutSwiftTextBox.Size = new System.Drawing.Size(598, 358);
+            this.OutSwiftTextBox.TabIndex = 2;
+            this.OutSwiftTextBox.WordWrap = false;
+            this.OutSwiftTextBox.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
             // 
             // splitContainer2
             // 
@@ -1043,7 +1044,7 @@ partial class Form1
     private TabPage SwiftPage;
     private TextBox SwiftTextBox;
     private TabPage OutSwiftPage;
-    private TextBox OutTextBox;
+    private TextBox OutSwiftTextBox;
     private ToolStripMenuItem FontMenuItem;
     private FontDialog FontDialog;
     private ToolStripStatusLabel TaxValue;

@@ -16,7 +16,8 @@ public static class Program
 
     // Service Bank
     const string CorBIC = "044525769";
-    const string CorACC = "30109810300000000063";
+    const string CorACC = "30101810745250000769";
+    const string CorACC2 = "30110810700000000769";
     const string CorUIC = "4525769000";
     #endregion consts
 
@@ -133,6 +134,10 @@ public static class Program
                 // <PacketEPD xmlns="urn:cbr-ru:ed:v2.0" EDNo="20" EDDate="2022-04-14" EDAuthor="4525769000" EDQuantity="6" Sum="4502602317" SystemCode="02">
                 // в соответствии с датой набора документов, указанной в наименовании файла.
 
+                // 2022-06-07
+                // 1. Удалять все атрибуты PaytKind вместе с их значениями.
+                // 2. Заменять в элементе ED101 в элементе Payee в элементе Bank атрибут CorrespAcc="30101810745250000769" на CorrespAcc="30110810700000000769".
+
                 node = root;
                 e = (XElement)node;
 
@@ -181,13 +186,35 @@ public static class Program
 
                     XAttribute? PaytKind = e?.Attribute(nameof(PaytKind));
 
-                    if (PaytKind != null && PaytKind.Value == "4")
+                    //if (PaytKind != null && PaytKind.Value == "4")
+                    //{
+                    //    PaytKind.Value = "0";
+                    //}
+
+                    if (PaytKind != null)
                     {
-                        PaytKind.Value = "0";
+                        PaytKind.Remove();
                     }
 
                     e?.Add(new XAttribute("PaymentPrecedence", "79"));
                     e?.Add(new XAttribute("SystemCode", "02"));
+
+                    XElement? Payee = e?.Element(ns + nameof(Payee));
+                    
+                    if (Payee != null)
+                    {
+                        XElement? Bank = Payee?.Element(ns + nameof(Bank));
+
+                        if (Bank != null)
+                        {
+                            XAttribute? CorrespAcc = Bank?.Attribute(nameof(CorrespAcc));
+
+                            if (CorrespAcc != null && CorrespAcc.Value == CorACC)
+                            {
+                                CorrespAcc.Value = CorACC2;
+                            }
+                        }
+                    }
 
                     node = node?.NextNode;
                 }

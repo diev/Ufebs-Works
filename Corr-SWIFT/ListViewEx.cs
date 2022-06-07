@@ -1,4 +1,25 @@
-﻿using System;
+﻿#region License
+/*
+Copyright 2022 Dmitrii Evdokimov
+Open source software
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+using CorrLib;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -117,5 +138,29 @@ internal static class ListViewEx
         }
 
         return false;
+    }
+
+    internal static void AddItem(this ListView listView, ED100 ed)
+    {
+        var item = new ListViewItem(ed.EDType);
+
+        var itemSum = item.SubItems.Add(ed.Sum);
+        var itemName = item.SubItems.Add(ed.PayerName);
+        var itemPayee = item.SubItems.Add(ed.PayeeName);
+        var itemPurpose = item.SubItems.Add(ed.Purpose);
+
+        if (ed.PayerName.Length > 160)
+        {
+            item.UseItemStyleForSubItems = false;
+            itemName.ForeColor = Color.Red;
+        }
+
+        if (ed.Purpose.Length > 210)
+        {
+            item.UseItemStyleForSubItems = false;
+            itemPurpose.ForeColor = Color.Red;
+        }
+
+        listView.Items.Add(item);
     }
 }
