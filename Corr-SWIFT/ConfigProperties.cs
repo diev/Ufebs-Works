@@ -1,12 +1,13 @@
 ﻿#region License
 /*
 Copyright 2022 Dmitrii Evdokimov
+Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +22,7 @@ using System.Text.Json.Nodes;
 
 namespace CorrSWIFT;
 
-internal static class ConfigProperties
+public static class ConfigProperties
 {
     private const string runtimeOptions = nameof(runtimeOptions);
     private const string configProperties = nameof(configProperties);
@@ -54,10 +55,10 @@ internal static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(SaveMask), value);
     }
 
-    public static string BankAccount
+    public static string CorrAccount
     {
-        get => AppContext.GetData(nameof(BankAccount)) as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(nameof(BankAccount), value);
+        get => AppContext.GetData(nameof(CorrAccount)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(CorrAccount), value);
     }
 
     public static string BankINN
@@ -90,6 +91,18 @@ internal static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(BankPayerLimit), value.ToString());
     }
 
+    public static string BankSWIFT
+    {
+        get => AppContext.GetData(nameof(BankSWIFT)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(BankSWIFT), value);
+    }
+
+    public static string CorrSWIFT
+    {
+        get => AppContext.GetData(nameof(CorrSWIFT)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(CorrSWIFT), value);
+    }
+
     public static void Save()
     {
         string config = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
@@ -104,13 +117,16 @@ internal static class ConfigProperties
         properties![nameof(SaveDir)] = SaveDir;
         properties![nameof(SaveMask)] = SaveMask;
 
-        properties![nameof(BankAccount)] = BankAccount;
+        properties![nameof(CorrAccount)] = CorrAccount;
         properties![nameof(BankINN)] = BankINN;
         properties![nameof(BankKPP)] = BankKPP;
         properties![nameof(BankPayerTemplate)] = BankPayerTemplate;
         properties![nameof(BankPurposeTemplate)] = BankPurposeTemplate;
 
         properties![nameof(BankPayerLimit)] = BankPayerLimit;
+
+        properties![nameof(BankSWIFT)] = BankSWIFT;
+        properties![nameof(CorrSWIFT)] = CorrSWIFT;
 
         var options = new JsonSerializerOptions { WriteIndented = true };
         json = configNode.ToJsonString(options);

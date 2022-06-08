@@ -99,11 +99,15 @@ public class ED100
 
     /// <summary>
     /// Вид операции (поле 18).
+    /// 01 – платежное поручение
+    /// 02 – платежное требование
+    /// 06 – инкассовое поручение
+    /// 16 – платежный ордер
     /// </summary>
     public string TransKind { get; set; } = "01"; // required
 
     /// <summary>
-    /// 
+    /// Схема имен XML
     /// </summary>
     public string Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
 
@@ -265,33 +269,51 @@ public class ED100
         this.Load(element);
     }
 
-    #endregion Constructors
-
-    public ED100 CorrClone()
+    public ED100(ED100 ed)
     {
-        ED100 corr = (ED100)this.MemberwiseClone();
+        EDType = ed.EDType;
 
-        corr.EDType = "ED101";
-        corr.PayerName = this.CorrPayerName();
+        ChargeOffDate = ed.ChargeOffDate;
+        EDAuthor = ed.EDAuthor;
+        EDDate = ed.EDDate;
+        EDNo = ed.EDNo;
+        PaymentID = ed.PaymentID;
+        PaymentPrecedence = ed.PaymentPrecedence;
+        PaytKind = ed.PaytKind;
+        Priority = ed.Priority;
+        ReceiptDate = ed.ReceiptDate;
+        Sum = ed.Sum;
+        SystemCode = ed.SystemCode;
+        TransKind = ed.TransKind;
+        Xmlns = ed.Xmlns;
 
-        // удалить КПП для ИП и нулевые
-        corr.PayerKPP = this.CorrPayerKPP();
-        corr.PayeeKPP = this.CorrPayeeKPP();
+        AccDocDate = ed.AccDocDate;
+        AccDocNo = ed.AccDocDate;
 
-        if (this.Tax)
-        {
-            corr.Purpose = this.CorrPurpose();
+        PayerINN = ed.PayerINN;
+        PayerKPP = ed.PayerKPP;
+        PayerPersonalAcc = ed.PayerPersonalAcc;
+        PayerName = ed.PayerName;
+        PayerBIC = ed.PayerBIC;
+        PayerCorrespAcc = ed.PayerCorrespAcc;
 
-            // add required "0" by default!
-            corr.CBC = this.CBC ?? "0";
-            corr.DocDate = this.DocDate ?? "0";
-            corr.DocNo = this.DocNo ?? "0";
-            corr.OKATO = this.OKATO ?? "0";
-            corr.PaytReason = this.PaytReason ?? "0";
-            corr.TaxPeriod = this.TaxPeriod ?? "0";
-            corr.TaxPaytKind = this.TaxPaytKind ?? "0";
-        }
+        PayeeINN = ed.PayeeINN;
+        PayeeKPP = ed.PayeeKPP;
+        PayeePersonalAcc = ed.PayeePersonalAcc;
+        PayeeName = ed.PayeeName;
+        PayeeBIC = ed.PayeeBIC;
+        PayeeCorrespAcc = ed.PayeeCorrespAcc;
 
-        return corr;
+        Purpose = ed.Purpose;
+
+        CBC = ed.CBC;
+        DocDate = ed.DocDate;
+        DocNo = ed.DocNo;
+        OKATO = ed.OKATO;
+        PaytReason = ed.PaytReason;
+        TaxPeriod = ed.TaxPeriod;
+        TaxPaytKind = ed.TaxPaytKind;
     }
+
+    #endregion Constructors
 }

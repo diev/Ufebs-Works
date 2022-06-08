@@ -19,7 +19,7 @@ limitations under the License.
 
 namespace CorrLib;
 
-public static class CorrExtensions
+public static class CorrProcessing
 {
     const string OurINN = "7831001422";
     const string OurKPP = "784101001";
@@ -99,5 +99,66 @@ public static class CorrExtensions
             kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
             ? kpp
             : null;
+    }
+
+    public static ED100 CorrClone(this ED100 ed)
+    {
+        var corr = new ED100(ed)
+        {
+            EDType = "ED101",
+            PayerName = ed.CorrPayerName(),
+
+            // удалить КПП для ИП и нулевые
+            PayerKPP = ed.CorrPayerKPP(),
+            PayeeKPP = ed.CorrPayeeKPP()
+        };
+
+        if (ed.Tax)
+        {
+            corr.Purpose = ed.CorrPurpose();
+
+            // add required "0" by default!
+            corr.CBC = ed.CBC ?? "0";
+            corr.DocDate = ed.DocDate ?? "0";
+            corr.DocNo = ed.DocNo ?? "0";
+            corr.OKATO = ed.OKATO ?? "0";
+            corr.PaytReason = ed.PaytReason ?? "0";
+            corr.TaxPeriod = ed.TaxPeriod ?? "0";
+            corr.TaxPaytKind = ed.TaxPaytKind ?? "0";
+        }
+
+        return corr;
+    }
+
+    public static ED100 CorrSWIFTClone(this ED100 ed)
+    {
+        var corr = new ED100(ed)
+        {
+            PayerName = SwiftTranslit.Lat(ed.PayerName),
+            PayeeName = SwiftTranslit.Lat(ed.PayeeName),
+
+            Purpose = SwiftTranslit.Lat(ed.Purpose),
+
+            Sum = SwiftTranslit.XSum(ed.Sum),
+
+            ChargeOffDate = SwiftTranslit.XDate(ed.ChargeOffDate),
+            EDDate = SwiftTranslit.XDate(ed.EDDate),
+            ReceiptDate = SwiftTranslit.XDate(ed.ReceiptDate),
+            AccDocDate = SwiftTranslit.XDate(ed.AccDocDate)
+        };
+
+        if (ed.Tax)
+        {
+            // add required "0" by default!
+            corr.CBC = SwiftTranslit.Lat(ed.CBC ?? "0");
+            corr.DocDate = SwiftTranslit.Lat(ed.DocDate ?? "0");
+            corr.DocNo = SwiftTranslit.Lat(ed.DocNo ?? "0");
+            corr.OKATO = SwiftTranslit.Lat(ed.OKATO ?? "0");
+            corr.PaytReason = SwiftTranslit.Lat(ed.PaytReason ?? "0");
+            corr.TaxPeriod = SwiftTranslit.Lat(ed.TaxPeriod ?? "0");
+            corr.TaxPaytKind = SwiftTranslit.Lat(ed.TaxPaytKind ?? "0");
+        }
+
+        return corr;
     }
 }

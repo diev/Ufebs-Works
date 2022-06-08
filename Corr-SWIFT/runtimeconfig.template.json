@@ -4,11 +4,13 @@
     "OpenMask": "*.xml",
     "SaveDir": "G:\\BANK\\TEST\\CLI",
     "SaveMask": "*_.txt",
-    "BankAccount": "30101810600000000702",
+    "CorrAccount": "30101810600000000702",
     "BankINN": "7831001422",
     "BankKPP": "784101001",
     "BankPayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
     "BankPurposeTemplate": "//7831001422//784101001//{name}//{purpose}",
-    "BankPayerLimit": 160
+    "BankPayerLimit": 160,
+    "BankSWIFT": "CITVRU2P",
+    "CorrSWIFT": "CITVRU2P"
   }
 }

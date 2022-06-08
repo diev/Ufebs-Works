@@ -37,12 +37,20 @@
             this.OpenFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SaveFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SaveBox = new System.Windows.Forms.GroupBox();
+            this.OutFormatBox = new System.Windows.Forms.ComboBox();
+            this.OutFormatLabel = new System.Windows.Forms.Label();
             this.SaveMaskText = new System.Windows.Forms.TextBox();
             this.SaveMaskLabel = new System.Windows.Forms.Label();
             this.SaveDirButton = new System.Windows.Forms.Button();
             this.SaveDirText = new System.Windows.Forms.TextBox();
             this.SaveDirLabel = new System.Windows.Forms.Label();
             this.BankBox = new System.Windows.Forms.GroupBox();
+            this.CorrSWIFTText = new System.Windows.Forms.TextBox();
+            this.CorrSWIFTLabel = new System.Windows.Forms.Label();
+            this.BankSWIFTText = new System.Windows.Forms.TextBox();
+            this.BankSWIFTLabel = new System.Windows.Forms.Label();
+            this.BankPayerLimitText = new System.Windows.Forms.TextBox();
+            this.BankPayerLimitLabel = new System.Windows.Forms.Label();
             this.BankPurposeText = new System.Windows.Forms.TextBox();
             this.BankPurposeLabel = new System.Windows.Forms.Label();
             this.BankPayerText = new System.Windows.Forms.TextBox();
@@ -51,13 +59,11 @@
             this.BankKPPLabel = new System.Windows.Forms.Label();
             this.BankINNText = new System.Windows.Forms.TextBox();
             this.BankINNLabel = new System.Windows.Forms.Label();
-            this.BankAccountText = new System.Windows.Forms.TextBox();
-            this.BankAccountLabel = new System.Windows.Forms.Label();
+            this.CorrAccountText = new System.Windows.Forms.TextBox();
+            this.CorrAccountLabel = new System.Windows.Forms.Label();
             this.AcceptConfigButton = new System.Windows.Forms.Button();
             this.CancelConfigButton = new System.Windows.Forms.Button();
             this.ResetConfigButton = new System.Windows.Forms.Button();
-            this.BankPayerLimitText = new System.Windows.Forms.TextBox();
-            this.BankPayerLimitLabel = new System.Windows.Forms.Label();
             this.OpenBox.SuspendLayout();
             this.SaveBox.SuspendLayout();
             this.BankBox.SuspendLayout();
@@ -134,6 +140,8 @@
             // 
             // SaveBox
             // 
+            this.SaveBox.Controls.Add(this.OutFormatBox);
+            this.SaveBox.Controls.Add(this.OutFormatLabel);
             this.SaveBox.Controls.Add(this.SaveMaskText);
             this.SaveBox.Controls.Add(this.SaveMaskLabel);
             this.SaveBox.Controls.Add(this.SaveDirButton);
@@ -145,6 +153,27 @@
             this.SaveBox.TabIndex = 1;
             this.SaveBox.TabStop = false;
             this.SaveBox.Text = "Конечные файлы";
+            // 
+            // OutFormatBox
+            // 
+            this.OutFormatBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.OutFormatBox.FormattingEnabled = true;
+            this.OutFormatBox.Items.AddRange(new object[] {
+            "УФЭБС",
+            "SWIFT"});
+            this.OutFormatBox.Location = new System.Drawing.Point(355, 48);
+            this.OutFormatBox.Name = "OutFormatBox";
+            this.OutFormatBox.Size = new System.Drawing.Size(121, 23);
+            this.OutFormatBox.TabIndex = 6;
+            // 
+            // OutFormatLabel
+            // 
+            this.OutFormatLabel.AutoSize = true;
+            this.OutFormatLabel.Location = new System.Drawing.Point(264, 51);
+            this.OutFormatLabel.Name = "OutFormatLabel";
+            this.OutFormatLabel.Size = new System.Drawing.Size(53, 15);
+            this.OutFormatLabel.TabIndex = 5;
+            this.OutFormatLabel.Text = "Формат:";
             // 
             // SaveMaskText
             // 
@@ -195,6 +224,10 @@
             // 
             // BankBox
             // 
+            this.BankBox.Controls.Add(this.CorrSWIFTText);
+            this.BankBox.Controls.Add(this.CorrSWIFTLabel);
+            this.BankBox.Controls.Add(this.BankSWIFTText);
+            this.BankBox.Controls.Add(this.BankSWIFTLabel);
             this.BankBox.Controls.Add(this.BankPayerLimitText);
             this.BankBox.Controls.Add(this.BankPayerLimitLabel);
             this.BankBox.Controls.Add(this.BankPurposeText);
@@ -205,14 +238,71 @@
             this.BankBox.Controls.Add(this.BankKPPLabel);
             this.BankBox.Controls.Add(this.BankINNText);
             this.BankBox.Controls.Add(this.BankINNLabel);
-            this.BankBox.Controls.Add(this.BankAccountText);
-            this.BankBox.Controls.Add(this.BankAccountLabel);
+            this.BankBox.Controls.Add(this.CorrAccountText);
+            this.BankBox.Controls.Add(this.CorrAccountLabel);
             this.BankBox.Location = new System.Drawing.Point(9, 184);
             this.BankBox.Name = "BankBox";
-            this.BankBox.Size = new System.Drawing.Size(563, 171);
+            this.BankBox.Size = new System.Drawing.Size(563, 198);
             this.BankBox.TabIndex = 2;
             this.BankBox.TabStop = false;
             this.BankBox.Text = "Реквизиты Банка";
+            // 
+            // CorrSWIFTText
+            // 
+            this.CorrSWIFTText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CorrSWIFTText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrSWIFTText.Location = new System.Drawing.Point(394, 163);
+            this.CorrSWIFTText.Name = "CorrSWIFTText";
+            this.CorrSWIFTText.Size = new System.Drawing.Size(161, 22);
+            this.CorrSWIFTText.TabIndex = 16;
+            // 
+            // CorrSWIFTLabel
+            // 
+            this.CorrSWIFTLabel.AutoSize = true;
+            this.CorrSWIFTLabel.Location = new System.Drawing.Point(299, 166);
+            this.CorrSWIFTLabel.Name = "CorrSWIFTLabel";
+            this.CorrSWIFTLabel.Size = new System.Drawing.Size(69, 15);
+            this.CorrSWIFTLabel.TabIndex = 15;
+            this.CorrSWIFTLabel.Text = "Кор. SWIFT:";
+            // 
+            // BankSWIFTText
+            // 
+            this.BankSWIFTText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BankSWIFTText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BankSWIFTText.Location = new System.Drawing.Point(106, 163);
+            this.BankSWIFTText.Name = "BankSWIFTText";
+            this.BankSWIFTText.Size = new System.Drawing.Size(161, 22);
+            this.BankSWIFTText.TabIndex = 14;
+            // 
+            // BankSWIFTLabel
+            // 
+            this.BankSWIFTLabel.AutoSize = true;
+            this.BankSWIFTLabel.Location = new System.Drawing.Point(11, 166);
+            this.BankSWIFTLabel.Name = "BankSWIFTLabel";
+            this.BankSWIFTLabel.Size = new System.Drawing.Size(42, 15);
+            this.BankSWIFTLabel.TabIndex = 13;
+            this.BankSWIFTLabel.Text = "SWIFT:";
+            // 
+            // BankPayerLimitText
+            // 
+            this.BankPayerLimitText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BankPayerLimitText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BankPayerLimitText.Location = new System.Drawing.Point(482, 77);
+            this.BankPayerLimitText.Name = "BankPayerLimitText";
+            this.BankPayerLimitText.Size = new System.Drawing.Size(73, 22);
+            this.BankPayerLimitText.TabIndex = 12;
+            // 
+            // BankPayerLimitLabel
+            // 
+            this.BankPayerLimitLabel.AutoSize = true;
+            this.BankPayerLimitLabel.Location = new System.Drawing.Point(264, 80);
+            this.BankPayerLimitLabel.Name = "BankPayerLimitLabel";
+            this.BankPayerLimitLabel.Size = new System.Drawing.Size(209, 15);
+            this.BankPayerLimitLabel.TabIndex = 11;
+            this.BankPayerLimitLabel.Text = "Предел наименования (105 или 160):";
             // 
             // BankPurposeText
             // 
@@ -290,30 +380,30 @@
             this.BankINNLabel.TabIndex = 3;
             this.BankINNLabel.Text = "ИНН:";
             // 
-            // BankAccountText
+            // CorrAccountText
             // 
-            this.BankAccountText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.CorrAccountText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankAccountText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankAccountText.Location = new System.Drawing.Point(106, 19);
-            this.BankAccountText.Name = "BankAccountText";
-            this.BankAccountText.Size = new System.Drawing.Size(274, 22);
-            this.BankAccountText.TabIndex = 1;
+            this.CorrAccountText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrAccountText.Location = new System.Drawing.Point(106, 19);
+            this.CorrAccountText.Name = "CorrAccountText";
+            this.CorrAccountText.Size = new System.Drawing.Size(274, 22);
+            this.CorrAccountText.TabIndex = 1;
             // 
-            // BankAccountLabel
+            // CorrAccountLabel
             // 
-            this.BankAccountLabel.AutoSize = true;
-            this.BankAccountLabel.Location = new System.Drawing.Point(11, 22);
-            this.BankAccountLabel.Name = "BankAccountLabel";
-            this.BankAccountLabel.Size = new System.Drawing.Size(36, 15);
-            this.BankAccountLabel.TabIndex = 0;
-            this.BankAccountLabel.Text = "Счет:";
+            this.CorrAccountLabel.AutoSize = true;
+            this.CorrAccountLabel.Location = new System.Drawing.Point(11, 22);
+            this.CorrAccountLabel.Name = "CorrAccountLabel";
+            this.CorrAccountLabel.Size = new System.Drawing.Size(61, 15);
+            this.CorrAccountLabel.TabIndex = 0;
+            this.CorrAccountLabel.Text = "Кор. счет:";
             // 
             // AcceptConfigButton
             // 
             this.AcceptConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AcceptConfigButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.AcceptConfigButton.Location = new System.Drawing.Point(408, 366);
+            this.AcceptConfigButton.Location = new System.Drawing.Point(408, 390);
             this.AcceptConfigButton.Name = "AcceptConfigButton";
             this.AcceptConfigButton.Size = new System.Drawing.Size(75, 23);
             this.AcceptConfigButton.TabIndex = 3;
@@ -325,7 +415,7 @@
             // 
             this.CancelConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelConfigButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelConfigButton.Location = new System.Drawing.Point(489, 366);
+            this.CancelConfigButton.Location = new System.Drawing.Point(489, 390);
             this.CancelConfigButton.Name = "CancelConfigButton";
             this.CancelConfigButton.Size = new System.Drawing.Size(75, 23);
             this.CancelConfigButton.TabIndex = 4;
@@ -336,7 +426,7 @@
             // ResetConfigButton
             // 
             this.ResetConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ResetConfigButton.Location = new System.Drawing.Point(115, 366);
+            this.ResetConfigButton.Location = new System.Drawing.Point(115, 390);
             this.ResetConfigButton.Name = "ResetConfigButton";
             this.ResetConfigButton.Size = new System.Drawing.Size(75, 23);
             this.ResetConfigButton.TabIndex = 5;
@@ -344,30 +434,11 @@
             this.ResetConfigButton.UseVisualStyleBackColor = true;
             this.ResetConfigButton.Click += new System.EventHandler(this.ResetButton_Click);
             // 
-            // BankPayerLimitText
-            // 
-            this.BankPayerLimitText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankPayerLimitText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankPayerLimitText.Location = new System.Drawing.Point(482, 77);
-            this.BankPayerLimitText.Name = "BankPayerLimitText";
-            this.BankPayerLimitText.Size = new System.Drawing.Size(73, 22);
-            this.BankPayerLimitText.TabIndex = 12;
-            // 
-            // BankPayerLimitLabel
-            // 
-            this.BankPayerLimitLabel.AutoSize = true;
-            this.BankPayerLimitLabel.Location = new System.Drawing.Point(264, 80);
-            this.BankPayerLimitLabel.Name = "BankPayerLimitLabel";
-            this.BankPayerLimitLabel.Size = new System.Drawing.Size(209, 15);
-            this.BankPayerLimitLabel.TabIndex = 11;
-            this.BankPayerLimitLabel.Text = "Предел наименования (105 или 160):";
-            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 399);
+            this.ClientSize = new System.Drawing.Size(584, 423);
             this.Controls.Add(this.ResetConfigButton);
             this.Controls.Add(this.CancelConfigButton);
             this.Controls.Add(this.AcceptConfigButton);
@@ -412,12 +483,18 @@
         private Label BankKPPLabel;
         private TextBox BankINNText;
         private Label BankINNLabel;
-        private TextBox BankAccountText;
-        private Label BankAccountLabel;
+        private TextBox CorrAccountText;
+        private Label CorrAccountLabel;
         private Button AcceptConfigButton;
         private Button CancelConfigButton;
         private Button ResetConfigButton;
         private TextBox BankPayerLimitText;
         private Label BankPayerLimitLabel;
+        private TextBox CorrSWIFTText;
+        private Label CorrSWIFTLabel;
+        private TextBox BankSWIFTText;
+        private Label BankSWIFTLabel;
+        private ComboBox OutFormatBox;
+        private Label OutFormatLabel;
     }
 }

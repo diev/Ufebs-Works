@@ -109,7 +109,7 @@ public partial class Form1 : Form
             //ConfigProperties.SaveMask = "*_.txt";
         }
 
-        if (ConfigProperties.BankAccount.Empty())
+        if (ConfigProperties.CorrAccount.Empty())
         {
             err.AppendLine($"Счет Банка не указан!");
             //ConfigProperties.BankAccount = "12345678901234567890";
@@ -361,7 +361,7 @@ public partial class Form1 : Form
 
                             // Берем из Параметров номер корсчета
 
-                            string acc2 = ConfigProperties.BankAccount; // "30109810800010001378";
+                            string acc2 = ConfigProperties.CorrAccount; // "30109810800010001378";
 
                             // Подставляем новые значения плательщика в шаблон, если не Банк сам за себя
 

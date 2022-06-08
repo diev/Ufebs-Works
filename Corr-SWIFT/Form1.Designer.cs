@@ -89,11 +89,11 @@ partial class Form1
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
             this.OutEdPage = new System.Windows.Forms.TabPage();
             this.OutDocsListBox = new System.Windows.Forms.ListView();
-            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
+            this.EDColumn = new System.Windows.Forms.ColumnHeader();
+            this.SumColumn = new System.Windows.Forms.ColumnHeader();
+            this.PayerColumn = new System.Windows.Forms.ColumnHeader();
+            this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
+            this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SwiftPage = new System.Windows.Forms.TabPage();
             this.SwiftTextBox = new System.Windows.Forms.TextBox();
             this.OutSwiftPage = new System.Windows.Forms.TabPage();
@@ -684,45 +684,46 @@ partial class Form1
             // OutDocsListBox
             // 
             this.OutDocsListBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader6,
-            this.columnHeader7,
-            this.columnHeader8,
-            this.columnHeader9,
-            this.columnHeader10});
+            this.EDColumn,
+            this.SumColumn,
+            this.PayerColumn,
+            this.PayeeColumn,
+            this.PurposeColumn});
             this.OutDocsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OutDocsListBox.FullRowSelect = true;
             this.OutDocsListBox.GridLines = true;
             this.OutDocsListBox.Location = new System.Drawing.Point(3, 3);
+            this.OutDocsListBox.MultiSelect = false;
             this.OutDocsListBox.Name = "OutDocsListBox";
             this.OutDocsListBox.Size = new System.Drawing.Size(598, 358);
             this.OutDocsListBox.TabIndex = 1;
             this.OutDocsListBox.UseCompatibleStateImageBehavior = false;
             this.OutDocsListBox.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader6
+            // EDColumn
             // 
-            this.columnHeader6.Text = "ED";
+            this.EDColumn.Text = "ED";
             // 
-            // columnHeader7
+            // SumColumn
             // 
-            this.columnHeader7.Text = "Сумма";
-            this.columnHeader7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.columnHeader7.Width = 80;
+            this.SumColumn.Text = "Сумма";
+            this.SumColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.SumColumn.Width = 80;
             // 
-            // columnHeader8
+            // PayerColumn
             // 
-            this.columnHeader8.Text = "Плательщик";
-            this.columnHeader8.Width = 260;
+            this.PayerColumn.Text = "Плательщик";
+            this.PayerColumn.Width = 260;
             // 
-            // columnHeader9
+            // PayeeColumn
             // 
-            this.columnHeader9.Text = "Получатель";
-            this.columnHeader9.Width = 160;
+            this.PayeeColumn.Text = "Получатель";
+            this.PayeeColumn.Width = 160;
             // 
-            // columnHeader10
+            // PurposeColumn
             // 
-            this.columnHeader10.Text = "Назначение";
-            this.columnHeader10.Width = 400;
+            this.PurposeColumn.Text = "Назначение";
+            this.PurposeColumn.Width = 400;
             // 
             // SwiftPage
             // 
@@ -1116,9 +1117,9 @@ partial class Form1
     private ColumnHeader columnHeader5;
     private TabPage OutEdPage;
     private ListView OutDocsListBox;
-    private ColumnHeader columnHeader6;
-    private ColumnHeader columnHeader7;
-    private ColumnHeader columnHeader8;
-    private ColumnHeader columnHeader9;
-    private ColumnHeader columnHeader10;
+    private ColumnHeader EDColumn;
+    private ColumnHeader SumColumn;
+    private ColumnHeader PayerColumn;
+    private ColumnHeader PayeeColumn;
+    private ColumnHeader PurposeColumn;
 }

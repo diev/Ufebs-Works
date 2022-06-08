@@ -213,76 +213,66 @@ public static class ED100Ex
     /// <returns></returns>
     public static string ToSWIFT(this ED100 ed)
     {
+        var es = ed.CorrSWIFTClone();
+
+        string id = $"{es.EDDate}{es.EDNo.PadLeft(9, '0')}"; //15x
+
+        // Block Structure
+
         var sb = new StringBuilder();
+        sb
+            // Basic header
+            .Append("{1:F01") // Block 1 identifier : Application identifier
+            .Append("CITVRU2P") // Service identifier
+            .Append("AXXX") // Logical terminal address
+            .Append(id) // Session number
+            .Append('}')
 
-        /*
-        {1:F01CITVRU2PAXXX0000036558}{2:I103AVTBRUMMXXXXN}{3:{113:RUR6}{121:de302129-4181-49b0-8053-0546a8c0af58}}{4:
-        :20:+220428-0853F103
-        :23B:CRED
-        :32A:220428RUB2000,
-        :50K:/40703810000000001470
-        INN7803018248.KPP784101001
-        ASSOCIACIa VEKTOR ROGA I KOPYTA TOV
-        ARIqESTVO SOBSTVENNIKOV JILXa I eKS
-        PLUATANTOV PODZEMNYH I VODNYH ARTER
-        :52A:CITVRU2P
-        :53B:/D/30109810800010001378
-        :57D://RU044030653.30101810500000000653
-        SEVERO-ZAPADNYi BANK PAO SBERBANK
-        G.SANKT-PETERBURG
-        :59:/40817810555004092061
-        INN780105207066.KPP000000000
-        MEJOV ALEKSEi ALEKSANDROVIc PREDSTA
-        VITELX RAZUMNOi JIZNI NA PLANETE ZE
-        MLa I SPUINIKAH uPITERA I DRUGIH NA
-        :70:DLa ZAcISLENIa NA ScET MEJOVA ALEKS
-        Ea ALEKSANDROVIcA I ZARABOTNAa PLAT
-        A ZA MAi 2022 G.ZA VYPOLNENNUu RAB
-        OTU PO PEREKLADKE TRUB I VYKAPYVANI
-        :71A:OUR
-        :72:/RPP/31.220428.3
-        /DAS/220428.220427.000000.000000
-        /NZP/u I ZAKAPYVANIu KANAV V GRUNT
-        //E NA GORE. SUMMA 2000-00 BEZ NALO
-        //GA (NDS)
-        /DAS/220428.220427.000000.000000
-        -}{5:}
-        */
+            // Application header
+            .Append("{2:I103") // Block 2 identifier : In, MT103
+            .Append("AVTBRUMM") // Destination address
+            .Append("XXXXXN}") // Logical terminal address, Message priority (Normal)
 
-        string date = SwiftTranslit.XDate(ed.EDDate);
-        string docdate = SwiftTranslit.XDate(ed.AccDocDate);
-        string charge = SwiftTranslit.XDate(ed.ChargeOffDate);
+            // User header
+            .Append("{3:{113:RUR6}{121:") // Block 3 identifier : Version
+            .Append(new Guid()) // uuid v4
+            .Append("}}")
 
-        sb.Append("{1:F01CITVRU2PAXXX0000036558}")
-            .Append("{2:I103AVTBRUMMXXXXN}")
-            .Append("{3:{113:RUR6}{121:de302129-4181-49b0-8053-0546a8c0af58}}")
-            .AppendLine("{4:");
+            // Text
+            .AppendLine("{4:"); // Block 4 identifier : 
+
+        #region SWIFT TEXT
 
         // Референс Отправителя (16x)
-        sb.AppendLine($":20:+{date}-{ed.EDNo}"); //..F103 is over 16x
+        //sb.AppendLine($":20:+{date}-{es.EDNo}F103"); //..F103 is over 16x!
+
+        sb.AppendLine($":20:+{id}");
 
         // Код банковской операции
+
         sb.AppendLine(":23B:CRED");
 
-        if (ed.Tax)
+        if (es.Tax)
         {
             // Код типа операции
-            sb.AppendLine($":26T:S{ed.DrawerStatus}");
+            sb.AppendLine($":26T:S{es.DrawerStatus}");
         }
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
-        sb.AppendLine($":32A:{charge}RUB{SwiftTranslit.XSum(ed.Sum)}");
+
+        sb.AppendLine($":32A:{es.ChargeOffDate}RUB{es.Sum}");
 
         // Плательщик
-        sb.AppendLine($":50K:/{ed.PayerPersonalAcc}"); // или :50F: с адресом и страной
 
-        if (ed.PayerINN != null)
+        sb.AppendLine($":50K:/{es.PayerPersonalAcc}"); // или :50F: с адресом и страной
+
+        if (es.PayerINN != null)
         {
-            sb.Append($"INN{ed.PayerINN}"); // или KIO
+            sb.Append($"INN{es.PayerINN}"); // или KIO
 
-            if (ed.PayerKPP != null)
+            if (es.PayerKPP != null)
             {
-                sb.Append($".KPP{ed.PayerKPP}");
+                sb.Append($".KPP{es.PayerKPP}");
             }
 
             sb.AppendLine();
@@ -292,26 +282,33 @@ public static class ED100Ex
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
-        string s = ed.PayerName.L();
-        int n = 0;
 
-        while (s.Length > 35 && ++n <= 3) // не более 3 строк - остальное отбрасывается
-        {
-            sb.AppendLine(s[..35]);
-            s = s.Remove(0, 35);
-        }
+        string s = es.PayerName.PadRight(210);
 
-        if (s.Length > 0 && ++n <= 3) // если остаток влезает
+        for (int i = 0; i < 3; i++)
         {
-            sb.AppendLine(s);
+            string s35 = s.Substring(i * 35, 35).TrimEnd();
+
+            if (s35.Length == 0)
+            {
+                break;
+            }
+
+            if (s35[0] == '-') // prohibited char
+            {
+                sb.Append(' ');
+            }
+
+            sb.AppendLine(s35);
         }
 
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
-        //sb.AppendLine(":52A:CITVRU2P");
-        sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
-            //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
-            //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
+
+        sb.AppendLine(":52A:CITVRU2P");
+        //sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
+        //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
+        //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
 
         // Корреспондент Отправителя (реквизиты счета, который должен быть использован при исполнении платежных инструкций)
         // Если Отправитель и Получатель сообщения обслуживают рублевые счета друг друга, и необходимо определить,
@@ -319,48 +316,56 @@ public static class ED100Ex
         // (С - кредитование или D - дебетование) и далее следует еще один слеш “/”и номер соответствующего счета.
         // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
         // если только иное особо не оговорено в двустороннем соглашении.
-        sb.AppendLine($":53B:/D/{ed.PayeePersonalAcc}"); //??
+
+        sb.AppendLine($":53B:/D/{CorrProperties.CorrAccount}"); // Корсчет нашего банка в том банке
 
         // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
         // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.
         //sb.AppendLine($":56D:/{ed.PayeePersonalAcc}") //??
-            //.AppendLine(SwiftTranslit.Lat("ББР"))
-            //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
+        //.AppendLine(SwiftTranslit.Lat("ББР"))
+        //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
 
         // Банк Бенефициара
         // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
-        sb.AppendLine($":57D://RU{ed.PayeeBIC}.{ed.PayeeCorrespAcc}");
-        //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
-        //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
+
+        sb.AppendLine($":57D://RU{es.PayeeBIC}.{es.PayeeCorrespAcc}");
+        //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя")) // Надо ли брать из Справочника БИК?
+        //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
         // Бенефициар
         // (клиент, которому будут выплачены средства)
-        sb.AppendLine($":59:/{ed.PayeePersonalAcc}");
 
-        if (ed.PayeeINN != null)
+        sb.AppendLine($":59:/{es.PayeePersonalAcc}");
+
+        if (es.PayeeINN != null)
         {
-            sb.Append($"INN{ed.PayeeINN}");
+            sb.Append($"INN{es.PayeeINN}");
 
-            if (ed.PayeeKPP != null)
+            if (es.PayeeKPP != null)
             {
-                sb.Append($".KPP{ed.PayeeKPP}");
+                sb.Append($".KPP{es.PayeeKPP}");
             }
 
             sb.AppendLine();
         }
 
-        s = ed.PayeeName.L();
-        n = 0;
+        s = es.PayeeName.PadRight(210);
 
-        while (s.Length > 35 && ++n <= 3) // не более 3 строк - остальное отбрасывается
+        for (int i = 0; i < 3; i++)
         {
-            sb.AppendLine(s[..35]);
-            s = s.Remove(0, 35);
-        }
+            string s35 = s.Substring(i * 35, 35).TrimEnd();
 
-        if (s.Length > 0 && ++n <= 3) // если остаток влезает
-        {
-            sb.AppendLine(s);
+            if (s35.Length == 0)
+            {
+                break;
+            }
+
+            if (s35[0] == '-') // prohibited char
+            {
+                sb.Append(' ');
+            }
+
+            sb.AppendLine(s35);
         }
 
         // Информация о платеже (4*35x + :72:/NZP/)
@@ -382,24 +387,31 @@ public static class ED100Ex
         // расположенной, начиная с первой позиции поля 70: апостроф - круглая скобка - VO<код>[PS < номер паспорта сделки >] - круглая скобка - апостроф.
         // ‘(VO10010)’OPLATA PO DOGOVORU
         // ‘(VO10040PS04060001/0001/0000/1/0)’OPLATA PO DOGOVORU
+
         sb.Append(":70:");
-        s = ed.Purpose.L();
-        n = 0;
+        s = es.Purpose.PadRight(210);
 
-        while (s.Length > 35 && ++n <= 4) // не более 4 строк - остальное идет в поле 72
+        int n = 0;
+        for (; n < 4; n++)
         {
-            sb.AppendLine(s[..35]);
-            s = s.Remove(0, 35);
-        }
+            string s35 = s.Substring(n * 35, 35).TrimEnd();
 
-        if (s.Length > 0 && ++n <= 4) // если остаток влезает
-        {
-            sb.AppendLine(s);
-            s = string.Empty; // ничего не осталось продолжать
+            if (s35.Length == 0)
+            {
+                break;
+            }
+
+            if (s35[0] == '-') // prohibited char
+            {
+                sb.Append(' ');
+            }
+
+            sb.AppendLine(s35);
         }
 
         // Детали расходов
         // Все расходы по данной операции относятся на счет Плательщика
+
         sb.AppendLine($":71A:OUR");
 
         // Информация Отправителя Получателю (6*35x)
@@ -421,7 +433,7 @@ public static class ED100Ex
 
         // /RPO/ — Реквизиты платежного ордера
         // "Номер частичного платежа.Шифр расчетного документа.Номер расчетного документа.Дата расчетного документа.Сумма остатка платежа"
-        // Шифр расчетного документа» и может иметь значение:
+        // Шифр расчетного документа может иметь значение:
         // 01 – платежное поручение
         // 02 – платежное требование
         // 06 – инкассовое поручение
@@ -437,44 +449,38 @@ public static class ED100Ex
         // после транслитерации не должен превышать 210 знаков.
 
         sb.Append(":72:")
-            .AppendLine($"/RPP/{ed.AccDocNo}.{docdate}.{ed.Priority}.ELEK.{charge}.{ed.TransKind}") // ??
-            .AppendLine($"/DAS/{date}.{date}.000000.000000"); // ??
+            .AppendLine($"/RPP/{es.AccDocNo}.{es.AccDocDate}.{es.Priority}.ELEK.{es.ChargeOffDate}.{es.TransKind}")
+            .AppendLine($"/DAS/{es.ChargeOffDate}.{es.ReceiptDate}.000000.000000");
 
-        if (s.Length > 0)
+        string nzp = "/NZP/";
+
+        for (; n < 6; n++)
         {
-            sb.Append("/NZP/");
-            n = 0;
+            string s35 = s.Substring(n * 35, 35).TrimEnd();
 
-            while (s.Length > 35)
+            if (s35.Length == 0)
             {
-                if (++n > 1)
-                {
-                    sb.Append("//");
-                }
-
-                sb.AppendLine(s[..35]);
-                s = s.Remove(0, 35);
+                break;
             }
 
-            if (s.Length > 0) // остаток
-            {
-                if (++n > 1)
-                {
-                    sb.Append("//");
-                }
-
-                sb.AppendLine(s);
-            }
+            sb.Append(nzp).AppendLine(s35);
+            nzp = "//";
         }
 
-        if (ed.Tax)
+        if (es.Tax)
         {
-            sb.AppendLine($":77B:/N10/{ed.TaxPaytKind.L()}/N4/{ed.CBC}") // ??
-                .AppendLine($"/N5/{ed.OKATO}/N6/{ed.PaytReason.L()}/N7/{ed.TaxPeriod.L()}")
-                .AppendLine($"/N8/{ed.DocNo}/N9/{ed.DocDate}");
+            sb.Append(":77B:")
+                .AppendLine($"/N10/{es.TaxPaytKind}/N4/{es.CBC}")
+                .AppendLine($"/N5/{es.OKATO}/N6/{es.PaytReason}/N7/{es.TaxPeriod}")
+                .AppendLine($"/N8/{es.DocNo}/N9/{es.DocDate}");
         }
 
-        sb.AppendLine("-}{5:}");
+        #endregion SWIFT TEXT
+
+        sb.Append("-}")
+
+            // Trailers
+            .AppendLine("{5:}"); // Block 5 identifier : 
 
         return sb.ToString();
     }
