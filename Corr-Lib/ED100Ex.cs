@@ -223,19 +223,19 @@ public static class ED100Ex
         sb
             // Basic header
             .Append("{1:F01") // Block 1 identifier : Application identifier
-            .Append("CITVRU2P") // Service identifier
+            .Append(CorrProperties.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
             .Append(id) // Session number
             .Append('}')
 
             // Application header
             .Append("{2:I103") // Block 2 identifier : In, MT103
-            .Append("AVTBRUMM") // Destination address
+            .Append(CorrProperties.CorrSWIFT) // Destination address
             .Append("XXXXXN}") // Logical terminal address, Message priority (Normal)
 
             // User header
             .Append("{3:{113:RUR6}{121:") // Block 3 identifier : Version
-            .Append(new Guid()) // uuid v4
+            .Append(Guid.NewGuid()) // uuid v4
             .Append("}}")
 
             // Text
@@ -252,11 +252,9 @@ public static class ED100Ex
 
         sb.AppendLine(":23B:CRED");
 
-        if (es.Tax)
-        {
-            // Код типа операции
-            sb.AppendLine($":26T:S{es.DrawerStatus}");
-        }
+        // Код типа операции
+
+        sb.AppendLineIf(es.Tax, $":26T:S{es.DrawerStatus}");
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
 
@@ -264,48 +262,29 @@ public static class ED100Ex
 
         // Плательщик
 
-        sb.AppendLine($":50K:/{es.PayerPersonalAcc}"); // или :50F: с адресом и страной
-
-        if (es.PayerINN != null)
-        {
-            sb.Append($"INN{es.PayerINN}"); // или KIO
-
-            if (es.PayerKPP != null)
-            {
-                sb.Append($".KPP{es.PayerKPP}");
-            }
-
-            sb.AppendLine();
-        }
+        sb.AppendLine($":50K:/{es.PayerPersonalAcc}") // или :50F: с адресом и страной
+            .AppendLineIf(es.PayerINN != null, $"INN{es.PayerINN}{es.PayerKPP.AddNotEmpty()}"); // или KIO
 
         // (3*35x!)
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
 
-        string s = es.PayerName.PadRight(210);
+        var s = es.PayerName.Prepare35();
 
         for (int i = 0; i < 3; i++)
         {
-            string s35 = s.Substring(i * 35, 35).TrimEnd();
+            var s35 = s.Slice(i * 35, 35).TrimEnd();
 
-            if (s35.Length == 0)
-            {
-                break;
-            }
+            if (s35.Length == 0) break;
 
-            if (s35[0] == '-') // prohibited char
-            {
-                sb.Append(' ');
-            }
-
-            sb.AppendLine(s35);
+            sb.AppendLine(s35.ToString());
         }
 
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
 
-        sb.AppendLine(":52A:CITVRU2P");
+        sb.AppendLine($":52A:{CorrProperties.BankSWIFT}");
         //sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
         //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
         //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
@@ -328,44 +307,26 @@ public static class ED100Ex
         // Банк Бенефициара
         // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
 
-        sb.AppendLine($":57D://RU{es.PayeeBIC}.{es.PayeeCorrespAcc}");
+        sb.AppendLine($":57D://RU{es.PayeeBIC}{es.PayeeCorrespAcc.AddNotEmpty()}");
+
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
         // Бенефициар
         // (клиент, которому будут выплачены средства)
 
-        sb.AppendLine($":59:/{es.PayeePersonalAcc}");
+        sb.AppendLine($":59:/{es.PayeePersonalAcc}")
+            .AppendLineIf(es.PayeeINN != null, $"INN{es.PayeeINN}{es.PayeeKPP.AddNotEmpty()}");
 
-        if (es.PayeeINN != null)
-        {
-            sb.Append($"INN{es.PayeeINN}");
-
-            if (es.PayeeKPP != null)
-            {
-                sb.Append($".KPP{es.PayeeKPP}");
-            }
-
-            sb.AppendLine();
-        }
-
-        s = es.PayeeName.PadRight(210);
+        s = es.PayeeName.Prepare35();
 
         for (int i = 0; i < 3; i++)
         {
-            string s35 = s.Substring(i * 35, 35).TrimEnd();
+            var s35 = s.Slice(i * 35, 35).TrimEnd();
 
-            if (s35.Length == 0)
-            {
-                break;
-            }
+            if (s35.Length == 0) break;
 
-            if (s35[0] == '-') // prohibited char
-            {
-                sb.Append(' ');
-            }
-
-            sb.AppendLine(s35);
+            sb.AppendLine(s35.ToString());
         }
 
         // Информация о платеже (4*35x + :72:/NZP/)
@@ -389,24 +350,17 @@ public static class ED100Ex
         // ‘(VO10040PS04060001/0001/0000/1/0)’OPLATA PO DOGOVORU
 
         sb.Append(":70:");
-        s = es.Purpose.PadRight(210);
+        s = es.Purpose.Prepare35();
 
         int n = 0;
+
         for (; n < 4; n++)
         {
-            string s35 = s.Substring(n * 35, 35).TrimEnd();
+            var s35 = s.Slice(n * 35, 35).TrimEnd();
 
-            if (s35.Length == 0)
-            {
-                break;
-            }
+            if (s35.Length == 0) break;
 
-            if (s35[0] == '-') // prohibited char
-            {
-                sb.Append(' ');
-            }
-
-            sb.AppendLine(s35);
+            sb.AppendLine(s35.ToString());
         }
 
         // Детали расходов
@@ -449,21 +403,18 @@ public static class ED100Ex
         // после транслитерации не должен превышать 210 знаков.
 
         sb.Append(":72:")
-            .AppendLine($"/RPP/{es.AccDocNo}.{es.AccDocDate}.{es.Priority}.ELEK.{es.ChargeOffDate}.{es.TransKind}")
+            .AppendLine($"/RPP/{es.AccDocNo}.{es.AccDocDate}.{es.Priority}.ELEK") // .{es.ChargeOffDate}.{es.TransKind}")
             .AppendLine($"/DAS/{es.ChargeOffDate}.{es.ReceiptDate}.000000.000000");
 
         string nzp = "/NZP/";
 
         for (; n < 6; n++)
         {
-            string s35 = s.Substring(n * 35, 35).TrimEnd();
+            var s35 = s.Slice(n * 35, 35).TrimEnd();
 
-            if (s35.Length == 0)
-            {
-                break;
-            }
+            if (s35.Length == 0) break;
 
-            sb.Append(nzp).AppendLine(s35);
+            sb.Append(nzp).AppendLine(s35.ToString());
             nzp = "//";
         }
 

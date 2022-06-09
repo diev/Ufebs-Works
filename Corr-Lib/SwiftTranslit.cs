@@ -303,6 +303,23 @@ public static class SwiftTranslit
         return result.Append(src).ToString();
     }
 
+    public static ReadOnlySpan<char> Prepare35(this string src)
+    {
+        string dst = src.PadRight(210, ' ');
+        
+        for (int i = 0; i < 6; i++)
+        {
+            int pos = i * 35;
+
+            if (dst[pos] == '-') // prohibited char at beginning of any line
+            {
+                dst = dst.Insert(pos, " ");
+            }
+        }
+
+        return dst;
+    }
+
     /// <summary>
     /// Преобразование даты из формата УФЭБС XML в SWIFT-RUR
     /// </summary>

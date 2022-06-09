@@ -174,7 +174,7 @@ partial class Form1
             // DoneLabel
             // 
             this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(257, 21);
+            this.DoneLabel.Size = new System.Drawing.Size(226, 21);
             this.DoneLabel.Spring = true;
             this.DoneLabel.Text = "Сделано:";
             this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -699,6 +699,7 @@ partial class Form1
             this.OutDocsListBox.TabIndex = 1;
             this.OutDocsListBox.UseCompatibleStateImageBehavior = false;
             this.OutDocsListBox.View = System.Windows.Forms.View.Details;
+            this.OutDocsListBox.SelectedIndexChanged += new System.EventHandler(this.OutDocsListBox_SelectedIndexChanged);
             // 
             // EDColumn
             // 

@@ -288,7 +288,7 @@ public class ED100
         Xmlns = ed.Xmlns;
 
         AccDocDate = ed.AccDocDate;
-        AccDocNo = ed.AccDocDate;
+        AccDocNo = ed.AccDocNo;
 
         PayerINN = ed.PayerINN;
         PayerKPP = ed.PayerKPP;

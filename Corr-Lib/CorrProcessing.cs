@@ -21,9 +21,9 @@ namespace CorrLib;
 
 public static class CorrProcessing
 {
-    const string OurINN = "7831001422";
-    const string OurKPP = "784101001";
-    const string OurName = "АО \"Сити Инвест Банк\"";
+    //const string OurINN = "7831001422";
+    //const string OurKPP = "784101001";
+    //const string OurName = "АО \"Сити Инвест Банк\"";
 
     /// <summary>
     /// Замена Наименования плательщика в случае оплаты за третье лицо.
@@ -34,7 +34,10 @@ public static class CorrProcessing
     {
         if (ed.CorrSubstRequired())
         {
-            return $"{OurName} ИНН {OurINN} ({ed.CorrShortenName()} Р/С {ed.PayerPersonalAcc})";
+            //return $"{OurName} ИНН {OurINN} ({ed.CorrShortenName()} Р/С {ed.PayerPersonalAcc})";
+            return CorrProperties.CorrPayerTemplate
+                .Replace("{name}", ed.CorrShortenName())
+                .Replace("{acc}", ed.PayerPersonalAcc);
         }
 
         return ed.PayerName;
@@ -49,8 +52,11 @@ public static class CorrProcessing
     {
         if (ed.Tax && ed.CorrSubstRequired())
         {
-            return $"{OurINN}//{OurKPP}//{ed.CorrShortenName()}//{ed.Purpose}"
-                .Replace("////", "//");
+            //return $"{OurINN}//{OurKPP}//{ed.CorrShortenName()}//{ed.Purpose}"
+            //.Replace("////", "//");
+            return CorrProperties.CorrPurposeTemplate
+                .Replace("{name}", ed.CorrShortenName())
+                .Replace("{purpose}", ed.Purpose);
         }
 
         return ed.Purpose;
@@ -63,7 +69,7 @@ public static class CorrProcessing
     /// <returns></returns>
     public static bool CorrSubstRequired(this ED100 ed)
     {
-        return ed.PayerINN != null && ed.PayerINN != OurINN;
+        return ed.PayerINN != null && ed.PayerINN != CorrProperties.BankINN;
     }
 
     /// <summary>
@@ -74,9 +80,12 @@ public static class CorrProcessing
     public static string CorrShortenName(this ED100 ed)
     {
         return ed.PayerName
-            .Replace("Общество с ограниченной ответственностью", "ООО", StringComparison.OrdinalIgnoreCase)
-            .Replace("Акционерное общество", "АО", StringComparison.OrdinalIgnoreCase)
-            .Replace("Индивидуальный предприниматель", "ИП", StringComparison.OrdinalIgnoreCase);
+            .Replace("Общество с ограниченной ответственностью", "ООО",
+            StringComparison.OrdinalIgnoreCase)
+            .Replace("Акционерное общество", "АО",
+            StringComparison.OrdinalIgnoreCase)
+            .Replace("Индивидуальный предприниматель", "ИП", 
+            StringComparison.OrdinalIgnoreCase);
     }
 
     public static string? CorrPayerKPP(this ED100 ed)

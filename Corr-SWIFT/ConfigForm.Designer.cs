@@ -49,12 +49,12 @@
             this.CorrSWIFTLabel = new System.Windows.Forms.Label();
             this.BankSWIFTText = new System.Windows.Forms.TextBox();
             this.BankSWIFTLabel = new System.Windows.Forms.Label();
-            this.BankPayerLimitText = new System.Windows.Forms.TextBox();
-            this.BankPayerLimitLabel = new System.Windows.Forms.Label();
-            this.BankPurposeText = new System.Windows.Forms.TextBox();
-            this.BankPurposeLabel = new System.Windows.Forms.Label();
-            this.BankPayerText = new System.Windows.Forms.TextBox();
-            this.BankPayerLabel = new System.Windows.Forms.Label();
+            this.CorrPayerLimitText = new System.Windows.Forms.TextBox();
+            this.CorrPayerLimitLabel = new System.Windows.Forms.Label();
+            this.CorrPurposeText = new System.Windows.Forms.TextBox();
+            this.CorrPurposeLabel = new System.Windows.Forms.Label();
+            this.CorrPayerText = new System.Windows.Forms.TextBox();
+            this.CorrPayerLabel = new System.Windows.Forms.Label();
             this.BankKPPText = new System.Windows.Forms.TextBox();
             this.BankKPPLabel = new System.Windows.Forms.Label();
             this.BankINNText = new System.Windows.Forms.TextBox();
@@ -228,12 +228,12 @@
             this.BankBox.Controls.Add(this.CorrSWIFTLabel);
             this.BankBox.Controls.Add(this.BankSWIFTText);
             this.BankBox.Controls.Add(this.BankSWIFTLabel);
-            this.BankBox.Controls.Add(this.BankPayerLimitText);
-            this.BankBox.Controls.Add(this.BankPayerLimitLabel);
-            this.BankBox.Controls.Add(this.BankPurposeText);
-            this.BankBox.Controls.Add(this.BankPurposeLabel);
-            this.BankBox.Controls.Add(this.BankPayerText);
-            this.BankBox.Controls.Add(this.BankPayerLabel);
+            this.BankBox.Controls.Add(this.CorrPayerLimitText);
+            this.BankBox.Controls.Add(this.CorrPayerLimitLabel);
+            this.BankBox.Controls.Add(this.CorrPurposeText);
+            this.BankBox.Controls.Add(this.CorrPurposeLabel);
+            this.BankBox.Controls.Add(this.CorrPayerText);
+            this.BankBox.Controls.Add(this.CorrPayerLabel);
             this.BankBox.Controls.Add(this.BankKPPText);
             this.BankBox.Controls.Add(this.BankKPPLabel);
             this.BankBox.Controls.Add(this.BankINNText);
@@ -245,7 +245,7 @@
             this.BankBox.Size = new System.Drawing.Size(563, 198);
             this.BankBox.TabIndex = 2;
             this.BankBox.TabStop = false;
-            this.BankBox.Text = "Реквизиты Банка";
+            this.BankBox.Text = "Реквизиты Банка и {шаблоны}";
             // 
             // CorrSWIFTText
             // 
@@ -285,62 +285,62 @@
             this.BankSWIFTLabel.TabIndex = 13;
             this.BankSWIFTLabel.Text = "SWIFT:";
             // 
-            // BankPayerLimitText
+            // CorrPayerLimitText
             // 
-            this.BankPayerLimitText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.CorrPayerLimitText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankPayerLimitText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankPayerLimitText.Location = new System.Drawing.Point(482, 77);
-            this.BankPayerLimitText.Name = "BankPayerLimitText";
-            this.BankPayerLimitText.Size = new System.Drawing.Size(73, 22);
-            this.BankPayerLimitText.TabIndex = 12;
+            this.CorrPayerLimitText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrPayerLimitText.Location = new System.Drawing.Point(482, 77);
+            this.CorrPayerLimitText.Name = "CorrPayerLimitText";
+            this.CorrPayerLimitText.Size = new System.Drawing.Size(73, 22);
+            this.CorrPayerLimitText.TabIndex = 12;
             // 
-            // BankPayerLimitLabel
+            // CorrPayerLimitLabel
             // 
-            this.BankPayerLimitLabel.AutoSize = true;
-            this.BankPayerLimitLabel.Location = new System.Drawing.Point(264, 80);
-            this.BankPayerLimitLabel.Name = "BankPayerLimitLabel";
-            this.BankPayerLimitLabel.Size = new System.Drawing.Size(209, 15);
-            this.BankPayerLimitLabel.TabIndex = 11;
-            this.BankPayerLimitLabel.Text = "Предел наименования (105 или 160):";
+            this.CorrPayerLimitLabel.AutoSize = true;
+            this.CorrPayerLimitLabel.Location = new System.Drawing.Point(264, 80);
+            this.CorrPayerLimitLabel.Name = "CorrPayerLimitLabel";
+            this.CorrPayerLimitLabel.Size = new System.Drawing.Size(209, 15);
+            this.CorrPayerLimitLabel.TabIndex = 11;
+            this.CorrPayerLimitLabel.Text = "Предел наименования (105 или 160):";
             // 
-            // BankPurposeText
+            // CorrPurposeText
             // 
-            this.BankPurposeText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.CorrPurposeText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankPurposeText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankPurposeText.Location = new System.Drawing.Point(106, 135);
-            this.BankPurposeText.Name = "BankPurposeText";
-            this.BankPurposeText.Size = new System.Drawing.Size(449, 22);
-            this.BankPurposeText.TabIndex = 10;
+            this.CorrPurposeText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrPurposeText.Location = new System.Drawing.Point(106, 135);
+            this.CorrPurposeText.Name = "CorrPurposeText";
+            this.CorrPurposeText.Size = new System.Drawing.Size(449, 22);
+            this.CorrPurposeText.TabIndex = 10;
             // 
-            // BankPurposeLabel
+            // CorrPurposeLabel
             // 
-            this.BankPurposeLabel.AutoSize = true;
-            this.BankPurposeLabel.Location = new System.Drawing.Point(11, 138);
-            this.BankPurposeLabel.Name = "BankPurposeLabel";
-            this.BankPurposeLabel.Size = new System.Drawing.Size(76, 15);
-            this.BankPurposeLabel.TabIndex = 9;
-            this.BankPurposeLabel.Text = "Назначение:";
+            this.CorrPurposeLabel.AutoSize = true;
+            this.CorrPurposeLabel.Location = new System.Drawing.Point(11, 138);
+            this.CorrPurposeLabel.Name = "CorrPurposeLabel";
+            this.CorrPurposeLabel.Size = new System.Drawing.Size(84, 15);
+            this.CorrPurposeLabel.TabIndex = 9;
+            this.CorrPurposeLabel.Text = "{Назначение}:";
             // 
-            // BankPayerText
+            // CorrPayerText
             // 
-            this.BankPayerText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.CorrPayerText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankPayerText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankPayerText.Location = new System.Drawing.Point(106, 106);
-            this.BankPayerText.Name = "BankPayerText";
-            this.BankPayerText.Size = new System.Drawing.Size(449, 22);
-            this.BankPayerText.TabIndex = 8;
+            this.CorrPayerText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrPayerText.Location = new System.Drawing.Point(106, 106);
+            this.CorrPayerText.Name = "CorrPayerText";
+            this.CorrPayerText.Size = new System.Drawing.Size(449, 22);
+            this.CorrPayerText.TabIndex = 8;
             // 
-            // BankPayerLabel
+            // CorrPayerLabel
             // 
-            this.BankPayerLabel.AutoSize = true;
-            this.BankPayerLabel.Location = new System.Drawing.Point(11, 109);
-            this.BankPayerLabel.Name = "BankPayerLabel";
-            this.BankPayerLabel.Size = new System.Drawing.Size(80, 15);
-            this.BankPayerLabel.TabIndex = 7;
-            this.BankPayerLabel.Text = "Плательщик:";
+            this.CorrPayerLabel.AutoSize = true;
+            this.CorrPayerLabel.Location = new System.Drawing.Point(11, 109);
+            this.CorrPayerLabel.Name = "CorrPayerLabel";
+            this.CorrPayerLabel.Size = new System.Drawing.Size(88, 15);
+            this.CorrPayerLabel.TabIndex = 7;
+            this.CorrPayerLabel.Text = "{Плательщик}:";
             // 
             // BankKPPText
             // 
@@ -475,10 +475,10 @@
         private TextBox SaveDirText;
         private Label SaveDirLabel;
         private GroupBox BankBox;
-        private TextBox BankPurposeText;
-        private Label BankPurposeLabel;
-        private TextBox BankPayerText;
-        private Label BankPayerLabel;
+        private TextBox CorrPurposeText;
+        private Label CorrPurposeLabel;
+        private TextBox CorrPayerText;
+        private Label CorrPayerLabel;
         private TextBox BankKPPText;
         private Label BankKPPLabel;
         private TextBox BankINNText;
@@ -488,8 +488,8 @@
         private Button AcceptConfigButton;
         private Button CancelConfigButton;
         private Button ResetConfigButton;
-        private TextBox BankPayerLimitText;
-        private Label BankPayerLimitLabel;
+        private TextBox CorrPayerLimitText;
+        private Label CorrPayerLimitLabel;
         private TextBox CorrSWIFTText;
         private Label CorrSWIFTLabel;
         private TextBox BankSWIFTText;

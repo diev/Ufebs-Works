@@ -1,6 +1,7 @@
 #region License
 /*
 Copyright 2022 Dmitrii Evdokimov
+Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,7 +27,7 @@ namespace CorrSWIFT;
 
 public partial class Form1 : Form
 {
-    private const string VersionDate = "2022-06-07";
+    private const string VersionDate = "2022-06-09";
 
     // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) или 160 (УФЭБС)?
     private const int MAX_PURPOSE = 210;
@@ -39,6 +40,8 @@ public partial class Form1 : Form
     private string _saveMaskName = "*";
 
     private SwiftLines _swift = new();
+
+    private List<ED100> _docs;
 
     #region Init
     public Form1()
@@ -82,62 +85,7 @@ public partial class Form1 : Form
 
     private void ReInitForm()
     {
-        StringBuilder err = new();
-
-        //if (string.IsNullOrEmpty(ConfigProperties.OpenDir) || !Directory.Exists(ConfigProperties.OpenDir))
-        if (ConfigProperties.OpenDir.Empty() || !Directory.Exists(ConfigProperties.OpenDir))
-        {
-            err.AppendLine($"Папка OpenDir не существует!");
-            //ConfigProperties.OpenDir = Directory.GetCurrentDirectory();
-        }
-
-        if (ConfigProperties.OpenMask.Empty())
-        {
-            err.AppendLine($"Маска OpenMask не указана!");
-            //ConfigProperties.OpenMask = "r*.xml";
-        }
-
-        if (ConfigProperties.SaveDir.Empty() || !Directory.Exists(ConfigProperties.SaveDir))
-        {
-            err.AppendLine($"Папка SaveDir не существует!");
-            //ConfigProperties.SaveDir = ConfigProperties.OpenDir;
-        }
-
-        if (ConfigProperties.SaveMask.Empty())
-        {
-            err.AppendLine($"Маска SaveMask не указана!");
-            //ConfigProperties.SaveMask = "*_.txt";
-        }
-
-        if (ConfigProperties.CorrAccount.Empty())
-        {
-            err.AppendLine($"Счет Банка не указан!");
-            //ConfigProperties.BankAccount = "12345678901234567890";
-        }
-
-        if (ConfigProperties.BankINN.Empty())
-        {
-            err.AppendLine($"ИНН Банка не указан!");
-            //ConfigProperties.BankINN = "7831001422";
-        }
-
-        if (ConfigProperties.BankKPP.Empty())
-        {
-            err.AppendLine($"КПП Банка не указан!");
-            //ConfigProperties.BankKPP = "783101001";
-        }
-
-        if (ConfigProperties.BankPayerTemplate.Empty())
-        {
-            err.AppendLine($"Шаблон за клиента Банка не указан!");
-            //ConfigProperties.BankPayerTemplate = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        }
-
-        if (ConfigProperties.BankPurposeTemplate.Empty())
-        {
-            err.AppendLine($"Шаблон назначения за третье лицо не указан!");
-            //ConfigProperties.BankPurposeTemplate = "//7831001422//783101001//{name}//{purpose}";
-        }
+        string err = ConfigProperties.Validate();
 
         if (err.Length > 0)
         {
@@ -267,25 +215,19 @@ public partial class Form1 : Form
             return;
         }
 
-        //if (file.Contains('>'))
-        //{
-        //    file = file.Split('>')[0].Trim();
-        //}
-
         if (File.Exists(file))
         {
             LoadFile(file);
 
             int index = list.SelectedIndex() + 1;
-            int total = list.Items.Count;
+            int count = list.Items.Count;
 
             FilesDoneBar.Value = index;
-            FilesDoneBar.Maximum = total;
+            FilesDoneBar.Maximum = count;
 
-            string s = $"{index}/{total}";
-            FilesDoneValue.Text = s;
-
-            FilesPage.Text = $"Файлы {s}";
+            string done = $"{index}/{count}";
+            FilesPage.Text = $"Файлы {done}";
+            FilesDoneValue.Text = done;
         }
     }
 
@@ -368,13 +310,13 @@ public partial class Form1 : Form
                             // $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
                             string name2 = bank
                                 ? name
-                                : ConfigProperties.BankPayerTemplate
+                                : ConfigProperties.CorrPayerTemplate
                                 .Replace("{name}", name)
                                 .Replace("{acc}", acc);
 
                             // Длина не превышает предельную?
 
-                            _isNameValid = name2.Length <= ConfigProperties.BankPayerLimit; // MAX_NAME;
+                            _isNameValid = name2.Length <= ConfigProperties.CorrPayerLimit; // MAX_NAME;
 
                             // Присваиваем новые значения для генерации нового теста документа
 
@@ -392,7 +334,7 @@ public partial class Form1 : Form
                                 // Подставляем новые значения назначения в шаблон платежа за третье лицо
 
                                 // $"//7831001422//784101001//{name}//{purpose}";
-                                purpose = ConfigProperties.BankPurposeTemplate
+                                purpose = ConfigProperties.CorrPurposeTemplate
                                     .Replace("{name}", name)
                                     .Replace("{purpose}", purpose);
 
@@ -413,7 +355,7 @@ public partial class Form1 : Form
                         break;
 
                     case "PacketEPD":
-                        var packet = new PacketEPD(root);
+                        //var packet = new PacketEPD(root);
 
                         //var node = root.FirstNode;
                         //do
@@ -424,17 +366,22 @@ public partial class Form1 : Form
                         //}
                         //while (node != null);
 
+                        _docs = new();
+
                         foreach (var node in root.Elements())
                         {
                             var ed = new ED100(node);
                             DocsListBox.AddItem(ed);
 
                             var corr = ed.CorrClone();
+                            _docs.Add(corr);
                             OutDocsListBox.AddItem(corr);
-
-                            //Test
-                            OutSwiftTextBox.Text = corr.ToSWIFT();
                         }
+
+                        int count = _docs.Count; // OutDocsListBox.Items.Count;
+                        OutEdPage.Text = $"К отправке ED {count}";
+                        DocsDoneValue.Text = count.ToString();
+                        DocsDoneBar.Maximum = count;
                         break;
 
                     case "ED101":
@@ -443,7 +390,13 @@ public partial class Form1 : Form
                     case "ED108":
                         var sed = new ED100(root);
                         DocsListBox.AddItem(sed);
-                        OutDocsListBox.AddItem(sed.CorrClone());
+                        _docs = new();
+                        var scorr = sed.CorrClone();
+                        _docs.Add(scorr);
+                        OutDocsListBox.AddItem(scorr);
+                        OutEdPage.Text = $"К отправке ED 1";
+                        DocsDoneValue.Text = "1";
+                        DocsDoneBar.Maximum = 1;
                         break;
 
                     default:
@@ -582,7 +535,7 @@ public partial class Form1 : Form
     #region TextEdits
     private void OutputChanged()
     {
-        int limit = ConfigProperties.BankPayerLimit; // MAX_NAME;
+        int limit = ConfigProperties.CorrPayerLimit; // MAX_NAME;
 
         //if (OutTextBox.Focused && OutEditCheck.Checked)
         if (ChangeMenuItem.Checked)
@@ -600,7 +553,7 @@ public partial class Form1 : Form
 
     private void NameChanged()
     {
-        int limit = ConfigProperties.BankPayerLimit; // MAX_NAME;
+        int limit = ConfigProperties.CorrPayerLimit; // MAX_NAME;
 
         //if (NameTextBox.Focused && !OutEditCheck.Checked)
         if (!ChangeMenuItem.Checked)
@@ -876,5 +829,25 @@ public partial class Form1 : Form
     private void FilesListBox_Click(object sender, EventArgs e)
     {
         FileSelected();
+    }
+
+    private void OutDocsListBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var item = OutDocsListBox.SelectedItem();
+
+        if (item != null)
+        {
+            int index = item.Index + 1;
+            int count = _docs.Count; //  OutDocsListBox.Items.Count;
+            string done = $"{index}/{count}";
+
+            OutEdPage.Text = $"К отправке ED {done}";
+            NameTextBox.Text = item.SubItems[2].Text;
+            PurposeTextBox.Text = item.SubItems[4].Text;
+            DocsDoneValue.Text = done;
+            DocsDoneBar.Value = index;
+
+            OutSwiftTextBox.Text = _docs[item.Index].ToSWIFT();
+        }
     }
 }

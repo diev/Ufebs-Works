@@ -7,9 +7,9 @@
     "CorrAccount": "30101810600000000702",
     "BankINN": "7831001422",
     "BankKPP": "784101001",
-    "BankPayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
-    "BankPurposeTemplate": "//7831001422//784101001//{name}//{purpose}",
-    "BankPayerLimit": 160,
+    "CorrPayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
+    "CorrPurposeTemplate": "//7831001422//784101001//{name}//{purpose}",
+    "CorrPayerLimit": 160,
     "BankSWIFT": "CITVRU2P",
     "CorrSWIFT": "CITVRU2P"
   }

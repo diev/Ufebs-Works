@@ -17,6 +17,9 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib;
+
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -73,22 +76,22 @@ public static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(BankKPP), value);
     }
 
-    public static string BankPayerTemplate
+    public static string CorrPayerTemplate
     {
-        get => AppContext.GetData(nameof(BankPayerTemplate)) as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(nameof(BankPayerTemplate), value);
+        get => AppContext.GetData(nameof(CorrPayerTemplate)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(CorrPayerTemplate), value);
     }
 
-    public static string BankPurposeTemplate
+    public static string CorrPurposeTemplate
     {
-        get => AppContext.GetData(nameof(BankPurposeTemplate)) as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(nameof(BankPurposeTemplate), value);
+        get => AppContext.GetData(nameof(CorrPurposeTemplate)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(CorrPurposeTemplate), value);
     }
 
-    public static int BankPayerLimit
+    public static int CorrPayerLimit
     {
-        get => int.Parse(AppContext.GetData(nameof(BankPayerLimit)) as string ?? "105");
-        set => AppDomain.CurrentDomain.SetData(nameof(BankPayerLimit), value.ToString());
+        get => int.Parse(AppContext.GetData(nameof(CorrPayerLimit)) as string ?? "105");
+        set => AppDomain.CurrentDomain.SetData(nameof(CorrPayerLimit), value.ToString());
     }
 
     public static string BankSWIFT
@@ -101,6 +104,59 @@ public static class ConfigProperties
     {
         get => AppContext.GetData(nameof(CorrSWIFT)) as string ?? string.Empty;
         set => AppDomain.CurrentDomain.SetData(nameof(CorrSWIFT), value);
+    }
+
+    static ConfigProperties()
+    {
+        InitCorrProperties();
+    }
+
+    public static void InitCorrProperties()
+    {
+        CorrProperties.CorrAccount = CorrAccount;
+        CorrProperties.BankINN = BankINN;
+        CorrProperties.BankKPP = BankKPP;
+        CorrProperties.CorrPayerTemplate = CorrPayerTemplate;
+        CorrProperties.CorrPurposeTemplate = CorrPurposeTemplate;
+
+        CorrProperties.CorrPayerLimit = CorrPayerLimit;
+
+        CorrProperties.BankSWIFT = BankSWIFT;
+        CorrProperties.CorrSWIFT = CorrSWIFT;
+    }
+
+    public static string Validate()
+    {
+        StringBuilder err = new();
+        err
+            .AppendLineIf(OpenDir.Empty() || !Directory.Exists(OpenDir),
+            $"Папка OpenDir не существует!")
+
+            .AppendLineIf(OpenMask.Empty(),
+            $"Маска OpenMask не указана!")
+
+            .AppendLineIf(SaveDir.Empty() || !Directory.Exists(SaveDir),
+            $"Папка SaveDir не существует!")
+
+            .AppendLineIf(SaveMask.Empty(),
+            $"Маска SaveMask не указана!")
+
+            .AppendLineIf(CorrAccount.Empty(),
+            $"Счет Банка не указан!")
+
+            .AppendLineIf(BankINN.Empty(),
+            $"ИНН Банка не указан!")
+
+            .AppendLineIf(BankKPP.Empty(),
+            $"КПП Банка не указан!")
+
+            .AppendLineIf(CorrPayerTemplate.Empty(),
+            $"Шаблон за клиента Банка не указан!")
+
+            .AppendLineIf(CorrPurposeTemplate.Empty(),
+            $"Шаблон назначения за третье лицо не указан!");
+
+        return err.ToString();
     }
 
     public static void Save()
@@ -120,10 +176,10 @@ public static class ConfigProperties
         properties![nameof(CorrAccount)] = CorrAccount;
         properties![nameof(BankINN)] = BankINN;
         properties![nameof(BankKPP)] = BankKPP;
-        properties![nameof(BankPayerTemplate)] = BankPayerTemplate;
-        properties![nameof(BankPurposeTemplate)] = BankPurposeTemplate;
+        properties![nameof(CorrPayerTemplate)] = CorrPayerTemplate;
+        properties![nameof(CorrPurposeTemplate)] = CorrPurposeTemplate;
 
-        properties![nameof(BankPayerLimit)] = BankPayerLimit;
+        properties![nameof(CorrPayerLimit)] = CorrPayerLimit;
 
         properties![nameof(BankSWIFT)] = BankSWIFT;
         properties![nameof(CorrSWIFT)] = CorrSWIFT;
@@ -132,5 +188,6 @@ public static class ConfigProperties
         json = configNode.ToJsonString(options);
 
         File.WriteAllText(config, json);
+        InitCorrProperties();
     }
 }

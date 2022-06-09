@@ -24,7 +24,6 @@ public partial class ConfigForm : Form
     public ConfigForm()
     {
         InitializeComponent();
-
         LoadConfig();
     }
 
@@ -39,10 +38,10 @@ public partial class ConfigForm : Form
         CorrAccountText.Text = ConfigProperties.CorrAccount;
         BankINNText.Text = ConfigProperties.BankINN;
         BankKPPText.Text = ConfigProperties.BankKPP;
-        BankPayerText.Text = ConfigProperties.BankPayerTemplate;
-        BankPurposeText.Text = ConfigProperties.BankPurposeTemplate;
+        CorrPayerText.Text = ConfigProperties.CorrPayerTemplate;
+        CorrPurposeText.Text = ConfigProperties.CorrPurposeTemplate;
 
-        BankPayerLimitText.Text = ConfigProperties.BankPayerLimit.ToString();
+        CorrPayerLimitText.Text = ConfigProperties.CorrPayerLimit.ToString();
 
         BankSWIFTText.Text = ConfigProperties.BankSWIFT;
         CorrSWIFTText.Text = ConfigProperties.CorrSWIFT;
@@ -59,10 +58,10 @@ public partial class ConfigForm : Form
         CorrAccountText.Text = "30101810600000000702";
         BankINNText.Text = "7831001422";
         BankKPPText.Text = "784101001";
-        BankPayerText.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        BankPurposeText.Text = "//7831001422//784101001//{name}//{purpose}";
+        CorrPayerText.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+        CorrPurposeText.Text = "//7831001422//784101001//{name}//{purpose}";
 
-        BankPayerLimitText.Text = "105"; // 105 = три строки по стандарту SWIFT-RUR или 160 (= 4.5 строки) по стандару УФЭБС
+        CorrPayerLimitText.Text = "105"; // 105 = три строки по стандарту SWIFT-RUR или 160 (= 4.5 строки) по стандару УФЭБС
 
         BankSWIFTText.Text = "CITVRU2P";
         CorrSWIFTText.Text = "CITVRU2P";
@@ -79,10 +78,10 @@ public partial class ConfigForm : Form
         ConfigProperties.CorrAccount = CorrAccountText.Text;
         ConfigProperties.BankINN = BankINNText.Text;
         ConfigProperties.BankKPP = BankKPPText.Text;
-        ConfigProperties.BankPayerTemplate = BankPayerText.Text;
-        ConfigProperties.BankPurposeTemplate = BankPurposeText.Text;
+        ConfigProperties.CorrPayerTemplate = CorrPayerText.Text;
+        ConfigProperties.CorrPurposeTemplate = CorrPurposeText.Text;
 
-        ConfigProperties.BankPayerLimit = int.Parse(BankPayerLimitText.Text);
+        ConfigProperties.CorrPayerLimit = int.Parse(CorrPayerLimitText.Text);
 
         ConfigProperties.BankSWIFT = BankSWIFTText.Text;
         ConfigProperties.CorrSWIFT = CorrSWIFTText.Text;

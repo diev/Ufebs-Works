@@ -36,4 +36,19 @@ public static class StringExtensions
     {
         return !string.IsNullOrWhiteSpace(value);
     }
+
+    public static string AddNotEmpty(this string? value)
+    {
+        return value == null ? string.Empty : $".{value}";
+    }
+
+    public static StringBuilder AppendLineIf(this StringBuilder @this, bool condition, string value)
+    {
+        if (condition)
+        {
+            @this.AppendLine(value);
+        }
+
+        return @this;
+    }
 }
