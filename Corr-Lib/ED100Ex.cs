@@ -435,4 +435,22 @@ public static class ED100Ex
 
         return sb.ToString();
     }
+
+    public static string ESum(this string value)
+    {
+        if (value is null)
+        {
+            return string.Empty;
+        }
+
+        // 0 123 456 789 012 345.67 (18x)
+        ReadOnlySpan<char> s = value.PadLeft(18);
+
+        return s.Length switch
+        {
+            1 => $"0.0{value}",
+            2 => $"0.{value}",
+            _ => $"{s[..1]} {s.Slice(1, 3)} {s.Slice(4, 3)} {s.Slice(7, 3)} {s.Slice(10, 3)} {s.Slice(13, 3)}.{s.Slice(16, 2)}".Trim(),
+        };
+    }
 }

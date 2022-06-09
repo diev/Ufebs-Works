@@ -177,48 +177,44 @@ public static class SwiftTranslit
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
     /// </summary>
-    /// <param name="c">Символ на кирилице</param>
+    /// <param name="value">Символ на кирилице</param>
     /// <returns>Символ на латинице</returns>
-    public static char Lat(char c)
+    public static char Lat(char value)
     {
-        if (TRANSLAT.TryGetValue(c, out char result))
+        if (TRANSLAT.TryGetValue(value, out char result))
         {
             return result;
         }
-        else
-        {
-            return c;
-        }
+
+        return value;
     }
 
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
     /// </summary>
-    /// <param name="c">Символ на латинице</param>
+    /// <param name="value">Символ на латинице</param>
     /// <returns>Символ на кирилице</returns>
-    public static char Cyr(char c)
+    public static char Cyr(char value)
     {
-        if (TRANSCYR.TryGetValue(c, out char result))
+        if (TRANSCYR.TryGetValue(value, out char result))
         {
             return result;
         }
-        else
-        {
-            return c;
-        }
+
+        return value;
     }
 
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
     /// </summary>
-    /// <param name="text">Строка на кирилице</param>
+    /// <param name="value">Строка на кирилице</param>
     /// <returns>Строка на латинице</returns>
-    public static string Lat(string text)
+    public static string Lat(string value)
     {
         bool rus = true; // default RU stream
-        var result = new StringBuilder(text.Length);
+        var result = new StringBuilder(value.Length);
 
-        foreach (var c in text)
+        foreach (var c in value)
         {
             if (rus)
             {
@@ -254,19 +250,19 @@ public static class SwiftTranslit
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
     /// </summary>
-    /// <param name="text">Строка на латинице</param>
+    /// <param name="value">Строка на латинице</param>
     /// <returns>Строка на кирилице</returns>
-    public static string Cyr(string text)
+    public static string Cyr(string value)
     {
-        if (!text.Contains('\'', StringComparison.OrdinalIgnoreCase))
+        if (!value.Contains('\'', StringComparison.OrdinalIgnoreCase))
         {
-            return string.Concat(text.Select(Cyr));
+            return string.Concat(value.Select(Cyr));
         }
 
         bool rus = true; // default RU stream
-        var result = new StringBuilder(text.Length);
+        var result = new StringBuilder(value.Length);
 
-        foreach (var c in text)
+        foreach (var c in value)
         {
             if (c == '\'')
             {
@@ -288,46 +284,46 @@ public static class SwiftTranslit
     /// <summary>
     /// Разбиение строки на текст по 35 символов в строке
     /// </summary>
-    /// <param name="src">Строка</param>
+    /// <param name="value">Строка</param>
     /// <returns>Текст по 35 символов в строке</returns>
-    public static string Wrap35(string src)
+    public static string Wrap35(string value)
     {
         var result = new StringBuilder(220);
 
-        while (src.Length > 35)
+        while (value.Length > 35)
         {
-            result.AppendLine(src[..35]);
-            src = src.Remove(0, 35);
+            result.AppendLine(value[..35]);
+            value = value.Remove(0, 35);
         }
 
-        return result.Append(src).ToString();
+        return result.Append(value).ToString();
     }
 
-    public static ReadOnlySpan<char> Prepare35(this string src)
+    public static ReadOnlySpan<char> Prepare35(this string value)
     {
-        string dst = src.PadRight(210, ' ');
+        string result = value.PadRight(210, ' ');
         
         for (int i = 0; i < 6; i++)
         {
             int pos = i * 35;
 
-            if (dst[pos] == '-') // prohibited char at beginning of any line
+            if (result[pos] == '-') // prohibited char at beginning of any line
             {
-                dst = dst.Insert(pos, " ");
+                result = result.Insert(pos, " ");
             }
         }
 
-        return dst;
+        return result;
     }
 
     /// <summary>
     /// Преобразование даты из формата УФЭБС XML в SWIFT-RUR
     /// </summary>
-    /// <param name="src">ГГГГ-ММ-ДД</param>
+    /// <param name="value">ГГГГ-ММ-ДД</param>
     /// <returns>ГГММДД</returns>
-    public static string XDate(string src)
+    public static string XDate(string value)
     {
-        return src[2..].Replace("-", "");
+        return value[2..].Replace("-", "");
     }
 
     /// <summary>
@@ -335,26 +331,26 @@ public static class SwiftTranslit
     /// Целая часть должна содержать, по крайней мере, одну цифру.
     /// Дробная часть может отсутствовать, но запятая между целой и дробной частью всегда должна присутствовать.
     /// </summary>
-    /// <param name="src">РКК</param>
+    /// <param name="value">РКК</param>
     /// <returns>Р,КК</returns>
-    public static string XSum(string src)
+    public static string XSum(string value)
     {
-        if (src.Length > 2)
+        if (value.Length > 2)
         {
-            if (src.EndsWith("00"))
+            if (value.EndsWith("00"))
             {
-                return src[..^2] + ",";
+                return value[..^2] + ",";
             }
 
-            return src.Insert(src.Length - 2, ",");
+            return value.Insert(value.Length - 2, ",");
         }
-        else if (src.Length == 2)
+        else if (value.Length == 2)
         {
-            return "0," + src;
+            return "0," + value;
         }
         else
         {
-            return "0,0" + src;
+            return "0,0" + value;
         }
     }
 }

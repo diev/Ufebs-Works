@@ -142,9 +142,10 @@ internal static class ListViewEx
 
     internal static void AddItem(this ListView listView, ED100 ed)
     {
-        var item = new ListViewItem(ed.EDType);
+        var item = new ListViewItem(ed.EDNo);
 
-        var itemSum = item.SubItems.Add(ed.Sum);
+        var itemType = item.SubItems.Add(ed.EDType);
+        var itemSum = item.SubItems.Add(ed.Sum.ESum());
         var itemName = item.SubItems.Add(ed.PayerName);
         var itemPayee = item.SubItems.Add(ed.PayeeName);
         var itemPurpose = item.SubItems.Add(ed.Purpose);

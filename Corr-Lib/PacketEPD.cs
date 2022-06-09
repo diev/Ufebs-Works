@@ -90,6 +90,11 @@ public class PacketEPD
     public PacketEPD()
     { }
 
+    public PacketEPD(string path)
+    {
+        this.Load(path);
+    }
+
     public PacketEPD(XNode node)
     {
         this.Load((XElement)node);

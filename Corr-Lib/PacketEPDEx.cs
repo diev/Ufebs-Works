@@ -24,6 +24,17 @@ namespace CorrLib;
 
 public static class PacketEPDEx
 {
+    public static void Load(this PacketEPD packet, string path)
+    {
+        var xdoc = XDocument.Load(path);
+        var root = xdoc.Root;
+
+        if (root is not null)
+        {
+            packet.Load(root);
+        }
+    }
+
     public static void Load(this PacketEPD packet, XElement xElement)
     {
         packet.EDType = xElement.Name.LocalName;
