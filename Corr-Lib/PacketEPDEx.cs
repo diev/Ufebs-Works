@@ -17,6 +17,7 @@ limitations under the License.
 */
 #endregion
 
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -35,19 +36,100 @@ public static class PacketEPDEx
         }
     }
 
-    public static void Load(this PacketEPD packet, XElement xElement)
+    public static void Load(this PacketEPD packet, XElement root)
     {
-        packet.EDType = xElement.Name.LocalName;
+        packet.EDType = root.Name.LocalName;
+        var ns = root.GetDefaultNamespace();
 
-        packet.EDAuthor = xElement.Attribute("EDAuthor")?.Value;
-        packet.EDDate = xElement.Attribute("EDDate")?.Value;
-        packet.EDNo = xElement.Attribute("EDNo")?.Value;
-        packet.EDQuantity = xElement.Attribute("EDQuantity")?.Value;
-        packet.EDReceiver = xElement.Attribute("EDReceiver")?.Value;
-        packet.Sum = xElement.Attribute("Sum")?.Value;
-        packet.SystemCode = xElement.Attribute("SystemCode")?.Value;
-        packet.Sum = xElement.Attribute("Sum")?.Value;
-        packet.Xmlns = xElement.Attribute("xmlns")?.Value;
+        if (packet.EDType.StartsWith("ED1"))
+        {
+            packet.EDAuthor = root.Attribute("EDAuthor")?.Value;
+            packet.EDDate = root.Attribute("EDDate")?.Value;
+            packet.EDNo = root.Attribute("EDNo")?.Value;
+            packet.EDQuantity = "1";
+            //packet.EDReceiver = root.Attribute("EDReceiver")?.Value;
+            packet.Sum = root.Attribute("Sum")?.Value;
+            packet.SystemCode = root.Attribute("SystemCode")?.Value;
+            packet.Xmlns = root.Attribute("xmlns")?.Value;
+
+            packet.Docs = new ED100[1];
+            packet.Docs[0] = new ED100(root);
+        }
+        else
+        {
+            switch (packet.EDType)
+            {
+                case "PacketEPD":
+                    packet.EDAuthor = root.Attribute("EDAuthor")?.Value;
+                    packet.EDDate = root.Attribute("EDDate")?.Value;
+                    packet.EDNo = root.Attribute("EDNo")?.Value;
+                    packet.EDQuantity = root.Attribute("EDQuantity")?.Value;
+                    packet.EDReceiver = root.Attribute("EDReceiver")?.Value;
+                    packet.Sum = root.Attribute("Sum")?.Value;
+                    packet.SystemCode = root.Attribute("SystemCode")?.Value;
+                    packet.Xmlns = root.Attribute("xmlns")?.Value;
+
+                    int qty = int.Parse(packet.EDQuantity);
+                    packet.Docs = new ED100[qty];
+                    var node = root.FirstNode;
+
+                    for (int i = 0; i < qty; i++)
+                    {
+                        packet.Docs[i] = new ED100(node);
+                        node = node.NextNode;
+                    }
+
+                    break;
+
+                case "ED503":
+                    packet.EDAuthor = root.Attribute("EDAuthor")?.Value;
+                    packet.EDDate = root.Attribute("EDDate")?.Value;
+                    packet.EDNo = root.Attribute("EDNo")?.Value;
+                    packet.EDQuantity = "1";
+                    packet.EDReceiver = root.Attribute("ActualReceiver")?.Value;
+                    //packet.Sum = root.Attribute("Sum")?.Value;
+                    //packet.SystemCode = root.Attribute("SystemCode")?.Value;
+                    packet.Xmlns = root.Attribute("xmlns")?.Value;
+
+                    packet.Docs = Array.Empty<ED100>();
+                    //packet.Docs[0] = new ED100(root.FirstNode);
+
+                    var container = root.Element(ns + "SWIFTContainer");
+                    var document = container?.Element(ns + "SWIFTDocument");
+                    string? value = document?.Value;
+
+                    if (value != null)
+                    {
+                        byte[] bytes = Convert.FromBase64String(value);
+                        string swiftText = Encoding.ASCII.GetString(bytes);
+
+                        //TODO swiftText
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    public static string[] RowData(this PacketEPD packet, int index)
+    {
+        var item = packet.Docs[index];
+        var corr = item.CorrClone();
+
+        return new string[]
+        {
+            item.EDNo,
+            item.EDType,
+            item.Sum.ESum(),
+            item.PayerName,
+            corr.PayerName, //TODO
+            item.PayeeName,
+            corr.Purpose,
+            string.Empty //TODO File.Exists?
+        };
     }
 
     public static void WriteStartXML(this PacketEPD packet, XmlWriter writer)
@@ -63,5 +145,7 @@ public static class PacketEPDEx
         writer.WriteAttributeString("Sum", packet.Sum);
         writer.WriteAttributeString("SystemCode", packet.SystemCode);
         writer.Flush();
+
+        //TODO Write Docs[]
     }
 }

@@ -79,9 +79,14 @@ public class PacketEPD
     public string SystemCode { get; set; } = string.Empty; // required
 
     /// <summary>
-    /// 
+    /// Схема имен XML.
     /// </summary>
     public string? Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
+
+    /// <summary>
+    /// Массив платежных документов.
+    /// </summary>
+    public ED100[] Docs { get; set; } = Array.Empty<ED100>();
 
     #endregion Properties
 

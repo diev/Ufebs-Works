@@ -24,9 +24,9 @@ public static class CorrProperties
     public static string CorrAccount { get; set; }
     public static string BankINN { get; set; }
     public static string BankKPP { get; set; }
-    public static string CorrPayerTemplate { get; set; }
-    public static string CorrPurposeTemplate { get; set; }
-    public static int CorrPayerLimit { get; set; }
+    public static string NameTemplate { get; set; }
+    public static string PurposeTemplate { get; set; }
+    public static int SwiftNameLimit { get; set; }
     public static string BankSWIFT { get; set; }
     public static string CorrSWIFT { get; set; }
 }

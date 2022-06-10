@@ -30,7 +30,8 @@ public partial class MainForm : Form
     private const string VersionDate = "2022-06-10";
 
     // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) или 160 (УФЭБС)?
-    private const int MAX_PURPOSE = 210;
+    private const int MAX_NAME = 100;
+    private const int MAX_PURPOSE = 100;
 
     private bool _isNameValid = false;
     private bool _isPurposeValid = false;
@@ -39,7 +40,7 @@ public partial class MainForm : Form
     private string? _saveFileName;
     private string _saveMaskName = "*";
 
-    private List<ED100> _docs;
+    private PacketEPD _packet;
 
     #region Init
     public MainForm()
@@ -67,14 +68,14 @@ public partial class MainForm : Form
         if (argc > 0) // 1:Input
         {
             string arg = Path.GetFullPath(args[1]);
-            ConfigProperties.OpenDir = Path.GetDirectoryName(arg) ?? @"C:\";
-            ConfigProperties.OpenMask = Path.GetFileName(arg);
+            Config.OpenDir = Path.GetDirectoryName(arg) ?? @"C:\";
+            Config.OpenMask = Path.GetFileName(arg);
 
             if (argc > 1) // 2:Output
             {
                 arg = Path.GetFullPath(args[2]);
-                ConfigProperties.SaveDir = Path.GetDirectoryName(arg) ?? @"C:\";
-                ConfigProperties.SaveMask = Path.GetFileName(arg);
+                Config.SaveDir = Path.GetDirectoryName(arg) ?? @"C:\";
+                Config.SaveMask = Path.GetFileName(arg);
             }
         }
 
@@ -83,7 +84,7 @@ public partial class MainForm : Form
 
     private void ReInitForm()
     {
-        string err = ConfigProperties.Validate();
+        string err = Config.Validate();
 
         if (err.Length > 0)
         {
@@ -93,29 +94,29 @@ public partial class MainForm : Form
             ConfigMenuItem.PerformClick();
         }
 
-        OpenFileDialog.InitialDirectory = ConfigProperties.OpenDir;
-        OpenFileDialog.Filter = $"УФЭБС|{ConfigProperties.OpenMask}|{OpenFileDialog.Filter}";
+        OpenFileDialog.InitialDirectory = Config.OpenDir;
+        OpenFileDialog.Filter = $"УФЭБС|{Config.OpenMask}|{OpenFileDialog.Filter}";
 
-        SaveAsFileDialog.InitialDirectory = ConfigProperties.SaveDir;
-        SaveAsFileDialog.Filter = $"SWIFT|{ConfigProperties.SaveMask}|{SaveAsFileDialog.Filter}";
-        SaveAsFileDialog.DefaultExt = Path.GetExtension(ConfigProperties.SaveMask);
+        SaveAsFileDialog.InitialDirectory = Config.SaveDir;
+        SaveAsFileDialog.Filter = $"SWIFT|{Config.SaveMask}|{SaveAsFileDialog.Filter}";
+        SaveAsFileDialog.DefaultExt = Path.GetExtension(Config.SaveMask);
 
-        _saveMaskName = Path.GetFileName(ConfigProperties.SaveMask);
+        _saveMaskName = Path.GetFileName(Config.SaveMask);
 
         FilesList.Items.Clear();
         //FilesListBox.Items.AddRange(Directory.GetFiles(ConfigProperties.OpenDir, ConfigProperties.OpenMask));
 
-        foreach (var file in new SourceFileCollection(ConfigProperties.OpenDir, ConfigProperties.OpenMask))
+        foreach (var file in new SourceFileCollection(Config.OpenDir, Config.OpenMask))
         {
             FilesList.Items.Add(new ListViewItem(file));
         }
 
-        var saved = Directory.GetFiles(ConfigProperties.SaveDir, ConfigProperties.SaveMask);
+        var saved = Directory.GetFiles(Config.SaveDir, Config.SaveMask);
 
         if (saved.Length > 0)
         {
             var reply = MessageBox.Show(
-                $"В выходной директории\n{ConfigProperties.SaveDir}\nуже есть {saved.Length} файлов {ConfigProperties.SaveMask}.\n\nОни будут перезаписаны при сохранениях!\nУдалить их?",
+                $"В выходной директории\n{Config.SaveDir}\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nОни будут перезаписаны при сохранениях!\nУдалить их?",
                 Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
             if (reply == DialogResult.Yes)
@@ -175,13 +176,9 @@ public partial class MainForm : Form
     {
         var font = FontDialog.Font;
 
-        //FilesList.Font = font;
-        XmlText.Font = font;
-        //DocsList.Font = font;
-        SwiftText.Font = font;
+        //TODO remove?
 
-        NameEdit.Font = font;
-        PurposeEdit.Font = font;
+        //SwiftText.Font = font;
     }
     #endregion Dialogs
 
@@ -189,193 +186,45 @@ public partial class MainForm : Form
 
     private bool LoadFile(string path) //TODO remove
     {
-        string filename = Path.GetFileNameWithoutExtension(path);
-        string ext = Path.GetExtension(path);
-        bool problems = false;
-
-        SaveAsFileDialog.FileName = _saveMaskName.Replace("*", filename);
-        _saveFileName = Path.Combine(SaveAsFileDialog.InitialDirectory, SaveAsFileDialog.FileName);
-        MarkSaved();
-
         // Заголовок окна
 
         Text = $"{Application.ProductName} | {path}";
 
-        if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+        _packet = new PacketEPD(path);
+        var docs = new PacketEPDocs(_packet);
+        DocsList.Items.Clear();
+
+        int c = CorrColumn.Index;
+        int p = PurposeColumn.Index;
+
+        foreach (var ed in docs)
         {
-            //string text = File.ReadAllText(path, Encoding.ASCII);
-        }
-        else if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
-        {
-            //XmlTextBox.Text = text; //no 1251!
+            var item = DocsList.Items.Add(new ListViewItem(ed));
+            
+            string name = ed[c];
+            string purpose = ed[p];
 
-            var xdoc = XDocument.Load(path);
-            var root = xdoc.Root;
-
-            if (root == null)
+            if (name.Length > MAX_NAME)
             {
-                XmlText.Text = "Not XML file";
-            }
-            else
-            {
-                XmlText.Text = xdoc.ToString();
-
-                //XNamespace ns = root.GetDefaultNamespace();
-                //XNode? node;
-                //XElement ed;
-
-                switch (root.Name.LocalName)
-                {
-                    case "ED503": // SWIFT
-                        {
-                            //string text = File.ReadAllText(path, Encoding.ASCII);
-                            //text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
-
-
-                            //// Исходный текст документа SWIFT
-
-                            //SwiftTextBox.Text = text;
-                            //_swift = new SwiftLines(SwiftTextBox.Lines);
-
-                            //if (text is null)
-                            //{
-                            //    SwiftTextBox.Text = "<SWIFTDocument> не содержит текста.";
-                            //}
-
-                            //// Переключаемся на последнюю закладку "К отправке"
-
-                            //Tabs.SelectedIndex = Tabs.TabCount - 1;
-
-                            //// Читаем значения из текста формата документа SWIFT-RUR
-
-                            //var acc = _swift.Account;
-                            //var inn = _swift.INN;
-                            ////var kpp = _swift.KPP;
-                            //var name = _swift.Name;
-
-                            //// Если ИНН плательщика наш (как в Параметрах), то это платеж от нашего Банка самого
-
-                            //bool bank = inn == ConfigProperties.BankINN; // "7831001422";
-
-                            //// Берем из Параметров номер корсчета
-
-                            //string acc2 = ConfigProperties.CorrAccount; // "30109810800010001378";
-
-                            //// Подставляем новые значения плательщика в шаблон, если не Банк сам за себя
-
-                            //// $"АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-                            //string name2 = bank
-                            //    ? name
-                            //    : ConfigProperties.CorrPayerTemplate
-                            //    .Replace("{name}", name)
-                            //    .Replace("{acc}", acc);
-
-                            //// Длина не превышает предельную?
-
-                            //_isNameValid = name2.Length <= ConfigProperties.CorrPayerLimit; // MAX_NAME;
-
-                            //// Присваиваем новые значения для генерации нового теста документа
-
-                            //_swift.Account = acc2;
-                            //_swift.Name = name2;
-
-                            //// Берем назначение из документа
-
-                            //string purpose = _swift.Purpose;
-
-                            //// Если не Банк сам и есть признак платежа в бюджет
-
-                            //if (!bank && _swift.Tax)
-                            //{
-                            //    // Подставляем новые значения назначения в шаблон платежа за третье лицо
-
-                            //    // $"//7831001422//784101001//{name}//{purpose}";
-                            //    purpose = ConfigProperties.CorrPurposeTemplate
-                            //        .Replace("{name}", name)
-                            //        .Replace("{purpose}", purpose);
-
-                            //    _swift.Purpose = purpose;
-                            //}
-
-                            //// Заполняем текстбоксы
-
-                            //SwiftText.Lines = _swift.Lines; // Новый текст документа SWIFT
-                            //NameEdit.Text = name2; // Текст наименования плательщика
-                            //PurposeEdit.Text = purpose; // Текст назначения платежа
-
-                            //// Пишем в статусную строку тип платежа
-
-                            //TaxValue.Text = _swift.Tax ? "Бюджет" : "Платеж";
-                        }
-                        break;
-
-                    case "PacketEPD":
-                        //var packet = new PacketEPD(root);
-
-                        //var node = root.FirstNode;
-                        //do
-                        //{
-                        //    var ed = new ED100(node);
-
-                        //    node = node.NextNode;
-                        //}
-                        //while (node != null);
-
-                        _docs = new();
-
-                        foreach (var node in root.Elements())
-                        {
-                            var ed = new ED100(node);
-                            //DocsList.AddItem(ed);
-
-                            var corr = ed.CorrClone();
-                            _docs.Add(corr);
-                            DocsList.AddItem(corr);
-                        }
-
-                        int count = _docs.Count;
-                        DocsPage.Text = $"PacketEPD {count}";
-                        DocsDone.Text = count.ToString();
-                        DocsDoneBar.Maximum = count;
-                        break;
-
-                    case "ED101":
-                    case "ED103":
-                    case "ED104":
-                    case "ED108":
-                        var sed = new ED100(root);
-                        //DocsList.AddItem(sed);
-                        _docs = new();
-                        var scorr = sed.CorrClone();
-                        _docs.Add(scorr);
-                        DocsList.AddItem(scorr);
-                        DocsPage.Text = $"PacketEPD 1";
-                        DocsDone.Text = "1";
-                        DocsDoneBar.Maximum = 1;
-                        break;
-
-                    default:
-                        break;
-                }
+                item.UseItemStyleForSubItems = false;
+                item.SubItems[c].BackColor = Color.LightPink;
             }
 
-            //text = SwiftHelper.GetSwiftDocument(text) ?? "No SwiftDocument";
-        }
-        else
-        {
-            XmlText.Text = "No XML file";
+            if (purpose.Length > MAX_PURPOSE)
+            {
+                item.UseItemStyleForSubItems = false;
+                item.SubItems[p].BackColor = Color.LightPink;
+            }
         }
 
-        // Выставляем доступность пунктов меню и кнопок
-
-        return CheckItemsEnabled();
+        return true; //???????????????
     }
 
     private void SaveFile(string? text = null)
     {
         if (_saveFileName != null)
         {
-            File.WriteAllText(_saveFileName, text ?? SwiftText.Text, Encoding.ASCII);
+            //File.WriteAllText(_saveFileName, text ?? SwiftText.Text, Encoding.ASCII); ??????????????????????
             MarkSaved();
         }
     }
@@ -401,51 +250,33 @@ public partial class MainForm : Form
 
     private void PrintPage(PrintPageEventArgs e)
     {
-        string documentContents = SwiftText.Text;
-        string stringToPrint = documentContents;
+        //string documentContents = SwiftText.Text; //????????????????????????????????????
+        //string stringToPrint = documentContents;
 
-        if (e.Graphics != null)
-        {
-            // Sets the value of charactersOnPage to the number of characters
-            // of stringToPrint that will fit within the bounds of the page.
-            e.Graphics.MeasureString(stringToPrint, Font,
-                e.MarginBounds.Size, StringFormat.GenericTypographic,
-                out int charactersOnPage, out int linesPerPage);
+        //if (e.Graphics != null)
+        //{
+        //    // Sets the value of charactersOnPage to the number of characters
+        //    // of stringToPrint that will fit within the bounds of the page.
+        //    e.Graphics.MeasureString(stringToPrint, Font,
+        //        e.MarginBounds.Size, StringFormat.GenericTypographic,
+        //        out int charactersOnPage, out int linesPerPage);
 
-            // Draws the string within the bounds of the page.
-            e.Graphics.DrawString(stringToPrint, Font, Brushes.Black,
-            e.MarginBounds, StringFormat.GenericTypographic);
+        //    // Draws the string within the bounds of the page.
+        //    e.Graphics.DrawString(stringToPrint, Font, Brushes.Black,
+        //    e.MarginBounds, StringFormat.GenericTypographic);
 
-            // Remove the portion of the string that has been printed.
-            stringToPrint = stringToPrint[charactersOnPage..];
+        //    // Remove the portion of the string that has been printed.
+        //    stringToPrint = stringToPrint[charactersOnPage..];
 
-            // Check to see if more pages are to be printed.
-            e.HasMorePages = (stringToPrint.Length > 0);
+        //    // Check to see if more pages are to be printed.
+        //    e.HasMorePages = (stringToPrint.Length > 0);
 
-            // If there are no more pages, reset the string to be printed.
-            if (!e.HasMorePages)
-            {
-                stringToPrint = documentContents;
-            }
-        }
-    }
-
-    private bool CheckItemsEnabled()
-    {
-        bool enabled = FilesList.PrevEnabled();
-
-        enabled =
-            _isNameValid &&
-            _isPurposeValid &&
-            FilesList.NextEnabled();
-
-        NextMenuItem.Enabled = enabled;
-        NextButton.Enabled = enabled;
-
-        FastNextMenuItem.Enabled = enabled;
-        FastNextButton.Enabled = enabled;
-
-        return enabled;
+        //    // If there are no more pages, reset the string to be printed.
+        //    if (!e.HasMorePages)
+        //    {
+        //        stringToPrint = documentContents;
+        //    }
+        //}
     }
 
     private void TryClose(ref FormClosingEventArgs e)
@@ -544,7 +375,7 @@ public partial class MainForm : Form
 
     private void FontMenuItem_Click(object sender, EventArgs e)
     {
-        FontDialog.Font = SwiftText.Font;
+        //FontDialog.Font = SwiftText.Font;?????????????????????????????????????????????
         FontDialog.ShowDialog();
     }
 
@@ -599,13 +430,6 @@ public partial class MainForm : Form
         GoForward();
     }
 
-    private void WrapMenuItem_Click(object sender, EventArgs e)
-    {
-        WrapMenuItem.Checked = !WrapMenuItem.Checked;
-        XmlText.WordWrap = WrapMenuItem.Checked;
-        SwiftText.WordWrap = WrapMenuItem.Checked;
-    }
-
     private void PrintDocument_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
     {
         PrintPage(e);
@@ -621,37 +445,6 @@ public partial class MainForm : Form
 
     #endregion UI
 
-    private void NameEdit_TextChanged(object sender, EventArgs e)
-    {
-        var edit = (TextBox)sender;
-
-        NameSwiftText.Text = edit.Text.LatWrap35();
-
-        int limit = ConfigProperties.CorrPayerLimit; // MAX_NAME;
-        int length = edit.TextLength;
-        _isNameValid = length <= limit;
-
-        NameLabel.Text = $"Плательщик {length}/{limit}:";
-        NameLabel.ForeColor = _isNameValid ? ForeColor : Color.Red;
-
-        CheckItemsEnabled();
-    }
-
-    private void PurposeEdit_TextChanged(object sender, EventArgs e)
-    {
-        var edit = (TextBox)sender;
-
-        PurposeSwiftText.Text = edit.Text.LatWrap35();
-
-        int length = edit.TextLength;
-        _isPurposeValid = length <= MAX_PURPOSE;
-
-        PurposeLabel.Text = $"Назначение {length}/{MAX_PURPOSE}:";
-        PurposeLabel.ForeColor = _isPurposeValid ? ForeColor : Color.Red;
-
-        CheckItemsEnabled();
-    }
-
     private void FilesList_SelectedIndexChanged(object sender, EventArgs e)
     {
         var list = (ListView)sender;
@@ -660,16 +453,6 @@ public partial class MainForm : Form
 
         string file = item.Text;
         LoadFile(file);
-
-        int index = item.Index + 1;
-        int count = list.Items.Count;
-
-        FilesDoneBar.Value = index;
-        FilesDoneBar.Maximum = count;
-
-        string done = $"{index}/{count}";
-        FilesPage.Text = $"Файлы {done}";
-        FilesDone.Text = done;
     }
 
     private void DocsList_SelectedIndexChanged(object sender, EventArgs e)
@@ -678,25 +461,64 @@ public partial class MainForm : Form
         if (list.SelectedItems.Count != 1) return;
         var item = list.SelectedItems[0];
 
-        NameEdit.Text = item.SubItems[PayerColumn.Index].Text;
-        PurposeEdit.Text = item.SubItems[PurposeColumn.Index].Text;
-
-        var ed = _docs[item.Index];
-        SwiftText.Text = ed.ToSWIFT();
+        var ed = _packet.Docs[item.Index];
         string id = $"{SwiftTranslit.XDate(ed.EDDate)}{ed.EDNo.PadLeft(9, '0')}";
-        string path = Path.Combine(ConfigProperties.SaveDir, id + ".swt");
-        File.WriteAllText(path, SwiftText.Text, Encoding.ASCII);
-        //MarkSaved();
+        string path = Path.Combine(Config.SaveDir, id + ".mt103");
+        File.WriteAllText(path, ed.ToSWIFT(), Encoding.ASCII);
         item.SubItems[SavedColumn.Index].Text = path;
+    }
 
-        int index = item.Index + 1;
-        int count = list.Items.Count;
+    private void DocsList_DoubleClick(object sender, EventArgs e)
+    {
+        var list = (ListView)sender;
+        if (list.SelectedItems.Count != 1) return;
+        var item = list.SelectedItems[0];
 
-        DocsDoneBar.Value = index;
-        DocsDoneBar.Maximum = count;
+        CorrectList(item);
+    }
 
-        string done = $"{index}/{count}";
-        DocsPage.Text = $"PacketEPD {done}";
-        DocsDone.Text = done;
+    private void CorrectList(ListViewItem item)
+    {
+        int i1 = CorrColumn.Index;
+        int i2 = PurposeColumn.Index;
+
+        string name = item.SubItems[i1].Text;
+        string purpose = item.SubItems[i2].Text;
+
+        var corrForm = new CorrForm(name, purpose)
+        {
+            Width = Width
+        };
+
+        if (corrForm.ShowDialog() == DialogResult.OK)
+        {
+            string name2 = corrForm.NameResult.Text;
+            string purpose2 = corrForm.PurposeResult.Text;
+
+            if (name == name2 && purpose == purpose2)
+            {
+                return;
+            }
+
+            var cursor = Cursor;
+            Cursor = Cursors.WaitCursor;
+
+            foreach (ListViewItem i in DocsList.Items)
+            {
+                if (i.SubItems[i1].Text == name)
+                {
+                    i.SubItems[i1].Text = name2;
+                    i.SubItems[i1].ResetStyle();
+                }
+
+                if (i.SubItems[i2].Text == purpose)
+                {
+                    i.SubItems[i2].Text = purpose2;
+                    i.SubItems[i2].ResetStyle();
+                }
+            }
+
+            Cursor = cursor;
+        }
     }
 }

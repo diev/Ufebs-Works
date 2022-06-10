@@ -28,15 +28,9 @@ partial class MainForm
     /// </summary>
     private void InitializeComponent()
     {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
-            this.DoneLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.FilesDone = new System.Windows.Forms.ToolStripStatusLabel();
-            this.FilesDoneBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.DocsDone = new System.Windows.Forms.ToolStripStatusLabel();
-            this.DocsDoneBar = new System.Windows.Forms.ToolStripProgressBar();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,134 +49,56 @@ partial class MainForm
             this.FastNextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FontMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.WrapMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.Tabs = new System.Windows.Forms.TabControl();
-            this.FilesPage = new System.Windows.Forms.TabPage();
             this.FilesList = new System.Windows.Forms.ListView();
             this.FileColumn = new System.Windows.Forms.ColumnHeader();
             this.RootColumn = new System.Windows.Forms.ColumnHeader();
             this.TotalQtyColumn = new System.Windows.Forms.ColumnHeader();
             this.TotalSumColumn = new System.Windows.Forms.ColumnHeader();
             this.PackSavedColumn = new System.Windows.Forms.ColumnHeader();
-            this.XmlPage = new System.Windows.Forms.TabPage();
-            this.XmlText = new System.Windows.Forms.TextBox();
-            this.DocsPage = new System.Windows.Forms.TabPage();
             this.DocsList = new System.Windows.Forms.ListView();
             this.NoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
             this.SumColumn = new System.Windows.Forms.ColumnHeader();
             this.PayerColumn = new System.Windows.Forms.ColumnHeader();
+            this.CorrColumn = new System.Windows.Forms.ColumnHeader();
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
-            this.SwiftPage = new System.Windows.Forms.TabPage();
-            this.SwiftText = new System.Windows.Forms.TextBox();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.NamePanel = new System.Windows.Forms.Panel();
-            this.NameLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.NameSwiftText = new System.Windows.Forms.TextBox();
-            this.NameLabel = new System.Windows.Forms.Label();
-            this.NameEdit = new System.Windows.Forms.TextBox();
-            this.PurposePanel = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.PurposeSwiftText = new System.Windows.Forms.TextBox();
-            this.PurposeLabel = new System.Windows.Forms.Label();
-            this.PurposeEdit = new System.Windows.Forms.TextBox();
-            this.ButtonsPanel = new System.Windows.Forms.Panel();
-            this.FastNextButton = new System.Windows.Forms.Button();
-            this.NextButton = new System.Windows.Forms.Button();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
             this.PrintPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
             this.PrintDocument = new System.Drawing.Printing.PrintDocument();
             this.PrintDialog = new System.Windows.Forms.PrintDialog();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.SaveAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.Tabs.SuspendLayout();
-            this.FilesPage.SuspendLayout();
-            this.XmlPage.SuspendLayout();
-            this.DocsPage.SuspendLayout();
-            this.SwiftPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
-            this.NamePanel.SuspendLayout();
-            this.NameLayoutPanel.SuspendLayout();
-            this.PurposePanel.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.ButtonsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // StatusBar
             // 
             this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Status,
-            this.DoneLabel,
-            this.FilesDone,
-            this.FilesDoneBar,
-            this.DocsDone,
-            this.DocsDoneBar});
-            this.StatusBar.Location = new System.Drawing.Point(0, 424);
+            this.Status});
+            this.StatusBar.Location = new System.Drawing.Point(0, 428);
             this.StatusBar.Name = "StatusBar";
-            this.StatusBar.Size = new System.Drawing.Size(930, 26);
+            this.StatusBar.Size = new System.Drawing.Size(930, 22);
             this.StatusBar.TabIndex = 0;
             this.StatusBar.Text = "statusStrip1";
             // 
             // Status
             // 
             this.Status.Name = "Status";
-            this.Status.Size = new System.Drawing.Size(582, 21);
+            this.Status.Size = new System.Drawing.Size(915, 17);
             this.Status.Spring = true;
-            this.Status.Text = "Результат не сохранен";
+            this.Status.Text = "Готово";
             this.Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // DoneLabel
-            // 
-            this.DoneLabel.Name = "DoneLabel";
-            this.DoneLabel.Size = new System.Drawing.Size(57, 21);
-            this.DoneLabel.Text = "Сделано:";
-            this.DoneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // FilesDone
-            // 
-            this.FilesDone.Name = "FilesDone";
-            this.FilesDone.Size = new System.Drawing.Size(13, 21);
-            this.FilesDone.Text = "0";
-            this.FilesDone.ToolTipText = "Файлы";
-            // 
-            // FilesDoneBar
-            // 
-            this.FilesDoneBar.Margin = new System.Windows.Forms.Padding(10, 7, 15, 7);
-            this.FilesDoneBar.Name = "FilesDoneBar";
-            this.FilesDoneBar.Size = new System.Drawing.Size(100, 12);
-            this.FilesDoneBar.Step = 1;
-            this.FilesDoneBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            // 
-            // DocsDone
-            // 
-            this.DocsDone.Name = "DocsDone";
-            this.DocsDone.Size = new System.Drawing.Size(13, 21);
-            this.DocsDone.Text = "0";
-            this.DocsDone.ToolTipText = "Документы";
-            // 
-            // DocsDoneBar
-            // 
-            this.DocsDoneBar.Margin = new System.Windows.Forms.Padding(10, 7, 15, 7);
-            this.DocsDoneBar.Name = "DocsDoneBar";
-            this.DocsDoneBar.Size = new System.Drawing.Size(100, 12);
-            this.DocsDoneBar.Step = 1;
-            this.DocsDoneBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // MainMenu
             // 
@@ -204,6 +120,7 @@ partial class MainForm
             this.toolStripSeparator,
             this.SaveMenuItem,
             this.SaveAsMenuItem,
+            this.SaveAllMenuItem,
             this.toolStripSeparator2,
             this.PrintMenuItem,
             this.PrintPreviewMenuItem,
@@ -323,8 +240,7 @@ partial class MainForm
             // ViewMenu
             // 
             this.ViewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.FontMenuItem,
-            this.WrapMenuItem});
+            this.FontMenuItem});
             this.ViewMenu.Name = "ViewMenu";
             this.ViewMenu.Size = new System.Drawing.Size(39, 20);
             this.ViewMenu.Text = "&Вид";
@@ -332,16 +248,9 @@ partial class MainForm
             // FontMenuItem
             // 
             this.FontMenuItem.Name = "FontMenuItem";
-            this.FontMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.FontMenuItem.Size = new System.Drawing.Size(122, 22);
             this.FontMenuItem.Text = "&Шрифт...";
             this.FontMenuItem.Click += new System.EventHandler(this.FontMenuItem_Click);
-            // 
-            // WrapMenuItem
-            // 
-            this.WrapMenuItem.Name = "WrapMenuItem";
-            this.WrapMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.WrapMenuItem.Text = "Перенос по словам";
-            this.WrapMenuItem.Click += new System.EventHandler(this.WrapMenuItem_Click);
             // 
             // HelpMenu
             // 
@@ -365,43 +274,20 @@ partial class MainForm
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
             this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.Tabs);
+            this.splitContainer1.Panel1.Controls.Add(this.FilesList);
             this.splitContainer1.Panel1.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(930, 400);
-            this.splitContainer1.SplitterDistance = 616;
+            this.splitContainer1.Panel2.Controls.Add(this.DocsList);
+            this.splitContainer1.Size = new System.Drawing.Size(930, 404);
+            this.splitContainer1.SplitterDistance = 138;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 2;
-            // 
-            // Tabs
-            // 
-            this.Tabs.Controls.Add(this.FilesPage);
-            this.Tabs.Controls.Add(this.XmlPage);
-            this.Tabs.Controls.Add(this.DocsPage);
-            this.Tabs.Controls.Add(this.SwiftPage);
-            this.Tabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Tabs.Location = new System.Drawing.Point(0, 4);
-            this.Tabs.Name = "Tabs";
-            this.Tabs.SelectedIndex = 0;
-            this.Tabs.Size = new System.Drawing.Size(612, 392);
-            this.Tabs.TabIndex = 0;
-            // 
-            // FilesPage
-            // 
-            this.FilesPage.Controls.Add(this.FilesList);
-            this.FilesPage.Location = new System.Drawing.Point(4, 24);
-            this.FilesPage.Name = "FilesPage";
-            this.FilesPage.Padding = new System.Windows.Forms.Padding(3);
-            this.FilesPage.Size = new System.Drawing.Size(604, 364);
-            this.FilesPage.TabIndex = 3;
-            this.FilesPage.Text = "Файлы";
-            this.FilesPage.UseVisualStyleBackColor = true;
             // 
             // FilesList
             // 
@@ -415,18 +301,18 @@ partial class MainForm
             this.FilesList.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FilesList.FullRowSelect = true;
             this.FilesList.GridLines = true;
-            this.FilesList.Location = new System.Drawing.Point(3, 3);
+            this.FilesList.Location = new System.Drawing.Point(0, 4);
             this.FilesList.MultiSelect = false;
             this.FilesList.Name = "FilesList";
-            this.FilesList.Size = new System.Drawing.Size(598, 358);
-            this.FilesList.TabIndex = 0;
+            this.FilesList.Size = new System.Drawing.Size(926, 130);
+            this.FilesList.TabIndex = 9;
             this.FilesList.UseCompatibleStateImageBehavior = false;
             this.FilesList.View = System.Windows.Forms.View.Details;
             this.FilesList.SelectedIndexChanged += new System.EventHandler(this.FilesList_SelectedIndexChanged);
             // 
             // FileColumn
             // 
-            this.FileColumn.Text = "Файл";
+            this.FileColumn.Text = "Входной файл";
             this.FileColumn.Width = 260;
             // 
             // RootColumn
@@ -448,45 +334,8 @@ partial class MainForm
             // 
             // PackSavedColumn
             // 
-            this.PackSavedColumn.Text = "Сохранен";
+            this.PackSavedColumn.Text = "Выходной файл";
             this.PackSavedColumn.Width = 260;
-            // 
-            // XmlPage
-            // 
-            this.XmlPage.Controls.Add(this.XmlText);
-            this.XmlPage.Location = new System.Drawing.Point(4, 24);
-            this.XmlPage.Name = "XmlPage";
-            this.XmlPage.Padding = new System.Windows.Forms.Padding(3);
-            this.XmlPage.Size = new System.Drawing.Size(604, 364);
-            this.XmlPage.TabIndex = 0;
-            this.XmlPage.Text = "XML";
-            this.XmlPage.UseVisualStyleBackColor = true;
-            // 
-            // XmlText
-            // 
-            this.XmlText.BackColor = System.Drawing.SystemColors.Control;
-            this.XmlText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.XmlText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.XmlText.Location = new System.Drawing.Point(3, 3);
-            this.XmlText.Multiline = true;
-            this.XmlText.Name = "XmlText";
-            this.XmlText.PlaceholderText = "Исходные файлы XML не найдены.";
-            this.XmlText.ReadOnly = true;
-            this.XmlText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.XmlText.Size = new System.Drawing.Size(598, 358);
-            this.XmlText.TabIndex = 2;
-            this.XmlText.WordWrap = false;
-            // 
-            // DocsPage
-            // 
-            this.DocsPage.Controls.Add(this.DocsList);
-            this.DocsPage.Location = new System.Drawing.Point(4, 24);
-            this.DocsPage.Name = "DocsPage";
-            this.DocsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.DocsPage.Size = new System.Drawing.Size(604, 364);
-            this.DocsPage.TabIndex = 4;
-            this.DocsPage.Text = "PacketEPD";
-            this.DocsPage.UseVisualStyleBackColor = true;
             // 
             // DocsList
             // 
@@ -495,19 +344,21 @@ partial class MainForm
             this.EDColumn,
             this.SumColumn,
             this.PayerColumn,
+            this.CorrColumn,
             this.PayeeColumn,
             this.PurposeColumn,
             this.SavedColumn});
             this.DocsList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DocsList.FullRowSelect = true;
             this.DocsList.GridLines = true;
-            this.DocsList.Location = new System.Drawing.Point(3, 3);
+            this.DocsList.Location = new System.Drawing.Point(0, 0);
             this.DocsList.Name = "DocsList";
-            this.DocsList.Size = new System.Drawing.Size(598, 358);
-            this.DocsList.TabIndex = 0;
+            this.DocsList.Size = new System.Drawing.Size(926, 259);
+            this.DocsList.TabIndex = 1;
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
             this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
+            this.DocsList.DoubleClick += new System.EventHandler(this.DocsList_DoubleClick);
             // 
             // NoColumn
             // 
@@ -529,6 +380,11 @@ partial class MainForm
             this.PayerColumn.Text = "Плательщик";
             this.PayerColumn.Width = 160;
             // 
+            // CorrColumn
+            // 
+            this.CorrColumn.Text = "Подстава";
+            this.CorrColumn.Width = 80;
+            // 
             // PayeeColumn
             // 
             this.PayeeColumn.Text = "Получатель";
@@ -541,214 +397,8 @@ partial class MainForm
             // 
             // SavedColumn
             // 
-            this.SavedColumn.Text = "Сохранен";
+            this.SavedColumn.Text = "Выходной файл";
             this.SavedColumn.Width = 260;
-            // 
-            // SwiftPage
-            // 
-            this.SwiftPage.Controls.Add(this.SwiftText);
-            this.SwiftPage.Location = new System.Drawing.Point(4, 24);
-            this.SwiftPage.Name = "SwiftPage";
-            this.SwiftPage.Padding = new System.Windows.Forms.Padding(3);
-            this.SwiftPage.Size = new System.Drawing.Size(604, 364);
-            this.SwiftPage.TabIndex = 2;
-            this.SwiftPage.Text = "SWIFT";
-            this.SwiftPage.UseVisualStyleBackColor = true;
-            // 
-            // SwiftText
-            // 
-            this.SwiftText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SwiftText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SwiftText.Location = new System.Drawing.Point(3, 3);
-            this.SwiftText.Multiline = true;
-            this.SwiftText.Name = "SwiftText";
-            this.SwiftText.PlaceholderText = "Нечего отправлять.";
-            this.SwiftText.ReadOnly = true;
-            this.SwiftText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.SwiftText.Size = new System.Drawing.Size(598, 358);
-            this.SwiftText.TabIndex = 2;
-            this.SwiftText.WordWrap = false;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.NamePanel);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.PurposePanel);
-            this.splitContainer2.Panel2.Controls.Add(this.ButtonsPanel);
-            this.splitContainer2.Size = new System.Drawing.Size(311, 400);
-            this.splitContainer2.SplitterDistance = 162;
-            this.splitContainer2.SplitterWidth = 3;
-            this.splitContainer2.TabIndex = 7;
-            // 
-            // NamePanel
-            // 
-            this.NamePanel.Controls.Add(this.NameLayoutPanel);
-            this.NamePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NamePanel.Location = new System.Drawing.Point(0, 0);
-            this.NamePanel.Name = "NamePanel";
-            this.NamePanel.Size = new System.Drawing.Size(307, 158);
-            this.NamePanel.TabIndex = 6;
-            // 
-            // NameLayoutPanel
-            // 
-            this.NameLayoutPanel.ColumnCount = 1;
-            this.NameLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.NameLayoutPanel.Controls.Add(this.NameSwiftText, 0, 2);
-            this.NameLayoutPanel.Controls.Add(this.NameLabel, 0, 0);
-            this.NameLayoutPanel.Controls.Add(this.NameEdit, 0, 1);
-            this.NameLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NameLayoutPanel.Location = new System.Drawing.Point(0, 0);
-            this.NameLayoutPanel.Name = "NameLayoutPanel";
-            this.NameLayoutPanel.RowCount = 3;
-            this.NameLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.NameLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.NameLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.NameLayoutPanel.Size = new System.Drawing.Size(307, 158);
-            this.NameLayoutPanel.TabIndex = 6;
-            // 
-            // NameSwiftText
-            // 
-            this.NameSwiftText.BackColor = System.Drawing.SystemColors.Control;
-            this.NameSwiftText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NameSwiftText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NameSwiftText.Location = new System.Drawing.Point(3, 97);
-            this.NameSwiftText.Multiline = true;
-            this.NameSwiftText.Name = "NameSwiftText";
-            this.NameSwiftText.PlaceholderText = "3 строки по 35.";
-            this.NameSwiftText.ReadOnly = true;
-            this.NameSwiftText.Size = new System.Drawing.Size(301, 58);
-            this.NameSwiftText.TabIndex = 5;
-            this.NameSwiftText.WordWrap = false;
-            // 
-            // NameLabel
-            // 
-            this.NameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NameLabel.AutoSize = true;
-            this.NameLabel.Location = new System.Drawing.Point(3, 15);
-            this.NameLabel.Name = "NameLabel";
-            this.NameLabel.Size = new System.Drawing.Size(80, 15);
-            this.NameLabel.TabIndex = 6;
-            this.NameLabel.Text = "Плательщик:";
-            // 
-            // NameEdit
-            // 
-            this.NameEdit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NameEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NameEdit.Location = new System.Drawing.Point(3, 33);
-            this.NameEdit.Multiline = true;
-            this.NameEdit.Name = "NameEdit";
-            this.NameEdit.PlaceholderText = "160 символов.";
-            this.NameEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.NameEdit.Size = new System.Drawing.Size(301, 58);
-            this.NameEdit.TabIndex = 4;
-            this.NameEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
-            // 
-            // PurposePanel
-            // 
-            this.PurposePanel.Controls.Add(this.tableLayoutPanel1);
-            this.PurposePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PurposePanel.Location = new System.Drawing.Point(0, 0);
-            this.PurposePanel.Name = "PurposePanel";
-            this.PurposePanel.Size = new System.Drawing.Size(307, 191);
-            this.PurposePanel.TabIndex = 13;
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.PurposeSwiftText, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.PurposeLabel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.PurposeEdit, 0, 1);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(307, 191);
-            this.tableLayoutPanel1.TabIndex = 7;
-            // 
-            // PurposeSwiftText
-            // 
-            this.PurposeSwiftText.BackColor = System.Drawing.SystemColors.Control;
-            this.PurposeSwiftText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PurposeSwiftText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PurposeSwiftText.Location = new System.Drawing.Point(3, 113);
-            this.PurposeSwiftText.Multiline = true;
-            this.PurposeSwiftText.Name = "PurposeSwiftText";
-            this.PurposeSwiftText.PlaceholderText = "4+2 строки по 35.";
-            this.PurposeSwiftText.ReadOnly = true;
-            this.PurposeSwiftText.Size = new System.Drawing.Size(301, 75);
-            this.PurposeSwiftText.TabIndex = 6;
-            this.PurposeSwiftText.WordWrap = false;
-            // 
-            // PurposeLabel
-            // 
-            this.PurposeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.PurposeLabel.AutoSize = true;
-            this.PurposeLabel.Location = new System.Drawing.Point(3, 15);
-            this.PurposeLabel.Name = "PurposeLabel";
-            this.PurposeLabel.Size = new System.Drawing.Size(125, 15);
-            this.PurposeLabel.TabIndex = 6;
-            this.PurposeLabel.Text = "Назначение платежа:";
-            // 
-            // PurposeEdit
-            // 
-            this.PurposeEdit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PurposeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PurposeEdit.Location = new System.Drawing.Point(3, 33);
-            this.PurposeEdit.Multiline = true;
-            this.PurposeEdit.Name = "PurposeEdit";
-            this.PurposeEdit.PlaceholderText = "210 символов.";
-            this.PurposeEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.PurposeEdit.Size = new System.Drawing.Size(301, 74);
-            this.PurposeEdit.TabIndex = 5;
-            this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeEdit_TextChanged);
-            // 
-            // ButtonsPanel
-            // 
-            this.ButtonsPanel.Controls.Add(this.FastNextButton);
-            this.ButtonsPanel.Controls.Add(this.NextButton);
-            this.ButtonsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.ButtonsPanel.Location = new System.Drawing.Point(0, 191);
-            this.ButtonsPanel.Name = "ButtonsPanel";
-            this.ButtonsPanel.Size = new System.Drawing.Size(307, 40);
-            this.ButtonsPanel.TabIndex = 11;
-            // 
-            // FastNextButton
-            // 
-            this.FastNextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.FastNextButton.Enabled = false;
-            this.FastNextButton.Location = new System.Drawing.Point(270, 6);
-            this.FastNextButton.Name = "FastNextButton";
-            this.FastNextButton.Size = new System.Drawing.Size(34, 23);
-            this.FastNextButton.TabIndex = 13;
-            this.FastNextButton.Text = ">>";
-            this.FastNextButton.UseVisualStyleBackColor = true;
-            this.FastNextButton.Click += new System.EventHandler(this.ForwardMenuItem_Click);
-            // 
-            // NextButton
-            // 
-            this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.NextButton.Enabled = false;
-            this.NextButton.Location = new System.Drawing.Point(189, 6);
-            this.NextButton.Name = "NextButton";
-            this.NextButton.Size = new System.Drawing.Size(75, 23);
-            this.NextButton.TabIndex = 12;
-            this.NextButton.Text = "Дальше";
-            this.NextButton.UseVisualStyleBackColor = true;
-            this.NextButton.Click += new System.EventHandler(this.NextMenuItem_Click);
             // 
             // OpenFileDialog
             // 
@@ -792,9 +442,11 @@ partial class MainForm
             // 
             this.PrintDialog.UseEXDialog = true;
             // 
-            // bindingSource1
+            // SaveAllMenuItem
             // 
-            this.bindingSource1.DataSource = typeof(CorrLib.SourceFileCollection);
+            this.SaveAllMenuItem.Name = "SaveAllMenuItem";
+            this.SaveAllMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.SaveAllMenuItem.Text = "Сохранить все";
             // 
             // MainForm
             // 
@@ -817,25 +469,6 @@ partial class MainForm
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.Tabs.ResumeLayout(false);
-            this.FilesPage.ResumeLayout(false);
-            this.XmlPage.ResumeLayout(false);
-            this.XmlPage.PerformLayout();
-            this.DocsPage.ResumeLayout(false);
-            this.SwiftPage.ResumeLayout(false);
-            this.SwiftPage.PerformLayout();
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
-            this.NamePanel.ResumeLayout(false);
-            this.NameLayoutPanel.ResumeLayout(false);
-            this.NameLayoutPanel.PerformLayout();
-            this.PurposePanel.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.ButtonsPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -849,16 +482,8 @@ partial class MainForm
     private OpenFileDialog OpenFileDialog;
     private SaveFileDialog SaveAsFileDialog;
     private ToolStripMenuItem ViewMenu;
-    private TabControl Tabs;
-    private TabPage XmlPage;
-    private TextBox XmlText;
-    private TabPage SwiftPage;
-    private TextBox SwiftText;
     private ToolStripMenuItem FontMenuItem;
     private FontDialog FontDialog;
-    private TabPage FilesPage;
-    private ToolStripProgressBar FilesDoneBar;
-    private ToolStripStatusLabel DoneLabel;
     private ToolStripMenuItem FileMenu;
     private ToolStripMenuItem OpenFileMenuItem;
     private ToolStripSeparator toolStripSeparator;
@@ -876,42 +501,24 @@ partial class MainForm
     private ToolStripMenuItem AboutMenuItem;
     private ToolStripMenuItem ConfigMenuItem;
     private ToolStripSeparator toolStripSeparator1;
-    private ToolStripStatusLabel FilesDone;
-    private ToolStripMenuItem WrapMenuItem;
     private PrintPreviewDialog PrintPreviewDialog;
     private System.Drawing.Printing.PrintDocument PrintDocument;
     private PrintDialog PrintDialog;
     private ToolStripStatusLabel Status;
-    private SplitContainer splitContainer2;
-    private Panel ButtonsPanel;
-    private Button FastNextButton;
-    private Button NextButton;
-    private Panel NamePanel;
-    private TextBox NameEdit;
-    private Panel PurposePanel;
-    private TextBox PurposeEdit;
-    private Label PurposeLabel;
-    private TabPage DocsPage;
-    private ListView DocsList;
-    private ColumnHeader EDColumn;
-    private ColumnHeader SumColumn;
-    private ColumnHeader PayerColumn;
-    private ColumnHeader PurposeColumn;
-    private ToolStripStatusLabel DocsDone;
-    private ToolStripProgressBar DocsDoneBar;
     private ListView FilesList;
     private ColumnHeader FileColumn;
     private ColumnHeader RootColumn;
-    private ColumnHeader PayeeColumn;
-    private TableLayoutPanel NameLayoutPanel;
-    private TextBox NameSwiftText;
-    private Label NameLabel;
-    private TableLayoutPanel tableLayoutPanel1;
-    private TextBox PurposeSwiftText;
-    private ColumnHeader NoColumn;
     private ColumnHeader TotalQtyColumn;
     private ColumnHeader TotalSumColumn;
     private ColumnHeader PackSavedColumn;
+    private ListView DocsList;
+    private ColumnHeader NoColumn;
+    private ColumnHeader EDColumn;
+    private ColumnHeader SumColumn;
+    private ColumnHeader PayerColumn;
+    private ColumnHeader PayeeColumn;
+    private ColumnHeader PurposeColumn;
     private ColumnHeader SavedColumn;
-    private BindingSource bindingSource1;
+    private ColumnHeader CorrColumn;
+    private ToolStripMenuItem SaveAllMenuItem;
 }

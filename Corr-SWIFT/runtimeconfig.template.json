@@ -3,13 +3,14 @@
     "OpenDir": "G:\\BANK\\TEST\\OUT",
     "OpenMask": "*.xml",
     "SaveDir": "G:\\BANK\\TEST\\CLI",
-    "SaveMask": "*_.txt",
+    "SaveMask": "*.mt103",
+    "SaveFormat": "SWIFT",
     "CorrAccount": "30101810600000000702",
     "BankINN": "7831001422",
     "BankKPP": "784101001",
-    "CorrPayerTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
-    "CorrPurposeTemplate": "//7831001422//784101001//{name}//{purpose}",
-    "CorrPayerLimit": 160,
+    "NameTemplate": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
+    "PurposeTemplate": "//7831001422//784101001//{name}//{purpose}",
+    "SwiftNameLimit": 160,
     "BankSWIFT": "CITVRU2P",
     "CorrSWIFT": "CITVRU2P"
   }

@@ -25,7 +25,7 @@ using System.Text.Json.Nodes;
 
 namespace CorrSWIFT;
 
-public static class ConfigProperties
+public static class Config
 {
     private const string runtimeOptions = nameof(runtimeOptions);
     private const string configProperties = nameof(configProperties);
@@ -58,6 +58,12 @@ public static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(SaveMask), value);
     }
 
+    public static string SaveFormat
+    {
+        get => AppContext.GetData(nameof(SaveFormat)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(SaveFormat), value);
+    }
+
     public static string CorrAccount
     {
         get => AppContext.GetData(nameof(CorrAccount)) as string ?? string.Empty;
@@ -76,22 +82,22 @@ public static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(BankKPP), value);
     }
 
-    public static string CorrPayerTemplate
+    public static string NameTemplate
     {
-        get => AppContext.GetData(nameof(CorrPayerTemplate)) as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(nameof(CorrPayerTemplate), value);
+        get => AppContext.GetData(nameof(NameTemplate)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(NameTemplate), value);
     }
 
-    public static string CorrPurposeTemplate
+    public static string PurposeTemplate
     {
-        get => AppContext.GetData(nameof(CorrPurposeTemplate)) as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(nameof(CorrPurposeTemplate), value);
+        get => AppContext.GetData(nameof(PurposeTemplate)) as string ?? string.Empty;
+        set => AppDomain.CurrentDomain.SetData(nameof(PurposeTemplate), value);
     }
 
-    public static int CorrPayerLimit
+    public static int SwiftNameLimit
     {
-        get => int.Parse(AppContext.GetData(nameof(CorrPayerLimit)) as string ?? "105");
-        set => AppDomain.CurrentDomain.SetData(nameof(CorrPayerLimit), value.ToString());
+        get => int.Parse(AppContext.GetData(nameof(SwiftNameLimit)) as string ?? "105");
+        set => AppDomain.CurrentDomain.SetData(nameof(SwiftNameLimit), value.ToString());
     }
 
     public static string BankSWIFT
@@ -106,7 +112,7 @@ public static class ConfigProperties
         set => AppDomain.CurrentDomain.SetData(nameof(CorrSWIFT), value);
     }
 
-    static ConfigProperties()
+    static Config()
     {
         InitCorrProperties();
     }
@@ -116,10 +122,10 @@ public static class ConfigProperties
         CorrProperties.CorrAccount = CorrAccount;
         CorrProperties.BankINN = BankINN;
         CorrProperties.BankKPP = BankKPP;
-        CorrProperties.CorrPayerTemplate = CorrPayerTemplate;
-        CorrProperties.CorrPurposeTemplate = CorrPurposeTemplate;
+        CorrProperties.NameTemplate = NameTemplate;
+        CorrProperties.PurposeTemplate = PurposeTemplate;
 
-        CorrProperties.CorrPayerLimit = CorrPayerLimit;
+        CorrProperties.SwiftNameLimit = SwiftNameLimit;
 
         CorrProperties.BankSWIFT = BankSWIFT;
         CorrProperties.CorrSWIFT = CorrSWIFT;
@@ -150,10 +156,10 @@ public static class ConfigProperties
             .AppendLineIf(BankKPP.Empty(),
             $"КПП Банка не указан!")
 
-            .AppendLineIf(CorrPayerTemplate.Empty(),
+            .AppendLineIf(NameTemplate.Empty(),
             $"Шаблон за клиента Банка не указан!")
 
-            .AppendLineIf(CorrPurposeTemplate.Empty(),
+            .AppendLineIf(PurposeTemplate.Empty(),
             $"Шаблон назначения за третье лицо не указан!");
 
         return err.ToString();
@@ -172,14 +178,15 @@ public static class ConfigProperties
 
         properties![nameof(SaveDir)] = SaveDir;
         properties![nameof(SaveMask)] = SaveMask;
+        properties![nameof(SaveFormat)] = SaveFormat;
 
         properties![nameof(CorrAccount)] = CorrAccount;
         properties![nameof(BankINN)] = BankINN;
         properties![nameof(BankKPP)] = BankKPP;
-        properties![nameof(CorrPayerTemplate)] = CorrPayerTemplate;
-        properties![nameof(CorrPurposeTemplate)] = CorrPurposeTemplate;
+        properties![nameof(NameTemplate)] = NameTemplate;
+        properties![nameof(PurposeTemplate)] = PurposeTemplate;
 
-        properties![nameof(CorrPayerLimit)] = CorrPayerLimit;
+        properties![nameof(SwiftNameLimit)] = SwiftNameLimit;
 
         properties![nameof(BankSWIFT)] = BankSWIFT;
         properties![nameof(CorrSWIFT)] = CorrSWIFT;

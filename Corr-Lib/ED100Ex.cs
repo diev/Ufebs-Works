@@ -374,10 +374,10 @@ public static class ED100Ex
         // /RPP/ — Реквизиты расчетного документа в соответствии с требованиями Банка России.
         // "Номер расчетного документа.Дата расчетного документа в формате ГГММДД.Очередность платежа.Вид платежа.Дата проведения платежа.Вид операции"
         // Данное подполе может иметь значение
-        // 01 – платежное поручение
-        // 02 – платежное требование
-        // 06 – инкассовое поручение
-        // 16 – платежный ордер
+        // 01 – платежное поручение (ED101, default)
+        // 02 – платежное требование (ED103)
+        // 06 – инкассовое поручение (ED104)
+        // 16 – платежный ордер (ED105)
         // Если подполе не используется, то по умолчанию считается, что документ представляет собой платежное поручение.
         // ?? ed.PaytKind ?? Вид платежа: Используется один из следующих кодов:
         // POST - почтой
@@ -403,7 +403,7 @@ public static class ED100Ex
         // после транслитерации не должен превышать 210 знаков.
 
         sb.Append(":72:")
-            .AppendLine($"/RPP/{es.AccDocNo}.{es.AccDocDate}.{es.Priority}.ELEK") // .{es.ChargeOffDate}.{es.TransKind}")
+            .AppendLine($"/RPP/{es.AccDocNo}.{es.AccDocDate}.{es.Priority}.ELEK.{es.ChargeOffDate}.{es.TransKind}")
             .AppendLine($"/DAS/{es.ChargeOffDate}.{es.ReceiptDate}.000000.000000");
 
         string nzp = "/NZP/";
@@ -438,7 +438,7 @@ public static class ED100Ex
 
     public static string ESum(this string value)
     {
-        if (value is null)
+        if (value is null || value == "0")
         {
             return string.Empty;
         }

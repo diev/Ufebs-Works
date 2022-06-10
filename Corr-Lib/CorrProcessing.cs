@@ -35,7 +35,7 @@ public static class CorrProcessing
         if (ed.CorrSubstRequired())
         {
             //return $"{OurName} ИНН {OurINN} ({ed.CorrShortenName()} Р/С {ed.PayerPersonalAcc})";
-            return CorrProperties.CorrPayerTemplate
+            return CorrProperties.NameTemplate
                 .Replace("{name}", ed.CorrShortenName())
                 .Replace("{acc}", ed.PayerPersonalAcc);
         }
@@ -54,7 +54,7 @@ public static class CorrProcessing
         {
             //return $"{OurINN}//{OurKPP}//{ed.CorrShortenName()}//{ed.Purpose}"
             //.Replace("////", "//");
-            return CorrProperties.CorrPurposeTemplate
+            return CorrProperties.PurposeTemplate
                 .Replace("{name}", ed.CorrShortenName())
                 .Replace("{purpose}", ed.Purpose);
         }

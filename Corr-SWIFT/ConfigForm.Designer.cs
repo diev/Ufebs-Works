@@ -29,40 +29,40 @@
         private void InitializeComponent()
         {
             this.OpenBox = new System.Windows.Forms.GroupBox();
-            this.OpenMaskText = new System.Windows.Forms.TextBox();
+            this.OpenMaskEdit = new System.Windows.Forms.TextBox();
             this.OpenMaskLabel = new System.Windows.Forms.Label();
             this.OpenDirButton = new System.Windows.Forms.Button();
-            this.OpenDirText = new System.Windows.Forms.TextBox();
+            this.OpenDirEdit = new System.Windows.Forms.TextBox();
             this.OpenDirLabel = new System.Windows.Forms.Label();
             this.OpenFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SaveFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SaveBox = new System.Windows.Forms.GroupBox();
-            this.OutFormatBox = new System.Windows.Forms.ComboBox();
+            this.SaveFormatChoice = new System.Windows.Forms.ComboBox();
             this.OutFormatLabel = new System.Windows.Forms.Label();
-            this.SaveMaskText = new System.Windows.Forms.TextBox();
+            this.SaveMaskEdit = new System.Windows.Forms.TextBox();
             this.SaveMaskLabel = new System.Windows.Forms.Label();
             this.SaveDirButton = new System.Windows.Forms.Button();
-            this.SaveDirText = new System.Windows.Forms.TextBox();
+            this.SaveDirEdit = new System.Windows.Forms.TextBox();
             this.SaveDirLabel = new System.Windows.Forms.Label();
             this.BankBox = new System.Windows.Forms.GroupBox();
-            this.CorrSWIFTText = new System.Windows.Forms.TextBox();
+            this.SwiftNameLimitChoice = new System.Windows.Forms.ComboBox();
+            this.CorrSwiftEdit = new System.Windows.Forms.TextBox();
             this.CorrSWIFTLabel = new System.Windows.Forms.Label();
-            this.BankSWIFTText = new System.Windows.Forms.TextBox();
+            this.BankSwiftEdit = new System.Windows.Forms.TextBox();
             this.BankSWIFTLabel = new System.Windows.Forms.Label();
-            this.CorrPayerLimitText = new System.Windows.Forms.TextBox();
-            this.CorrPayerLimitLabel = new System.Windows.Forms.Label();
-            this.CorrPurposeText = new System.Windows.Forms.TextBox();
+            this.SwiftLimitLabel = new System.Windows.Forms.Label();
+            this.PurposeTemplateEdit = new System.Windows.Forms.TextBox();
             this.CorrPurposeLabel = new System.Windows.Forms.Label();
-            this.CorrPayerText = new System.Windows.Forms.TextBox();
+            this.NameTemplateEdit = new System.Windows.Forms.TextBox();
             this.CorrPayerLabel = new System.Windows.Forms.Label();
-            this.BankKPPText = new System.Windows.Forms.TextBox();
+            this.BankKppEdit = new System.Windows.Forms.TextBox();
             this.BankKPPLabel = new System.Windows.Forms.Label();
-            this.BankINNText = new System.Windows.Forms.TextBox();
+            this.BankInnEdit = new System.Windows.Forms.TextBox();
             this.BankINNLabel = new System.Windows.Forms.Label();
-            this.CorrAccountText = new System.Windows.Forms.TextBox();
+            this.CorrAccountEdit = new System.Windows.Forms.TextBox();
             this.CorrAccountLabel = new System.Windows.Forms.Label();
-            this.AcceptConfigButton = new System.Windows.Forms.Button();
-            this.CancelConfigButton = new System.Windows.Forms.Button();
+            this.OKButton = new System.Windows.Forms.Button();
+            this.AbortButton = new System.Windows.Forms.Button();
             this.ResetConfigButton = new System.Windows.Forms.Button();
             this.OpenBox.SuspendLayout();
             this.SaveBox.SuspendLayout();
@@ -71,10 +71,10 @@
             // 
             // OpenBox
             // 
-            this.OpenBox.Controls.Add(this.OpenMaskText);
+            this.OpenBox.Controls.Add(this.OpenMaskEdit);
             this.OpenBox.Controls.Add(this.OpenMaskLabel);
             this.OpenBox.Controls.Add(this.OpenDirButton);
-            this.OpenBox.Controls.Add(this.OpenDirText);
+            this.OpenBox.Controls.Add(this.OpenDirEdit);
             this.OpenBox.Controls.Add(this.OpenDirLabel);
             this.OpenBox.Location = new System.Drawing.Point(9, 8);
             this.OpenBox.Name = "OpenBox";
@@ -83,13 +83,13 @@
             this.OpenBox.TabStop = false;
             this.OpenBox.Text = "Исходные файлы";
             // 
-            // OpenMaskText
+            // OpenMaskEdit
             // 
-            this.OpenMaskText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OpenMaskText.Location = new System.Drawing.Point(106, 48);
-            this.OpenMaskText.Name = "OpenMaskText";
-            this.OpenMaskText.Size = new System.Drawing.Size(137, 22);
-            this.OpenMaskText.TabIndex = 4;
+            this.OpenMaskEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.OpenMaskEdit.Location = new System.Drawing.Point(106, 48);
+            this.OpenMaskEdit.Name = "OpenMaskEdit";
+            this.OpenMaskEdit.Size = new System.Drawing.Size(137, 22);
+            this.OpenMaskEdit.TabIndex = 4;
             // 
             // OpenMaskLabel
             // 
@@ -111,15 +111,15 @@
             this.OpenDirButton.UseVisualStyleBackColor = true;
             this.OpenDirButton.Click += new System.EventHandler(this.OpenDirButton_Click);
             // 
-            // OpenDirText
+            // OpenDirEdit
             // 
-            this.OpenDirText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.OpenDirEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OpenDirText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OpenDirText.Location = new System.Drawing.Point(106, 19);
-            this.OpenDirText.Name = "OpenDirText";
-            this.OpenDirText.Size = new System.Drawing.Size(370, 22);
-            this.OpenDirText.TabIndex = 1;
+            this.OpenDirEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.OpenDirEdit.Location = new System.Drawing.Point(106, 19);
+            this.OpenDirEdit.Name = "OpenDirEdit";
+            this.OpenDirEdit.Size = new System.Drawing.Size(370, 22);
+            this.OpenDirEdit.TabIndex = 1;
             // 
             // OpenDirLabel
             // 
@@ -140,12 +140,12 @@
             // 
             // SaveBox
             // 
-            this.SaveBox.Controls.Add(this.OutFormatBox);
+            this.SaveBox.Controls.Add(this.SaveFormatChoice);
             this.SaveBox.Controls.Add(this.OutFormatLabel);
-            this.SaveBox.Controls.Add(this.SaveMaskText);
+            this.SaveBox.Controls.Add(this.SaveMaskEdit);
             this.SaveBox.Controls.Add(this.SaveMaskLabel);
             this.SaveBox.Controls.Add(this.SaveDirButton);
-            this.SaveBox.Controls.Add(this.SaveDirText);
+            this.SaveBox.Controls.Add(this.SaveDirEdit);
             this.SaveBox.Controls.Add(this.SaveDirLabel);
             this.SaveBox.Location = new System.Drawing.Point(9, 96);
             this.SaveBox.Name = "SaveBox";
@@ -154,17 +154,17 @@
             this.SaveBox.TabStop = false;
             this.SaveBox.Text = "Конечные файлы";
             // 
-            // OutFormatBox
+            // SaveFormatChoice
             // 
-            this.OutFormatBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OutFormatBox.FormattingEnabled = true;
-            this.OutFormatBox.Items.AddRange(new object[] {
+            this.SaveFormatChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SaveFormatChoice.FormattingEnabled = true;
+            this.SaveFormatChoice.Items.AddRange(new object[] {
             "УФЭБС",
             "SWIFT"});
-            this.OutFormatBox.Location = new System.Drawing.Point(355, 48);
-            this.OutFormatBox.Name = "OutFormatBox";
-            this.OutFormatBox.Size = new System.Drawing.Size(121, 23);
-            this.OutFormatBox.TabIndex = 6;
+            this.SaveFormatChoice.Location = new System.Drawing.Point(355, 48);
+            this.SaveFormatChoice.Name = "SaveFormatChoice";
+            this.SaveFormatChoice.Size = new System.Drawing.Size(121, 23);
+            this.SaveFormatChoice.TabIndex = 6;
             // 
             // OutFormatLabel
             // 
@@ -175,13 +175,13 @@
             this.OutFormatLabel.TabIndex = 5;
             this.OutFormatLabel.Text = "Формат:";
             // 
-            // SaveMaskText
+            // SaveMaskEdit
             // 
-            this.SaveMaskText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SaveMaskText.Location = new System.Drawing.Point(106, 48);
-            this.SaveMaskText.Name = "SaveMaskText";
-            this.SaveMaskText.Size = new System.Drawing.Size(137, 22);
-            this.SaveMaskText.TabIndex = 4;
+            this.SaveMaskEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveMaskEdit.Location = new System.Drawing.Point(106, 48);
+            this.SaveMaskEdit.Name = "SaveMaskEdit";
+            this.SaveMaskEdit.Size = new System.Drawing.Size(137, 22);
+            this.SaveMaskEdit.TabIndex = 4;
             // 
             // SaveMaskLabel
             // 
@@ -203,15 +203,15 @@
             this.SaveDirButton.UseVisualStyleBackColor = true;
             this.SaveDirButton.Click += new System.EventHandler(this.SaveDirButton_Click);
             // 
-            // SaveDirText
+            // SaveDirEdit
             // 
-            this.SaveDirText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SaveDirEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveDirText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SaveDirText.Location = new System.Drawing.Point(106, 19);
-            this.SaveDirText.Name = "SaveDirText";
-            this.SaveDirText.Size = new System.Drawing.Size(370, 22);
-            this.SaveDirText.TabIndex = 1;
+            this.SaveDirEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SaveDirEdit.Location = new System.Drawing.Point(106, 19);
+            this.SaveDirEdit.Name = "SaveDirEdit";
+            this.SaveDirEdit.Size = new System.Drawing.Size(370, 22);
+            this.SaveDirEdit.TabIndex = 1;
             // 
             // SaveDirLabel
             // 
@@ -224,21 +224,21 @@
             // 
             // BankBox
             // 
-            this.BankBox.Controls.Add(this.CorrSWIFTText);
+            this.BankBox.Controls.Add(this.SwiftNameLimitChoice);
+            this.BankBox.Controls.Add(this.CorrSwiftEdit);
             this.BankBox.Controls.Add(this.CorrSWIFTLabel);
-            this.BankBox.Controls.Add(this.BankSWIFTText);
+            this.BankBox.Controls.Add(this.BankSwiftEdit);
             this.BankBox.Controls.Add(this.BankSWIFTLabel);
-            this.BankBox.Controls.Add(this.CorrPayerLimitText);
-            this.BankBox.Controls.Add(this.CorrPayerLimitLabel);
-            this.BankBox.Controls.Add(this.CorrPurposeText);
+            this.BankBox.Controls.Add(this.SwiftLimitLabel);
+            this.BankBox.Controls.Add(this.PurposeTemplateEdit);
             this.BankBox.Controls.Add(this.CorrPurposeLabel);
-            this.BankBox.Controls.Add(this.CorrPayerText);
+            this.BankBox.Controls.Add(this.NameTemplateEdit);
             this.BankBox.Controls.Add(this.CorrPayerLabel);
-            this.BankBox.Controls.Add(this.BankKPPText);
+            this.BankBox.Controls.Add(this.BankKppEdit);
             this.BankBox.Controls.Add(this.BankKPPLabel);
-            this.BankBox.Controls.Add(this.BankINNText);
+            this.BankBox.Controls.Add(this.BankInnEdit);
             this.BankBox.Controls.Add(this.BankINNLabel);
-            this.BankBox.Controls.Add(this.CorrAccountText);
+            this.BankBox.Controls.Add(this.CorrAccountEdit);
             this.BankBox.Controls.Add(this.CorrAccountLabel);
             this.BankBox.Location = new System.Drawing.Point(9, 184);
             this.BankBox.Name = "BankBox";
@@ -247,15 +247,27 @@
             this.BankBox.TabStop = false;
             this.BankBox.Text = "Реквизиты Банка и {шаблоны}";
             // 
-            // CorrSWIFTText
+            // SwiftNameLimitChoice
             // 
-            this.CorrSWIFTText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SwiftNameLimitChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SwiftNameLimitChoice.FormattingEnabled = true;
+            this.SwiftNameLimitChoice.Items.AddRange(new object[] {
+            "105",
+            "160"});
+            this.SwiftNameLimitChoice.Location = new System.Drawing.Point(480, 76);
+            this.SwiftNameLimitChoice.Name = "SwiftNameLimitChoice";
+            this.SwiftNameLimitChoice.Size = new System.Drawing.Size(75, 23);
+            this.SwiftNameLimitChoice.TabIndex = 17;
+            // 
+            // CorrSwiftEdit
+            // 
+            this.CorrSwiftEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrSWIFTText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrSWIFTText.Location = new System.Drawing.Point(394, 163);
-            this.CorrSWIFTText.Name = "CorrSWIFTText";
-            this.CorrSWIFTText.Size = new System.Drawing.Size(161, 22);
-            this.CorrSWIFTText.TabIndex = 16;
+            this.CorrSwiftEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrSwiftEdit.Location = new System.Drawing.Point(394, 163);
+            this.CorrSwiftEdit.Name = "CorrSwiftEdit";
+            this.CorrSwiftEdit.Size = new System.Drawing.Size(161, 22);
+            this.CorrSwiftEdit.TabIndex = 16;
             // 
             // CorrSWIFTLabel
             // 
@@ -266,15 +278,15 @@
             this.CorrSWIFTLabel.TabIndex = 15;
             this.CorrSWIFTLabel.Text = "Кор. SWIFT:";
             // 
-            // BankSWIFTText
+            // BankSwiftEdit
             // 
-            this.BankSWIFTText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BankSwiftEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankSWIFTText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankSWIFTText.Location = new System.Drawing.Point(106, 163);
-            this.BankSWIFTText.Name = "BankSWIFTText";
-            this.BankSWIFTText.Size = new System.Drawing.Size(161, 22);
-            this.BankSWIFTText.TabIndex = 14;
+            this.BankSwiftEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BankSwiftEdit.Location = new System.Drawing.Point(106, 163);
+            this.BankSwiftEdit.Name = "BankSwiftEdit";
+            this.BankSwiftEdit.Size = new System.Drawing.Size(161, 22);
+            this.BankSwiftEdit.TabIndex = 14;
             // 
             // BankSWIFTLabel
             // 
@@ -285,34 +297,24 @@
             this.BankSWIFTLabel.TabIndex = 13;
             this.BankSWIFTLabel.Text = "SWIFT:";
             // 
-            // CorrPayerLimitText
+            // SwiftLimitLabel
             // 
-            this.CorrPayerLimitText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.SwiftLimitLabel.AutoSize = true;
+            this.SwiftLimitLabel.Location = new System.Drawing.Point(299, 80);
+            this.SwiftLimitLabel.Name = "SwiftLimitLabel";
+            this.SwiftLimitLabel.Size = new System.Drawing.Size(135, 15);
+            this.SwiftLimitLabel.TabIndex = 11;
+            this.SwiftLimitLabel.Text = "Предел наименования:";
+            // 
+            // PurposeTemplateEdit
+            // 
+            this.PurposeTemplateEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrPayerLimitText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrPayerLimitText.Location = new System.Drawing.Point(482, 77);
-            this.CorrPayerLimitText.Name = "CorrPayerLimitText";
-            this.CorrPayerLimitText.Size = new System.Drawing.Size(73, 22);
-            this.CorrPayerLimitText.TabIndex = 12;
-            // 
-            // CorrPayerLimitLabel
-            // 
-            this.CorrPayerLimitLabel.AutoSize = true;
-            this.CorrPayerLimitLabel.Location = new System.Drawing.Point(264, 80);
-            this.CorrPayerLimitLabel.Name = "CorrPayerLimitLabel";
-            this.CorrPayerLimitLabel.Size = new System.Drawing.Size(209, 15);
-            this.CorrPayerLimitLabel.TabIndex = 11;
-            this.CorrPayerLimitLabel.Text = "Предел наименования (105 или 160):";
-            // 
-            // CorrPurposeText
-            // 
-            this.CorrPurposeText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrPurposeText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrPurposeText.Location = new System.Drawing.Point(106, 135);
-            this.CorrPurposeText.Name = "CorrPurposeText";
-            this.CorrPurposeText.Size = new System.Drawing.Size(449, 22);
-            this.CorrPurposeText.TabIndex = 10;
+            this.PurposeTemplateEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PurposeTemplateEdit.Location = new System.Drawing.Point(106, 135);
+            this.PurposeTemplateEdit.Name = "PurposeTemplateEdit";
+            this.PurposeTemplateEdit.Size = new System.Drawing.Size(449, 22);
+            this.PurposeTemplateEdit.TabIndex = 10;
             // 
             // CorrPurposeLabel
             // 
@@ -323,15 +325,15 @@
             this.CorrPurposeLabel.TabIndex = 9;
             this.CorrPurposeLabel.Text = "{Назначение}:";
             // 
-            // CorrPayerText
+            // NameTemplateEdit
             // 
-            this.CorrPayerText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.NameTemplateEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrPayerText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrPayerText.Location = new System.Drawing.Point(106, 106);
-            this.CorrPayerText.Name = "CorrPayerText";
-            this.CorrPayerText.Size = new System.Drawing.Size(449, 22);
-            this.CorrPayerText.TabIndex = 8;
+            this.NameTemplateEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.NameTemplateEdit.Location = new System.Drawing.Point(106, 106);
+            this.NameTemplateEdit.Name = "NameTemplateEdit";
+            this.NameTemplateEdit.Size = new System.Drawing.Size(449, 22);
+            this.NameTemplateEdit.TabIndex = 8;
             // 
             // CorrPayerLabel
             // 
@@ -342,15 +344,15 @@
             this.CorrPayerLabel.TabIndex = 7;
             this.CorrPayerLabel.Text = "{Плательщик}:";
             // 
-            // BankKPPText
+            // BankKppEdit
             // 
-            this.BankKPPText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BankKppEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankKPPText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankKPPText.Location = new System.Drawing.Point(106, 77);
-            this.BankKPPText.Name = "BankKPPText";
-            this.BankKPPText.Size = new System.Drawing.Size(137, 22);
-            this.BankKPPText.TabIndex = 6;
+            this.BankKppEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BankKppEdit.Location = new System.Drawing.Point(106, 77);
+            this.BankKppEdit.Name = "BankKppEdit";
+            this.BankKppEdit.Size = new System.Drawing.Size(137, 22);
+            this.BankKppEdit.TabIndex = 6;
             // 
             // BankKPPLabel
             // 
@@ -361,15 +363,15 @@
             this.BankKPPLabel.TabIndex = 5;
             this.BankKPPLabel.Text = "КПП:";
             // 
-            // BankINNText
+            // BankInnEdit
             // 
-            this.BankINNText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.BankInnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankINNText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankINNText.Location = new System.Drawing.Point(106, 48);
-            this.BankINNText.Name = "BankINNText";
-            this.BankINNText.Size = new System.Drawing.Size(161, 22);
-            this.BankINNText.TabIndex = 4;
+            this.BankInnEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BankInnEdit.Location = new System.Drawing.Point(106, 48);
+            this.BankInnEdit.Name = "BankInnEdit";
+            this.BankInnEdit.Size = new System.Drawing.Size(161, 22);
+            this.BankInnEdit.TabIndex = 4;
             // 
             // BankINNLabel
             // 
@@ -380,15 +382,15 @@
             this.BankINNLabel.TabIndex = 3;
             this.BankINNLabel.Text = "ИНН:";
             // 
-            // CorrAccountText
+            // CorrAccountEdit
             // 
-            this.CorrAccountText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.CorrAccountEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrAccountText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrAccountText.Location = new System.Drawing.Point(106, 19);
-            this.CorrAccountText.Name = "CorrAccountText";
-            this.CorrAccountText.Size = new System.Drawing.Size(274, 22);
-            this.CorrAccountText.TabIndex = 1;
+            this.CorrAccountEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorrAccountEdit.Location = new System.Drawing.Point(106, 19);
+            this.CorrAccountEdit.Name = "CorrAccountEdit";
+            this.CorrAccountEdit.Size = new System.Drawing.Size(274, 22);
+            this.CorrAccountEdit.TabIndex = 1;
             // 
             // CorrAccountLabel
             // 
@@ -399,29 +401,28 @@
             this.CorrAccountLabel.TabIndex = 0;
             this.CorrAccountLabel.Text = "Кор. счет:";
             // 
-            // AcceptConfigButton
+            // OKButton
             // 
-            this.AcceptConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AcceptConfigButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.AcceptConfigButton.Location = new System.Drawing.Point(408, 390);
-            this.AcceptConfigButton.Name = "AcceptConfigButton";
-            this.AcceptConfigButton.Size = new System.Drawing.Size(75, 23);
-            this.AcceptConfigButton.TabIndex = 3;
-            this.AcceptConfigButton.Text = "Сохранить";
-            this.AcceptConfigButton.UseVisualStyleBackColor = true;
-            this.AcceptConfigButton.Click += new System.EventHandler(this.AcceptButton_Click);
+            this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.OKButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.OKButton.Location = new System.Drawing.Point(408, 390);
+            this.OKButton.Name = "OKButton";
+            this.OKButton.Size = new System.Drawing.Size(75, 23);
+            this.OKButton.TabIndex = 3;
+            this.OKButton.Text = "Сохранить";
+            this.OKButton.UseVisualStyleBackColor = true;
+            this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
             // 
-            // CancelConfigButton
+            // AbortButton
             // 
-            this.CancelConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelConfigButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelConfigButton.Location = new System.Drawing.Point(489, 390);
-            this.CancelConfigButton.Name = "CancelConfigButton";
-            this.CancelConfigButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelConfigButton.TabIndex = 4;
-            this.CancelConfigButton.Text = "Отмена";
-            this.CancelConfigButton.UseVisualStyleBackColor = true;
-            this.CancelConfigButton.Click += new System.EventHandler(this.CancelButton_Click);
+            this.AbortButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AbortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.AbortButton.Location = new System.Drawing.Point(489, 390);
+            this.AbortButton.Name = "AbortButton";
+            this.AbortButton.Size = new System.Drawing.Size(75, 23);
+            this.AbortButton.TabIndex = 4;
+            this.AbortButton.Text = "Отмена";
+            this.AbortButton.UseVisualStyleBackColor = true;
             // 
             // ResetConfigButton
             // 
@@ -440,8 +441,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 423);
             this.Controls.Add(this.ResetConfigButton);
-            this.Controls.Add(this.CancelConfigButton);
-            this.Controls.Add(this.AcceptConfigButton);
+            this.Controls.Add(this.AbortButton);
+            this.Controls.Add(this.OKButton);
             this.Controls.Add(this.BankBox);
             this.Controls.Add(this.SaveBox);
             this.Controls.Add(this.OpenBox);
@@ -461,40 +462,40 @@
         #endregion
 
         private GroupBox OpenBox;
-        private TextBox OpenMaskText;
+        private TextBox OpenMaskEdit;
         private Label OpenMaskLabel;
         private Button OpenDirButton;
-        private TextBox OpenDirText;
+        private TextBox OpenDirEdit;
         private Label OpenDirLabel;
         private FolderBrowserDialog OpenFolderDialog;
         private FolderBrowserDialog SaveFolderDialog;
         private GroupBox SaveBox;
-        private TextBox SaveMaskText;
+        private TextBox SaveMaskEdit;
         private Label SaveMaskLabel;
         private Button SaveDirButton;
-        private TextBox SaveDirText;
+        private TextBox SaveDirEdit;
         private Label SaveDirLabel;
         private GroupBox BankBox;
-        private TextBox CorrPurposeText;
+        private TextBox PurposeTemplateEdit;
         private Label CorrPurposeLabel;
-        private TextBox CorrPayerText;
+        private TextBox NameTemplateEdit;
         private Label CorrPayerLabel;
-        private TextBox BankKPPText;
+        private TextBox BankKppEdit;
         private Label BankKPPLabel;
-        private TextBox BankINNText;
+        private TextBox BankInnEdit;
         private Label BankINNLabel;
-        private TextBox CorrAccountText;
+        private TextBox CorrAccountEdit;
         private Label CorrAccountLabel;
-        private Button AcceptConfigButton;
-        private Button CancelConfigButton;
+        private Button OKButton;
+        private Button AbortButton;
         private Button ResetConfigButton;
-        private TextBox CorrPayerLimitText;
-        private Label CorrPayerLimitLabel;
-        private TextBox CorrSWIFTText;
+        private Label SwiftLimitLabel;
+        private TextBox CorrSwiftEdit;
         private Label CorrSWIFTLabel;
-        private TextBox BankSWIFTText;
+        private TextBox BankSwiftEdit;
         private Label BankSWIFTLabel;
-        private ComboBox OutFormatBox;
+        private ComboBox SaveFormatChoice;
         private Label OutFormatLabel;
+        private ComboBox SwiftNameLimitChoice;
     }
 }

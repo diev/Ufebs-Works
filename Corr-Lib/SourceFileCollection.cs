@@ -48,7 +48,7 @@ public class SourceFileCollection : IReadOnlyList<string[]>
                 packet.EDType,
                 packet.EDQuantity,
                 packet.Sum.ESum(),
-                string.Empty
+                string.Empty //TODO File.Exists?
             };
         }
     }

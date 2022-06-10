@@ -29,64 +29,67 @@ public partial class ConfigForm : Form
 
     private void LoadConfig()
     {
-        OpenDirText.Text = ConfigProperties.OpenDir;
-        OpenMaskText.Text = ConfigProperties.OpenMask;
+        OpenDirEdit.Text = Config.OpenDir;
+        OpenMaskEdit.Text = Config.OpenMask;
 
-        SaveDirText.Text = ConfigProperties.SaveDir;
-        SaveMaskText.Text = ConfigProperties.SaveMask;
+        SaveDirEdit.Text = Config.SaveDir;
+        SaveMaskEdit.Text = Config.SaveMask;
+        SaveFormatChoice.Text = Config.SaveFormat;
 
-        CorrAccountText.Text = ConfigProperties.CorrAccount;
-        BankINNText.Text = ConfigProperties.BankINN;
-        BankKPPText.Text = ConfigProperties.BankKPP;
-        CorrPayerText.Text = ConfigProperties.CorrPayerTemplate;
-        CorrPurposeText.Text = ConfigProperties.CorrPurposeTemplate;
+        CorrAccountEdit.Text = Config.CorrAccount;
+        BankInnEdit.Text = Config.BankINN;
+        BankKppEdit.Text = Config.BankKPP;
+        NameTemplateEdit.Text = Config.NameTemplate;
+        PurposeTemplateEdit.Text = Config.PurposeTemplate;
 
-        CorrPayerLimitText.Text = ConfigProperties.CorrPayerLimit.ToString();
+        SwiftNameLimitChoice.Text = Config.SwiftNameLimit.ToString();
 
-        BankSWIFTText.Text = ConfigProperties.BankSWIFT;
-        CorrSWIFTText.Text = ConfigProperties.CorrSWIFT;
+        BankSwiftEdit.Text = Config.BankSWIFT;
+        CorrSwiftEdit.Text = Config.CorrSWIFT;
     }
 
     private void ResetConfig()
     {
-        OpenDirText.Text = @"C:\TEMP";
-        OpenMaskText.Text = "r*.xml";
+        OpenDirEdit.Text = @"C:\TEMP";
+        OpenMaskEdit.Text = "*.xml";
 
-        SaveDirText.Text = @"C:\TEMP";
-        SaveMaskText.Text = "*_.txt";
+        SaveDirEdit.Text = @"C:\TEMP";
+        SaveMaskEdit.Text = "*.mt103";
+        SaveFormatChoice.Text = "SWIFT";
 
-        CorrAccountText.Text = "30101810600000000702";
-        BankINNText.Text = "7831001422";
-        BankKPPText.Text = "784101001";
-        CorrPayerText.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        CorrPurposeText.Text = "//7831001422//784101001//{name}//{purpose}";
+        CorrAccountEdit.Text = "30101810600000000702";
+        BankInnEdit.Text = "7831001422";
+        BankKppEdit.Text = "784101001";
+        NameTemplateEdit.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
+        PurposeTemplateEdit.Text = "//7831001422//784101001//{name}//{purpose}";
 
-        CorrPayerLimitText.Text = "105"; // 105 = три строки по стандарту SWIFT-RUR или 160 (= 4.5 строки) по стандару УФЭБС
+        SwiftNameLimitChoice.Text = "160"; // 105 = три строки по стандарту SWIFT-RUR или 160 (= 4.5 строки) по стандару УФЭБС
 
-        BankSWIFTText.Text = "CITVRU2P";
-        CorrSWIFTText.Text = "CITVRU2P";
+        BankSwiftEdit.Text = "CITVRU2P";
+        CorrSwiftEdit.Text = "CITVRU2P";
     }
 
     private void SaveConfig()
     {
-        ConfigProperties.OpenDir = OpenDirText.Text;
-        ConfigProperties.OpenMask = OpenMaskText.Text;
+        Config.OpenDir = OpenDirEdit.Text;
+        Config.OpenMask = OpenMaskEdit.Text;
 
-        ConfigProperties.SaveDir = SaveDirText.Text;
-        ConfigProperties.SaveMask = SaveMaskText.Text;
+        Config.SaveDir = SaveDirEdit.Text;
+        Config.SaveMask = SaveMaskEdit.Text;
+        Config.SaveFormat = SaveFormatChoice.Text;
 
-        ConfigProperties.CorrAccount = CorrAccountText.Text;
-        ConfigProperties.BankINN = BankINNText.Text;
-        ConfigProperties.BankKPP = BankKPPText.Text;
-        ConfigProperties.CorrPayerTemplate = CorrPayerText.Text;
-        ConfigProperties.CorrPurposeTemplate = CorrPurposeText.Text;
+        Config.CorrAccount = CorrAccountEdit.Text;
+        Config.BankINN = BankInnEdit.Text;
+        Config.BankKPP = BankKppEdit.Text;
+        Config.NameTemplate = NameTemplateEdit.Text;
+        Config.PurposeTemplate = PurposeTemplateEdit.Text;
 
-        ConfigProperties.CorrPayerLimit = int.Parse(CorrPayerLimitText.Text);
+        Config.SwiftNameLimit = int.Parse(SwiftNameLimitChoice.Text);
 
-        ConfigProperties.BankSWIFT = BankSWIFTText.Text;
-        ConfigProperties.CorrSWIFT = CorrSWIFTText.Text;
+        Config.BankSWIFT = BankSwiftEdit.Text;
+        Config.CorrSWIFT = CorrSwiftEdit.Text;
 
-        ConfigProperties.Save();
+        Config.Save();
 
         MessageBox.Show("Параметры сохранены.", Application.ProductName,
             MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -94,21 +97,17 @@ public partial class ConfigForm : Form
 
     private void OpenDirButton_Click(object sender, EventArgs e)
     {
-        var result = OpenFolderDialog.ShowDialog();
-
-        if (result == DialogResult.OK)
+        if (OpenFolderDialog.ShowDialog() == DialogResult.OK)
         {
-            OpenDirText.Text = OpenFolderDialog.SelectedPath;
+            OpenDirEdit.Text = OpenFolderDialog.SelectedPath;
         }
     }
 
     private void SaveDirButton_Click(object sender, EventArgs e)
     {
-        var result = SaveFolderDialog.ShowDialog();
-
-        if (result == DialogResult.OK)
+        if (SaveFolderDialog.ShowDialog() == DialogResult.OK)
         {
-            SaveDirText.Text = SaveFolderDialog.SelectedPath;
+            SaveDirEdit.Text = SaveFolderDialog.SelectedPath;
         }
     }
 
@@ -117,14 +116,8 @@ public partial class ConfigForm : Form
         ResetConfig();
     }
 
-    private void AcceptButton_Click(object sender, EventArgs e)
+    private void OKButton_Click(object sender, EventArgs e)
     {
         SaveConfig();
-        Close();
-    }
-
-    private void CancelButton_Click(object sender, EventArgs e)
-    {
-        Close();
     }
 }
