@@ -69,7 +69,7 @@ partial class MainForm
             this.PackSavedColumn = new System.Windows.Forms.ColumnHeader();
             this.XmlPage = new System.Windows.Forms.TabPage();
             this.XmlText = new System.Windows.Forms.TextBox();
-            this.PacketPage = new System.Windows.Forms.TabPage();
+            this.DocsPage = new System.Windows.Forms.TabPage();
             this.DocsList = new System.Windows.Forms.ListView();
             this.NoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
@@ -110,7 +110,7 @@ partial class MainForm
             this.Tabs.SuspendLayout();
             this.FilesPage.SuspendLayout();
             this.XmlPage.SuspendLayout();
-            this.PacketPage.SuspendLayout();
+            this.DocsPage.SuspendLayout();
             this.SwiftPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -383,7 +383,7 @@ partial class MainForm
             // 
             this.Tabs.Controls.Add(this.FilesPage);
             this.Tabs.Controls.Add(this.XmlPage);
-            this.Tabs.Controls.Add(this.PacketPage);
+            this.Tabs.Controls.Add(this.DocsPage);
             this.Tabs.Controls.Add(this.SwiftPage);
             this.Tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Tabs.Location = new System.Drawing.Point(0, 4);
@@ -422,7 +422,7 @@ partial class MainForm
             this.FilesList.TabIndex = 0;
             this.FilesList.UseCompatibleStateImageBehavior = false;
             this.FilesList.View = System.Windows.Forms.View.Details;
-            this.FilesList.Click += new System.EventHandler(this.FilesListBox_Click);
+            this.FilesList.SelectedIndexChanged += new System.EventHandler(this.FilesList_SelectedIndexChanged);
             // 
             // FileColumn
             // 
@@ -477,16 +477,16 @@ partial class MainForm
             this.XmlText.TabIndex = 2;
             this.XmlText.WordWrap = false;
             // 
-            // PacketPage
+            // DocsPage
             // 
-            this.PacketPage.Controls.Add(this.DocsList);
-            this.PacketPage.Location = new System.Drawing.Point(4, 24);
-            this.PacketPage.Name = "PacketPage";
-            this.PacketPage.Padding = new System.Windows.Forms.Padding(3);
-            this.PacketPage.Size = new System.Drawing.Size(604, 364);
-            this.PacketPage.TabIndex = 4;
-            this.PacketPage.Text = "PacketEPD";
-            this.PacketPage.UseVisualStyleBackColor = true;
+            this.DocsPage.Controls.Add(this.DocsList);
+            this.DocsPage.Location = new System.Drawing.Point(4, 24);
+            this.DocsPage.Name = "DocsPage";
+            this.DocsPage.Padding = new System.Windows.Forms.Padding(3);
+            this.DocsPage.Size = new System.Drawing.Size(604, 364);
+            this.DocsPage.TabIndex = 4;
+            this.DocsPage.Text = "PacketEPD";
+            this.DocsPage.UseVisualStyleBackColor = true;
             // 
             // DocsList
             // 
@@ -507,6 +507,7 @@ partial class MainForm
             this.DocsList.TabIndex = 0;
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
+            this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
             // 
             // NoColumn
             // 
@@ -567,7 +568,6 @@ partial class MainForm
             this.SwiftText.Size = new System.Drawing.Size(598, 358);
             this.SwiftText.TabIndex = 2;
             this.SwiftText.WordWrap = false;
-            this.SwiftText.TextChanged += new System.EventHandler(this.OutTextBox_TextChanged);
             // 
             // splitContainer2
             // 
@@ -651,7 +651,7 @@ partial class MainForm
             this.NameEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.NameEdit.Size = new System.Drawing.Size(301, 58);
             this.NameEdit.TabIndex = 4;
-            this.NameEdit.TextChanged += new System.EventHandler(this.NameTextBox_TextChanged);
+            this.NameEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
             // 
             // PurposePanel
             // 
@@ -714,7 +714,7 @@ partial class MainForm
             this.PurposeEdit.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.PurposeEdit.Size = new System.Drawing.Size(301, 74);
             this.PurposeEdit.TabIndex = 5;
-            this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeTextBox_TextChanged);
+            this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeEdit_TextChanged);
             // 
             // ButtonsPanel
             // 
@@ -821,7 +821,7 @@ partial class MainForm
             this.FilesPage.ResumeLayout(false);
             this.XmlPage.ResumeLayout(false);
             this.XmlPage.PerformLayout();
-            this.PacketPage.ResumeLayout(false);
+            this.DocsPage.ResumeLayout(false);
             this.SwiftPage.ResumeLayout(false);
             this.SwiftPage.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
@@ -891,7 +891,7 @@ partial class MainForm
     private Panel PurposePanel;
     private TextBox PurposeEdit;
     private Label PurposeLabel;
-    private TabPage PacketPage;
+    private TabPage DocsPage;
     private ListView DocsList;
     private ColumnHeader EDColumn;
     private ColumnHeader SumColumn;

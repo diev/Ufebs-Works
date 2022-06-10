@@ -443,7 +443,7 @@ public static class ED100Ex
             return string.Empty;
         }
 
-        // 0 123 456 789 012 345.67 (18x)
+        // "0 123 456 789 012 345.67" (18x)
         ReadOnlySpan<char> s = value.PadLeft(18);
 
         return s.Length switch

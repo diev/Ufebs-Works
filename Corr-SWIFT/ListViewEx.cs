@@ -42,7 +42,7 @@ internal static class ListViewEx
         }
     }
 
-    internal static ListViewItem? SelectedItem(this ListView listView)
+    internal static ListViewItem? SelectedItem(this ListView listView) //TODO remove
     {
         return listView.SelectedItems.Count > 0
             ? listView.SelectedItems[0]
@@ -62,7 +62,7 @@ internal static class ListViewEx
         listView.Items[value].Selected = true;
     }
 
-    internal static bool SelectFirst(this ListView listView)
+    internal static bool SelectFirst(this ListView listView) //TODO remove
     {
         if (listView.Items.Count > 0)
         {
@@ -84,7 +84,7 @@ internal static class ListViewEx
         return count > 0 && --index >= 0;
     }
 
-    internal static bool SelectPrev(this ListView listView)
+    internal static bool SelectPrev(this ListView listView) //TODO remove
     {
         int count = listView.Items.Count;
         int index = listView.SelectedIndex();
@@ -140,7 +140,7 @@ internal static class ListViewEx
         return false;
     }
 
-    internal static void AddItem(this ListView listView, ED100 ed)
+    internal static void AddItem(this ListView listView, ED100 ed) //TODO remove
     {
         var item = new ListViewItem(ed.EDNo);
 
@@ -149,6 +149,7 @@ internal static class ListViewEx
         var itemName = item.SubItems.Add(ed.PayerName);
         var itemPayee = item.SubItems.Add(ed.PayeeName);
         var itemPurpose = item.SubItems.Add(ed.Purpose);
+        var itemSaved = item.SubItems.Add(string.Empty);
 
         if (ed.PayerName.Length > 160)
         {

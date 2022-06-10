@@ -27,7 +27,7 @@ namespace CorrSWIFT;
 
 public partial class MainForm : Form
 {
-    private const string VersionDate = "2022-06-09";
+    private const string VersionDate = "2022-06-10";
 
     // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) или 160 (УФЭБС)?
     private const int MAX_PURPOSE = 210;
@@ -38,8 +38,6 @@ public partial class MainForm : Form
     private bool _saved = false;
     private string? _saveFileName;
     private string _saveMaskName = "*";
-
-    private SwiftLines _swift = new();
 
     private List<ED100> _docs;
 
@@ -188,40 +186,8 @@ public partial class MainForm : Form
     #endregion Dialogs
 
     #region Actions
-    private void FileSelected()
-    {
-        var list = FilesList;
-        var selected = list.SelectedItem();
 
-        if (selected is null)
-        {
-            return;
-        }
-
-        string? file = selected.Text;
-
-        if (file is null)
-        {
-            return;
-        }
-
-        if (File.Exists(file))
-        {
-            LoadFile(file);
-
-            int index = list.SelectedIndex() + 1;
-            int count = list.Items.Count;
-
-            FilesDoneBar.Value = index;
-            FilesDoneBar.Maximum = count;
-
-            string done = $"{index}/{count}";
-            FilesPage.Text = $"Файлы {done}";
-            FilesDone.Text = done;
-        }
-    }
-
-    private bool LoadFile(string path)
+    private bool LoadFile(string path) //TODO remove
     {
         string filename = Path.GetFileNameWithoutExtension(path);
         string ext = Path.GetExtension(path);
@@ -368,7 +334,7 @@ public partial class MainForm : Form
                         }
 
                         int count = _docs.Count;
-                        PacketPage.Text = $"PacketEPD {count}";
+                        DocsPage.Text = $"PacketEPD {count}";
                         DocsDone.Text = count.ToString();
                         DocsDoneBar.Maximum = count;
                         break;
@@ -383,7 +349,7 @@ public partial class MainForm : Form
                         var scorr = sed.CorrClone();
                         _docs.Add(scorr);
                         DocsList.AddItem(scorr);
-                        PacketPage.Text = $"PacketEPD 1";
+                        DocsPage.Text = $"PacketEPD 1";
                         DocsDone.Text = "1";
                         DocsDoneBar.Maximum = 1;
                         break;
@@ -525,86 +491,7 @@ public partial class MainForm : Form
 
     #endregion Actions
 
-    #region TextEdits
-    private void OutputChanged()
-    {
-        int limit = ConfigProperties.CorrPayerLimit; // MAX_NAME;
-
-        //if (OutTextBox.Focused && OutEditCheck.Checked)
-        //if (ChangeMenuItem.Checked)
-        {
-            _swift.Lines = SwiftText.Lines;
-            _swift.NameLimit = limit;
-            //OutTextBox.Lines = _swift.Lines;
-
-            NameEdit.Text = _swift.Name;
-            PurposeEdit.Text = _swift.Purpose;
-        }
-
-        CheckItemsEnabled();
-    }
-
-    private void NameChanged()
-    {
-        int limit = ConfigProperties.CorrPayerLimit; // MAX_NAME;
-
-        //if (NameTextBox.Focused && !OutEditCheck.Checked)
-        //if (!ChangeMenuItem.Checked)
-        {
-            _swift.Name = NameEdit.Text;
-            _swift.NameLimit = limit;
-            SwiftText.Lines = _swift.Lines;
-        }
-
-        int length = NameEdit.TextLength;
-        _isNameValid = length <= limit;
-
-        NameLabel.Text = $"Плательщик {length}/{limit}:";
-        NameLabel.ForeColor = _isNameValid ? ForeColor : Color.Red;
-
-        CheckItemsEnabled();
-    }
-
-    private void PurposeChanged()
-    {
-        //if (PurposeTextBox.Focused && !ChangeMenuItem.Checked)
-        //if (!ChangeMenuItem.Checked)
-        {
-            _swift.Purpose = PurposeEdit.Text;
-            SwiftText.Lines = _swift.Lines;
-        }
-
-        int length = PurposeEdit.TextLength;
-        _isPurposeValid = length <= MAX_PURPOSE;
-
-        PurposeLabel.Text = $"Назначение {length}/{MAX_PURPOSE}:";
-        PurposeLabel.ForeColor = _isPurposeValid ? ForeColor : Color.Red;
-
-        CheckItemsEnabled();
-    }
-    #endregion TextEdits
-
     #region Buttons
-    private void GoPrev()
-    {
-        if (!_saved)
-        {
-            var reply = MessageBox.Show($"Сохранить файл\n{_saveFileName}\nперед шагом назад?",
-                Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
-
-            if (reply == DialogResult.Yes)
-            {
-                SaveFile();
-            }
-            else if (reply == DialogResult.Cancel)
-            {
-                return;
-            }
-        }
-
-        FilesList.SelectPrev();
-    }
-
     private void GoNext()
     {
         SaveFile();
@@ -661,21 +548,6 @@ public partial class MainForm : Form
         FontDialog.ShowDialog();
     }
 
-    private void OutTextBox_TextChanged(object sender, EventArgs e)
-    {
-        OutputChanged();
-    }
-
-    private void NameTextBox_TextChanged(object sender, EventArgs e)
-    {
-        NameChanged();
-    }
-
-    private void PurposeTextBox_TextChanged(object sender, EventArgs e)
-    {
-        PurposeChanged();
-    }
-
     private void SaveMenuItem_Click(object sender, EventArgs e)
     {
         SaveFile();
@@ -706,16 +578,6 @@ public partial class MainForm : Form
         About();
     }
 
-    private void FilesListBox_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        FileSelected();
-    }
-
-    private void NewFileMenuItem_Click(object sender, EventArgs e)
-    {
-        //TODO
-    }
-
     private void PrintMenuItem_Click(object sender, EventArgs e)
     {
         PrintDocument.Print();
@@ -725,11 +587,6 @@ public partial class MainForm : Form
     {
         PrintDocument.DocumentName = _saveFileName ?? "Файл для печати";
         PrintPreviewDialog.ShowDialog();
-    }
-
-    private void PrevMenuItem_Click(object sender, EventArgs e)
-    {
-        GoPrev();
     }
 
     private void NextMenuItem_Click(object sender, EventArgs e)
@@ -764,28 +621,82 @@ public partial class MainForm : Form
 
     #endregion UI
 
-    private void FilesListBox_Click(object sender, EventArgs e)
+    private void NameEdit_TextChanged(object sender, EventArgs e)
     {
-        FileSelected();
+        var edit = (TextBox)sender;
+
+        NameSwiftText.Text = edit.Text.LatWrap35();
+
+        int limit = ConfigProperties.CorrPayerLimit; // MAX_NAME;
+        int length = edit.TextLength;
+        _isNameValid = length <= limit;
+
+        NameLabel.Text = $"Плательщик {length}/{limit}:";
+        NameLabel.ForeColor = _isNameValid ? ForeColor : Color.Red;
+
+        CheckItemsEnabled();
     }
 
-    private void OutDocsListBox_SelectedIndexChanged(object sender, EventArgs e)
+    private void PurposeEdit_TextChanged(object sender, EventArgs e)
     {
-        var item = DocsList.SelectedItem();
+        var edit = (TextBox)sender;
 
-        if (item != null)
-        {
-            int index = item.Index + 1;
-            int count = _docs.Count; //  OutDocsListBox.Items.Count;
-            string done = $"{index}/{count}";
+        PurposeSwiftText.Text = edit.Text.LatWrap35();
 
-            PacketPage.Text = $"PacketEPD {done}";
-            NameEdit.Text = item.SubItems[2].Text;
-            PurposeEdit.Text = item.SubItems[4].Text;
-            DocsDone.Text = done;
-            DocsDoneBar.Value = index;
+        int length = edit.TextLength;
+        _isPurposeValid = length <= MAX_PURPOSE;
 
-            SwiftText.Text = _docs[item.Index].ToSWIFT();
-        }
+        PurposeLabel.Text = $"Назначение {length}/{MAX_PURPOSE}:";
+        PurposeLabel.ForeColor = _isPurposeValid ? ForeColor : Color.Red;
+
+        CheckItemsEnabled();
+    }
+
+    private void FilesList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var list = (ListView)sender;
+        if (list.SelectedItems.Count != 1) return;
+        var item = list.SelectedItems[0];
+
+        string file = item.Text;
+        LoadFile(file);
+
+        int index = item.Index + 1;
+        int count = list.Items.Count;
+
+        FilesDoneBar.Value = index;
+        FilesDoneBar.Maximum = count;
+
+        string done = $"{index}/{count}";
+        FilesPage.Text = $"Файлы {done}";
+        FilesDone.Text = done;
+    }
+
+    private void DocsList_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        var list = (ListView)sender;
+        if (list.SelectedItems.Count != 1) return;
+        var item = list.SelectedItems[0];
+
+        NameEdit.Text = item.SubItems[PayerColumn.Index].Text;
+        PurposeEdit.Text = item.SubItems[PurposeColumn.Index].Text;
+
+        var ed = _docs[item.Index];
+        SwiftText.Text = ed.ToSWIFT();
+        string id = $"{SwiftTranslit.XDate(ed.EDDate)}{ed.EDNo.PadLeft(9, '0')}";
+        string path = Path.Combine(ConfigProperties.SaveDir, id + ".swt");
+        File.WriteAllText(path, SwiftText.Text, Encoding.ASCII);
+        //MarkSaved();
+        item.SubItems[SavedColumn.Index].Text = path;
+
+        int index = item.Index + 1;
+        int count = list.Items.Count;
+
+        DocsDoneBar.Value = index;
+        DocsDoneBar.Maximum = count;
+
+        string done = $"{index}/{count}";
+        DocsPage.Text = $"PacketEPD {done}";
+        DocsDone.Text = done;
     }
 }

@@ -288,15 +288,24 @@ public static class SwiftTranslit
     /// <returns>Текст по 35 символов в строке</returns>
     public static string Wrap35(string value)
     {
-        var result = new StringBuilder(220);
+        var s = value.Prepare35();
+        var sb = new StringBuilder(210);
 
-        while (value.Length > 35)
+        for (int i = 0; i < 6; i++)
         {
-            result.AppendLine(value[..35]);
-            value = value.Remove(0, 35);
+            var s35 = s.Slice(i * 35, 35).TrimEnd();
+
+            if (s35.Length == 0) break;
+
+            sb.AppendLine(s35.ToString());
         }
 
-        return result.Append(value).ToString();
+        return sb.ToString();
+    }
+
+    public static string LatWrap35(this string value)
+    {
+        return Wrap35(Lat(value));
     }
 
     public static ReadOnlySpan<char> Prepare35(this string value)
