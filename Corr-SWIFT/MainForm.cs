@@ -59,23 +59,31 @@ public partial class MainForm : Form
 
         // runtimeconfig.template.json > App.runtimeconfig.json
 
-        // exe G:\BANK\TEST\OUT\r*.xml G:\BANK\TEST\CLI\*_.txt
+        //// exe G:\BANK\TEST\OUT\r*.xml G:\BANK\TEST\CLI\*_.txt
 
-        string[] args = Environment.GetCommandLineArgs(); // 0:exe 1:[Input|*] 2:[Output_|\]
+        //string[] args = Environment.GetCommandLineArgs(); // 0:exe 1:[Input|*] 2:[Output_|\]
+        //int argc = args.Length - 1;
+
+        //if (argc > 0) // 1:Input
+        //{
+        //    string arg = Path.GetFullPath(args[1]);
+        //    Config.OpenDir = Path.GetDirectoryName(arg) ?? @"C:\";
+        //    Config.OpenMask = Path.GetFileName(arg);
+
+        //    if (argc > 1) // 2:Output
+        //    {
+        //        arg = Path.GetFullPath(args[2]);
+        //        Config.SaveDir = Path.GetDirectoryName(arg) ?? @"C:\";
+        //        Config.SaveMask = Path.GetFileName(arg);
+        //    }
+        //}
+
+        string[] args = Environment.GetCommandLineArgs();
         int argc = args.Length - 1;
 
-        if (argc > 0) // 1:Input
+        if (argc == 1 && Config.Profiles.Contains(args[1]))
         {
-            string arg = Path.GetFullPath(args[1]);
-            Config.OpenDir = Path.GetDirectoryName(arg) ?? @"C:\";
-            Config.OpenMask = Path.GetFileName(arg);
-
-            if (argc > 1) // 2:Output
-            {
-                arg = Path.GetFullPath(args[2]);
-                Config.SaveDir = Path.GetDirectoryName(arg) ?? @"C:\";
-                Config.SaveMask = Path.GetFileName(arg);
-            }
+            Config.Profile = args[1];
         }
 
         ReInitForm();
@@ -87,8 +95,8 @@ public partial class MainForm : Form
 
         if (err.Length > 0)
         {
-            MessageBox.Show($"Проверьте настройки:\n\n{err}", Application.ProductName,
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Проверьте настройки:\n\n{err}",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             ConfigMenuItem.PerformClick();
         }
@@ -216,7 +224,7 @@ public partial class MainForm : Form
             }
         }
 
-        return true; //???????????????
+        return true; //TODO bool?
     }
 
     private void SaveFile(string? text = null)
@@ -313,8 +321,10 @@ public partial class MainForm : Form
 Сохраняются они в файле
 {config}
 
-Также пути можно переопределить в командной строке:
-    Input\[*.xml] [Output\[*_.txt]]";
+Можно сохранить с именем Профиля, и тогда
+его можно указать в командной строке.";
+//Также пути можно переопределить в командной строке:
+//    Input\[*.xml] [Output\[*_.txt]]";
 
         MessageBox.Show(text, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }

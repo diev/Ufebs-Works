@@ -356,7 +356,7 @@
             this.OKButton.Location = new System.Drawing.Point(408, 491);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
-            this.OKButton.TabIndex = 5;
+            this.OKButton.TabIndex = 7;
             this.OKButton.Text = "Сохранить";
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
@@ -368,7 +368,7 @@
             this.AbortButton.Location = new System.Drawing.Point(489, 491);
             this.AbortButton.Name = "AbortButton";
             this.AbortButton.Size = new System.Drawing.Size(75, 23);
-            this.AbortButton.TabIndex = 6;
+            this.AbortButton.TabIndex = 8;
             this.AbortButton.Text = "Отмена";
             this.AbortButton.UseVisualStyleBackColor = true;
             // 
@@ -467,16 +467,16 @@
             this.ProfileChoice.Name = "ProfileChoice";
             this.ProfileChoice.Size = new System.Drawing.Size(137, 23);
             this.ProfileChoice.Sorted = true;
-            this.ProfileChoice.TabIndex = 8;
+            this.ProfileChoice.TabIndex = 6;
             this.ProfileChoice.SelectedValueChanged += new System.EventHandler(this.ProfileChoice_SelectedValueChanged);
             // 
             // ProfileLabel
             // 
             this.ProfileLabel.AutoSize = true;
-            this.ProfileLabel.Location = new System.Drawing.Point(9, 495);
+            this.ProfileLabel.Location = new System.Drawing.Point(20, 495);
             this.ProfileLabel.Name = "ProfileLabel";
             this.ProfileLabel.Size = new System.Drawing.Size(62, 15);
-            this.ProfileLabel.TabIndex = 7;
+            this.ProfileLabel.TabIndex = 5;
             this.ProfileLabel.Text = "Профиль:";
             // 
             // ConfigForm

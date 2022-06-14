@@ -25,14 +25,8 @@ public partial class ConfigForm : Form
     {
         InitializeComponent();
 
-        //ProfileChoice.DataSource = Config.Profiles.Split(';');
-        var profiles = Config.Profiles.Split(';', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var item in profiles)
-        {
-            ProfileChoice.Items.Add(item);
-        }
-
+        ProfileChoice.Items.AddRange(Config.Profiles.Split(';'));
+        ProfileChoice.Items.Add(string.Empty);
         ProfileChoice.Text = Config.Profile;
 
         LoadConfig();
@@ -65,23 +59,19 @@ public partial class ConfigForm : Form
 
     private void SaveConfig()
     {
-        Config.Profile = ProfileChoice.Text;
+        string profile = ProfileChoice.Text;
+        string profiles = Config.Profiles;
 
-        //Config.Profiles = string.Join(';', (string[])ProfileChoice.DataSource);
+        Config.Profile = profile;
 
-        string profiles = ProfileChoice.Text;
-
-        foreach (var item in ProfileChoice.Items)
+        if (profiles.Length > 0 && !profiles.Contains(profile))
         {
-            string profile = item.ToString();
-
-            if (!profiles.Contains(profile))
-            {
-                profiles += $";{profile}";
-            }
+            Config.Profiles += ';' + profile;
         }
-
-        Config.Profiles = profiles;
+        else
+        {
+            Config.Profiles = profile;
+        }
 
         Config.OpenDir = OpenDirEdit.Text ?? OpenDirEdit.PlaceholderText;
         Config.OpenMask = OpenMaskEdit.Text ?? OpenDirEdit.PlaceholderText;
@@ -105,8 +95,8 @@ public partial class ConfigForm : Form
 
         Config.Save();
 
-        MessageBox.Show("Параметры сохранены.", Application.ProductName,
-            MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show($"Параметры профиля \"{profile}\" сохранены.", 
+            Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void OpenDirButton_Click(object sender, EventArgs e)

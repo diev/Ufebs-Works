@@ -54,98 +54,98 @@ public static class Config
 
     public static string Profile
     {
-        get => AppContext.GetData(".Profile") as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(".Profile", value);
+        get => G(nameof(Profile));
+        set => S(nameof(Profile), value);
     }
 
     public static string Profiles
     {
-        get => AppContext.GetData(".Profiles") as string ?? string.Empty;
-        set => AppDomain.CurrentDomain.SetData(".Profiles", value);
+        get => G(nameof(Profiles));
+        set => S(nameof(Profiles), value);
     }
 
     public static string OpenDir
     {
-        get => G(_openDir);
-        set => S(_openDir, value);
+        get => GP(_openDir);
+        set => SP(_openDir, value);
     }
 
     public static string OpenMask
     {
-        get => G(_openMask);
-        set => S(_openMask, value);
+        get => GP(_openMask);
+        set => SP(_openMask, value);
     }
 
     public static string SaveDir
     {
-        get => G(_saveDir);
-        set => S(_saveDir, value);
+        get => GP(_saveDir);
+        set => SP(_saveDir, value);
     }
 
     public static string SaveMask
     {
-        get => G(_saveMask);
-        set => S(_saveMask, value);
+        get => GP(_saveMask);
+        set => SP(_saveMask, value);
     }
 
     public static string SaveFormat
     {
-        get => G(_saveFormat);
-        set => S(_saveFormat, value);
+        get => GP(_saveFormat);
+        set => SP(_saveFormat, value);
     }
 
     public static string CorrAccount
     {
-        get => G(_corrAccount);
-        set => S(_corrAccount, value);
+        get => GP(_corrAccount);
+        set => SP(_corrAccount, value);
     }
 
     public static string BankINN
     {
-        get => G(_bankINN);
-        set => S(_bankINN, value);
+        get => GP(_bankINN);
+        set => SP(_bankINN, value);
     }
 
     public static string BankKPP
     {
-        get => G(_bankKPP);
-        set => S(_bankKPP, value);
+        get => GP(_bankKPP);
+        set => SP(_bankKPP, value);
     }
 
     public static string TemplatesName
     {
-        get => G(_templatesName);
-        set => S(_templatesName, value);
+        get => GP(_templatesName);
+        set => SP(_templatesName, value);
     }
 
     public static string TemplatesPurpose
     {
-        get => G(_templatesPurpose);
-        set => S(_templatesPurpose, value);
+        get => GP(_templatesPurpose);
+        set => SP(_templatesPurpose, value);
     }
 
     public static int SwiftNameLimit
     {
-        get => Gint(_swiftNameLimit);
-        set => S(_swiftNameLimit, value);
+        get => GPint(_swiftNameLimit, 160);
+        set => SP(_swiftNameLimit, value);
     }
 
     public static string SwiftPurposeField
     {
-        get => G(_swiftPurposeField);
-        set => S(_swiftPurposeField, value);
+        get => GP(_swiftPurposeField, "70");
+        set => SP(_swiftPurposeField, value);
     }
 
     public static string BankSWIFT
     {
-        get => G(_bankSWIFT);
-        set => S(_bankSWIFT, value);
+        get => GP(_bankSWIFT);
+        set => SP(_bankSWIFT, value);
     }
 
     public static string CorrSWIFT
     {
-        get => G(_corrSWIFT);
-        set => S(_corrSWIFT, value);
+        get => GP(_corrSWIFT);
+        set => SP(_corrSWIFT, value);
     }
 
     static Config()
@@ -214,8 +214,8 @@ public static class Config
         var configNode = JsonNode.Parse(json);
         var properties = configNode![runtimeOptions]![configProperties];
 
-        properties![".Profile"] = Profile;
-        properties![".Profiles"] = Profiles;
+        properties![nameof(Profile)] = Profile;
+        properties![nameof(Profiles)] = Profiles;
 
         properties![P(_openDir)] = OpenDir;
         properties![P(_openMask)] = OpenMask;
@@ -244,14 +244,21 @@ public static class Config
         InitCorrProperties();
     }
 
-    private static string P(string value)
+    private static string P(string name)
     {
-        return Profile + "." + value;
+        return Profile == string.Empty
+            ? name
+            : Profile + "." + name;
     }
 
     private static string G(string name, string defValue = "")
     {
-        return AppContext.GetData(P(name)) as string ?? defValue;
+        return AppContext.GetData(name) as string ?? defValue;
+    }
+
+    private static string GP(string name, string defValue = "")
+    {
+        return G(P(name), defValue);
     }
 
     private static int Gint(string name, int defValue = 0)
@@ -259,13 +266,28 @@ public static class Config
         return int.Parse(G(name, defValue.ToString()));
     }
 
+    private static int GPint(string name, int defValue = 0)
+    {
+        return Gint(P(name), defValue);
+    }
+
     private static void S(string name, string value)
     {
-        AppDomain.CurrentDomain.SetData(P(name), value);
+        AppDomain.CurrentDomain.SetData(name, value);
+    }
+
+    private static void SP(string name, string value)
+    {
+        S(P(name), value);
     }
 
     private static void S(string name, int value)
     {
         AppDomain.CurrentDomain.SetData(P(name), value.ToString());
+    }
+
+    private static void SP(string name, int value)
+    {
+        S(P(name), value.ToString());
     }
 }
