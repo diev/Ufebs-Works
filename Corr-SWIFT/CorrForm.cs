@@ -36,7 +36,11 @@ namespace CorrSWIFT
 
         private void NameResult_TextChanged(object sender, EventArgs e)
         {
-            NameSwift.Text = NameResult.Text.LatWrap35();
+            if (SwiftGroup.Visible)
+            {
+                NameSwift.Text = NameResult.Text.LatWrap35();
+            }
+
             int n = NameResult.TextLength - 160; //TODO
             _nameOk = n <= 0;
 
@@ -56,7 +60,11 @@ namespace CorrSWIFT
 
         private void PurposeResult_TextChanged(object sender, EventArgs e)
         {
-            PurposeSwift.Text = PurposeResult.Text.LatWrap35();
+            if (SwiftGroup.Visible)
+            {
+                PurposeSwift.Text = PurposeResult.Text.LatWrap35();
+            }
+
             int n = PurposeResult.TextLength - 210; //TODO
             _purposeOk = n <= 0;
 
@@ -77,6 +85,24 @@ namespace CorrSWIFT
         private void SetButtons()
         {
             OKButton.Enabled = _nameOk && _purposeOk;
+        }
+
+        private void CorrForm_Load(object sender, EventArgs e)
+        {
+            SwiftGroup.Visible = Config.SaveFormat == "SWIFT";
+            
+            if (SwiftGroup.Visible)
+            {
+                NameSwift.Text = NameResult.Text.LatWrap35();
+                PurposeSwift.Text = PurposeResult.Text.LatWrap35();
+            }
+            else
+            {
+                Height -= SwiftGroup.Height;
+
+                NameSwift.Enabled = false;
+                PurposeSwift.Enabled = false;
+            }
         }
     }
 }

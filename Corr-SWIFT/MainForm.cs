@@ -21,17 +21,16 @@ using CorrLib;
 
 using System.Drawing.Printing;
 using System.Text;
-using System.Xml.Linq;
 
 namespace CorrSWIFT;
 
 public partial class MainForm : Form
 {
-    private const string VersionDate = "2022-06-10";
+    private const string VersionDate = "2022-06-14";
 
     // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) ËÎË 160 (”‘›¡—)?
-    private const int MAX_NAME = 100;
-    private const int MAX_PURPOSE = 100;
+    private const int MAX_NAME = 100; //TODO TEST ONLY!!!
+    private const int MAX_PURPOSE = 100; //TODO TEST ONLY!!!
 
     private bool _isNameValid = false;
     private bool _isPurposeValid = false;

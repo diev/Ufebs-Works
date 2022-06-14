@@ -24,11 +24,24 @@ public partial class ConfigForm : Form
     public ConfigForm()
     {
         InitializeComponent();
+
+        //ProfileChoice.DataSource = Config.Profiles.Split(';');
+        var profiles = Config.Profiles.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var item in profiles)
+        {
+            ProfileChoice.Items.Add(item);
+        }
+
+        ProfileChoice.Text = Config.Profile;
+
         LoadConfig();
     }
 
     private void LoadConfig()
     {
+        Config.Profile = ProfileChoice.Text;
+
         OpenDirEdit.Text = Config.OpenDir;
         OpenMaskEdit.Text = Config.OpenMask;
 
@@ -36,58 +49,59 @@ public partial class ConfigForm : Form
         SaveMaskEdit.Text = Config.SaveMask;
         SaveFormatChoice.Text = Config.SaveFormat;
 
-        CorrAccountEdit.Text = Config.CorrAccount;
         BankInnEdit.Text = Config.BankINN;
         BankKppEdit.Text = Config.BankKPP;
-        NameTemplateEdit.Text = Config.NameTemplate;
-        PurposeTemplateEdit.Text = Config.PurposeTemplate;
+        BankSwiftEdit.Text = Config.BankSWIFT;
+
+        CorrAccountEdit.Text = Config.CorrAccount;
+        CorrSwiftEdit.Text = Config.CorrSWIFT;
+
+        TemplatesNameEdit.Text = Config.TemplatesName;
+        TemplatesPurposeEdit.Text = Config.TemplatesPurpose;
 
         SwiftNameLimitChoice.Text = Config.SwiftNameLimit.ToString();
-
-        BankSwiftEdit.Text = Config.BankSWIFT;
-        CorrSwiftEdit.Text = Config.CorrSWIFT;
-    }
-
-    private void ResetConfig()
-    {
-        OpenDirEdit.Text = @"C:\TEMP";
-        OpenMaskEdit.Text = "*.xml";
-
-        SaveDirEdit.Text = @"C:\TEMP";
-        SaveMaskEdit.Text = "*.mt103";
-        SaveFormatChoice.Text = "SWIFT";
-
-        CorrAccountEdit.Text = "30101810600000000702";
-        BankInnEdit.Text = "7831001422";
-        BankKppEdit.Text = "784101001";
-        NameTemplateEdit.Text = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-        PurposeTemplateEdit.Text = "//7831001422//784101001//{name}//{purpose}";
-
-        SwiftNameLimitChoice.Text = "160"; // 105 = три строки по стандарту SWIFT-RUR или 160 (= 4.5 строки) по стандару УФЭБС
-
-        BankSwiftEdit.Text = "CITVRU2P";
-        CorrSwiftEdit.Text = "CITVRU2P";
+        SwiftPurposeFieldChoice.Text = Config.SwiftPurposeField;
     }
 
     private void SaveConfig()
     {
-        Config.OpenDir = OpenDirEdit.Text;
-        Config.OpenMask = OpenMaskEdit.Text;
+        Config.Profile = ProfileChoice.Text;
 
-        Config.SaveDir = SaveDirEdit.Text;
-        Config.SaveMask = SaveMaskEdit.Text;
+        //Config.Profiles = string.Join(';', (string[])ProfileChoice.DataSource);
+
+        string profiles = ProfileChoice.Text;
+
+        foreach (var item in ProfileChoice.Items)
+        {
+            string profile = item.ToString();
+
+            if (!profiles.Contains(profile))
+            {
+                profiles += $";{profile}";
+            }
+        }
+
+        Config.Profiles = profiles;
+
+        Config.OpenDir = OpenDirEdit.Text ?? OpenDirEdit.PlaceholderText;
+        Config.OpenMask = OpenMaskEdit.Text ?? OpenDirEdit.PlaceholderText;
+
+        Config.SaveDir = SaveDirEdit.Text ?? SaveDirEdit.PlaceholderText;
+        Config.SaveMask = SaveMaskEdit.Text ?? SaveMaskEdit.PlaceholderText;
         Config.SaveFormat = SaveFormatChoice.Text;
 
-        Config.CorrAccount = CorrAccountEdit.Text;
-        Config.BankINN = BankInnEdit.Text;
-        Config.BankKPP = BankKppEdit.Text;
-        Config.NameTemplate = NameTemplateEdit.Text;
-        Config.PurposeTemplate = PurposeTemplateEdit.Text;
+        Config.BankINN = BankInnEdit.Text ?? BankInnEdit.PlaceholderText;
+        Config.BankKPP = BankKppEdit.Text ?? BankKppEdit.PlaceholderText;
+        Config.BankSWIFT = BankSwiftEdit.Text ?? BankSwiftEdit.PlaceholderText;
+
+        Config.CorrAccount = CorrAccountEdit.Text ?? CorrAccountEdit.PlaceholderText;
+        Config.CorrSWIFT = CorrSwiftEdit.Text ?? CorrSwiftEdit.PlaceholderText;
+
+        Config.TemplatesName = TemplatesNameEdit.Text ?? TemplatesNameEdit.PlaceholderText;
+        Config.TemplatesPurpose = TemplatesPurposeEdit.Text ?? TemplatesPurposeEdit.PlaceholderText;
 
         Config.SwiftNameLimit = int.Parse(SwiftNameLimitChoice.Text);
-
-        Config.BankSWIFT = BankSwiftEdit.Text;
-        Config.CorrSWIFT = CorrSwiftEdit.Text;
+        Config.SwiftPurposeField = SwiftPurposeFieldChoice.Text;
 
         Config.Save();
 
@@ -111,13 +125,13 @@ public partial class ConfigForm : Form
         }
     }
 
-    private void ResetButton_Click(object sender, EventArgs e)
-    {
-        ResetConfig();
-    }
-
     private void OKButton_Click(object sender, EventArgs e)
     {
         SaveConfig();
+    }
+
+    private void ProfileChoice_SelectedValueChanged(object sender, EventArgs e)
+    {
+        LoadConfig();
     }
 }

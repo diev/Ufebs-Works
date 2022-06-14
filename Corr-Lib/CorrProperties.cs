@@ -21,12 +21,16 @@ namespace CorrLib;
 
 public static class CorrProperties
 {
-    public static string CorrAccount { get; set; }
-    public static string BankINN { get; set; }
-    public static string BankKPP { get; set; }
-    public static string NameTemplate { get; set; }
-    public static string PurposeTemplate { get; set; }
+    public static string? BankINN { get; set; }
+    public static string? BankKPP { get; set; }
+    public static string? BankSWIFT { get; set; }
+
+    public static string? CorrAccount { get; set; }
+    public static string? CorrSWIFT { get; set; }
+
+    public static string? TemplatesName { get; set; }
+    public static string? TemplatesPurpose { get; set; }
+
     public static int SwiftNameLimit { get; set; }
-    public static string BankSWIFT { get; set; }
-    public static string CorrSWIFT { get; set; }
+    public static string? SwiftPurposeField { get; set; }
 }

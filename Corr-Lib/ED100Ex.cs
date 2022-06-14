@@ -25,31 +25,39 @@ namespace CorrLib;
 
 public static class ED100Ex
 {
-    public static void Load(this ED100 ed, XElement xElement)
+    public static void Load(this ED100 ed, XElement x)
     {
-        ed.EDType = xElement.Name.LocalName;
+        ed.EDType = x.Name.LocalName; // required
 
-        ed.ChargeOffDate = xElement.Attribute("ChargeOffDate")?.Value;
-        ed.EDAuthor = xElement.Attribute("EDAuthor")?.Value;
-        ed.EDDate = xElement.Attribute("EDDate")?.Value;
-        ed.EDNo = xElement.Attribute("EDNo")?.Value;
-        ed.PaymentID = xElement.Attribute("PaymentID")?.Value;
-        ed.PaymentPrecedence = xElement.Attribute("PaymentPrecedence")?.Value;
-        ed.PaytKind = xElement.Attribute("PaytKind")?.Value;
-        ed.Priority = xElement.Attribute("Priority")?.Value;
-        ed.ReceiptDate = xElement.Attribute("ReceiptDate")?.Value;
-        ed.Sum = xElement.Attribute("Sum")?.Value;
-        ed.SystemCode = xElement.Attribute("SystemCode")?.Value;
-        ed.TransKind = xElement.Attribute("TransKind")?.Value;
-        ed.Xmlns = xElement.Attribute("xmlns")?.Value;
+        ed.ChargeOffDate = x.Attribute("ChargeOffDate")?.Value;
+        ed.EDAuthor = x.Attribute("EDAuthor")!.Value; // required
+        ed.EDDate = x.Attribute("EDDate")!.Value; // required
+        ed.EDNo = x.Attribute("EDNo")!.Value; // required
+        ed.FileDate = x.Attribute("FileDate")?.Value;
+        ed.OperationID = x.Attribute("OperationID")?.Value;
+        ed.PaymentID = x.Attribute("PaymentID")?.Value;
+        ed.PaymentPrecedence = x.Attribute("PaymentPrecedence")!.Value; // required
+        ed.PaytKind = x.Attribute("PaytKind")?.Value;
+        ed.Priority = x.Attribute("Priority")!.Value; // required
+        ed.ReceiptDate = x.Attribute("ReceiptDate")?.Value;
+        ed.Sum = x.Attribute("Sum")!.Value; // required
+        ed.SystemCode = x.Attribute("SystemCode")!.Value; // required
+        ed.TransKind = x.Attribute("TransKind")!.Value; // required
+        ed.Xmlns = x.Attribute("xmlns")?.Value;
 
-        foreach (var e in xElement.Elements())
+        foreach (var e in x.Elements())
         {
             switch (e.Name.LocalName)
             {
+                //case "SettleNotEarlier": // Исполнить не ранее, чем
+                //    break;
+
+                //case "SettleNotLater": // Исполнить не позднее, чем
+                //    break;
+
                 case "AccDoc":
-                    ed.AccDocDate = e.Attribute("AccDocDate")?.Value;
-                    ed.AccDocNo = e.Attribute("AccDocNo")?.Value;
+                    ed.AccDocDate = e.Attribute("AccDocDate")!.Value; // required
+                    ed.AccDocNo = e.Attribute("AccDocNo")!.Value; // required
                     break;
 
                 case "Payer":
@@ -62,7 +70,7 @@ public static class ED100Ex
                         switch (p.Name.LocalName)
                         {
                             case "Name":
-                                ed.PayerName = p.Value.Replace("  ", " ");
+                                ed.PayerName = p.Value.Trim().Replace("  ", " ");
                                 break;
 
                             case "Bank":
@@ -86,7 +94,7 @@ public static class ED100Ex
                         switch (p.Name.LocalName)
                         {
                             case "Name":
-                                ed.PayeeName = p.Value.Replace("  ", " ");
+                                ed.PayeeName = p.Value.Trim().Replace("  ", " ");
                                 break;
 
                             case "Bank":
@@ -101,7 +109,7 @@ public static class ED100Ex
                     break;
 
                 case "Purpose":
-                    ed.Purpose = e.Value.Replace("  ", " ");
+                    ed.Purpose = e.Value.Trim().Replace("  ", " ");
                     break;
 
                 case "DepartmentalInfo":
@@ -121,7 +129,65 @@ public static class ED100Ex
         }
     }
 
-    public static void WriteXML(this ED100 ed, XmlWriter writer)
+    public static void Load(this ED100 ed, ED100 e)
+    {
+        ed.EDType = e.EDType;
+
+        ed.ChargeOffDate = e.ChargeOffDate;
+        ed.CodePurpose = e.CodePurpose;
+        ed.EDAuthor = e.EDAuthor;
+        ed.EDDate = e.EDDate;
+        ed.EDNo = e.EDNo;
+        ed.EDReceiver = e.EDReceiver;
+        ed.FileDate = e.FileDate;
+        ed.OperationID = e.OperationID;
+        ed.PaymentID = e.PaymentID;
+        ed.PaymentPrecedence = e.PaymentPrecedence;
+        ed.PaytKind = e.PaytKind;
+        ed.Priority = e.Priority;
+        ed.ReceiptDate = e.ReceiptDate;
+        //ed.ReqSettlementDate = e.ReqSettlementDate;
+        //ed.ResField = e.ResField;
+        ed.Sum = e.Sum;
+        ed.SystemCode = e.SystemCode;
+        ed.TransKind = e.TransKind;
+        ed.Xmlns = e.Xmlns;
+
+        //ed.SettleNotEarlier = e.SettleNotEarlier;
+        //ed.SettleNotLater = e.SettleNotLater;
+
+        ed.AccDocDate = e.AccDocDate;
+        ed.AccDocNo = e.AccDocNo;
+
+        ed.PayerINN = e.PayerINN;
+        ed.PayerKPP = e.PayerKPP;
+        ed.PayerPersonalAcc = e.PayerPersonalAcc;
+        ed.PayerName = e.PayerName;
+        ed.PayerBIC = e.PayerBIC;
+        ed.PayerCorrespAcc = e.PayerCorrespAcc;
+
+        ed.PayeeINN = e.PayeeINN;
+        ed.PayeeKPP = e.PayeeKPP;
+        ed.PayeePersonalAcc = e.PayeePersonalAcc;
+        ed.PayeeName = e.PayeeName;
+        ed.PayeeBIC = e.PayeeBIC;
+        ed.PayeeCorrespAcc = e.PayeeCorrespAcc;
+
+        ed.Purpose = e.Purpose;
+
+        if (e.Tax)
+        {
+            ed.CBC = e.CBC;
+            ed.DocDate = e.DocDate;
+            ed.DocNo = e.DocNo;
+            ed.OKATO = e.OKATO;
+            ed.PaytReason = e.PaytReason;
+            ed.TaxPeriod = e.TaxPeriod;
+            ed.TaxPaytKind = e.TaxPaytKind;
+        }
+    }
+
+public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not null only (except not required)
     {
         // ED101
         writer.WriteStartElement(ed.EDType, ed.Xmlns);
@@ -130,11 +196,14 @@ public static class ED100Ex
         writer.WriteAttributeString("EDAuthor", ed.EDAuthor);
         writer.WriteAttributeString("EDDate", ed.EDDate);
         writer.WriteAttributeString("EDNo", ed.EDNo);
+        writer.WriteAttributeString("FileDate", ed.FileDate); //63
+        writer.WriteAttributeString("OperationID", ed.OperationID); //22
         writer.WriteAttributeString("PaymentID", ed.PaymentID); //22
         writer.WriteAttributeString("PaymentPrecedence", ed.PaymentPrecedence);
         writer.WriteAttributeString("PaytKind", ed.PaytKind); //5
         writer.WriteAttributeString("Priority", ed.Priority); //21
         writer.WriteAttributeString("ReceiptDate", ed.ReceiptDate); //62
+        //writer.WriteAttributeString("ResField", ed.ResField); //23
         writer.WriteAttributeString("Sum", ed.Sum); //7
         writer.WriteAttributeString("SystemCode", ed.SystemCode);
         writer.WriteAttributeString("TransKind", ed.TransKind); //18
@@ -186,13 +255,13 @@ public static class ED100Ex
             // DepartmentalInfo
             writer.WriteStartElement("DepartmentalInfo");
 
-            writer.WriteAttributeString("CBC", ed.CBC); //104
-            writer.WriteAttributeString("DocDate", ed.DocDate); //109
-            writer.WriteAttributeString("DocNo", ed.DocNo); //108
+            writer.WriteAttributeString("CBC", ed.CBC ?? "0"); //104
+            writer.WriteAttributeString("DocDate", ed.DocDate ?? "0"); //109
+            writer.WriteAttributeString("DocNo", ed.DocNo ?? "0"); //108
             writer.WriteAttributeString("DrawerStatus", ed.DrawerStatus); //101
-            writer.WriteAttributeString("OKATO", ed.OKATO); //105
-            writer.WriteAttributeString("PaytReason", ed.PaytReason); //106
-            writer.WriteAttributeString("TaxPeriod", ed.TaxPeriod); //107
+            writer.WriteAttributeString("OKATO", ed.OKATO ?? "0"); //105
+            writer.WriteAttributeString("PaytReason", ed.PaytReason ?? "0"); //106
+            writer.WriteAttributeString("TaxPeriod", ed.TaxPeriod ?? "0"); //107
 
             if (ed.TaxPaytKind != null && ed.TaxPaytKind != "0") //fix
             {
@@ -213,9 +282,9 @@ public static class ED100Ex
     /// <returns></returns>
     public static string ToSWIFT(this ED100 ed)
     {
-        var es = ed.CorrSWIFTClone();
+        ed.Translit();
 
-        string id = $"{es.EDDate}{es.EDNo.PadLeft(9, '0')}"; //15x
+        string id = $"{ed.EDDate}{ed.EDNo.PadLeft(9, '0')}"; //15x
 
         // Block Structure
 
@@ -254,31 +323,34 @@ public static class ED100Ex
 
         // Код типа операции
 
-        sb.AppendLineIf(es.Tax, $":26T:S{es.DrawerStatus}");
+        sb.AppendLineIf(ed.Tax, $":26T:S{ed.DrawerStatus}");
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
 
-        sb.AppendLine($":32A:{es.ChargeOffDate}RUB{es.Sum}");
+        sb.AppendLine($":32A:{ed.ChargeOffDate}RUB{ed.Sum}");
 
         // Плательщик
 
-        sb.AppendLine($":50K:/{es.PayerPersonalAcc}") // или :50F: с адресом и страной
-            .AppendLineIf(es.PayerINN != null, $"INN{es.PayerINN}{es.PayerKPP.AddNotEmpty()}"); // или KIO
+        sb.AppendLine($":50K:/{ed.PayerPersonalAcc}") // или :50F: с адресом и страной
+            .AppendLineIf(ed.PayerINN != null, $"INN{ed.PayerINN}{ed.PayerKPP.AddNotEmpty()}"); // или KIO
 
         // (3*35x!)
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
 
-        var s = es.PayerName.Prepare35();
-
-        for (int i = 0; i < 3; i++)
+        if (ed.PayerName != null)
         {
-            var s35 = s.Slice(i * 35, 35).TrimEnd();
+            var s = ed.PayerName.Prepare35();
 
-            if (s35.Length == 0) break;
+            for (int i = 0; i < 3; i++)
+            {
+                var s35 = s.Slice(i * 35, 35).TrimEnd();
 
-            sb.AppendLine(s35.ToString());
+                if (s35.Length == 0) break;
+
+                sb.AppendLine(s35.ToString());
+            }
         }
 
         // Банк Плательщика
@@ -307,7 +379,7 @@ public static class ED100Ex
         // Банк Бенефициара
         // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
 
-        sb.AppendLine($":57D://RU{es.PayeeBIC}{es.PayeeCorrespAcc.AddNotEmpty()}");
+        sb.AppendLine($":57D://RU{ed.PayeeBIC}{ed.PayeeCorrespAcc.AddNotEmpty()}");
 
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
@@ -315,18 +387,21 @@ public static class ED100Ex
         // Бенефициар
         // (клиент, которому будут выплачены средства)
 
-        sb.AppendLine($":59:/{es.PayeePersonalAcc}")
-            .AppendLineIf(es.PayeeINN != null, $"INN{es.PayeeINN}{es.PayeeKPP.AddNotEmpty()}");
+        sb.AppendLine($":59:/{ed.PayeePersonalAcc}")
+            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddNotEmpty()}");
 
-        s = es.PayeeName.Prepare35();
-
-        for (int i = 0; i < 3; i++)
+        if (ed.PayeeName != null)
         {
-            var s35 = s.Slice(i * 35, 35).TrimEnd();
+            var s = ed.PayeeName.Prepare35();
 
-            if (s35.Length == 0) break;
+            for (int i = 0; i < 3; i++)
+            {
+                var s35 = s.Slice(i * 35, 35).TrimEnd();
 
-            sb.AppendLine(s35.ToString());
+                if (s35.Length == 0) break;
+
+                sb.AppendLine(s35.ToString());
+            }
         }
 
         // Информация о платеже (4*35x + :72:/NZP/)
@@ -334,33 +409,42 @@ public static class ED100Ex
         // Суммарный объем информации о назначении платежа, содержащийся в поле 70 и в поле 72 с кодовым словом /NZP/,
         // после транслитерации не должен превышать 210 знаков.
         //
-        // В соответствии с Инструкцией Банка России №117-И от 15.06.2004 г. при составлении платежных инструкций для осуществления расчетов
+        // В соответствии с Инструкцией Банка России N117-И от 15.06.2004 г. при составлении платежных инструкций для осуществления расчетов
         // в российских рублях по валютным операциям в поле 70 должен быть указан код вида валютной операции, и может указываться номер паспорта сделки.
         // Перед значением кода вида валютной операции проставляется разделительный символ VO, а перед номером паспорта сделки, если он указывается,
         // - разделительный символ PS. Разделительные символы VO, PS указываются прописными латинскими буквами.
         // Эта информация должна быть заключена в фигурные скобки и помещена в начале поля «Назначение платежа» в следующем виде:
-        // { VO<код>[PS < номер паспорта сделки >]}. Пробелы внутри фигурных скобок не допускаются.
+        // {VO<код>[PS <номер паспорта сделки>]}. Пробелы внутри фигурных скобок не допускаются.
         // Однако, символы фигурных скобок не могут содержаться в тексте сообщений SWIFT. Поэтому применяется следующее исключение из правил транслитерации.
-        // Применяется только для поля 70 в сообщениях SWIFT МТ101 и МТ103 и для поля 72 с кодом /NZP/ МТ202 в связи с Инструкцией Банка России №117-И от 15.06.2004г.
+        // Применяется только для поля 70 в сообщениях SWIFT МТ101 и МТ103 и для поля 72 с кодом /NZP/ МТ202 в связи с Инструкцией Банка России N117-И от 15.06.2004г.
         // На основании разъяснений Банка России символы фигурных скобок, ограничивающие закодированную информацию валютной операции в поле «Назначение платежа»
         // платежного поручения, процессом транслитерации с кириллицы на латиницу отображаются круглыми скобками в соответствующем поле(поле 70) сообщения SWIFT.
         // А при обратной транслитерации круглые скобки отображаются символами фигурных скобок. Условием для этого является наличие следующей комбинации,
         // расположенной, начиная с первой позиции поля 70: апостроф - круглая скобка - VO<код>[PS < номер паспорта сделки >] - круглая скобка - апостроф.
-        // ‘(VO10010)’OPLATA PO DOGOVORU
-        // ‘(VO10040PS04060001/0001/0000/1/0)’OPLATA PO DOGOVORU
+        // '(VO10010)'OPLATA PO DOGOVORU
+        // '(VO10040PS04060001/0001/0000/1/0)'OPLATA PO DOGOVORU
 
-        sb.Append(":70:");
-        s = es.Purpose.Prepare35();
 
-        int n = 0;
+        int purposeLine = 0;
+        ReadOnlySpan<char> purpose = string.Empty;
 
-        for (; n < 4; n++)
+        if (ed.Purpose != null)
         {
-            var s35 = s.Slice(n * 35, 35).TrimEnd();
+            purpose = ed.Purpose.Prepare35();
 
-            if (s35.Length == 0) break;
+            if (CorrProperties.SwiftPurposeField == "70")
+            {
+                sb.Append(":70:");
 
-            sb.AppendLine(s35.ToString());
+                for (; purposeLine < 4; purposeLine++)
+                {
+                    var s35 = purpose.Slice(purposeLine * 35, 35).TrimEnd();
+
+                    if (s35.Length == 0) break;
+
+                    sb.AppendLine(s35.ToString());
+                }
+            }
         }
 
         // Детали расходов
@@ -383,7 +467,7 @@ public static class ED100Ex
         // POST - почтой
         // TELG – телеграфом
         // ELEK – электронными средствами связи
-        // BESP – по системе БЭСП.
+        // BESP – по системе БЭСП (Использование сервиса срочного перевода является обязательным для платежей на сумму от 100 000 000 рублей!).
 
         // /RPO/ — Реквизиты платежного ордера
         // "Номер частичного платежа.Шифр расчетного документа.Номер расчетного документа.Дата расчетного документа.Сумма остатка платежа"
@@ -402,28 +486,40 @@ public static class ED100Ex
         // /NZP/ Продолжение поля 70 Назначение платежа. Суммарный объем информации о назначении платежа, содержащийся в поле 70 и в поле 72 с кодовым словом /NZP/,
         // после транслитерации не должен превышать 210 знаков.
 
+        string paytKind = ed.PaytKind != null // || ed.Sum.Length > 10 //TODO БЭСП
+            ? "BESP" 
+            : "ELEK";
+
         sb.Append(":72:")
-            .AppendLine($"/RPP/{es.AccDocNo}.{es.AccDocDate}.{es.Priority}.ELEK.{es.ChargeOffDate}.{es.TransKind}")
-            .AppendLine($"/DAS/{es.ChargeOffDate}.{es.ReceiptDate}.000000.000000");
+            .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate}.{ed.Priority}.{paytKind}") //.{es.ChargeOffDate}.{es.TransKind}")
+            .AppendLine($"/DAS/{ed.ChargeOffDate}.{ed.ReceiptDate}.000000.000000");
 
-        string nzp = "/NZP/";
-
-        for (; n < 6; n++)
+        if (ed.Tax)
         {
-            var s35 = s.Slice(n * 35, 35).TrimEnd();
-
-            if (s35.Length == 0) break;
-
-            sb.Append(nzp).AppendLine(s35.ToString());
-            nzp = "//";
+            sb.AppendLine($"/UIP/{ed.PaymentID ?? "0"}");
         }
 
-        if (es.Tax)
+        if (!purpose.IsEmpty)
+        {
+            string nzp = "/NZP/";
+
+            for (; purposeLine < 6; purposeLine++)
+            {
+                var s35 = purpose.Slice(purposeLine * 35, 35).TrimEnd();
+
+                if (s35.Length == 0) break;
+
+                sb.Append(nzp).AppendLine(s35.ToString());
+                nzp = "//";
+            }
+        }
+
+        if (ed.Tax)
         {
             sb.Append(":77B:")
-                .AppendLine($"/N10/{es.TaxPaytKind}/N4/{es.CBC}")
-                .AppendLine($"/N5/{es.OKATO}/N6/{es.PaytReason}/N7/{es.TaxPeriod}")
-                .AppendLine($"/N8/{es.DocNo}/N9/{es.DocDate}");
+                .AppendLine($"/N10/{ed.TaxPaytKind ?? "0"}/N4/{ed.CBC ?? "0"}")
+                .AppendLine($"/N5/{ed.OKATO ?? "0"}/N6/{ed.PaytReason ?? "0"}/N7/{ed.TaxPeriod ?? "0"}")
+                .AppendLine($"/N8/{ed.DocNo ?? "0"}/N9/{ed.DocDate ?? "0"}");
         }
 
         #endregion SWIFT TEXT

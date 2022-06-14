@@ -51,7 +51,7 @@ public class PacketEPD
     /// <summary>
     /// Дата составления ЭС.
     /// </summary>
-    public string? EDDate { get; set; }
+    public string EDDate { get; set; }
 
     /// <summary>
     /// Номер ЭС в течение опердня.
@@ -91,9 +91,6 @@ public class PacketEPD
     #endregion Properties
 
     #region Constructors
-
-    public PacketEPD()
-    { }
 
     public PacketEPD(string path)
     {

@@ -209,8 +209,13 @@ public static class SwiftTranslit
     /// </summary>
     /// <param name="value">Строка на кирилице</param>
     /// <returns>Строка на латинице</returns>
-    public static string Lat(string value)
+    public static string? Lat(string? value)
     {
+        if (value is null)
+        {
+            return value;
+        }
+
         bool rus = true; // default RU stream
         var result = new StringBuilder(value.Length);
 
@@ -252,17 +257,28 @@ public static class SwiftTranslit
     /// </summary>
     /// <param name="value">Строка на латинице</param>
     /// <returns>Строка на кирилице</returns>
-    public static string Cyr(string value) //TODO Purpose "'(VO12345)'..." -> "{VO12345}..."
+    public static string? Cyr(string? value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
     {
+        if (value is null)
+        {
+            return value;
+        }
 
         /*
-        В соответствии с Инструкцией Банка России № 181-И от 16.08.2017г. при составлении платежных инструкций для осуществления расчетов с участием нерезидентов в валюте Российской Федерации в поле 70 должен быть указан код вида валютной операции.
+        В соответствии с Инструкцией Банка России N181-И от 16.08.2017г. при составлении платежных инструкций для осуществления 
+        расчетов с участием нерезидентов в валюте Российской Федерации в поле 70 должен быть указан код вида валютной операции.
         Перед значением кода вида валютной операции проставляется разделительный символ VO.
-        Эта информация должна быть заключена в скобки и помещена в начале поля «Назначение платежа» в следующем виде: '(VO<код>)'. Пробелы внутри скобок не допускаются.
+
+        Эта информация должна быть заключена в скобки и помещена в начале поля «Назначение платежа» в следующем виде: '(VO<код>)'. 
+        Пробелы внутри скобок не допускаются.
+
         '(VO5!n)'24х (Структурированный формат – Свободный текст)
         3*35x (Свободный текст)
-        ,где VO - код вида валютной операции в соответствии с Приложением № 1 к Инструкции Банка России № 181-И от 16.08.2017г.
+
+        где VO - код вида валютной операции в соответствии с Приложением № 1 к Инструкции Банка России N181-И от 16.08.2017г.
+        
         Примеры:
+        
         :70:'(VO10010)'OPLATA ZA STROITELXNYE MATERIALY PO DOGOVORU n82 OT 01/05/2013. BEZ NDS
         :70:'(VO80050)''PAYMENT FOR SERVICES INV 52 DD 30/06/2014. WITHOUT VAT'
          */
@@ -299,8 +315,13 @@ public static class SwiftTranslit
     /// </summary>
     /// <param name="value">Строка</param>
     /// <returns>Текст по 35 символов в строке</returns>
-    public static string Wrap35(string value)
+    public static string? Wrap35(string? value)
     {
+        if (value is null)
+        {
+            return value;
+        }
+
         var s = value.Prepare35();
         var sb = new StringBuilder(210);
 
@@ -316,8 +337,13 @@ public static class SwiftTranslit
         return sb.ToString();
     }
 
-    public static string LatWrap35(this string value)
+    public static string? LatWrap35(this string? value)
     {
+        if (value is null)
+        {
+            return value;
+        }
+
         return Wrap35(Lat(value));
     }
 
@@ -339,11 +365,26 @@ public static class SwiftTranslit
     }
 
     /// <summary>
+    /// Преобразование даты, если она есть, из формата УФЭБС XML в SWIFT-RUR
+    /// </summary>
+    /// <param name="value">ГГГГ-ММ-ДД или null</param>
+    /// <returns>ГГММДД или null</returns>
+    public static string? XDate(string? value)
+    {
+        if (value is null)
+        {
+            return value;
+        }
+
+        return XDateX(value);
+    }
+
+    /// <summary>
     /// Преобразование даты из формата УФЭБС XML в SWIFT-RUR
     /// </summary>
     /// <param name="value">ГГГГ-ММ-ДД</param>
     /// <returns>ГГММДД</returns>
-    public static string XDate(string value)
+    public static string XDateX(string value)
     {
         return value[2..].Replace("-", "");
     }

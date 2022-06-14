@@ -22,8 +22,8 @@ using System.Xml.Linq;
 namespace CorrLib;
 
 /// <summary>
-/// ED101 xmlns="urn:cbr-ru:ed:v2.0"
-/// Платежное поручение
+/// Базовый комплексный тип для всех электронных платежных сообщений. Содержит реквизиты, общие для всех типов ЭПС.
+/// Сверено с форматом УФЭБС по файлу cbr_ed101_v2022.3.0.xsd
 /// </summary>
 public class ED100
 {
@@ -40,7 +40,9 @@ public class ED100
     /// ED110 ЭПС сокращенного формата.
     /// ED111 Мемориальный ордер в электронном виде.
     /// </summary>
-    public string EDType { get; set; } = "ED101";
+    public string EDType { get; set; } = null!;
+
+    #region Attributes
 
     /// <summary>
     /// Списано со счета плательщика (поле 71). Дата списания денежных средств со счета плательщика.
@@ -48,39 +50,59 @@ public class ED100
     public string? ChargeOffDate { get; set; }
 
     /// <summary>
+    /// Назначение платежа кодовое (поле 20). До 35 символов.
+    /// </summary>
+    public string? CodePurpose { get; set; }
+
+    /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDAuthor { get; set; } = "4030702000";
+    public string EDAuthor { get; set; } = null!; // required "4030702000";
 
     /// <summary>
     /// Дата составления ЭС.
     /// </summary>
-    public string EDDate { get; set; } = DateTime.Now.ToString("yyyy-MM-dd");
+    public string EDDate { get; set; } = null!; // required
 
     /// <summary>
     /// Номер ЭС в течение опердня.
     /// </summary>
-    public string EDNo { get; set; } = "1";
+    public string EDNo { get; set; } = null!; // required
 
     /// <summary>
-    /// Уникальный идентификатор платежа, присвоенный получателем средств (поле 22).
+    /// Уникальный идентификатор получателя ЭС - УИС.
     /// </summary>
-    public string? PaymentID { get; set; }
+    public string? EDReceiver { get; set; }
 
     /// <summary>
-    /// Приоритет платежа.
+    /// Дата помещения в картотеку (поле 63).
     /// </summary>
-    public string? PaymentPrecedence { get; set; } // required (\d{2})
+    public string? FileDate { get; set; }
 
     /// <summary>
-    /// Вид платежа (поле 5).
+    /// Уникальный присваиваемый номер операции.
+    /// </summary>
+    public string? OperationID { get; set; }
+
+    /// <summary>
+    /// Уникальный идентификатор платежа (УИП), присвоенный получателем средств (поле 22).
+    /// </summary>
+    public string? PaymentID { get; set; } // required for Tax (default 0)
+
+    /// <summary>
+    /// Приоритет платежа. Две цифры.
+    /// </summary>
+    public string PaymentPrecedence { get; set; } = null!; // required (default 79)
+
+    /// <summary>
+    /// Вид платежа (поле 5). Одна цифра.
     /// </summary>
     public string? PaytKind { get; set; }
 
     /// <summary>
     /// Очередность платежа (поле 21).
     /// </summary>
-    public string Priority { get; set; } = "5"; // required
+    public string Priority { get; set; } = null!; // required (default 5)
 
     /// <summary>
     /// Поступило в банк плательщика (поле 62).
@@ -88,46 +110,76 @@ public class ED100
     public string? ReceiptDate { get; set; }
 
     /// <summary>
+    /// Запрошенная (требуемая) дата исполнения распоряжения.
+    /// </summary>
+    //public string? ReqSettlementDate { get; set; }
+
+    /// <summary>
+    /// Резервное поле (поле 23). Текст до 35 символов.
+    /// </summary>
+    //public string? ResField { get; set; }
+
+    /// <summary>
     /// Сумма (поле 7).
     /// </summary>
-    public string Sum { get; set; } = "0"; // required > 0
+    public string Sum { get; set; } = null!; // required > 0
 
     /// <summary>
     /// Признак системы обработки.
     /// </summary>
-    public string? SystemCode { get; set; }
+    public string SystemCode { get; set; } = null!; // required (default 02)
 
     /// <summary>
     /// Вид операции (поле 18).
-    /// 01 – платежное поручение
-    /// 02 – платежное требование
-    /// 06 – инкассовое поручение
-    /// 16 – платежный ордер
+    /// 01 – платежное поручение (ED101)
+    /// 02 – платежное требование (ED103)
+    /// 06 – инкассовое поручение (ED104)
+    /// 16 – платежный ордер (ED105)
     /// </summary>
-    public string TransKind { get; set; } = "01"; // required
+    public string TransKind { get; set; } = null!; // required (default 01)
 
     /// <summary>
-    /// Схема имен XML
+    /// Схема имен УФЭБС XML.
     /// </summary>
-    public string Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
+    public string? Xmlns { get; set; } // "urn:cbr-ru:ed:v2.0"
 
-    // AccDoc
+    #endregion Attributes
+
+    #region Elements
+
+    #region SetleNot
+    /// <summary>
+    /// Исполнить не ранее, чем
+    /// </summary>
+    //public string? SettleNotEarlier { get; set; }
+
+    /// <summary>
+    /// Исполнить не позднее, чем
+    /// </summary>
+    //public string? SettleNotLater { get; set; }
+
+    #endregion SetleNot
+
+    #region AccDoc
+    // Реквизиты исходного распоряжения о переводе денежных средств (поля 3 и 4).
 
     /// <summary>
     /// Дата составления распоряжения (поле 4).
     /// </summary>
-    public string? AccDocDate { get; set; } // required
+    public string AccDocDate { get; set; } = null!; // required
 
     /// <summary>
     /// Номер распоряжения (поле 3).
     /// </summary>
-    public string? AccDocNo { get; set; } // required
+    public string AccDocNo { get; set; } = null!; // required
 
-    // PayerRU
-    // Реквизиты плательщика в полноформатных электронных платежных сообщениях.
+    #endregion AccDoc
+
+    #region PayerRU
+    // Реквизиты плательщика.
 
     /// <summary>
-    /// ИНН плательщика (поле 60).
+    /// ИНН (или КИО) плательщика (поле 60).
     /// </summary>
     public string? PayerINN { get; set; }
 
@@ -142,7 +194,7 @@ public class ED100
     public string? PayerPersonalAcc { get; set; }
 
     /// <summary>
-    /// Наименование плательщика (поле 8).
+    /// Наименование плательщика (поле 8). Текст до 160 символов.
     /// </summary>
     public string? PayerName { get; set; }
 
@@ -152,18 +204,20 @@ public class ED100
     /// <summary>
     /// БИК (поле 11).
     /// </summary>
-    public string PayerBIC { get; set; } = "044030702";
+    public string? PayerBIC { get; set; } // "044030702"
 
     /// <summary>
     /// Номер счета банка плательщика (поле 12).
     /// </summary>
-    public string PayerCorrespAcc { get; set; } = "30101810600000000702";
+    public string? PayerCorrespAcc { get; set; } // "30101810600000000702"
 
-    // PayeeRU
-    // Реквизиты получателя средств в полноформатных электронных платежных сообщениях.
+    #endregion PayerRU
+
+    #region PayeeRU
+    // Реквизиты получателя средств.
 
     /// <summary>
-    /// ИНН получателя средств (поле 61).
+    /// ИНН (или КИО) получателя средств (поле 61).
     /// </summary>
     public string? PayeeINN { get; set; }
 
@@ -178,7 +232,7 @@ public class ED100
     public string? PayeePersonalAcc { get; set; }
 
     /// <summary>
-    /// Наименование получателя средств (поле 16).
+    /// Наименование получателя средств (поле 16). Текст до 160 символов.
     /// </summary>
     public string? PayeeName { get; set; }
 
@@ -195,48 +249,52 @@ public class ED100
     /// </summary>
     public string? PayeeCorrespAcc { get; set; }
 
+    #endregion PayeeRU
+
     // Purpose
 
     /// <summary>
-    /// Назначение платежа (поле 24).
+    /// Назначение платежа (поле 24). Текст до 210 символов.
     /// </summary>
     public string? Purpose { get; set; }
 
-    // DepartmentalInfo
-    // Ведомственная информация (поля 101, 104-110).
+    #endregion Elements
+
+    #region DepartmentalInfo
+    // Ведомственная информация (поля 101, 104-110). Опционально.
 
     /// <summary>
-    /// Поле 104.
+    /// Код бюджетной классификации (поле 104).
     /// </summary>
     public string? CBC { get; set; }
 
     /// <summary>
-    /// Поле 109.
+    /// Дата документа / Показатель даты документа (поле 109).
     /// </summary>
     public string? DocDate { get; set; }
 
     /// <summary>
-    /// Поле 108.
+    /// Номер документа / Идентификатор сведений о физическом лице в соответствии с указаниями Минфина РФ (поле 108).
     /// </summary>
     public string? DocNo { get; set; }
 
     /// <summary>
-    /// Поле 101.
+    /// Статус налогоплательщика (поле 101).
     /// </summary>
-    public string? DrawerStatus { get; set; }
+    public string? DrawerStatus { get; set; } // null if no DepartmentalInfo
 
     /// <summary>
-    /// Поле 105.
+    /// Код ОКТМО (поле 105).
     /// </summary>
     public string? OKATO { get; set; }
 
     /// <summary>
-    /// Поле 106.
+    /// Основание платежа (поле 106).
     /// </summary>
     public string? PaytReason { get; set; }
 
     /// <summary>
-    /// Поле 107.
+    /// Основание налогового периода / Код таможенного органа (поле 107).
     /// </summary>
     public string? TaxPeriod { get; set; }
 
@@ -245,23 +303,26 @@ public class ED100
     /// </summary>
     public string? TaxPaytKind { get; set; }
 
-    // Functions
+    #endregion DepartmentalInfo
+
+    #region Functions
 
     /// <summary>
     /// Присутствует ведомственная информация (поля 101, 104-110).
     /// </summary>
     public bool Tax => DrawerStatus != null;
 
+    #endregion Functions
     #endregion Properties
 
     #region Constructors
 
-    public ED100()
-    { }
-
-    public ED100(XNode node)
+    public ED100(XNode? node)
     {
-        this.Load((XElement)node);
+        if (node != null)
+        {
+            this.Load((XElement)node);
+        }
     }
 
     public ED100(XElement element)
@@ -271,48 +332,7 @@ public class ED100
 
     public ED100(ED100 ed)
     {
-        EDType = ed.EDType;
-
-        ChargeOffDate = ed.ChargeOffDate;
-        EDAuthor = ed.EDAuthor;
-        EDDate = ed.EDDate;
-        EDNo = ed.EDNo;
-        PaymentID = ed.PaymentID;
-        PaymentPrecedence = ed.PaymentPrecedence;
-        PaytKind = ed.PaytKind;
-        Priority = ed.Priority;
-        ReceiptDate = ed.ReceiptDate;
-        Sum = ed.Sum;
-        SystemCode = ed.SystemCode;
-        TransKind = ed.TransKind;
-        Xmlns = ed.Xmlns;
-
-        AccDocDate = ed.AccDocDate;
-        AccDocNo = ed.AccDocNo;
-
-        PayerINN = ed.PayerINN;
-        PayerKPP = ed.PayerKPP;
-        PayerPersonalAcc = ed.PayerPersonalAcc;
-        PayerName = ed.PayerName;
-        PayerBIC = ed.PayerBIC;
-        PayerCorrespAcc = ed.PayerCorrespAcc;
-
-        PayeeINN = ed.PayeeINN;
-        PayeeKPP = ed.PayeeKPP;
-        PayeePersonalAcc = ed.PayeePersonalAcc;
-        PayeeName = ed.PayeeName;
-        PayeeBIC = ed.PayeeBIC;
-        PayeeCorrespAcc = ed.PayeeCorrespAcc;
-
-        Purpose = ed.Purpose;
-
-        CBC = ed.CBC;
-        DocDate = ed.DocDate;
-        DocNo = ed.DocNo;
-        OKATO = ed.OKATO;
-        PaytReason = ed.PaytReason;
-        TaxPeriod = ed.TaxPeriod;
-        TaxPaytKind = ed.TaxPaytKind;
+        this.Load(ed);
     }
 
     #endregion Constructors
