@@ -254,7 +254,7 @@ public static class Program
                     e = (XElement?)node;
                     XAttribute? PaytKind = e?.Attribute(nameof(PaytKind));
 
-                    if (PaytKind != null && PaytKind.Value == "0")
+                    if (PaytKind != null /* && PaytKind.Value == "0" */)
                     {
                         PaytKind.Remove();
                     }
