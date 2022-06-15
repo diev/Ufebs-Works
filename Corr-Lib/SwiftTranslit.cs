@@ -18,6 +18,7 @@ limitations under the License.
 #endregion
 
 using System.Text;
+using System;
 
 namespace CorrLib;
 
@@ -26,6 +27,15 @@ namespace CorrLib;
 /// </summary>
 public static class SwiftTranslit
 {
+    /* Набор разрешенных символов:
+a b c d e f g h i j k l m n o p q r s t u v w x y z
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+0 1 2 3 4 5 6 7 8 9
+/ - ? : ( ) . , ' +
+CR LF Space (Пробел)
+     */
+
+
     private static readonly Dictionary<char, char> TRANSLAT = new()
     {
         { 'А', 'A' },
@@ -113,8 +123,8 @@ public static class SwiftTranslit
         { '>', ')' },
         { '[', '(' },
         { ']', ')' },
-        { '{', '(' },
-        { '}', ')' },
+        { '{', '(' }, //TODO Применяется только для поля 70 в сообщениях SWIFT МТ103 и для поля 72 с кодом /NZP/ МТ202
+        { '}', ')' }, //TODO Применяется только для поля 70 в сообщениях SWIFT МТ103 и для поля 72 с кодом /NZP/ МТ202
         { '"', 'm' },
         { '”', 'm' },
         { '“', 'm' },
@@ -216,11 +226,42 @@ public static class SwiftTranslit
             return value;
         }
 
+        var result = new StringBuilder(value.Length * 2);
+
+        // "{VO12345[PS...]}..."
+
+        int n = value.IndexOf("{VO");
+
+        if (n > -1)
+        {
+            int m = value.IndexOf("}", n + 3) + 1;
+
+            if (m > -1)
+            {
+                if (n > 0)
+                {
+                    result.Append(Lat(value[..n]));
+                }
+
+                result.Append("'(VO")
+                    .Append(value.AsSpan(n + 3, m - n - 4))
+                    .Append(")'");
+
+                if (m < value.Length)
+                {
+                    result.Append(Lat(value[m..]));
+                }
+
+                return result.ToString();
+            }
+        }
+
         bool rus = true; // default RU stream
-        var result = new StringBuilder(value.Length);
+        bool unknown = false;
+        var buff = new StringBuilder();
 
         foreach (var c in value)
-        {
+        { 
             if (rus)
             {
                 if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(c, StringComparison.OrdinalIgnoreCase))
@@ -228,24 +269,68 @@ public static class SwiftTranslit
                     rus = false;
                     result.Append('\'').Append(c);
                 }
+                else if ("0123456789/-?:().,+ ".Contains(c, StringComparison.Ordinal))
+                {
+                    result.Append(c);
+                }
+                else if (c == '\'')
+                {
+                    result.Append('j');
+                }
                 else
                 {
                     result.Append(Lat(c));
                 }
             }
+
+            // lat
+
             else if (c == '\'')
             {
-                rus = true;
-                result.Append("\'j");
+                result.Append('j');
             }
-            else if (!"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-?:().,+ ".Contains(c, StringComparison.OrdinalIgnoreCase))
+
+            else if ("0123456789/-?:().,+ ".Contains(c, StringComparison.Ordinal))
             {
-                rus = true;
-                result.Append('\'').Append(Lat(c));
+                unknown = true;
+                buff.Append(c);
             }
+
+            else if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(c, StringComparison.OrdinalIgnoreCase))
+            {
+                if (unknown)
+                {
+                    result.Append(buff);
+                    unknown = false;
+                    buff.Clear();
+                }
+
+                result.Append(c);
+            }
+
             else
             {
-                result.Append(c);
+                rus = true;
+                result.Append('\'');
+
+                if (unknown)
+                {
+                    result.Append(buff);
+                    unknown = false;
+                    buff.Clear();
+                }
+
+                result.Append(Lat(c));
+            }
+        }
+
+        if (!rus)
+        {
+            result.Append('\'');
+
+            if (unknown)
+            {
+                result.Append(buff);
             }
         }
 
@@ -350,8 +435,8 @@ public static class SwiftTranslit
     public static ReadOnlySpan<char> Prepare35(this string value)
     {
         string result = value.PadRight(210, ' ');
-        
-        for (int i = 0; i < 6; i++)
+
+        for (int i = 0; i < 4; i++) //TODO '-' для первых 4 строк до строк с "//", где еще до 2, если вообще играет(?)
         {
             int pos = i * 35;
 
@@ -371,7 +456,7 @@ public static class SwiftTranslit
     /// <returns>ГГММДД или null</returns>
     public static string? XDate(string? value)
     {
-        if (value is null)
+        if (string.IsNullOrEmpty(value))
         {
             return value;
         }

@@ -28,7 +28,7 @@ public static class CorrProcessing
     /// </summary>
     /// <param name="ed">Документ в формате ED100.</param>
     /// <returns>Наименование плательщика с заменой или без.</returns>
-    public static string? CorrPayerName(this ED100 ed)
+    public static string? CorrName(this ED100 ed)
     {
         if (ed.CorrSubstRequired() && CorrProperties.TemplatesName != null)
         {
@@ -93,21 +93,10 @@ public static class CorrProcessing
         }
     }
 
-    public static string? CorrPayerKPP(this ED100 ed)
+    public static string? CorrKPP(this ED100 ed, int person)
     {
-        string? inn = ed.PayerINN;
-        string? kpp = ed.PayerKPP;
-
-        return inn != null && inn.Length != 12 &&
-            kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
-            ? kpp
-            : null;
-    }
-
-    public static string? CorrPayeeKPP(this ED100 ed)
-    {
-        string? inn = ed.PayeeINN;
-        string? kpp = ed.PayeeKPP;
+        string? inn = person == 1 ? ed.PayerINN : ed.PayeeINN;
+        string? kpp = person == 1 ? ed.PayerKPP : ed.PayeeKPP;
 
         return inn != null && inn.Length != 12 &&
             kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
@@ -118,11 +107,11 @@ public static class CorrProcessing
     public static ED100 Corr(this ED100 ed)
     {
         ed.EDType = "ED101";
-        ed.PayerName = ed.CorrPayerName();
+        ed.PayerName = ed.CorrName();
 
         // удалить КПП для ИП и нулевые
-        ed.PayerKPP = ed.CorrPayerKPP();
-        ed.PayeeKPP = ed.CorrPayeeKPP();
+        ed.PayerKPP = ed.CorrKPP(1);
+        ed.PayeeKPP = ed.CorrKPP(2);
 
         if (ed.Tax)
         {
@@ -144,25 +133,7 @@ public static class CorrProcessing
         ed.FileDate = XDate(ed.FileDate);
         ed.ReceiptDate = XDate(ed.ReceiptDate);
         ed.AccDocDate = XDateX(ed.AccDocDate);
-
-        if (ed.Purpose != null && ed.Purpose.Contains("{VO", StringComparison.Ordinal))
-        {
-            string purpose = ed.Purpose;
-
-            int i = purpose.IndexOf("{VO", StringComparison.Ordinal) + 3;
-            int n = purpose.IndexOf('}', i);
-
-            string vo = purpose.Substring(i, n - 3);
-            string? text = purpose.Length > n + 1
-                ? Lat(purpose[(n + 1)..])
-                : null;
-
-            ed.Purpose = $"'(VO{vo})'{text}";
-        }
-        else
-        {
-            ed.Purpose = Lat(ed.Purpose);
-        }
+        ed.Purpose = Lat(ed.Purpose);
 
         if (ed.Tax)
         {

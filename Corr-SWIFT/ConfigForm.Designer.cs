@@ -159,7 +159,7 @@
             this.SaveBox.Size = new System.Drawing.Size(563, 82);
             this.SaveBox.TabIndex = 1;
             this.SaveBox.TabStop = false;
-            this.SaveBox.Text = "Конечные файлы";
+            this.SaveBox.Text = "Конечные файлы с {id} в маске";
             // 
             // SaveFormatChoice
             // 
@@ -187,7 +187,7 @@
             this.SaveMaskEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.SaveMaskEdit.Location = new System.Drawing.Point(106, 48);
             this.SaveMaskEdit.Name = "SaveMaskEdit";
-            this.SaveMaskEdit.PlaceholderText = "*.mt103";
+            this.SaveMaskEdit.PlaceholderText = "{id}.txt";
             this.SaveMaskEdit.Size = new System.Drawing.Size(137, 22);
             this.SaveMaskEdit.TabIndex = 4;
             // 

@@ -19,7 +19,7 @@ limitations under the License.
 
 using CorrLib;
 
-using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -47,6 +47,10 @@ public static class Config
 
     private const string _swiftNameLimit = "Swift.NameLimit";
     private const string _swiftPurposeField = "Swift.PurposeField";
+
+    // Save.Format
+    public const string UfebsFormat = "УФЭБС";
+    public const string SwiftFormat = "SWIFT";
 
     // AppContext.SetData(string name, object? data); // available from .NET 7+
     // See a lifehack at
@@ -241,6 +245,39 @@ public static class Config
         json = configNode.ToJsonString(options);
 
         File.WriteAllText(config, json);
+
+        //TODO auto save!
+        Type t = typeof(Config);
+        var infos = t.GetProperties(/*BindingFlags.Public | BindingFlags.Instance*/);
+        var sb = new StringBuilder();
+        foreach (var info in infos)
+        {
+            sb.Append(info.Name).Append('/').Append(info.PropertyType.Name).Append(" = ");
+            if (info.PropertyType.Name == "String")
+                sb.AppendLine(info.GetValue(info) as string);
+            else
+                sb.AppendLine((info.GetValue(info) as int?).ToString());
+        }
+        File.WriteAllText(config + "!", sb.ToString());
+        /*
+        Profile/String = 
+        Profiles/String = 
+        OpenDir/String = G:\BANK\TEST\OUT
+        OpenMask/String = *.xml
+        SaveDir/String = G:\BANK\TEST\CLI
+        SaveMask/String = {id}.txt
+        SaveFormat/String = УФЭБС
+        CorrAccount/String = 30101810600000000702
+        BankINN/String = 7831001422
+        BankKPP/String = 784101001
+        TemplatesName/String = АО "Сити Инвест Банк" ИНН 7831001422 ({name} р/с {acc})
+        TemplatesPurpose/String = //7831001422//784101001//{name}//{purpose}
+        SwiftNameLimit/Int32 = 105
+        SwiftPurposeField/String = 70
+        BankSWIFT/String = CITVRU2P
+        CorrSWIFT/String = CITVRU2P
+         */
+
         InitCorrProperties();
     }
 

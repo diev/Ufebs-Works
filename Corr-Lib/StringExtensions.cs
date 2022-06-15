@@ -17,11 +17,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CorrLib;
 
@@ -40,6 +36,13 @@ public static class StringExtensions
     public static string AddNotEmpty(this string? value)
     {
         return value == null ? string.Empty : $".{value}";
+    }
+
+    public static string AddNotEmptyNorZeros(this string? value)
+    {
+        return value == null || value.Length == 0 || value == "0" || value == "000000000"
+            ? string.Empty
+            : $".{value}";
     }
 
     public static StringBuilder AppendLineIf(this StringBuilder @this, bool condition, string value)

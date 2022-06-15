@@ -46,7 +46,7 @@ public class PacketEPD
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string? EDAuthor { get; set; }
+    public string EDAuthor { get; set; }
 
     /// <summary>
     /// Дата составления ЭС.
@@ -56,7 +56,7 @@ public class PacketEPD
     /// <summary>
     /// Номер ЭС в течение опердня.
     /// </summary>
-    public string? EDNo { get; set; }
+    public string EDNo { get; set; }
 
     /// <summary>
     /// Количество ЭПС в пакете.
@@ -66,7 +66,7 @@ public class PacketEPD
     /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string? EDReceiver { get; set; }
+    public string EDReceiver { get; set; }
 
     /// <summary>
     /// Общая сумма ЭПС в пакете.
