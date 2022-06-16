@@ -25,7 +25,6 @@ public partial class ConfigForm : Form
     {
         InitializeComponent();
 
-        //ProfileChoice.Items.AddRange(Config.Profiles.Split(';'));
         ProfileChoice.Items.AddRange(Config.Profiles);
         ProfileChoice.Items.Add(string.Empty);
         ProfileChoice.Text = Config.Profile;
@@ -36,6 +35,8 @@ public partial class ConfigForm : Form
     private void LoadConfig()
     {
         Config.Profile = ProfileChoice.Text;
+
+        // string
 
         OpenDirEdit.Text = Config.OpenDir;
         OpenMaskEdit.Text = Config.OpenMask;
@@ -54,26 +55,29 @@ public partial class ConfigForm : Form
         TemplatesNameEdit.Text = Config.TemplatesName;
         TemplatesPurposeEdit.Text = Config.TemplatesPurpose;
 
-        SwiftNameLimitChoice.Text = Config.SwiftNameLimit.ToString();
         SwiftPurposeFieldChoice.Text = Config.SwiftPurposeField;
+
+        // int
+
+        SwiftNameLimitChoice.Text = Config.SwiftNameLimit == 0
+            ? SwiftNameLimitChoice.Items[0].ToString()
+            : Config.SwiftNameLimit.ToString();
     }
 
     private void SaveConfig()
     {
         string profile = ProfileChoice.Text;
-        string[] profiles = Config.Profiles;
+
+        if (!ProfileChoice.Items.Contains(profile))
+        {
+            var list = new List<string>(Config.Profiles);
+            list.Add(profile);
+            Config.Profiles = list.ToArray();
+        }
 
         Config.Profile = profile;
 
-        if (profiles.Length > 0 && !profiles.Contains(profile))
-        {
-            //Config.Profiles += ';' + profile;
-            Config.Profiles.Append<string>(profile);
-        }
-        else
-        {
-            Config.Profiles = new string[] { profile };
-        }
+        // string TextBox
 
         Config.OpenDir = OpenDirEdit.Text ?? OpenDirEdit.PlaceholderText;
         Config.OpenMask = OpenMaskEdit.Text ?? OpenDirEdit.PlaceholderText;
@@ -92,8 +96,13 @@ public partial class ConfigForm : Form
         Config.TemplatesName = TemplatesNameEdit.Text ?? TemplatesNameEdit.PlaceholderText;
         Config.TemplatesPurpose = TemplatesPurposeEdit.Text ?? TemplatesPurposeEdit.PlaceholderText;
 
-        Config.SwiftNameLimit = int.Parse(SwiftNameLimitChoice.Text);
+        // string ComboBox
+
         Config.SwiftPurposeField = SwiftPurposeFieldChoice.Text;
+
+        // int ComboBox
+
+        Config.SwiftNameLimit = int.Parse(SwiftNameLimitChoice.Text);
 
         Config.Save();
 

@@ -89,21 +89,21 @@ public partial class MainForm : Form
             Config.Profile = args[1];
         }
 
-        ReInitForm();
-    }
+        Show();
 
-    private void ReInitForm()
-    {
-        string err = Config.Validate();
-
-        if (err.Length > 0)
+        if (Config.OpenDir.Length == 0)
         {
-            MessageBox.Show($"Проверьте настройки:\n\n{err}",
+            MessageBox.Show($"Проверьте настройки!",
                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             ConfigMenuItem.PerformClick();
         }
 
+        ReInitForm();
+    }
+
+    private void ReInitForm()
+    {
         OpenFileDialog.InitialDirectory = Config.OpenDir;
         OpenFileDialog.Filter = $"{Config.UfebsFormat}|{Config.OpenMask}|{OpenFileDialog.Filter}";
 
@@ -111,10 +111,7 @@ public partial class MainForm : Form
         SaveAsFileDialog.Filter = $"{Config.SwiftFormat}|{Config.SaveMask}|{SaveAsFileDialog.Filter}";
         SaveAsFileDialog.DefaultExt = Path.GetExtension(Config.SaveMask);
 
-        //_saveMaskName = Path.GetFileName(Config.SaveMask);
-
         FilesList.Items.Clear();
-        //FilesListBox.Items.AddRange(Directory.GetFiles(ConfigProperties.OpenDir, ConfigProperties.OpenMask));
 
         foreach (var file in new SourceFileCollection(Config.OpenDir, Config.OpenMask))
         {
@@ -126,7 +123,7 @@ public partial class MainForm : Form
         if (saved.Length > 0)
         {
             var reply = MessageBox.Show(
-                $"В выходной директории\n{Config.SaveDir}\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nОни будут перезаписаны при сохранениях!\nУдалить их?",
+                $"В выходной директории\n{Config.SaveDir}\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nУдалить их?",
                 Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
             if (reply == DialogResult.Yes)
@@ -144,7 +141,6 @@ public partial class MainForm : Form
     private void OpenFilesOK()
     {
         FilesList.Items.Clear();
-        //FilesListBox.Items.AddRange(OpenFileDialog.FileNames);
 
         foreach (var file in new SourceFileCollection(OpenFileDialog.FileNames))
         {

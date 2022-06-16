@@ -1,7 +1,7 @@
 {
   "configProperties": {
     "Profile": "",
-    "Profiles": [ "" ],
+    "Profiles": [],
     "OpenDir": "G:\\BANK\\TEST\\OUT",
     "OpenMask": "*.xml",
     "SaveDir": "G:\\BANK\\TEST\\CLI",

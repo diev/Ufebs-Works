@@ -394,6 +394,7 @@
             this.SwiftNameLimitChoice.Location = new System.Drawing.Point(401, 50);
             this.SwiftNameLimitChoice.Name = "SwiftNameLimitChoice";
             this.SwiftNameLimitChoice.Size = new System.Drawing.Size(75, 23);
+            this.SwiftNameLimitChoice.Sorted = true;
             this.SwiftNameLimitChoice.TabIndex = 2;
             // 
             // label3
@@ -438,6 +439,7 @@
             this.SwiftPurposeFieldChoice.Location = new System.Drawing.Point(401, 50);
             this.SwiftPurposeFieldChoice.Name = "SwiftPurposeFieldChoice";
             this.SwiftPurposeFieldChoice.Size = new System.Drawing.Size(75, 23);
+            this.SwiftPurposeFieldChoice.Sorted = true;
             this.SwiftPurposeFieldChoice.TabIndex = 2;
             // 
             // label1

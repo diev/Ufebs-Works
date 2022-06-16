@@ -29,7 +29,7 @@ public class SourceFileCollection : IReadOnlyList<string[]>
 
     public int Count => _items.Length;
 
-    public SourceFileCollection(string directory, string mask)
+    public SourceFileCollection(string directory, string mask) //TODO path is empty?
         : this(Directory.GetFiles(directory, mask))
     { }
 
