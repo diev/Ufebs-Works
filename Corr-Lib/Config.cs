@@ -17,14 +17,12 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib;
-
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
 
-namespace CorrSWIFT;
+namespace CorrLib;
 
 public static class Config
 {
@@ -44,15 +42,7 @@ public static class Config
         set
         {
             S(nameof(Profile), value);
-
-            if (string.IsNullOrEmpty(value))
-            {
-                _profile = string.Empty;
-            }
-            else
-            {
-                _profile = value + '.';
-            }
+            _profile = value + '.';
         }
     }
 
@@ -148,38 +138,15 @@ public static class Config
 
     static Config()
     {
-        _profile = AppContext.GetData(nameof(Profile)) as string ?? string.Empty;
-
-        if (_profile.Length > 0)
-        {
-            _profile += '.';
-        }
-
-        InitCorrProperties();
+        _profile = (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';
     }
 
-    public static void InitCorrProperties()
-    {
-        CorrProperties.BankINN = BankINN;
-        CorrProperties.BankKPP = BankKPP;
-        CorrProperties.BankSWIFT = BankSWIFT;
-
-        CorrProperties.CorrAccount = CorrAccount;
-        CorrProperties.CorrSWIFT = CorrSWIFT;
-
-        CorrProperties.TemplatesName = TemplatesName;
-        CorrProperties.TemplatesPurpose = TemplatesPurpose;
-
-        CorrProperties.SwiftNameLimit = SwiftNameLimit;
-        CorrProperties.SwiftPurposeField = SwiftPurposeField;
-    }
-
-    public static void Save()
+    public static void Save(string appPath)
     {
         const string runtimeOptions = nameof(runtimeOptions);
         const string configProperties = nameof(configProperties);
 
-        string path = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
+        string path = Path.ChangeExtension(appPath, "runtimeconfig.json");
         string json = File.ReadAllText(path);
 
         var configNode = JsonNode.Parse(json);
@@ -224,15 +191,16 @@ public static class Config
 
         var options = new JsonSerializerOptions
         {
-            //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+            //Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
         };
-        json = configNode.ToJsonString(options);
+        json = configNode.ToJsonString(options); //TODO JsonSerializer.Serialize() ?
 
         File.WriteAllText(path, json);
-        InitCorrProperties();
     }
+
+    #region Getters
 
     private static string G(string name, string defValue = "") =>
         AppContext.GetData(name) as string ?? defValue;
@@ -255,7 +223,7 @@ public static class Config
     private static int GPInt(string name, int defValue = 0) =>
         GInt(_profile + name, defValue);
 
-    private static string[]? GArray(string name)
+    private static string[] GArray(string name)
     {
         var value = AppContext.GetData(name);
         
@@ -266,14 +234,22 @@ public static class Config
 
         if (value is String)
         {
-            string[]? values = JsonSerializer.Deserialize<string[]>((string)value);
+            var values = JsonSerializer.Deserialize<string[]>((string)value);
             S(name, values);
 
-            return values;
+            if (values is null)
+            {
+                return Array.Empty<string>();
+            }
+
+            return (string[])values;
         }
 
-        return (string[]?)value;
+        return (string[])value;
     }
+
+    #endregion Getters
+    #region Setters
 
     private static void S(string name, string value = "") =>
         AppDomain.CurrentDomain.SetData(name, value);
@@ -290,4 +266,5 @@ public static class Config
     private static void S(string name, string[]? value) =>
         AppDomain.CurrentDomain.SetData(name, value);
 
+    #endregion Setters
 }

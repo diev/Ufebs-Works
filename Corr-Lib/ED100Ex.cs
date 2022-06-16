@@ -293,14 +293,14 @@ public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not nu
         sb
             // Basic header
             .Append("{1:F01") // Block 1 identifier : Application identifier
-            .Append(CorrProperties.BankSWIFT) // Service identifier
+            .Append(Config.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
             .Append(id) // Session number
             .Append('}')
 
             // Application header
             .Append("{2:I103") // Block 2 identifier : In, MT103
-            .Append(CorrProperties.CorrSWIFT) // Destination address
+            .Append(Config.CorrSWIFT) // Destination address
             .Append("XXXXXN}") // Logical terminal address, Message priority (Normal)
 
             // User header
@@ -372,7 +372,7 @@ public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not nu
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
 
-        sb.AppendLine($":52A:{CorrProperties.BankSWIFT}");
+        sb.AppendLine($":52A:{Config.BankSWIFT}");
         //sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
         //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
         //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
@@ -384,7 +384,7 @@ public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not nu
         // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
         // если только иное особо не оговорено в двустороннем соглашении.
 
-        sb.AppendLine($":53B:/D/{CorrProperties.CorrAccount}"); // Корсчет нашего банка в том банке
+        sb.AppendLine($":53B:/D/{Config.CorrAccount}"); // Корсчет нашего банка в том банке
 
         // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
         // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.
@@ -452,7 +452,7 @@ public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not nu
         {
             purpose = ed.Purpose.Prepare35();
 
-            if (CorrProperties.SwiftPurposeField == "70")
+            if (Config.SwiftPurposeField == "70")
             {
                 sb.Append(":70:");
 
@@ -584,14 +584,14 @@ public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not nu
         sb
             // Basic header
             .Append("{1:F01") // Block 1 identifier : Application identifier
-            .Append(CorrProperties.BankSWIFT) // Service identifier
+            .Append(Config.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
             .Append(id) // Session number
             .Append('}')
 
             // Application header
             .Append("{2:I202") // Block 2 identifier : In, MT202
-            .Append(CorrProperties.CorrSWIFT) // Destination address
+            .Append(Config.CorrSWIFT) // Destination address
             .Append("XXXXXN}") // Logical terminal address, Message priority (Normal)
 
             // User header
@@ -629,7 +629,7 @@ public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not nu
         // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
         // если только иное особо не оговорено в двустороннем соглашении.
 
-        sb.AppendLine($":53B:/D/{CorrProperties.CorrAccount}"); // Корсчет нашего банка в том банке
+        sb.AppendLine($":53B:/D/{Config.CorrAccount}"); // Корсчет нашего банка в том банке
 
         // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
         // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.

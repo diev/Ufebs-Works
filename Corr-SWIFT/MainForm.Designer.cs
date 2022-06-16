@@ -364,7 +364,6 @@ partial class MainForm
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
             this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
-            this.DocsList.DoubleClick += new System.EventHandler(this.DocsList_DoubleClick);
             // 
             // NoColumn
             // 

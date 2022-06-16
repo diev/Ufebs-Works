@@ -30,10 +30,10 @@ public static class CorrProcessing
     /// <returns>Наименование плательщика с заменой или без.</returns>
     public static string? CorrName(this ED100 ed)
     {
-        if (ed.CorrSubstRequired() && CorrProperties.TemplatesName != null)
+        if (ed.CorrSubstRequired() && Config.TemplatesName != null)
         {
             //return $"{OurName} ИНН {OurINN} ({ed.CorrShortenName()} Р/С {ed.PayerPersonalAcc})";
-            return CorrProperties.TemplatesName
+            return Config.TemplatesName
                 .Replace("{name}", ed.CorrShortenName())
                 .Replace("{acc}", ed.PayerPersonalAcc);
         }
@@ -48,9 +48,9 @@ public static class CorrProcessing
     /// <returns>Назначение платежа с заменой или без.</returns>
     public static string? CorrPurpose(this ED100 ed)
     {
-        if (ed.Tax && ed.CorrSubstRequired() && CorrProperties.TemplatesPurpose != null)
+        if (ed.Tax && ed.CorrSubstRequired() && Config.TemplatesPurpose != null)
         {
-            return CorrProperties.TemplatesPurpose
+            return Config.TemplatesPurpose
                 .Replace("{name}", ed.CorrShortenName())
                 .Replace("{purpose}", ed.Purpose);
         }
@@ -65,7 +65,7 @@ public static class CorrProcessing
     /// <returns></returns>
     public static bool CorrSubstRequired(this ED100 ed)
     {
-        return ed.PayerINN != null && ed.PayerINN != CorrProperties.BankINN;
+        return ed.PayerINN != null && ed.PayerINN != Config.BankINN;
     }
 
     /// <summary>
@@ -149,76 +149,36 @@ public static class CorrProcessing
         return ed;
     }
 
-    //public static ED100 CorrClone(this ED100 ed)
-    //{
-    //    var corr = new ED100(ed)
-    //    {
-    //        EDType = "ED101",
-    //        PayerName = ed.CorrPayerName(),
+    public static bool CorrValid(this ED100 ed)
+    {
+        switch (Config.SaveFormat)
+        {
+            case Config.UfebsFormat:
+                if (ed.PayerName?.Length > 160) return false;
+                if (ed.Purpose?.Length > 210) return false;
+                break;
 
-    //        // удалить КПП для ИП и нулевые
-    //        PayerKPP = ed.CorrPayerKPP(),
-    //        PayeeKPP = ed.CorrPayeeKPP()
-    //    };
+            case Config.SwiftFormat:
+                if (Lat(ed.PayerName)?.Length > Config.SwiftNameLimit) return false;
+                if (Lat(ed.Purpose)?.Length > 210) return false;
+                break;
+        }
 
-    //    if (ed.Tax)
-    //    {
-    //        corr.Purpose = ed.CorrPurpose();
+        return true;
+    }
 
-    //        // add required "0" by default!
-    //        corr.CBC = ed.CBC ?? "0";
-    //        corr.DocDate = ed.DocDate ?? "0";
-    //        corr.DocNo = ed.DocNo ?? "0";
-    //        corr.OKATO = ed.OKATO ?? "0";
-    //        corr.PaytReason = ed.PaytReason ?? "0";
-    //        corr.TaxPeriod = ed.TaxPeriod ?? "0";
-    //        corr.TaxPaytKind = ed.TaxPaytKind ?? "0";
-    //    }
+    public static bool CorrMT103Valid(this ED100 ed)
+    {
+        if (ed.PayerName?.Length > Config.SwiftNameLimit) return false;
+        if (ed.Purpose?.Length > 210) return false;
 
-    //    return corr;
-    //}
+        return true;
+    }
 
-    //public static ED100 CorrSWIFTClone(this ED100 ed)
-    //{
-    //    var corr = new ED100(ed)
-    //    {
-    //        PayerName = SwiftTranslit.Lat(ed.PayerName),
-    //        PayeeName = SwiftTranslit.Lat(ed.PayeeName),
+    public static string CorrId(this ED100 @this) =>
+        $"{SwiftTranslit.XDate(@this.EDDate)}{@this.EDNo.PadLeft(9, '0')}";
 
-    //        Sum = SwiftTranslit.XSum(ed.Sum),
+    public static string CorrFileName(this ED100 @this) =>
+        Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", @this.CorrId()));
 
-    //        ChargeOffDate = SwiftTranslit.XDate(ed.ChargeOffDate),
-    //        EDDate = SwiftTranslit.XDate(ed.EDDate),
-    //        ReceiptDate = SwiftTranslit.XDate(ed.ReceiptDate),
-    //        AccDocDate = SwiftTranslit.XDate(ed.AccDocDate)
-    //    };
-
-    //    if (ed.Purpose.Contains("{VO", StringComparison.Ordinal))
-    //    {
-    //        string purpose = ed.Purpose;
-    //        int i = purpose.IndexOf("{VO", StringComparison.Ordinal) + 3;
-    //        int n = purpose.IndexOf('}', i);
-    //        string vo = purpose.Substring(i, n - 3);
-    //        string text = SwiftTranslit.Lat(purpose[(n + 1)..]);
-
-    //        corr.Purpose = $"'(VO{vo})'{text}";
-    //    }
-    //    else
-    //    {
-    //        corr.Purpose = SwiftTranslit.Lat(ed.Purpose);
-    //    }
-
-    //    if (ed.Tax)
-    //    {
-    //        corr.CBC = SwiftTranslit.Lat(ed.CBC);
-    //        corr.DocDate = SwiftTranslit.Lat(ed.DocDate);
-    //        corr.DocNo = SwiftTranslit.Lat(ed.DocNo);
-    //        corr.OKATO = SwiftTranslit.Lat(ed.OKATO);
-    //        corr.PaytReason = SwiftTranslit.Lat(ed.PaytReason);
-    //        corr.TaxPeriod = SwiftTranslit.Lat(ed.TaxPeriod);
-    //        corr.TaxPaytKind = SwiftTranslit.Lat(ed.TaxPaytKind);
-    //    }
-
-    //    return corr;
-    //}
 }

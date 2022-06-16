@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib;
+
 namespace CorrSWIFT;
 
 public partial class ConfigForm : Form
@@ -104,10 +106,14 @@ public partial class ConfigForm : Form
 
         Config.SwiftNameLimit = int.Parse(SwiftNameLimitChoice.Text);
 
-        Config.Save();
+        Config.Save(Application.ExecutablePath);
 
-        MessageBox.Show($"Параметры профиля \"{profile}\" сохранены.", 
-            Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        string msg = profile.Length == 0
+            ? "Параметры сохранены."
+            : $"Параметры профиля \"{profile}\" сохранены.";
+
+        MessageBox.Show(msg, Application.ProductName, 
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void OpenDirButton_Click(object sender, EventArgs e)

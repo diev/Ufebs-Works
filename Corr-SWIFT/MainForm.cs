@@ -26,7 +26,7 @@ namespace CorrSWIFT;
 
 public partial class MainForm : Form
 {
-    private const string VersionDate = "2022-06-15"; //TODO Versioning in .NET6+
+    private const string VersionDate = "2022-06-16"; //TODO Versioning in .NET6+
 
     // private const int MAX_NAME = 3 * 35; // 105 (SWIFT-RUR) ËÎË 160 (”‘›¡—)?
     private const int MAX_NAME = 100; //TODO TEST ONLY!!!
@@ -513,26 +513,34 @@ public partial class MainForm : Form
         if (list.SelectedItems.Count != 1) return;
         var item = list.SelectedItems[0];
 
-        var ed = new ED100(_packet.Docs[item.Index]);
-        string id = $"{SwiftTranslit.XDate(ed.EDDate)}{ed.EDNo.PadLeft(9, '0')}";
-        string path = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", id));
-        File.WriteAllText(path, ed.MT103(), Encoding.ASCII);
-        item.SubItems[SavedColumn.Index].Text = path;
+        if (!SaveFileItem(item))
+        {
+            CorrectList(item);
+        }
     }
 
-    private void DocsList_DoubleClick(object sender, EventArgs e)
+    private bool SaveFileItem(ListViewItem item)
     {
-        var list = (ListView)sender;
-        if (list.SelectedItems.Count != 1) return;
-        var item = list.SelectedItems[0];
+        var ed = new ED100(_packet.Docs[item.Index]);
 
-        CorrectList(item);
+        if (ed.CorrValid())
+        {
+            //string id = ed.CorrId();
+            string path = ed.CorrFileName();
+            File.WriteAllText(path, ed.MT103(), Encoding.ASCII);
+            item.SubItems[SavedColumn.Index].Text = path;
+
+            return true;
+        }
+
+        return false;
     }
 
     private void CorrectList(ListViewItem item)
     {
         int i1 = CorrColumn.Index;
         int i2 = PurposeColumn.Index;
+        int i3 = SavedColumn.Index;
 
         string name = item.SubItems[i1].Text;
         string purpose = item.SubItems[i2].Text;
@@ -560,11 +568,13 @@ public partial class MainForm : Form
                 if (i.SubItems[i1].Text == name)
                 {
                     ResetItem(i, i1, name2);
+                    SaveFileItem(i);
                 }
 
                 if (i.SubItems[i2].Text == purpose)
                 {
                     ResetItem(i, i2, purpose2);
+                    SaveFileItem(i);
                 }
             }
 

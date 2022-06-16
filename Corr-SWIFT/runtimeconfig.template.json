@@ -2,19 +2,19 @@
   "configProperties": {
     "Profile": "",
     "Profiles": [],
-    "OpenDir": "G:\\BANK\\TEST\\OUT",
-    "OpenMask": "*.xml",
-    "SaveDir": "G:\\BANK\\TEST\\CLI",
-    "SaveMask": "{id}.txt",
-    "SaveFormat": "SWIFT",
-    "BankINN": "7831001422",
-    "BankKPP": "784101001",
-    "BankSWIFT": "CITVRU2P",
-    "CorrAccount": "30101810600000000702",
-    "CorrSWIFT": "CITVRU2P",
-    "TemplatesName": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
-    "TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
-    "SwiftNameLimit": 105,
-    "SwiftPurposeField": "70"
+    ".OpenDir": "G:\\BANK\\TEST\\OUT",
+    ".OpenMask": "*.xml",
+    ".SaveDir": "G:\\BANK\\TEST\\CLI",
+    ".SaveMask": "{id}.txt",
+    ".SaveFormat": "SWIFT",
+    ".BankINN": "7831001422",
+    ".BankKPP": "784101001",
+    ".BankSWIFT": "CITVRU2P",
+    ".CorrAccount": "30101810600000000702",
+    ".CorrSWIFT": "CITVRU2P",
+    ".TemplatesName": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
+    ".TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
+    ".SwiftNameLimit": 105,
+    ".SwiftPurposeField": "70"
   }
 }
