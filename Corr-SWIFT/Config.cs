@@ -62,9 +62,9 @@ public static class Config
         set => S(nameof(Profile), value);
     }
 
-    public static string Profiles
+    public static string[] Profiles
     {
-        get => G(nameof(Profiles));
+        get => Garray(nameof(Profiles));
         set => S(nameof(Profiles), value);
     }
 
@@ -216,49 +216,89 @@ public static class Config
         string json = File.ReadAllText(config);
 
         var configNode = JsonNode.Parse(json);
-        var properties = configNode![runtimeOptions]![configProperties];
+        var entry = configNode![runtimeOptions]![configProperties];
 
-        properties![nameof(Profile)] = Profile;
-        properties![nameof(Profiles)] = Profiles;
+        entry![nameof(Profile)] = Profile;
+        //entry![nameof(Profiles)] = (string[])Profiles;
 
-        properties![P(_openDir)] = OpenDir;
-        properties![P(_openMask)] = OpenMask;
+        entry![P(_openDir)] = OpenDir;
+        entry![P(_openMask)] = OpenMask;
 
-        properties![P(_saveDir)] = SaveDir;
-        properties![P(_saveMask)] = SaveMask;
-        properties![P(_saveFormat)] = SaveFormat;
+        entry![P(_saveDir)] = SaveDir;
+        entry![P(_saveMask)] = SaveMask;
+        entry![P(_saveFormat)] = SaveFormat;
 
-        properties![P(_bankINN)] = BankINN;
-        properties![P(_bankKPP)] = BankKPP;
-        properties![P(_bankSWIFT)] = BankSWIFT;
+        entry![P(_bankINN)] = BankINN;
+        entry![P(_bankKPP)] = BankKPP;
+        entry![P(_bankSWIFT)] = BankSWIFT;
 
-        properties![P(_corrAccount)] = CorrAccount;
-        properties![P(_corrSWIFT)] = CorrSWIFT;
+        entry![P(_corrAccount)] = CorrAccount;
+        entry![P(_corrSWIFT)] = CorrSWIFT;
 
-        properties![P(_templatesName)] = TemplatesName;
-        properties![P(_templatesPurpose)] = TemplatesPurpose;
+        entry![P(_templatesName)] = TemplatesName;
+        entry![P(_templatesPurpose)] = TemplatesPurpose;
 
-        properties![P(_swiftNameLimit)] = SwiftNameLimit;
-        properties![P(_swiftPurposeField)] = SwiftPurposeField;
+        entry![P(_swiftNameLimit)] = SwiftNameLimit;
+        entry![P(_swiftPurposeField)] = SwiftPurposeField;
 
         var options = new JsonSerializerOptions { WriteIndented = true };
         json = configNode.ToJsonString(options);
 
         File.WriteAllText(config, json);
+        InitCorrProperties();
+    }
 
-        //TODO auto save!
+    public static void Save2()
+    {
+        const string runtimeOptions = nameof(runtimeOptions);
+        const string configProperties = nameof(configProperties);
+
+        string path = Path.ChangeExtension(Application.ExecutablePath, "runtimeconfig.json");
+        string json = File.ReadAllText(path);
+
+        var configNode = JsonNode.Parse(json);
+        var entry = configNode![runtimeOptions]![configProperties];
+
         Type t = typeof(Config);
-        var infos = t.GetProperties(/*BindingFlags.Public | BindingFlags.Instance*/);
-        var sb = new StringBuilder();
-        foreach (var info in infos)
+        var properties = t.GetProperties(/*BindingFlags.Public | BindingFlags.Instance*/);
+        //var sb = new StringBuilder();
+        
+        foreach (var p in properties)
         {
-            sb.Append(info.Name).Append('/').Append(info.PropertyType.Name).Append(" = ");
-            if (info.PropertyType.Name == "String")
-                sb.AppendLine(info.GetValue(info) as string);
-            else
-                sb.AppendLine((info.GetValue(info) as int?).ToString());
+            //sb.Append(p.Name).Append('/').Append(p.PropertyType.Name).Append(" = ");
+            //if (p.PropertyType.Name == "String")
+            //    sb.AppendLine(p.GetValue(p) as string);
+            //else
+            //    sb.AppendLine((p.GetValue(p) as int?).ToString());
+
+            //AppDomain.CurrentDomain.SetData(p.Name, p.GetValue(p) as string);
+
+            switch (p.Name)
+            {
+                case nameof(Profile):
+                    entry![nameof(Profile)] = Profile;
+                    break;
+
+                case nameof(Profiles): //TODO https://blog.okyrylchuk.dev/system-text-json-features-in-the-dotnet-6#heading-serialization-order-of-properties
+                    entry![nameof(Profiles)] = string.Join(';', Profiles);
+                    break;
+
+                default:
+                    switch (p.PropertyType.Name)
+                    {
+                        case "String":
+                            entry![P(p.Name)] = p.GetValue(p) as string;
+                            break;
+
+                        case "Int32":
+                            entry![P(p.Name)] = p.GetValue(p) as int?;
+                            break;
+                    }
+                    break;
+            }
         }
-        File.WriteAllText(config + "!", sb.ToString());
+
+        //File.WriteAllText(path + "!", sb.ToString());
         /*
         Profile/String = 
         Profiles/String = 
@@ -278,6 +318,10 @@ public static class Config
         CorrSWIFT/String = CITVRU2P
          */
 
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        json = configNode.ToJsonString(options);
+
+        File.WriteAllText(path + "2", json);
         InitCorrProperties();
     }
 
@@ -296,6 +340,16 @@ public static class Config
     private static string GP(string name, string defValue = "")
     {
         return G(P(name), defValue);
+    }
+
+    private static string[]? Garray(string name)
+    {
+        return AppContext.GetData(name) as string[];
+    }
+
+    private static void S(string name, string[] value)
+    {
+        AppDomain.CurrentDomain.SetData(name, value);
     }
 
     private static int Gint(string name, int defValue = 0)

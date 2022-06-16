@@ -25,7 +25,8 @@ public partial class ConfigForm : Form
     {
         InitializeComponent();
 
-        ProfileChoice.Items.AddRange(Config.Profiles.Split(';'));
+        //ProfileChoice.Items.AddRange(Config.Profiles.Split(';'));
+        ProfileChoice.Items.AddRange(Config.Profiles);
         ProfileChoice.Items.Add(string.Empty);
         ProfileChoice.Text = Config.Profile;
 
@@ -60,17 +61,18 @@ public partial class ConfigForm : Form
     private void SaveConfig()
     {
         string profile = ProfileChoice.Text;
-        string profiles = Config.Profiles;
+        string[] profiles = Config.Profiles;
 
         Config.Profile = profile;
 
         if (profiles.Length > 0 && !profiles.Contains(profile))
         {
-            Config.Profiles += ';' + profile;
+            //Config.Profiles += ';' + profile;
+            Config.Profiles.Append<string>(profile);
         }
         else
         {
-            Config.Profiles = profile;
+            Config.Profiles = new string[] { profile };
         }
 
         Config.OpenDir = OpenDirEdit.Text ?? OpenDirEdit.PlaceholderText;

@@ -37,6 +37,7 @@ partial class MainForm
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.SaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.PrintMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PrintPreviewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,7 +74,6 @@ partial class MainForm
             this.PrintPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
             this.PrintDocument = new System.Drawing.Printing.PrintDocument();
             this.PrintDialog = new System.Windows.Forms.PrintDialog();
-            this.SaveAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -162,6 +162,12 @@ partial class MainForm
             this.SaveAsMenuItem.Size = new System.Drawing.Size(242, 22);
             this.SaveAsMenuItem.Text = "Сохранить &как...";
             this.SaveAsMenuItem.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
+            // 
+            // SaveAllMenuItem
+            // 
+            this.SaveAllMenuItem.Name = "SaveAllMenuItem";
+            this.SaveAllMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.SaveAllMenuItem.Text = "Сохранить все";
             // 
             // toolStripSeparator2
             // 
@@ -334,7 +340,7 @@ partial class MainForm
             // 
             // PackSavedColumn
             // 
-            this.PackSavedColumn.Text = "Выходной файл";
+            this.PackSavedColumn.Text = "Выходной файл УФЭБС";
             this.PackSavedColumn.Width = 260;
             // 
             // DocsList
@@ -364,6 +370,7 @@ partial class MainForm
             // 
             this.NoColumn.Text = "No";
             this.NoColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.NoColumn.Width = 80;
             // 
             // EDColumn
             // 
@@ -397,7 +404,7 @@ partial class MainForm
             // 
             // SavedColumn
             // 
-            this.SavedColumn.Text = "Выходной файл";
+            this.SavedColumn.Text = "Выходной файл SWIFT";
             this.SavedColumn.Width = 260;
             // 
             // OpenFileDialog
@@ -441,12 +448,6 @@ partial class MainForm
             // PrintDialog
             // 
             this.PrintDialog.UseEXDialog = true;
-            // 
-            // SaveAllMenuItem
-            // 
-            this.SaveAllMenuItem.Name = "SaveAllMenuItem";
-            this.SaveAllMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.SaveAllMenuItem.Text = "Сохранить все";
             // 
             // MainForm
             // 
