@@ -83,11 +83,19 @@ public class PacketEPD
     /// </summary>
     public string? Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
 
+    #region Extensions
+
     /// <summary>
     /// Массив платежных документов.
     /// </summary>
-    public ED100[] Docs { get; set; } = Array.Empty<ED100>();
+    public CorrED100[] Elements { get; set; } = Array.Empty<CorrED100>();
 
+    /// <summary>
+    /// Наш идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).
+    /// </summary>
+    public string Id => $"{EDDate[2..].Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
+
+    #endregion Extensions
     #endregion Properties
 
     #region Constructors

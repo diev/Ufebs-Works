@@ -56,7 +56,7 @@ internal static class ListViewEx
             : -1;
     }
 
-    internal static void SelectIndex(this ListView listView, int value)
+    internal static void SelectIndex(this ListView listView, int value) //TODO remove
     {
         listView.ClearSelection();
         listView.Items[value].Selected = true;
@@ -76,7 +76,7 @@ internal static class ListViewEx
         return false;
     }
 
-    internal static bool PrevEnabled(this ListView listView)
+    internal static bool PrevEnabled(this ListView listView) //TODO remove
     {
         int count = listView.Items.Count;
         int index = listView.SelectedIndex();
@@ -100,7 +100,7 @@ internal static class ListViewEx
         return false;
     }
 
-    internal static bool NextEnabled(this ListView listView)
+    internal static bool NextEnabled(this ListView listView) //TODO remove
     {
         int count = listView.Items.Count;
         int index = listView.SelectedIndex();
@@ -108,7 +108,7 @@ internal static class ListViewEx
         return count > 0 && ++index < count - 1;
     }
 
-    internal static bool SelectNext(this ListView listView)
+    internal static bool SelectNext(this ListView listView) //TODO remove
     {
         int count = listView.Items.Count;
         int index = listView.SelectedIndex();
@@ -124,7 +124,7 @@ internal static class ListViewEx
         return false;
     }
 
-    internal static bool SelectLast(this ListView listView)
+    internal static bool SelectLast(this ListView listView) //TODO remove
     {
         int count = listView.Items.Count;
         int index = listView.SelectedIndex();
@@ -140,12 +140,12 @@ internal static class ListViewEx
         return false;
     }
 
-    internal static void AddItem(this ListView listView, ED100 ed) //TODO remove
+    internal static void AddItem(this ListView listView, CorrED100 ed) //TODO remove
     {
         var item = new ListViewItem(ed.EDNo);
 
         var itemType = item.SubItems.Add(ed.EDType);
-        var itemSum = item.SubItems.Add(ed.Sum.ESum());
+        var itemSum = item.SubItems.Add(ed.Sum.DisplaySum());
         var itemName = item.SubItems.Add(ed.PayerName);
         var itemPayee = item.SubItems.Add(ed.PayeeName);
         var itemPurpose = item.SubItems.Add(ed.Purpose);

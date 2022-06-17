@@ -141,4 +141,19 @@ public partial class ConfigForm : Form
     {
         LoadConfig();
     }
+
+    private void SaveFormatChoice_SelectedValueChanged(object sender, EventArgs e)
+    {
+        bool on = (sender as ComboBox)?.Text == Config.SwiftFormat;
+
+        BankSwiftLabel.Visible = on;
+        CorrSwiftLabel.Visible = on;
+        SwiftPurposeFieldLabel.Visible = on;
+        SwiftNameLimitLabel.Visible = on;
+
+        BankSwiftEdit.Visible = on;
+        CorrSwiftEdit.Visible = on;
+        SwiftPurposeFieldChoice.Visible = on;
+        SwiftNameLimitChoice.Visible = on;
+    }
 }

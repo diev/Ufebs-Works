@@ -59,6 +59,7 @@ partial class MainForm
             this.TotalQtyColumn = new System.Windows.Forms.ColumnHeader();
             this.TotalSumColumn = new System.Windows.Forms.ColumnHeader();
             this.PackSavedColumn = new System.Windows.Forms.ColumnHeader();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.DocsList = new System.Windows.Forms.ListView();
             this.NoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
@@ -68,6 +69,8 @@ partial class MainForm
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
+            this.PurposeEdit = new System.Windows.Forms.TextBox();
+            this.NameEdit = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
@@ -80,6 +83,10 @@ partial class MainForm
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusBar
@@ -289,7 +296,7 @@ partial class MainForm
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.DocsList);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(930, 404);
             this.splitContainer1.SplitterDistance = 138;
             this.splitContainer1.SplitterWidth = 3;
@@ -319,13 +326,13 @@ partial class MainForm
             // FileColumn
             // 
             this.FileColumn.Text = "Входной файл";
-            this.FileColumn.Width = 260;
+            this.FileColumn.Width = 280;
             // 
             // RootColumn
             // 
             this.RootColumn.Text = "Тип";
             this.RootColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.RootColumn.Width = 100;
+            this.RootColumn.Width = 80;
             // 
             // TotalQtyColumn
             // 
@@ -341,7 +348,31 @@ partial class MainForm
             // PackSavedColumn
             // 
             this.PackSavedColumn.Text = "Выходной файл УФЭБС";
-            this.PackSavedColumn.Width = 260;
+            this.PackSavedColumn.Width = 280;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer2.IsSplitterFixed = true;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.DocsList);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainer2.Panel2.Controls.Add(this.PurposeEdit);
+            this.splitContainer2.Panel2.Controls.Add(this.NameEdit);
+            this.splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(3);
+            this.splitContainer2.Size = new System.Drawing.Size(926, 259);
+            this.splitContainer2.SplitterDistance = 193;
+            this.splitContainer2.TabIndex = 3;
             // 
             // DocsList
             // 
@@ -359,8 +390,8 @@ partial class MainForm
             this.DocsList.GridLines = true;
             this.DocsList.Location = new System.Drawing.Point(0, 0);
             this.DocsList.Name = "DocsList";
-            this.DocsList.Size = new System.Drawing.Size(926, 259);
-            this.DocsList.TabIndex = 1;
+            this.DocsList.Size = new System.Drawing.Size(926, 193);
+            this.DocsList.TabIndex = 3;
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
             this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
@@ -368,12 +399,12 @@ partial class MainForm
             // NoColumn
             // 
             this.NoColumn.Text = "No";
-            this.NoColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.NoColumn.Width = 80;
             // 
             // EDColumn
             // 
-            this.EDColumn.Text = "ED";
+            this.EDColumn.Text = "Тип";
+            this.EDColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // SumColumn
             // 
@@ -404,7 +435,27 @@ partial class MainForm
             // SavedColumn
             // 
             this.SavedColumn.Text = "Выходной файл SWIFT";
-            this.SavedColumn.Width = 260;
+            this.SavedColumn.Width = 280;
+            // 
+            // PurposeEdit
+            // 
+            this.PurposeEdit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.PurposeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PurposeEdit.Location = new System.Drawing.Point(3, 25);
+            this.PurposeEdit.Name = "PurposeEdit";
+            this.PurposeEdit.Size = new System.Drawing.Size(920, 22);
+            this.PurposeEdit.TabIndex = 1;
+            this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeEdit_TextChanged);
+            // 
+            // NameEdit
+            // 
+            this.NameEdit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.NameEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.NameEdit.Location = new System.Drawing.Point(3, 3);
+            this.NameEdit.Name = "NameEdit";
+            this.NameEdit.Size = new System.Drawing.Size(920, 22);
+            this.NameEdit.TabIndex = 0;
+            this.NameEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
             // 
             // OpenFileDialog
             // 
@@ -469,6 +520,11 @@ partial class MainForm
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -511,14 +567,17 @@ partial class MainForm
     private ColumnHeader TotalQtyColumn;
     private ColumnHeader TotalSumColumn;
     private ColumnHeader PackSavedColumn;
+    private ToolStripMenuItem SaveAllMenuItem;
+    private SplitContainer splitContainer2;
     private ListView DocsList;
     private ColumnHeader NoColumn;
     private ColumnHeader EDColumn;
     private ColumnHeader SumColumn;
     private ColumnHeader PayerColumn;
+    private ColumnHeader CorrColumn;
     private ColumnHeader PayeeColumn;
     private ColumnHeader PurposeColumn;
     private ColumnHeader SavedColumn;
-    private ColumnHeader CorrColumn;
-    private ToolStripMenuItem SaveAllMenuItem;
+    private TextBox PurposeEdit;
+    private TextBox NameEdit;
 }

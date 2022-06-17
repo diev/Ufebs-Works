@@ -46,9 +46,9 @@
             this.SaveDirLabel = new System.Windows.Forms.Label();
             this.BankBox = new System.Windows.Forms.GroupBox();
             this.CorrSwiftEdit = new System.Windows.Forms.TextBox();
-            this.CorrSWIFTLabel = new System.Windows.Forms.Label();
+            this.CorrSwiftLabel = new System.Windows.Forms.Label();
             this.BankSwiftEdit = new System.Windows.Forms.TextBox();
-            this.BankSWIFTLabel = new System.Windows.Forms.Label();
+            this.BankSwiftLabel = new System.Windows.Forms.Label();
             this.BankKppEdit = new System.Windows.Forms.TextBox();
             this.BankKPPLabel = new System.Windows.Forms.Label();
             this.BankInnEdit = new System.Windows.Forms.TextBox();
@@ -59,11 +59,11 @@
             this.AbortButton = new System.Windows.Forms.Button();
             this.TemplatesNameGroup = new System.Windows.Forms.GroupBox();
             this.SwiftNameLimitChoice = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.SwiftNameLimitLabel = new System.Windows.Forms.Label();
             this.TemplatesNameEdit = new System.Windows.Forms.TextBox();
             this.TemplatesPurposeGroup = new System.Windows.Forms.GroupBox();
             this.SwiftPurposeFieldChoice = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.SwiftPurposeFieldLabel = new System.Windows.Forms.Label();
             this.TemplatesPurposeEdit = new System.Windows.Forms.TextBox();
             this.ProfileChoice = new System.Windows.Forms.ComboBox();
             this.ProfileLabel = new System.Windows.Forms.Label();
@@ -172,6 +172,7 @@
             this.SaveFormatChoice.Name = "SaveFormatChoice";
             this.SaveFormatChoice.Size = new System.Drawing.Size(132, 23);
             this.SaveFormatChoice.TabIndex = 6;
+            this.SaveFormatChoice.SelectedValueChanged += new System.EventHandler(this.SaveFormatChoice_SelectedValueChanged);
             // 
             // OutFormatLabel
             // 
@@ -234,9 +235,9 @@
             // BankBox
             // 
             this.BankBox.Controls.Add(this.CorrSwiftEdit);
-            this.BankBox.Controls.Add(this.CorrSWIFTLabel);
+            this.BankBox.Controls.Add(this.CorrSwiftLabel);
             this.BankBox.Controls.Add(this.BankSwiftEdit);
-            this.BankBox.Controls.Add(this.BankSWIFTLabel);
+            this.BankBox.Controls.Add(this.BankSwiftLabel);
             this.BankBox.Controls.Add(this.BankKppEdit);
             this.BankBox.Controls.Add(this.BankKPPLabel);
             this.BankBox.Controls.Add(this.BankInnEdit);
@@ -260,14 +261,14 @@
             this.CorrSwiftEdit.Size = new System.Drawing.Size(137, 22);
             this.CorrSwiftEdit.TabIndex = 9;
             // 
-            // CorrSWIFTLabel
+            // CorrSwiftLabel
             // 
-            this.CorrSWIFTLabel.AutoSize = true;
-            this.CorrSWIFTLabel.Location = new System.Drawing.Point(264, 79);
-            this.CorrSWIFTLabel.Name = "CorrSWIFTLabel";
-            this.CorrSWIFTLabel.Size = new System.Drawing.Size(69, 15);
-            this.CorrSWIFTLabel.TabIndex = 8;
-            this.CorrSWIFTLabel.Text = "Кор. SWIFT:";
+            this.CorrSwiftLabel.AutoSize = true;
+            this.CorrSwiftLabel.Location = new System.Drawing.Point(264, 79);
+            this.CorrSwiftLabel.Name = "CorrSwiftLabel";
+            this.CorrSwiftLabel.Size = new System.Drawing.Size(69, 15);
+            this.CorrSwiftLabel.TabIndex = 8;
+            this.CorrSwiftLabel.Text = "Кор. SWIFT:";
             // 
             // BankSwiftEdit
             // 
@@ -280,14 +281,14 @@
             this.BankSwiftEdit.Size = new System.Drawing.Size(137, 22);
             this.BankSwiftEdit.TabIndex = 5;
             // 
-            // BankSWIFTLabel
+            // BankSwiftLabel
             // 
-            this.BankSWIFTLabel.AutoSize = true;
-            this.BankSWIFTLabel.Location = new System.Drawing.Point(11, 79);
-            this.BankSWIFTLabel.Name = "BankSWIFTLabel";
-            this.BankSWIFTLabel.Size = new System.Drawing.Size(42, 15);
-            this.BankSWIFTLabel.TabIndex = 4;
-            this.BankSWIFTLabel.Text = "SWIFT:";
+            this.BankSwiftLabel.AutoSize = true;
+            this.BankSwiftLabel.Location = new System.Drawing.Point(11, 79);
+            this.BankSwiftLabel.Name = "BankSwiftLabel";
+            this.BankSwiftLabel.Size = new System.Drawing.Size(42, 15);
+            this.BankSwiftLabel.TabIndex = 4;
+            this.BankSwiftLabel.Text = "SWIFT:";
             // 
             // BankKppEdit
             // 
@@ -375,7 +376,7 @@
             // TemplatesNameGroup
             // 
             this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitChoice);
-            this.TemplatesNameGroup.Controls.Add(this.label3);
+            this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitLabel);
             this.TemplatesNameGroup.Controls.Add(this.TemplatesNameEdit);
             this.TemplatesNameGroup.Location = new System.Drawing.Point(9, 298);
             this.TemplatesNameGroup.Name = "TemplatesNameGroup";
@@ -397,14 +398,14 @@
             this.SwiftNameLimitChoice.Sorted = true;
             this.SwiftNameLimitChoice.TabIndex = 2;
             // 
-            // label3
+            // SwiftNameLimitLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(264, 55);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(134, 15);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Предел длины в SWIFT:";
+            this.SwiftNameLimitLabel.AutoSize = true;
+            this.SwiftNameLimitLabel.Location = new System.Drawing.Point(264, 55);
+            this.SwiftNameLimitLabel.Name = "SwiftNameLimitLabel";
+            this.SwiftNameLimitLabel.Size = new System.Drawing.Size(134, 15);
+            this.SwiftNameLimitLabel.TabIndex = 1;
+            this.SwiftNameLimitLabel.Text = "Предел длины в SWIFT:";
             // 
             // TemplatesNameEdit
             // 
@@ -420,7 +421,7 @@
             // TemplatesPurposeGroup
             // 
             this.TemplatesPurposeGroup.Controls.Add(this.SwiftPurposeFieldChoice);
-            this.TemplatesPurposeGroup.Controls.Add(this.label1);
+            this.TemplatesPurposeGroup.Controls.Add(this.SwiftPurposeFieldLabel);
             this.TemplatesPurposeGroup.Controls.Add(this.TemplatesPurposeEdit);
             this.TemplatesPurposeGroup.Location = new System.Drawing.Point(9, 392);
             this.TemplatesPurposeGroup.Name = "TemplatesPurposeGroup";
@@ -442,14 +443,14 @@
             this.SwiftPurposeFieldChoice.Sorted = true;
             this.SwiftPurposeFieldChoice.TabIndex = 2;
             // 
-            // label1
+            // SwiftPurposeFieldLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(264, 56);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Поле в SWIFT:";
+            this.SwiftPurposeFieldLabel.AutoSize = true;
+            this.SwiftPurposeFieldLabel.Location = new System.Drawing.Point(264, 56);
+            this.SwiftPurposeFieldLabel.Name = "SwiftPurposeFieldLabel";
+            this.SwiftPurposeFieldLabel.Size = new System.Drawing.Size(83, 15);
+            this.SwiftPurposeFieldLabel.TabIndex = 1;
+            this.SwiftPurposeFieldLabel.Text = "Поле в SWIFT:";
             // 
             // TemplatesPurposeEdit
             // 
@@ -541,18 +542,18 @@
         private Button OKButton;
         private Button AbortButton;
         private TextBox CorrSwiftEdit;
-        private Label CorrSWIFTLabel;
+        private Label CorrSwiftLabel;
         private TextBox BankSwiftEdit;
-        private Label BankSWIFTLabel;
+        private Label BankSwiftLabel;
         private ComboBox SaveFormatChoice;
         private Label OutFormatLabel;
         private GroupBox TemplatesNameGroup;
         private ComboBox SwiftNameLimitChoice;
-        private Label label3;
+        private Label SwiftNameLimitLabel;
         private TextBox TemplatesNameEdit;
         private GroupBox TemplatesPurposeGroup;
         private ComboBox SwiftPurposeFieldChoice;
-        private Label label1;
+        private Label SwiftPurposeFieldLabel;
         private TextBox TemplatesPurposeEdit;
         private ComboBox ProfileChoice;
         private Label ProfileLabel;

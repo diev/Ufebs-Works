@@ -25,9 +25,9 @@ public class PacketEPDocs : IReadOnlyList<string[]>
 {
     private readonly PacketEPD _packet;
 
-    public string[] this[int index] => _packet.RowData(index);
+    public string[] this[int index] => _packet.DataRow(index);
 
-    public int Count => _packet.Docs.Length;
+    public int Count => _packet.Elements.Length;
 
     public PacketEPDocs(PacketEPD packet)
     {
@@ -43,9 +43,9 @@ public class PacketEPDocs : IReadOnlyList<string[]>
 
     public IEnumerator<string[]> GetEnumerator()
     {
-        for (int i = 0; i < _packet.Docs.Length; i++)
+        for (int i = 0; i < _packet.Elements.Length; i++)
         {
-            yield return _packet.RowData(i);
+            yield return _packet.DataRow(i);
         }
     }
 }

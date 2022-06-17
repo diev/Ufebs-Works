@@ -21,7 +21,7 @@ using System.Collections;
 
 namespace CorrLib;
 
-public class SourceFileCollection : IReadOnlyList<string[]>
+public class SourceFiles : IReadOnlyList<string[]>
 {
     private readonly string[][] _items;
 
@@ -29,11 +29,11 @@ public class SourceFileCollection : IReadOnlyList<string[]>
 
     public int Count => _items.Length;
 
-    public SourceFileCollection(string directory, string mask) //TODO path is empty?
+    public SourceFiles(string directory, string mask) //TODO path is empty?
         : this(Directory.GetFiles(directory, mask))
     { }
 
-    public SourceFileCollection(string[] files)
+    public SourceFiles(string[] files)
     {
         _items = new string[files.Length][];
 
@@ -47,7 +47,7 @@ public class SourceFileCollection : IReadOnlyList<string[]>
                 files[i],
                 packet.EDType,
                 packet.EDQuantity,
-                packet.Sum.ESum(),
+                packet.Sum.DisplaySum(),
                 string.Empty //TODO File.Exists?
             };
         }

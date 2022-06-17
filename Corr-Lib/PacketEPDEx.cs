@@ -52,8 +52,8 @@ public static class PacketEPDEx
             packet.SystemCode = root.Attribute("SystemCode")!.Value;
             packet.Xmlns = root.Attribute("xmlns")?.Value;
 
-            packet.Docs = new ED100[1];
-            packet.Docs[0] = new ED100(root);
+            packet.Elements = new CorrED100[1];
+            packet.Elements[0] = new CorrED100(root);
         }
         else
         {
@@ -70,12 +70,12 @@ public static class PacketEPDEx
                     packet.Xmlns = root.Attribute("xmlns")?.Value;
 
                     int qty = int.Parse(packet.EDQuantity);
-                    packet.Docs = new ED100[qty];
+                    packet.Elements = new CorrED100[qty];
                     var node = root.FirstNode;
 
                     for (int i = 0; i < qty; i++)
                     {
-                        packet.Docs[i] = new ED100(node);
+                        packet.Elements[i] = new CorrED100(node);
                         node = node?.NextNode;
                     }
 
@@ -91,7 +91,7 @@ public static class PacketEPDEx
                     //packet.SystemCode = root.Attribute("SystemCode")?.Value;
                     packet.Xmlns = root.Attribute("xmlns")?.Value;
 
-                    packet.Docs = Array.Empty<ED100>();
+                    packet.Elements = Array.Empty<CorrED100>();
                     //packet.Docs[0] = new ED100(root.FirstNode);
 
                     var container = root.Element(ns + "SWIFTContainer");
@@ -114,20 +114,19 @@ public static class PacketEPDEx
         }
     }
 
-    public static string[] RowData(this PacketEPD packet, int index)
+    public static string[] DataRow(this PacketEPD packet, int index)
     {
-        var item = packet.Docs[index];
-        var corr = new ED100(item).Corr();
+        var item = packet.Elements[index];
 
         return new string[]
         {
             item.EDNo,
             item.EDType,
-            item.Sum.ESum(),
-            item.PayerName ?? string.Empty,
-            corr.PayerName ?? string.Empty, //TODO
+            item.Sum.DisplaySum(),
+            item.OriginalPayerName ?? string.Empty,
+            item.PayerName ?? string.Empty, //TODO
             item.PayeeName ?? string.Empty,
-            corr.Purpose ?? string.Empty,
+            item.Purpose ?? string.Empty,
             string.Empty //TODO File.Exists?
         };
     }

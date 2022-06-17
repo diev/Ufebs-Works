@@ -305,14 +305,19 @@ public class ED100
 
     #endregion DepartmentalInfo
 
-    #region Functions
+    #region Extensions
 
     /// <summary>
     /// Присутствует ведомственная информация (поля 101, 104-110).
     /// </summary>
     public bool Tax => DrawerStatus != null;
 
-    #endregion Functions
+    /// <summary>
+    /// Наш идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).
+    /// </summary>
+    public string Id => $"{EDDate[2..].Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
+
+    #endregion Extensions
     #endregion Properties
 
     #region Constructors
