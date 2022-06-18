@@ -186,13 +186,11 @@ public static class ED100Ex
         }
     }
 
-    private static string? FixKPP(string? inn, string? kpp)
-    {
-        return inn != null && inn.Length != 12 &&
-            kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
-            ? kpp
-            : null;
-    }
+    private static string? FixKPP(string? inn, string? kpp) =>
+        inn != null && inn.Length != 12 &&
+        kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
+        ? kpp
+        : null;
 
     public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not null only (except not required)
     {

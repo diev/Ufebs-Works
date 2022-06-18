@@ -31,23 +31,15 @@ partial class MainForm
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.FormatStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ProfileStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.SaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SaveAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SaveAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.PrintMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PrintPreviewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.ConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.GoMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.NextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.FastNextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.FontMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.HelpMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,19 +56,15 @@ partial class MainForm
             this.NoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
             this.SumColumn = new System.Windows.Forms.ColumnHeader();
+            this.OriginalColumn = new System.Windows.Forms.ColumnHeader();
             this.PayerColumn = new System.Windows.Forms.ColumnHeader();
-            this.CorrColumn = new System.Windows.Forms.ColumnHeader();
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeEdit = new System.Windows.Forms.TextBox();
             this.NameEdit = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.SaveAsFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
-            this.PrintPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
-            this.PrintDocument = new System.Drawing.Printing.PrintDocument();
-            this.PrintDialog = new System.Windows.Forms.PrintDialog();
             this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -92,7 +80,9 @@ partial class MainForm
             // StatusBar
             // 
             this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Status});
+            this.Status,
+            this.FormatStatus,
+            this.ProfileStatus});
             this.StatusBar.Location = new System.Drawing.Point(0, 428);
             this.StatusBar.Name = "StatusBar";
             this.StatusBar.Size = new System.Drawing.Size(930, 22);
@@ -102,16 +92,27 @@ partial class MainForm
             // Status
             // 
             this.Status.Name = "Status";
-            this.Status.Size = new System.Drawing.Size(915, 17);
+            this.Status.Size = new System.Drawing.Size(829, 17);
             this.Status.Spring = true;
-            this.Status.Text = "Готово";
+            this.Status.Text = "Загрузка...";
             this.Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // FormatStatus
+            // 
+            this.FormatStatus.Name = "FormatStatus";
+            this.FormatStatus.Size = new System.Drawing.Size(45, 17);
+            this.FormatStatus.Text = "Format";
+            // 
+            // ProfileStatus
+            // 
+            this.ProfileStatus.Name = "ProfileStatus";
+            this.ProfileStatus.Size = new System.Drawing.Size(41, 17);
+            this.ProfileStatus.Text = "Profile";
             // 
             // MainMenu
             // 
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileMenu,
-            this.GoMenu,
             this.ViewMenu,
             this.HelpMenu});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
@@ -125,13 +126,6 @@ partial class MainForm
             this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenFileMenuItem,
             this.toolStripSeparator,
-            this.SaveMenuItem,
-            this.SaveAsMenuItem,
-            this.SaveAllMenuItem,
-            this.toolStripSeparator2,
-            this.PrintMenuItem,
-            this.PrintPreviewMenuItem,
-            this.toolStripSeparator3,
             this.ConfigMenuItem,
             this.toolStripSeparator1,
             this.ExitMenuItem});
@@ -145,110 +139,34 @@ partial class MainForm
             this.OpenFileMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.OpenFileMenuItem.Name = "OpenFileMenuItem";
             this.OpenFileMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenFileMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.OpenFileMenuItem.Size = new System.Drawing.Size(173, 22);
             this.OpenFileMenuItem.Text = "&Открыть...";
             this.OpenFileMenuItem.Click += new System.EventHandler(this.OpenMenuItem_Click);
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(239, 6);
-            // 
-            // SaveMenuItem
-            // 
-            this.SaveMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("SaveMenuItem.Image")));
-            this.SaveMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.SaveMenuItem.Name = "SaveMenuItem";
-            this.SaveMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.SaveMenuItem.Text = "&Сохранить";
-            this.SaveMenuItem.Click += new System.EventHandler(this.SaveMenuItem_Click);
-            // 
-            // SaveAsMenuItem
-            // 
-            this.SaveAsMenuItem.Name = "SaveAsMenuItem";
-            this.SaveAsMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.SaveAsMenuItem.Text = "Сохранить &как...";
-            this.SaveAsMenuItem.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
-            // 
-            // SaveAllMenuItem
-            // 
-            this.SaveAllMenuItem.Name = "SaveAllMenuItem";
-            this.SaveAllMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.SaveAllMenuItem.Text = "Сохранить все";
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(239, 6);
-            // 
-            // PrintMenuItem
-            // 
-            this.PrintMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("PrintMenuItem.Image")));
-            this.PrintMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.PrintMenuItem.Name = "PrintMenuItem";
-            this.PrintMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.PrintMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.PrintMenuItem.Text = "&Печать";
-            this.PrintMenuItem.Click += new System.EventHandler(this.PrintMenuItem_Click);
-            // 
-            // PrintPreviewMenuItem
-            // 
-            this.PrintPreviewMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("PrintPreviewMenuItem.Image")));
-            this.PrintPreviewMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.PrintPreviewMenuItem.Name = "PrintPreviewMenuItem";
-            this.PrintPreviewMenuItem.Size = new System.Drawing.Size(242, 22);
-            this.PrintPreviewMenuItem.Text = "Предварительный про&смотр...";
-            this.PrintPreviewMenuItem.Click += new System.EventHandler(this.PrintPreviewMenuItem_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(239, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(170, 6);
             // 
             // ConfigMenuItem
             // 
             this.ConfigMenuItem.Name = "ConfigMenuItem";
-            this.ConfigMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.ConfigMenuItem.Size = new System.Drawing.Size(173, 22);
             this.ConfigMenuItem.Text = "П&араметры...";
             this.ConfigMenuItem.Click += new System.EventHandler(this.ConfigMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(239, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(170, 6);
             // 
             // ExitMenuItem
             // 
             this.ExitMenuItem.Name = "ExitMenuItem";
             this.ExitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.ExitMenuItem.Size = new System.Drawing.Size(173, 22);
             this.ExitMenuItem.Text = "Вы&ход";
             this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
-            // 
-            // GoMenu
-            // 
-            this.GoMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.NextMenuItem,
-            this.FastNextMenuItem});
-            this.GoMenu.Name = "GoMenu";
-            this.GoMenu.Size = new System.Drawing.Size(66, 20);
-            this.GoMenu.Text = "П&ереход";
-            // 
-            // NextMenuItem
-            // 
-            this.NextMenuItem.Name = "NextMenuItem";
-            this.NextMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.NextMenuItem.Size = new System.Drawing.Size(315, 22);
-            this.NextMenuItem.Text = "&Сохранить и дальше";
-            this.NextMenuItem.Click += new System.EventHandler(this.NextMenuItem_Click);
-            // 
-            // FastNextMenuItem
-            // 
-            this.FastNextMenuItem.Name = "FastNextMenuItem";
-            this.FastNextMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.FastNextMenuItem.Size = new System.Drawing.Size(315, 22);
-            this.FastNextMenuItem.Text = "С&охранить и до следующей ошибки";
-            this.FastNextMenuItem.Click += new System.EventHandler(this.ForwardMenuItem_Click);
             // 
             // ViewMenu
             // 
@@ -380,8 +298,8 @@ partial class MainForm
             this.NoColumn,
             this.EDColumn,
             this.SumColumn,
+            this.OriginalColumn,
             this.PayerColumn,
-            this.CorrColumn,
             this.PayeeColumn,
             this.PurposeColumn,
             this.SavedColumn});
@@ -412,15 +330,15 @@ partial class MainForm
             this.SumColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.SumColumn.Width = 80;
             // 
+            // OriginalColumn
+            // 
+            this.OriginalColumn.Text = "Плательщик";
+            this.OriginalColumn.Width = 160;
+            // 
             // PayerColumn
             // 
-            this.PayerColumn.Text = "Плательщик";
-            this.PayerColumn.Width = 160;
-            // 
-            // CorrColumn
-            // 
-            this.CorrColumn.Text = "Подстава";
-            this.CorrColumn.Width = 80;
+            this.PayerColumn.Text = "Подстава";
+            this.PayerColumn.Width = 80;
             // 
             // PayeeColumn
             // 
@@ -443,9 +361,12 @@ partial class MainForm
             this.PurposeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.PurposeEdit.Location = new System.Drawing.Point(3, 25);
             this.PurposeEdit.Name = "PurposeEdit";
+            this.PurposeEdit.PlaceholderText = "Назначение платежа";
             this.PurposeEdit.Size = new System.Drawing.Size(920, 22);
             this.PurposeEdit.TabIndex = 1;
             this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeEdit_TextChanged);
+            this.PurposeEdit.Enter += new System.EventHandler(this.PurposeEdit_Enter);
+            this.PurposeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PurposeEdit_KeyUp);
             // 
             // NameEdit
             // 
@@ -453,9 +374,12 @@ partial class MainForm
             this.NameEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.NameEdit.Location = new System.Drawing.Point(3, 3);
             this.NameEdit.Name = "NameEdit";
+            this.NameEdit.PlaceholderText = "Плательщик";
             this.NameEdit.Size = new System.Drawing.Size(920, 22);
             this.NameEdit.TabIndex = 0;
             this.NameEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
+            this.NameEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
+            this.NameEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
             // 
             // OpenFileDialog
             // 
@@ -468,36 +392,9 @@ partial class MainForm
             this.OpenFileDialog.Title = "Открыть файл(ы)";
             this.OpenFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.OpenFileDialog_FileOk);
             // 
-            // SaveAsFileDialog
-            // 
-            this.SaveAsFileDialog.CreatePrompt = true;
-            this.SaveAsFileDialog.DefaultExt = "txt";
-            this.SaveAsFileDialog.Filter = "TXT|*.txt|XML|*.xml|Все файлы|*.*";
-            this.SaveAsFileDialog.Title = "Сохранить файл";
-            this.SaveAsFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveAsFileDialog_FileOk);
-            // 
             // FontDialog
             // 
             this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
-            // 
-            // PrintPreviewDialog
-            // 
-            this.PrintPreviewDialog.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.PrintPreviewDialog.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.PrintPreviewDialog.ClientSize = new System.Drawing.Size(400, 300);
-            this.PrintPreviewDialog.Document = this.PrintDocument;
-            this.PrintPreviewDialog.Enabled = true;
-            this.PrintPreviewDialog.Icon = ((System.Drawing.Icon)(resources.GetObject("PrintPreviewDialog.Icon")));
-            this.PrintPreviewDialog.Name = "PrintPreviewDialog";
-            this.PrintPreviewDialog.Visible = false;
-            // 
-            // PrintDocument
-            // 
-            this.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.PrintDocument_PrintPage);
-            // 
-            // PrintDialog
-            // 
-            this.PrintDialog.UseEXDialog = true;
             // 
             // MainForm
             // 
@@ -536,30 +433,17 @@ partial class MainForm
     private MenuStrip MainMenu;
     private SplitContainer splitContainer1;
     private OpenFileDialog OpenFileDialog;
-    private SaveFileDialog SaveAsFileDialog;
     private ToolStripMenuItem ViewMenu;
     private ToolStripMenuItem FontMenuItem;
     private FontDialog FontDialog;
     private ToolStripMenuItem FileMenu;
     private ToolStripMenuItem OpenFileMenuItem;
     private ToolStripSeparator toolStripSeparator;
-    private ToolStripMenuItem SaveMenuItem;
-    private ToolStripMenuItem SaveAsMenuItem;
-    private ToolStripSeparator toolStripSeparator2;
-    private ToolStripMenuItem PrintMenuItem;
-    private ToolStripMenuItem PrintPreviewMenuItem;
-    private ToolStripSeparator toolStripSeparator3;
     private ToolStripMenuItem ExitMenuItem;
-    private ToolStripMenuItem GoMenu;
-    private ToolStripMenuItem NextMenuItem;
-    private ToolStripMenuItem FastNextMenuItem;
     private ToolStripMenuItem HelpMenu;
     private ToolStripMenuItem AboutMenuItem;
     private ToolStripMenuItem ConfigMenuItem;
     private ToolStripSeparator toolStripSeparator1;
-    private PrintPreviewDialog PrintPreviewDialog;
-    private System.Drawing.Printing.PrintDocument PrintDocument;
-    private PrintDialog PrintDialog;
     private ToolStripStatusLabel Status;
     private ListView FilesList;
     private ColumnHeader FileColumn;
@@ -567,17 +451,18 @@ partial class MainForm
     private ColumnHeader TotalQtyColumn;
     private ColumnHeader TotalSumColumn;
     private ColumnHeader PackSavedColumn;
-    private ToolStripMenuItem SaveAllMenuItem;
     private SplitContainer splitContainer2;
     private ListView DocsList;
     private ColumnHeader NoColumn;
     private ColumnHeader EDColumn;
     private ColumnHeader SumColumn;
+    private ColumnHeader OriginalColumn;
     private ColumnHeader PayerColumn;
-    private ColumnHeader CorrColumn;
     private ColumnHeader PayeeColumn;
     private ColumnHeader PurposeColumn;
     private ColumnHeader SavedColumn;
     private TextBox PurposeEdit;
     private TextBox NameEdit;
+    private ToolStripStatusLabel FormatStatus;
+    private ToolStripStatusLabel ProfileStatus;
 }

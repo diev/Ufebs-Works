@@ -35,10 +35,10 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT103(this CorrED100 ed)
+    public static string ToStringMT103(this CorrED100 corrED100)
     {
-        string sum = ed.Sum; // save for BESP if over 100 000 000.00
-        ed.Translit();
+        string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
+        var ed = Translit(corrED100);
 
         //string id = $"{ed.EDDate}{ed.EDNo.PadLeft(9, '0')}"; //ed.Id (15x)
 
@@ -326,10 +326,10 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT202(this CorrED100 ed)
+    public static string ToStringMT202(this CorrED100 corrED100)
     {
-        string sum = ed.Sum; // save for BESP if over 100 000 000.00
-        ed.Translit();
+        string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
+        var ed = Translit(corrED100);
 
         string id = $"{ed.EDDate}{ed.EDNo.PadLeft(9, '0')}"; //15x
 
@@ -524,31 +524,28 @@ public static class SwiftMT
         return sb.ToString();
     }
 
-    public static ED100 Translit(this CorrED100 ed)
+    private static CorrED100 Translit(CorrED100 ed) => new(ed)
     {
-        ed.PayerName = Lat(ed.PayerName);
-        ed.PayeeName = Lat(ed.PayeeName);
+        PayerName = Lat(ed.PayerName),
+        PayeeName = Lat(ed.PayeeName),
 
-        ed.Sum = XSum(ed.Sum);
+        Sum = XSum(ed.Sum),
 
-        ed.ChargeOffDate = XDate(ed.ChargeOffDate);
-        ed.EDDate = XDateX(ed.EDDate);
-        ed.FileDate = XDate(ed.FileDate);
-        ed.ReceiptDate = XDate(ed.ReceiptDate);
-        ed.AccDocDate = XDateX(ed.AccDocDate);
-        ed.Purpose = Lat(ed.Purpose);
+        ChargeOffDate = XDate(ed.ChargeOffDate),
+        EDDate = XDateX(ed.EDDate),
+        FileDate = XDate(ed.FileDate),
+        ReceiptDate = XDate(ed.ReceiptDate),
+        AccDocDate = XDateX(ed.AccDocDate),
+        Purpose = Lat(ed.Purpose),
 
-        if (ed.Tax)
-        {
-            ed.CBC = Lat(ed.CBC);
-            ed.DocDate = Lat(ed.DocDate);
-            ed.DocNo = Lat(ed.DocNo);
-            ed.OKATO = Lat(ed.OKATO);
-            ed.PaytReason = Lat(ed.PaytReason);
-            ed.TaxPeriod = Lat(ed.TaxPeriod);
-            ed.TaxPaytKind = Lat(ed.TaxPaytKind);
-        }
+        //if (ed.Tax)
 
-        return ed;
-    }
+        CBC = Lat(ed.CBC),
+        DocDate = Lat(ed.DocDate),
+        DocNo = Lat(ed.DocNo),
+        OKATO = Lat(ed.OKATO),
+        PaytReason = Lat(ed.PaytReason),
+        TaxPeriod = Lat(ed.TaxPeriod),
+        TaxPaytKind = Lat(ed.TaxPaytKind)
+    };
 }

@@ -210,14 +210,10 @@ public static class Config
 
     private static int GInt(string name, int defValue = 0)
     {
-        var value = AppContext.GetData(name) as int?;
-
-        if (value is null)
-        { 
-            return defValue;
-        }
-
-        return (int)value;
+        var o = AppContext.GetData(name);
+        if (o is null) return defValue;
+        if (o is int i) return i;
+        return int.Parse((string)o);
     }
 
     private static int GPInt(string name, int defValue = 0) =>
@@ -254,13 +250,13 @@ public static class Config
     private static void S(string name, string value = "") =>
         AppDomain.CurrentDomain.SetData(name, value);
 
-    private static void SP(string name, string value = "") =>
+    private static void SP(string name, string value = "") => 
         S(_profile + name, value);
 
-    private static void S(string name, int value) =>
+    private static void S(string name, int value) => 
         AppDomain.CurrentDomain.SetData(name, value);
 
-    private static void SP(string name, int value) =>
+    private static void SP(string name, int value) => 
         S(_profile + name, value);
 
     private static void S(string name, string[]? value) =>

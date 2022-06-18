@@ -94,18 +94,15 @@ public partial class MainForm : Form
 
     private void ReInitForm()
     {
-        Status.Text = $"Profile: {Config.Profile} | Format: {Config.SaveFormat}";
+        Text = $"{Application.ProductName}";
+        Status.Text = "Загрузка......";
+        FormatStatus.Text = $"Format: {Config.SaveFormat}";
+        ProfileStatus.Text = $"Profile: {Config.Profile}";
 
         string mask = Config.SaveMask.Replace("{id}", "*");
 
-        OpenFileDialog.InitialDirectory = Config.OpenDir;
-        OpenFileDialog.Filter = $"{Config.UfebsFormat}|{Config.OpenMask}|{OpenFileDialog.Filter}";
-
-        SaveAsFileDialog.InitialDirectory = Config.SaveDir;
-        SaveAsFileDialog.Filter = $"{Config.SaveFormat}|{mask}|{SaveAsFileDialog.Filter}";
-        SaveAsFileDialog.DefaultExt = Path.GetExtension(mask);
-
         FilesList.Items.Clear();
+        DocsList.Items.Clear();
 
         foreach (var file in new SourceFiles(Config.OpenDir, Config.OpenMask))
         {
@@ -128,6 +125,8 @@ public partial class MainForm : Form
                 }
             }
         }
+
+        Status.Text = "Выберите файл";
     }
     #endregion Init
 
@@ -135,6 +134,7 @@ public partial class MainForm : Form
     private void OpenFilesOK()
     {
         FilesList.Items.Clear();
+        DocsList.Items.Clear();
 
         foreach (var file in new SourceFiles(OpenFileDialog.FileNames))
         {
@@ -142,46 +142,18 @@ public partial class MainForm : Form
         }
     }
 
-    private void SaveFileOK()
-    {
-        //_saveFileName = SaveAsFileDialog.FileName;
-
-        //switch (Tabs.SelectedIndex)
-        //{
-        //    case 0:
-        //        SaveFile(string.Join(Environment.NewLine,
-        //            FilesListBox.Items.OfType<string>().ToArray()));
-        //        return;
-
-        //    case 1:
-        //        SaveFile(XmlTextBox.Text);
-        //        break;
-
-        //    case 2:
-        //        SaveFile(SwiftTextBox.Text);
-        //        break;
-
-        //    case 3:
-        //        SaveFile();
-        //        break;
-        //}
-
-        ////FilesListBox.Items[FilesListBox.SelectedIndex] = _saveFileName;
-        ////FilesListBox.SelectedItem = _saveFileName;
-        //_saved = true;
-        //SavedLabel.Text = _saved ? "Сохранен" : "Не сохранен";
-    }
-
     private void FontOK()
     {
-        //var font = FontDialog.Font;
+        var font = FontDialog.Font;
+        NameEdit.Font = font;
+        PurposeEdit.Font = font;
 
-        //TODO remove?
-
-        //SwiftText.Font = font;
+        splitContainer2.SplitterDistance =
+            splitContainer2.Height - NameEdit.Height - PurposeEdit.Height -
+            splitContainer2.SplitterWidth * 3;
     }
+    
     #endregion Dialogs
-
     #region Actions
 
     //private void LoadFile(string path)
@@ -191,7 +163,7 @@ public partial class MainForm : Form
 
         // Заголовок окна
 
-        Text = $"{Application.ProductName} | {path} | Profile: {Config.Profile} | Format: {Config.SaveFormat}";
+        Text = $"{Application.ProductName} {path}";
 
         _packet = new PacketEPD(path);
         var docs = new PacketEPDocs(_packet);
@@ -245,85 +217,15 @@ public partial class MainForm : Form
                     break;
             }
 
+            item.ForeColor = Color.DarkGreen;
+            Status.Text = "Готово. Выберите другой файл.";
         }
-    }
+        else
+        {
+            item.ForeColor = Color.DarkRed;
+            Status.Text = "Есть ошибки!";
+        }
 
-    private void SaveFile(string? text = null)
-    {
-        //if (_saveFileName != null)
-        //{
-        //    //File.WriteAllText(_saveFileName, text ?? SwiftText.Text, Encoding.ASCII); ??????????????????????
-        //    MarkFileSaved(); //TODO ????????????????????????????????????????????
-        //}
-    }
-
-    private void MarkFileSaved()
-    {
-        //_fileSaved = File.Exists(_saveFileName);
-        //var item = FilesList.SelectedItem();
-
-        //if (_fileSaved)
-        //{
-        //    Status.Text = $"Сохранен в {_saveFileName}";
-        //    item.SubItems[PackSavedColumn.Index].Text = _saveFileName;
-        //    item.ForeColor = Color.DarkGreen;
-        //}
-        //else
-        //{
-        //    Status.Text = $"Ошибка сохранения в {_saveFileName}";
-        //    item.SubItems[PackSavedColumn.Index].Text = "<!>";
-        //    item.ForeColor = Color.Red;
-        //}
-    }
-
-    private void MarkDocSaved()
-    {
-        //_docSaved = File.Exists(_saveDocName);
-        //var item = DocsList.SelectedItem();
-
-        //if (_docSaved)
-        //{
-        //    Status.Text = $"Сохранен в {_saveDocName}";
-        //    item.SubItems[SavedColumn.Index].Text = _saveDocName;
-        //    item.ForeColor = Color.DarkGreen;
-        //}
-        //else
-        //{
-        //    Status.Text = $"Ошибка сохранения в {_saveDocName}";
-        //    item.SubItems[SavedColumn.Index].Text = "<!>";
-        //    item.ForeColor = Color.Red;
-        //}
-    }
-
-    private void PrintPage(PrintPageEventArgs e)
-    {
-        //string documentContents = SwiftText.Text; //????????????????????????????????????
-        //string stringToPrint = documentContents;
-
-        //if (e.Graphics != null)
-        //{
-        //    // Sets the value of charactersOnPage to the number of characters
-        //    // of stringToPrint that will fit within the bounds of the page.
-        //    e.Graphics.MeasureString(stringToPrint, Font,
-        //        e.MarginBounds.Size, StringFormat.GenericTypographic,
-        //        out int charactersOnPage, out int linesPerPage);
-
-        //    // Draws the string within the bounds of the page.
-        //    e.Graphics.DrawString(stringToPrint, Font, Brushes.Black,
-        //    e.MarginBounds, StringFormat.GenericTypographic);
-
-        //    // Remove the portion of the string that has been printed.
-        //    stringToPrint = stringToPrint[charactersOnPage..];
-
-        //    // Check to see if more pages are to be printed.
-        //    e.HasMorePages = (stringToPrint.Length > 0);
-
-        //    // If there are no more pages, reset the string to be printed.
-        //    if (!e.HasMorePages)
-        //    {
-        //        stringToPrint = documentContents;
-        //    }
-        //}
     }
 
     private void TryClose(ref FormClosingEventArgs e)
@@ -380,44 +282,11 @@ public partial class MainForm : Form
 
     #endregion Actions
 
-    #region Buttons
-    private void GoNext()
-    {
-        SaveFile();
-
-        if (!FilesList.SelectNext() &&
-            MessageBox.Show($"Сделано: {FilesList.Items.Count}.\nЗакрыть программу?", Application.ProductName,
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-        {
-            Close();
-        }
-    }
-
-    private void GoForward()
-    {
-        while (
-            //_isNameValid &&
-            //_isPurposeValid &&
-            FilesList.NextEnabled())
-        {
-            //GoNext(); //зацикливается и не завершает программу!
-
-            SaveFile();
-
-            if (!FilesList.SelectNext() &&
-                MessageBox.Show($"Сделано: {FilesList.Items.Count}.\nЗакрыть программу?", Application.ProductName,
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-            {
-                Close();
-                break;
-            }
-        }
-    }
-    #endregion Buttons
-
     #region UI
     private void OpenMenuItem_Click(object sender, EventArgs e)
     {
+        OpenFileDialog.InitialDirectory = Config.OpenDir;
+        OpenFileDialog.Filter = $"{Config.UfebsFormat}|{Config.OpenMask}|{OpenFileDialog.Filter}";
         OpenFileDialog.ShowDialog();
     }
 
@@ -426,30 +295,15 @@ public partial class MainForm : Form
         Close();
     }
 
-    private void SaveAsMenuItem_Click(object sender, EventArgs e)
-    {
-        SaveAsFileDialog.ShowDialog();
-    }
-
     private void FontMenuItem_Click(object sender, EventArgs e)
     {
-        //FontDialog.Font = SwiftText.Font;?????????????????????????????????????????????
+        FontDialog.Font = NameEdit.Font;
         FontDialog.ShowDialog();
-    }
-
-    private void SaveMenuItem_Click(object sender, EventArgs e)
-    {
-        SaveFile();
     }
 
     private void OpenFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
     {
         OpenFilesOK();
-    }
-
-    private void SaveAsFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-        SaveFileOK();
     }
 
     private void FontDialog_Apply(object sender, EventArgs e)
@@ -467,33 +321,6 @@ public partial class MainForm : Form
         App.About();
     }
 
-    private void PrintMenuItem_Click(object sender, EventArgs e)
-    {
-        PrintDocument.Print();
-    }
-
-    private void PrintPreviewMenuItem_Click(object sender, EventArgs e)
-    {
-        //PrintDocument.DocumentName = _saveFileName ?? "Файл для печати";
-        PrintDocument.DocumentName = "Файл для печати";
-        PrintPreviewDialog.ShowDialog();
-    }
-
-    private void NextMenuItem_Click(object sender, EventArgs e)
-    {
-        GoNext();
-    }
-
-    private void ForwardMenuItem_Click(object sender, EventArgs e)
-    {
-        GoForward();
-    }
-
-    private void PrintDocument_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
-    {
-        PrintPage(e);
-    }
-
     private void ConfigMenuItem_Click(object sender, EventArgs e)
     {
         ConfigForm configForm = new();
@@ -509,9 +336,6 @@ public partial class MainForm : Form
         var list = (ListView)sender;
         if (list.SelectedItems.Count != 1) return;
         var item = list.SelectedItems[0];
-
-        //string file = item.Text;
-        //LoadFile(file);
 
         LoadFile(item);
     }
@@ -537,88 +361,33 @@ public partial class MainForm : Form
             case Config.UfebsFormat:
                 if (NameEdit.TextLength > 160 || PurposeEdit.TextLength > 210)
                 {
-                    //CorrectList(item);
+                    item.ForeColor = Color.DarkRed;
+                    Status.Text = "Необходимо сократить текст!";
                     return;
                 }
 
-                //item.SubItems[NoColumn.Index].Text += "+";
                 item.SubItems[SavedColumn.Index].Text = "+";
                 break;
 
             case Config.SwiftFormat:
                 if (Lat(NameEdit.Text)?.Length > Config.SwiftNameLimit || Lat(PurposeEdit.Text)?.Length > 210)
                 {
-                    //CorrectList(item);
+                    item.ForeColor = Color.DarkRed;
+                    Status.Text = "Необходимо сократить текст!";
                     return;
                 }
 
                 string path = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", ed.Id));
                 File.WriteAllText(path, ed.ToStringMT103(), Encoding.ASCII);
                 item.SubItems[SavedColumn.Index].Text = path;
-
-                //item.SubItems[NoColumn.Index].Text += "+";
                 break;
         }
 
         ed.Saved = true;
+        item.ForeColor = Color.DarkGreen;
+        Status.Text = "Готово";
     }
 
-    private void CorrectList(ListViewItem item)
-    {
-        //int i1 = CorrColumn.Index;
-        //int i2 = PurposeColumn.Index;
-
-        //string name = item.SubItems[i1].Text;
-        //string purpose = item.SubItems[i2].Text;
-
-        //var corrForm = new CorrForm(name, purpose)
-        //{
-        //    Width = Width
-        //};
-
-        //if (corrForm.ShowDialog() == DialogResult.OK)
-        //{
-        //    string name2 = corrForm.NameResult.Text;
-        //    string purpose2 = corrForm.PurposeResult.Text;
-
-        //    if (name == name2 && purpose == purpose2)
-        //    {
-        //        return;
-        //    }
-
-        //    var cursor = Cursor;
-        //    Cursor = Cursors.WaitCursor;
-
-        //    foreach (ListViewItem everyItem in DocsList.Items)
-        //    {
-        //        if (everyItem.SubItems[i1].Text == name)
-        //        {
-        //            ResetItem(everyItem, i1, name2);
-        //            SaveDocItem(everyItem);
-        //        }
-
-        //        if (everyItem.SubItems[i2].Text == purpose)
-        //        {
-        //            ResetItem(everyItem, i2, purpose2);
-        //            SaveDocItem(everyItem);
-        //        }
-        //    }
-
-        //    Cursor = cursor;
-        //}
-    }
-
-    private static void MarkItem(ListViewItem item, int column)
-    {
-        item.UseItemStyleForSubItems = false;
-        item.SubItems[column].BackColor = Color.LightPink;
-    }
-
-    private static void ResetItem(ListViewItem item, int column, string value)
-    {
-        item.SubItems[column].Text = value;
-        item.SubItems[column].ResetStyle();
-    }
 
     private void NameEdit_TextChanged(object sender, EventArgs e)
     {
@@ -652,6 +421,69 @@ public partial class MainForm : Form
                 edit.BackColor = len > max ? Color.LightPink : BackColor;
                 Status.Text = len > max ? $"Надо сократить {len - max}" : $"Готово ({len}/{max})";
                 break;
+        }
+    }
+
+    private void NameEdit_Enter(object sender, EventArgs e)
+    {
+        EditChanged(sender as TextBox);
+    }
+
+    private void PurposeEdit_Enter(object sender, EventArgs e)
+    {
+        EditChanged(sender as TextBox);
+    }
+
+    private void NameEdit_KeyUp(object sender, KeyEventArgs e)
+    {
+        if (DocsList.SelectedItems.Count != 1) return;
+        var item = DocsList.SelectedItems[0];
+        var ed = _packet.Elements[item.Index];
+
+        if (e.KeyCode == Keys.Enter)
+        {
+            string prev = ed.PayerName;
+            string name = NameEdit.Text;
+            ed.PayerName = name;
+            item.SubItems[PayerColumn.Index].Text = name;
+            SaveDocItem(item);
+
+            foreach (ListViewItem doc in DocsList.Items)
+            {
+                ed = _packet.Elements[doc.Index];
+
+                if (!ed.Saved && ed.PayerName == prev)
+                {
+                    ed.PayerName = name;
+                    doc.SubItems[PayerColumn.Index].Text = name;
+                    SaveDocItem(doc);
+                }
+            }
+
+            //TODO mark ok in FilesList if all saved
+        }
+        else if (e.KeyCode == Keys.Escape)
+        {
+            NameEdit.Text = ed.PayerName;
+        }
+    }
+
+    private void PurposeEdit_KeyUp(object sender, KeyEventArgs e)
+    {
+        if (DocsList.SelectedItems.Count != 1) return;
+        var item = DocsList.SelectedItems[0];
+        var ed = _packet.Elements[item.Index];
+
+        if (e.KeyCode == Keys.Enter)
+        {
+            string purpose = PurposeEdit.Text;
+            ed.Purpose = purpose;
+            item.SubItems[PurposeColumn.Index].Text = purpose;
+            SaveDocItem(item);
+        }
+        else if (e.KeyCode == Keys.Escape)
+        {
+            PurposeEdit.Text = ed.Purpose;
         }
     }
 }
