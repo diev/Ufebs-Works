@@ -19,7 +19,6 @@ limitations under the License.
 
 using CorrLib;
 
-using System.Drawing.Printing;
 using System.Text;
 
 using static CorrLib.SwiftTranslit;
@@ -169,26 +168,10 @@ public partial class MainForm : Form
         var docs = new PacketEPDocs(_packet);
         DocsList.Items.Clear();
 
-        //int c = CorrColumn.Index;
-        //int p = PurposeColumn.Index;
-
         foreach (var ed in docs)
         {
             var doc = DocsList.Items.Add(new ListViewItem(ed));
-            SaveDocItem(doc); //TODO Cancel* = Abort
-            
-            //string name = ed[c];
-            //string purpose = ed[p];
-
-            //if (name.Length > MAX_NAME) //TODO Test
-            //{
-            //    MarkItem(item, c);
-            //}
-
-            //if (purpose.Length > MAX_PURPOSE) //TODO Test
-            //{
-            //    MarkItem(item, p);
-            //}
+            SaveDocItem(doc); //TODO Cancel* = Abort (foreach break)
         }
 
         bool ok = true;
@@ -207,8 +190,8 @@ public partial class MainForm : Form
             switch (Config.SaveFormat)
             {
                 case Config.UfebsFormat:
-                    string path2 = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", _packet.Id));
-                    File.WriteAllText(path2, _packet.Sum, Encoding.ASCII); //TODO write corrPacketEPD!!!
+                    string path2 = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", _packet.Id)); //TODO add "*"
+                    File.WriteAllText(path2, _packet.Sum, Encoding.ASCII); //TODO write corrPacketEPD!!! без ошибочных? MessageBox
                     item.SubItems[PackSavedColumn.Index].Text = path2;
                     break;
 
