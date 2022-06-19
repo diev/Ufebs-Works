@@ -20,6 +20,7 @@ limitations under the License.
 using CorrLib;
 
 using System.Text;
+using System.Xml;
 
 using static CorrLib.SwiftTranslit;
 
@@ -191,7 +192,29 @@ public partial class MainForm : Form
             {
                 case Config.UfebsFormat:
                     string path2 = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", _packet.Id)); //TODO add "*"
-                    File.WriteAllText(path2, _packet.Sum, Encoding.ASCII); //TODO write corrPacketEPD!!! без ошибочных? MessageBox
+
+                    {
+                        var settings = new XmlWriterSettings()
+                        {
+                            Encoding = Encoding.GetEncoding("windows-1251"),
+                            Indent = true 
+                        };
+
+                        using var writer = XmlWriter.Create(path2, settings);
+
+                        if (_packet.EDType == "PacketEPD")
+                        {
+                            _packet.WriteXML(writer);
+                        }
+                        else if (_packet.EDType.StartsWith("ED1"))
+                        {
+                            _packet.Elements[0].WriteXML(writer);
+                        }
+                        //TODO ED503
+
+                        writer.Close();
+                    }
+
                     item.SubItems[PackSavedColumn.Index].Text = path2;
                     break;
 

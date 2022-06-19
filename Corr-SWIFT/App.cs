@@ -21,7 +21,7 @@ namespace CorrSWIFT;
 
 public static class App
 {
-    private const string VersionDate = "2022-06-17"; //TODO Versioning in .NET6+
+    private const string VersionDate = "2022-06-20"; //TODO Versioning in .NET6+
 
     public static void About()
     {

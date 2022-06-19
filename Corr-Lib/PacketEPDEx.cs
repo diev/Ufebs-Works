@@ -131,7 +131,7 @@ public static class PacketEPDEx
         };
     }
 
-    public static void WriteStartXML(this PacketEPD packet, XmlWriter writer)
+    public static void WriteXML(this PacketEPD packet, XmlWriter writer)
     {
         // PacketEPD
         writer.WriteStartElement(packet.EDType, packet.Xmlns);
@@ -145,6 +145,11 @@ public static class PacketEPDEx
         writer.WriteAttributeString("SystemCode", packet.SystemCode);
         writer.Flush();
 
-        //TODO Write Docs[]
+        foreach (var item in packet.Elements)
+        {
+            item.WriteXML(writer);
+        }
+
+        writer.WriteEndElement();
     }
 }
