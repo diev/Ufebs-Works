@@ -33,9 +33,7 @@ public static class SwiftHelpers
     public static string? Wrap35(string? value)
     {
         if (value is null)
-        {
-            return value;
-        }
+            return null;
 
         var s = value.Prepare35();
         var sb = new StringBuilder(210);
@@ -53,18 +51,10 @@ public static class SwiftHelpers
     }
 
     public static string? LatWrap35(this string? value)
-    {
-        if (value is null)
-        {
-            return value;
-        }
-
-        return Wrap35(Lat(value));
-    }
+        => Wrap35(Lat(value));
 
     public static ReadOnlySpan<char> Prepare35(this string value)
-    {
-        string result = value.PadRight(210, ' ');
+        => value.PadRight(210, ' ');
 
         //for (int i = 0; i < 4; i++) //TODO '-' для первых 4 строк
         //{
@@ -76,23 +66,15 @@ public static class SwiftHelpers
         //    }
         //}
 
-        return result;
-    }
-
     /// <summary>
     /// Преобразование даты, если она есть, из формата УФЭБС XML в SWIFT-RUR
     /// </summary>
     /// <param name="value">ГГГГ-ММ-ДД или null</param>
     /// <returns>ГГММДД или null</returns>
     public static string? XDate(string? value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return value;
-        }
-
-        return XDateX(value);
-    }
+        => string.IsNullOrEmpty(value)
+        ? value
+        : XDateX(value);
 
     /// <summary>
     /// Преобразование даты из формата УФЭБС XML в SWIFT-RUR
@@ -100,9 +82,7 @@ public static class SwiftHelpers
     /// <param name="value">ГГГГ-ММ-ДД</param>
     /// <returns>ГГММДД</returns>
     public static string XDateX(string value)
-    {
-        return value[2..].Replace("-", "");
-    }
+        => value[2..].Replace("-", "");
 
     /// <summary>
     /// Преобразование суммы из формата УФЭБС XML в SWIFT-RUR.
@@ -112,23 +92,12 @@ public static class SwiftHelpers
     /// <param name="value">РКК</param>
     /// <returns>Р,КК</returns>
     public static string XSum(string value)
-    {
-        if (value.Length > 2)
+        => value.Length switch
         {
-            if (value.EndsWith("00"))
-            {
-                return value[..^2] + ",";
-            }
-
-            return value.Insert(value.Length - 2, ",");
-        }
-        else if (value.Length == 2)
-        {
-            return "0," + value;
-        }
-        else
-        {
-            return "0,0" + value;
-        }
-    }
+            1 => "0,0" + value,
+            2 => "0," + value,
+            _ => value.EndsWith("00")
+            ? value[..^2] + ','
+            : value.Insert(value.Length - 2, ",")
+        };
 }

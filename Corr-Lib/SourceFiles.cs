@@ -25,9 +25,11 @@ public class SourceFiles : IReadOnlyList<string[]>
 {
     private readonly string[][] _items;
 
-    public string[] this[int index] => _items[index];
+    public string[] this[int index]
+        => _items[index];
 
-    public int Count => _items.Length;
+    public int Count
+        => _items.Length;
 
     public SourceFiles(string directory, string mask) //TODO path is empty?
         : this(Directory.GetFiles(directory, mask))
@@ -53,7 +55,8 @@ public class SourceFiles : IReadOnlyList<string[]>
         }
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+        => GetEnumerator();
 
     public IEnumerator<string[]> GetEnumerator()
     {

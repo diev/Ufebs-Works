@@ -155,5 +155,9 @@ public partial class ConfigForm : Form
         CorrSwiftEdit.Visible = on;
         SwiftPurposeFieldChoice.Visible = on;
         SwiftNameLimitChoice.Visible = on;
+
+        SaveMaskEdit.PlaceholderText = on
+            ? "{id}.txt"
+            : "*_.xml";
     }
 }

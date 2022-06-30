@@ -15,9 +15,10 @@ set packer="C:\Program Files\7-Zip\7z.exe" a %pack% -xr!bin -xr!obj
 if exist %pack% del %pack%
 %1 > build.cmd (
 echo @echo off
-echo rem ".NET Desktop Runtime 6.0" required
+echo rem .NET 6 WindowsDesktop Runtime required
 echo rem Download from get.dot.net
 echo rem Use "dotnet --info" to check
+echo rem Use "dotnet publish" to build
 echo.
 echo dotnet publish %project%\%project%.csproj -o Distr\%project%
 )
@@ -34,6 +35,6 @@ goto :eof
 if /%1/ == // goto :eof
 echo Pack %1
 %packer% -r %1\*.cs %1\*.resx
-%packer% %1\*.csproj %1\*.json
+%packer% %1\*.csproj %1\*.json %1\*.ico
 shift
 goto pack

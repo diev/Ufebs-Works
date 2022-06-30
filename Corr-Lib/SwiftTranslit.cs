@@ -188,14 +188,9 @@ CR LF Space (Пробел)
     /// <param name="value">Символ на кирилице</param>
     /// <returns>Символ на латинице</returns>
     public static char Lat(char value)
-    {
-        if (TRANSLAT.TryGetValue(value, out char result))
-        {
-            return result;
-        }
-
-        return value;
-    }
+        => TRANSLAT.TryGetValue(value, out char result)
+        ? result
+        : value;
 
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
@@ -203,14 +198,9 @@ CR LF Space (Пробел)
     /// <param name="value">Символ на латинице</param>
     /// <returns>Символ на кирилице</returns>
     public static char Cyr(char value)
-    {
-        if (TRANSCYR.TryGetValue(value, out char result))
-        {
-            return result;
-        }
-
-        return value;
-    }
+        => TRANSCYR.TryGetValue(value, out char result)
+        ? result
+        : value;
 
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
@@ -220,9 +210,7 @@ CR LF Space (Пробел)
     public static string? Lat(string? value)
     {
         if (value is null)
-        {
-            return value;
-        }
+            return null;
 
         var result = new StringBuilder(value.Length * 2);
 
@@ -267,14 +255,17 @@ CR LF Space (Пробел)
                     rus = false;
                     result.Append('\'').Append(c);
                 }
+
                 else if ("0123456789/-?:().,+ ".Contains(c, StringComparison.Ordinal))
                 {
                     result.Append(c);
                 }
+
                 else if (c == '\'')
                 {
                     result.Append('j');
                 }
+
                 else
                 {
                     result.Append(Lat(c));
@@ -343,9 +334,7 @@ CR LF Space (Пробел)
     public static string? Cyr(string? value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
     {
         if (value is null)
-        {
-            return value;
-        }
+            return null;
 
         /*
         В соответствии с Инструкцией Банка России N181-И от 16.08.2017г. при составлении платежных инструкций для осуществления 

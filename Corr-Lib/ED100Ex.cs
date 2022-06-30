@@ -28,7 +28,7 @@ public static class ED100Ex
     {
         ed.EDType = x.Name.LocalName; // required
 
-        ed.ChargeOffDate = x.Attribute("ChargeOffDate")?.Value;
+        ed.ChargeOffDate = x.Attribute("ChargeOffDate")!.Value;
         ed.EDAuthor = x.Attribute("EDAuthor")!.Value; // required
         ed.EDDate = x.Attribute("EDDate")!.Value; // required
         ed.EDNo = x.Attribute("EDNo")!.Value; // required
@@ -38,7 +38,9 @@ public static class ED100Ex
         ed.PaymentPrecedence = x.Attribute("PaymentPrecedence")!.Value; // required
         ed.PaytKind = x.Attribute("PaytKind")?.Value;
         ed.Priority = x.Attribute("Priority")!.Value; // required
-        ed.ReceiptDate = x.Attribute("ReceiptDate")?.Value;
+        ed.ReceiptDate = x.Attribute("ReceiptDate")!.Value;
+        ed.ReqSettlementDate = x.Attribute("ReqSettlementDate")?.Value;
+        ed.ResField = x.Attribute("ResField")?.Value;
         ed.Sum = x.Attribute("Sum")!.Value; // required
         ed.SystemCode = x.Attribute("SystemCode")!.Value; // required
         ed.TransKind = x.Attribute("TransKind")!.Value; // required
@@ -132,24 +134,24 @@ public static class ED100Ex
     {
         ed.EDType = e.EDType;
 
-        ed.ChargeOffDate = e.ChargeOffDate;
-        ed.CodePurpose = e.CodePurpose;
+        ed.ChargeOffDate = e.ChargeOffDate; //71
+        ed.CodePurpose = e.CodePurpose; //20
         ed.EDAuthor = e.EDAuthor;
         ed.EDDate = e.EDDate;
         ed.EDNo = e.EDNo;
         ed.EDReceiver = e.EDReceiver;
-        ed.FileDate = e.FileDate;
+        ed.FileDate = e.FileDate; //63
         ed.OperationID = e.OperationID;
-        ed.PaymentID = e.PaymentID;
+        ed.PaymentID = e.PaymentID; //22
         ed.PaymentPrecedence = e.PaymentPrecedence;
-        ed.PaytKind = e.PaytKind;
-        ed.Priority = e.Priority;
-        ed.ReceiptDate = e.ReceiptDate;
-        //ed.ReqSettlementDate = e.ReqSettlementDate;
-        //ed.ResField = e.ResField;
-        ed.Sum = e.Sum;
-        ed.SystemCode = e.SystemCode;
-        ed.TransKind = e.TransKind;
+        ed.PaytKind = e.PaytKind; //5
+        ed.Priority = e.Priority; //21
+        ed.ReceiptDate = e.ReceiptDate; //62
+        ed.ReqSettlementDate = e.ReqSettlementDate;
+        ed.ResField = e.ResField; //23
+        ed.Sum = e.Sum; //7
+        ed.SystemCode = e.SystemCode; 
+        ed.TransKind = e.TransKind; //18
         ed.Xmlns = e.Xmlns;
 
         //ed.SettleNotEarlier = e.SettleNotEarlier;
@@ -186,40 +188,62 @@ public static class ED100Ex
         }
     }
 
-    private static string? FixKPP(string? inn, string? kpp) =>
-        inn != null && inn.Length != 12 &&
+    private static string? FixKPP(string? inn, string? kpp)
+        => inn != null && inn.Length != 12 &&
         kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
         ? kpp
         : null;
 
-    public static void WriteXML(this ED100 ed, XmlWriter writer) //TODO write not null only (except not required)
+    public static void WriteXML(this ED100 ed, XmlWriter writer)
     {
         // ED101
-        writer.WriteStartElement(ed.EDType, ed.Xmlns);
 
+        writer.WriteStartElement(ed.EDType, ed.Xmlns);
         writer.WriteAttributeString("ChargeOffDate", ed.ChargeOffDate); //71
+
+        if (ed.CodePurpose != null)
+            writer.WriteAttributeString("CodePurpose", ed.CodePurpose); //20
+        
         writer.WriteAttributeString("EDAuthor", ed.EDAuthor);
         writer.WriteAttributeString("EDDate", ed.EDDate);
         writer.WriteAttributeString("EDNo", ed.EDNo);
-        writer.WriteAttributeString("FileDate", ed.FileDate); //63
-        writer.WriteAttributeString("OperationID", ed.OperationID); //22
-        writer.WriteAttributeString("PaymentID", ed.PaymentID); //22
+        
+        if (ed.FileDate != null)
+            writer.WriteAttributeString("FileDate", ed.FileDate); //63
+        
+        if (ed.OperationID != null)
+            writer.WriteAttributeString("OperationID", ed.OperationID);
+        
+        if (ed.PaymentID != null)
+            writer.WriteAttributeString("PaymentID", ed.PaymentID); //22
+        
         writer.WriteAttributeString("PaymentPrecedence", ed.PaymentPrecedence);
-        writer.WriteAttributeString("PaytKind", ed.PaytKind); //5
+
+        if (ed.PaytKind != null)
+            writer.WriteAttributeString("PaytKind", ed.PaytKind); //5
+        
         writer.WriteAttributeString("Priority", ed.Priority); //21
         writer.WriteAttributeString("ReceiptDate", ed.ReceiptDate); //62
-        //writer.WriteAttributeString("ResField", ed.ResField); //23
+
+        if (ed.ReqSettlementDate != null)
+            writer.WriteAttributeString("ReqSettlementDate", ed.ReqSettlementDate); //23
+
+        if (ed.ResField != null)
+            writer.WriteAttributeString("ResField", ed.ResField); //23
+
         writer.WriteAttributeString("Sum", ed.Sum); //7
         writer.WriteAttributeString("SystemCode", ed.SystemCode);
         writer.WriteAttributeString("TransKind", ed.TransKind); //18
 
         // AccDoc
+        
         writer.WriteStartElement("AccDoc");
         writer.WriteAttributeString("AccDocDate", ed.AccDocDate); //4
         writer.WriteAttributeString("AccDocNo", ed.AccDocNo); //3
         writer.WriteEndElement(); // AccDoc
 
         // Payer
+
         writer.WriteStartElement("Payer");
         writer.WriteAttributeString("INN", ed.PayerINN); //60
 
@@ -229,9 +253,9 @@ public static class ED100Ex
         }
 
         writer.WriteAttributeString("PersonalAcc", ed.PayerPersonalAcc);  //9
-
         writer.WriteElementString("Name", ed.PayerName); //8
 
+        // Bank
         writer.WriteStartElement("Bank");
         writer.WriteAttributeString("BIC", ed.PayerBIC); //11
         writer.WriteAttributeString("CorrespAcc", ed.PayerCorrespAcc); //12
@@ -239,13 +263,14 @@ public static class ED100Ex
         writer.WriteEndElement(); // Payer
 
         // Payee
+        
         writer.WriteStartElement("Payee");
         writer.WriteAttributeString("INN", ed.PayeeINN); //61
         writer.WriteAttributeString("KPP", ed.PayeeKPP); //103
         writer.WriteAttributeString("PersonalAcc", ed.PayeePersonalAcc); //17
-
         writer.WriteElementString("Name", ed.PayeeName); //16
 
+        // Bank
         writer.WriteStartElement("Bank");
         writer.WriteAttributeString("BIC", ed.PayeeBIC); //14
         writer.WriteAttributeString("CorrespAcc", ed.PayeeCorrespAcc); //15
@@ -253,6 +278,7 @@ public static class ED100Ex
         writer.WriteEndElement(); // Payee
 
         // Purpose
+        
         writer.WriteElementString("Purpose", ed.Purpose); //24
 
         if (ed.Tax)

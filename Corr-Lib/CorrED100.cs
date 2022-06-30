@@ -28,19 +28,13 @@ public class CorrED100 : ED100
     public bool Saved { get; set; } = false;
 
     public CorrED100(XNode? node) : base(node)
-    {
-        CorrSubst(this);
-    }
+        => CorrSubst(this);
 
     public CorrED100(XElement element) : base(element)
-    {
-        CorrSubst(this);
-    }
+        => CorrSubst(this);
 
     public CorrED100(ED100 ed) : base(ed)
-    {
-        CorrSubst(this);
-    }
+        => CorrSubst(this);
 
     private static void CorrSubst(CorrED100 ed)
     {
@@ -80,7 +74,8 @@ public class CorrED100 : ED100
     /// Сокращение по возможности длинных строк в Наименовании плательщика.
     /// </summary>
     /// <returns>Текст покороче.</returns>
-    private static string? ShortenName(string? name) => name?
+    private static string? ShortenName(string? name)
+        => name?
         .Replace("Общество с ограниченной ответственностью", "ООО", StringComparison.OrdinalIgnoreCase)
         .Replace("Публичное акционерное общество", "ПАО", StringComparison.OrdinalIgnoreCase)
         .Replace("Акционерное общество", "АО", StringComparison.OrdinalIgnoreCase)

@@ -159,7 +159,7 @@
             this.SaveBox.Size = new System.Drawing.Size(563, 82);
             this.SaveBox.TabIndex = 1;
             this.SaveBox.TabStop = false;
-            this.SaveBox.Text = "Конечные файлы с {id} в маске";
+            this.SaveBox.Text = "Конечные файлы с {id} или * в маске";
             // 
             // SaveFormatChoice
             // 
@@ -376,8 +376,8 @@
             // TemplatesNameGroup
             // 
             this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitChoice);
-            this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitLabel);
             this.TemplatesNameGroup.Controls.Add(this.TemplatesNameEdit);
+            this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitLabel);
             this.TemplatesNameGroup.Location = new System.Drawing.Point(9, 298);
             this.TemplatesNameGroup.Name = "TemplatesNameGroup";
             this.TemplatesNameGroup.Size = new System.Drawing.Size(563, 88);

@@ -404,6 +404,7 @@ partial class MainForm
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.StatusBar);
             this.Controls.Add(this.MainMenu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MainMenu;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;

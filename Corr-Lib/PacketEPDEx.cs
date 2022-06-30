@@ -64,7 +64,7 @@ public static class PacketEPDEx
                     packet.EDDate = root.Attribute("EDDate")!.Value;
                     packet.EDNo = root.Attribute("EDNo")!.Value;
                     packet.EDQuantity = root.Attribute("EDQuantity")!.Value;
-                    packet.EDReceiver = root.Attribute("EDReceiver")!.Value;
+                    packet.EDReceiver = root.Attribute("EDReceiver")?.Value;
                     packet.Sum = root.Attribute("Sum")!.Value;
                     packet.SystemCode = root.Attribute("SystemCode")!.Value;
                     packet.Xmlns = root.Attribute("xmlns")?.Value;
@@ -86,7 +86,7 @@ public static class PacketEPDEx
                     packet.EDDate = root.Attribute("EDDate")!.Value;
                     packet.EDNo = root.Attribute("EDNo")!.Value;
                     packet.EDQuantity = "1";
-                    packet.EDReceiver = root.Attribute("ActualReceiver")?.Value;
+                    packet.EDReceiver = root.Attribute("ActualReceiver")!.Value;
                     //packet.Sum = root.Attribute("Sum")?.Value;
                     //packet.SystemCode = root.Attribute("SystemCode")?.Value;
                     packet.Xmlns = root.Attribute("xmlns")?.Value;

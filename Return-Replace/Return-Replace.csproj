@@ -6,11 +6,14 @@
     <RootNamespace>Return_Replace</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <Version>1.1.0$(VersionPrefix)</Version>
+    <Version>1.2.0$(VersionPrefix)</Version>
+    <Description>Преобразование обратных пакетов ESID, полученных из ЦБ через корсчет в другом банке.</Description>
+    <Company>Cibank</Company>
+    <NeutralLanguage>ru-RU</NeutralLanguage>
   </PropertyGroup>
 
 </Project>

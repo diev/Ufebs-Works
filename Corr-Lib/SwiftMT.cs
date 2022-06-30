@@ -531,10 +531,10 @@ public static class SwiftMT
 
         Sum = XSum(ed.Sum),
 
-        ChargeOffDate = XDate(ed.ChargeOffDate),
+        ChargeOffDate = XDate(ed.ChargeOffDate)!,
         EDDate = XDateX(ed.EDDate),
         FileDate = XDate(ed.FileDate),
-        ReceiptDate = XDate(ed.ReceiptDate),
+        ReceiptDate = XDate(ed.ReceiptDate)!,
         AccDocDate = XDateX(ed.AccDocDate),
         Purpose = Lat(ed.Purpose),
 

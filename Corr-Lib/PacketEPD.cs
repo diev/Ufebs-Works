@@ -46,17 +46,17 @@ public class PacketEPD
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDAuthor { get; set; }
+    public string EDAuthor { get; set; } = null!;
 
     /// <summary>
     /// Дата составления ЭС.
     /// </summary>
-    public string EDDate { get; set; }
+    public string EDDate { get; set; } = null!;
 
     /// <summary>
     /// Номер ЭС в течение опердня.
     /// </summary>
-    public string EDNo { get; set; }
+    public string EDNo { get; set; } = null!;
 
     /// <summary>
     /// Количество ЭПС в пакете.
@@ -66,7 +66,7 @@ public class PacketEPD
     /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string EDReceiver { get; set; }
+    public string? EDReceiver { get; set; }
 
     /// <summary>
     /// Общая сумма ЭПС в пакете.
@@ -91,9 +91,15 @@ public class PacketEPD
     public CorrED100[] Elements { get; set; } = Array.Empty<CorrED100>();
 
     /// <summary>
+    /// Иия файла, из которого загружен пакет.
+    /// </summary>
+    public string? Path { get; protected set; }
+
+    /// <summary>
     /// Наш идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).
     /// </summary>
-    public string Id => $"{EDDate[2..].Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
+    public string Id
+        => $"{EDDate[2..].Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
 
     #endregion Extensions
     #endregion Properties
@@ -102,18 +108,15 @@ public class PacketEPD
 
     public PacketEPD(string path)
     {
+        Path = path;
         this.Load(path);
     }
 
     public PacketEPD(XNode node)
-    {
-        this.Load((XElement)node);
-    }
+        => this.Load((XElement)node);
 
     public PacketEPD(XElement element)
-    {
-        this.Load(element);
-    }
+        => this.Load(element);
 
     #endregion Constructors
 }

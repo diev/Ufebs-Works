@@ -137,9 +137,7 @@ public static class Config
     }
 
     static Config()
-    {
-        _profile = (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';
-    }
+        => _profile = (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';
 
     public static void Save(string appPath)
     {
@@ -202,22 +200,24 @@ public static class Config
 
     #region Getters
 
-    private static string G(string name, string defValue = "") =>
-        AppContext.GetData(name) as string ?? defValue;
+    private static string G(string name, string defValue = "")
+        => AppContext.GetData(name) as string ?? defValue;
 
-    private static string GP(string name, string defValue = "") =>
-        G(_profile + name, defValue);
+    private static string GP(string name, string defValue = "")
+        => G(_profile + name, defValue);
 
     private static int GInt(string name, int defValue = 0)
     {
         var o = AppContext.GetData(name);
+
         if (o is null) return defValue;
         if (o is int i) return i;
+
         return int.Parse((string)o);
     }
 
-    private static int GPInt(string name, int defValue = 0) =>
-        GInt(_profile + name, defValue);
+    private static int GPInt(string name, int defValue = 0)
+        => GInt(_profile + name, defValue);
 
     private static string[] GArray(string name)
     {
@@ -247,20 +247,20 @@ public static class Config
     #endregion Getters
     #region Setters
 
-    private static void S(string name, string value = "") =>
-        AppDomain.CurrentDomain.SetData(name, value);
+    private static void S(string name, string value = "")
+        => AppDomain.CurrentDomain.SetData(name, value);
 
-    private static void SP(string name, string value = "") => 
-        S(_profile + name, value);
+    private static void SP(string name, string value = "")
+        => S(_profile + name, value);
 
-    private static void S(string name, int value) => 
-        AppDomain.CurrentDomain.SetData(name, value);
+    private static void S(string name, int value)
+        => AppDomain.CurrentDomain.SetData(name, value);
 
-    private static void SP(string name, int value) => 
-        S(_profile + name, value);
+    private static void SP(string name, int value)
+        => S(_profile + name, value);
 
-    private static void S(string name, string[]? value) =>
-        AppDomain.CurrentDomain.SetData(name, value);
+    private static void S(string name, string[]? value)
+        => AppDomain.CurrentDomain.SetData(name, value);
 
     #endregion Setters
 }

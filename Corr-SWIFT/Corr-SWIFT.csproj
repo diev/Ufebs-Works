@@ -9,14 +9,35 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>ru-RU</NeutralLanguage>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>2.2.6.30</AssemblyVersion>
+    <FileVersion>2.2.6.30</FileVersion>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <Version>1.2.0$(VersionPrefix)</Version>
+    <Company>CIBANK</Company>
+    <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR.</Description>
+    <ApplicationIcon>Oxygen-Icons.org-Oxygen-Actions-svn-commit.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Oxygen-Icons.org-Oxygen-Actions-svn-commit.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Corr-Lib\Corr-Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

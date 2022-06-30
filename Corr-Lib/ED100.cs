@@ -47,7 +47,7 @@ public class ED100
     /// <summary>
     /// Списано со счета плательщика (поле 71). Дата списания денежных средств со счета плательщика.
     /// </summary>
-    public string? ChargeOffDate { get; set; }
+    public string ChargeOffDate { get; set; }
 
     /// <summary>
     /// Назначение платежа кодовое (поле 20). До 35 символов.
@@ -92,12 +92,12 @@ public class ED100
     /// <summary>
     /// Приоритет платежа. Две цифры.
     /// </summary>
-    public string PaymentPrecedence { get; set; } = null!; // required (default 79)
+    public string PaymentPrecedence { get; set; } = null!; // required (default 79, БЭСП 69)
 
     /// <summary>
     /// Вид платежа (поле 5). Одна цифра.
     /// </summary>
-    public string? PaytKind { get; set; }
+    public string? PaytKind { get; set; } // default null, БЭСП 4
 
     /// <summary>
     /// Очередность платежа (поле 21).
@@ -107,17 +107,17 @@ public class ED100
     /// <summary>
     /// Поступило в банк плательщика (поле 62).
     /// </summary>
-    public string? ReceiptDate { get; set; }
+    public string ReceiptDate { get; set; }
 
     /// <summary>
     /// Запрошенная (требуемая) дата исполнения распоряжения.
     /// </summary>
-    //public string? ReqSettlementDate { get; set; }
+    public string? ReqSettlementDate { get; set; } //not used
 
     /// <summary>
     /// Резервное поле (поле 23). Текст до 35 символов.
     /// </summary>
-    //public string? ResField { get; set; }
+    public string? ResField { get; set; } //not used
 
     /// <summary>
     /// Сумма (поле 7).
@@ -331,14 +331,10 @@ public class ED100
     }
 
     public ED100(XElement element)
-    {
-        this.Load(element);
-    }
+        => this.Load(element);
 
     public ED100(ED100 ed)
-    {
-        this.Load(ed);
-    }
+        => this.Load(ed);
 
     #endregion Constructors
 }

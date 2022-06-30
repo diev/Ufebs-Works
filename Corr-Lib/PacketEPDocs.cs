@@ -25,21 +25,20 @@ public class PacketEPDocs : IReadOnlyList<string[]>
 {
     private readonly PacketEPD _packet;
 
-    public string[] this[int index] => _packet.DataRow(index);
+    public string[] this[int index]
+        => _packet.DataRow(index);
 
-    public int Count => _packet.Elements.Length;
+    public int Count
+        => _packet.Elements.Length;
 
     public PacketEPDocs(PacketEPD packet)
-    {
-        _packet = packet;
-    }
+        => _packet = packet;
 
     public PacketEPDocs(string path)
-    {
-        _packet = new PacketEPD(path);
-    }
+        => _packet = new PacketEPD(path);
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+        => GetEnumerator();
 
     public IEnumerator<string[]> GetEnumerator()
     {

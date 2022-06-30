@@ -29,6 +29,8 @@ namespace CorrSWIFT;
 public partial class MainForm : Form
 {
     private PacketEPD _packet;
+    private int _selectedFileIndex = -1;
+    //private int _selectedDocIndex = -1;
 
     #region Init
     public MainForm()
@@ -103,6 +105,11 @@ public partial class MainForm : Form
 
         FilesList.Items.Clear();
         DocsList.Items.Clear();
+        NameEdit.Text = string.Empty;
+        PurposeEdit.Text = string.Empty;
+
+        _selectedFileIndex = -1;
+        //_selectedDocIndex = -1;
 
         foreach (var file in new SourceFiles(Config.OpenDir, Config.OpenMask))
         {
@@ -126,7 +133,7 @@ public partial class MainForm : Form
             }
         }
 
-        Status.Text = "Выберите файл";
+        Status.Text = "Выберите файл.";
     }
     #endregion Init
 
@@ -161,6 +168,14 @@ public partial class MainForm : Form
     {
         string path = item.Text;
 
+        if (!File.Exists(path))
+        {
+            MessageBox.Show($"Файл \"{path}\" уже отсутствует на диске!",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            return;
+        }
+
         // Заголовок окна
 
         Text = $"{Application.ProductName} {path}";
@@ -175,67 +190,27 @@ public partial class MainForm : Form
             SaveDocItem(doc); //TODO Cancel* = Abort (foreach break)
         }
 
-        bool ok = true;
-
-        foreach (var ed in _packet.Elements)
-        {
-            if (!ed.Saved)
-            {
-                ok = false;
-                break;
-            }
-        }
-
-        if (ok)
-        {
-            switch (Config.SaveFormat)
-            {
-                case Config.UfebsFormat:
-                    string path2 = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", _packet.Id)); //TODO add "*"
-
-                    {
-                        var settings = new XmlWriterSettings()
-                        {
-                            Encoding = Encoding.GetEncoding("windows-1251"),
-                            Indent = true 
-                        };
-
-                        using var writer = XmlWriter.Create(path2, settings);
-
-                        if (_packet.EDType == "PacketEPD")
-                        {
-                            _packet.WriteXML(writer);
-                        }
-                        else if (_packet.EDType.StartsWith("ED1"))
-                        {
-                            _packet.Elements[0].WriteXML(writer);
-                        }
-                        //TODO ED503
-
-                        writer.Close();
-                    }
-
-                    item.SubItems[PackSavedColumn.Index].Text = path2;
-                    break;
-
-                case Config.SwiftFormat:
-                    item.SubItems[PackSavedColumn.Index].Text = "+";
-                    break;
-            }
-
-            item.ForeColor = Color.DarkGreen;
-            Status.Text = "Готово. Выберите другой файл.";
-        }
-        else
-        {
-            item.ForeColor = Color.DarkRed;
-            Status.Text = "Есть ошибки!";
-        }
-
+        SaveFileItem();
     }
 
     private void TryClose(ref FormClosingEventArgs e)
     {
+        if (Status.Text != "Всё готово.")
+        {
+            var reply = MessageBox.Show($"Есть несохраненные файлы! Закрыть программу?",
+                Application.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+
+            switch (reply)
+            {
+                case DialogResult.OK:
+                    break;
+
+                case DialogResult.Cancel:
+                    e.Cancel = true;
+                    break;
+            }
+        }
+
         //switch (Config.SaveFormat)
         //{
         //    case Config.UfebsFormat:
@@ -324,7 +299,8 @@ public partial class MainForm : Form
 
     private void AboutMenuItem_Click(object sender, EventArgs e)
     {
-        App.About();
+        var about = new AboutBox();
+        about.Show();
     }
 
     private void ConfigMenuItem_Click(object sender, EventArgs e)
@@ -340,23 +316,111 @@ public partial class MainForm : Form
     private void FilesList_SelectedIndexChanged(object sender, EventArgs e)
     {
         var list = (ListView)sender;
-        if (list.SelectedItems.Count != 1) return;
-        var item = list.SelectedItems[0];
 
-        LoadFile(item);
+        if (list.SelectedItems.Count == 1)
+        {
+            _selectedFileIndex = list.SelectedItems[0].Index;
+            var item = list.SelectedItems[0];
+
+            LoadFile(item);
+        }
     }
 
     private void DocsList_SelectedIndexChanged(object sender, EventArgs e)
     {
         var list = (ListView)sender;
-        if (list.SelectedItems.Count != 1) return;
-        var item = list.SelectedItems[0];
 
-        SaveDocItem(item);
+        if (list.SelectedItems.Count == 1)
+        {
+            //_selectedDocIndex = list.SelectedItems[0].Index;
+            var item = list.SelectedItems[0];
+
+            SaveDocItem(item);
+        }
+    }
+
+    private void SaveFileItem()
+    {
+        var item = FilesList.Items[_selectedFileIndex];
+
+        foreach (var ed in _packet.Elements)
+        {
+            if (!ed.Saved)
+            {
+                item.ForeColor = Color.DarkRed;
+                Status.Text = "В пакете есть ошибки!";
+
+                return;
+            }
+        }
+
+        _ = Config.SaveFormat switch
+        {
+            Config.UfebsFormat => item.SubItems[PackSavedColumn.Index].Text = GetUfebsFileName(),
+            Config.SwiftFormat => item.SubItems[PackSavedColumn.Index].Text = "+",
+            _ => throw new NotImplementedException()
+        };
+
+        item.ForeColor = Color.DarkGreen;
+        Status.Text = "Готово. Выберите другой файл.";
+
+        foreach (ListViewItem i in FilesList.Items)
+        {
+            //if (i.ForeColor != Color.DarkGreen) //TODO see in collection, not in listview!
+            if (i.SubItems[PackSavedColumn.Index].Text.Length == 0) // not '+'
+            {
+                Status.Text = "Выберите следующий необработанный файл";
+                return;
+            }
+        }
+
+        Status.Text = "Всё готово.";
+
+        string GetUfebsFileName()
+        {
+            string filename = Config.SaveMask;
+
+            if (filename.Contains('*') && _packet.Path != null)
+            {
+                filename = filename.Replace("*", Path.GetFileNameWithoutExtension(_packet.Path));
+            }
+
+            if (filename.Contains("{id}"))
+            {
+                filename = filename.Replace("{id}", _packet.Id);
+            }
+
+            filename = Path.Combine(Config.SaveDir, filename);
+            var settings = new XmlWriterSettings()
+            {
+                Encoding = Encoding.GetEncoding("windows-1251"),
+                Indent = true
+            };
+
+            using (var writer = XmlWriter.Create(filename, settings))
+            {
+                if (_packet.EDType == "PacketEPD")
+                {
+                    _packet.WriteXML(writer);
+                }
+                else if (_packet.EDType.StartsWith("ED1"))
+                {
+                    _packet.Elements[0].WriteXML(writer);
+                }
+                //TODO ED503
+
+                writer.Close();
+            }
+
+            return filename;
+        }
     }
 
     private void SaveDocItem(ListViewItem item)
     {
+        //var item = DocsList.Items[_selectedDocIndex];
+        //var ed = _packet.Elements[_selectedDocIndex];
+
         var ed = _packet.Elements[item.Index];
 
         NameEdit.Text = ed.PayerName;
@@ -394,7 +458,6 @@ public partial class MainForm : Form
         Status.Text = "Готово";
     }
 
-
     private void NameEdit_TextChanged(object sender, EventArgs e)
     {
         EditChanged(sender as TextBox);
@@ -416,16 +479,29 @@ public partial class MainForm : Form
         {
             case Config.UfebsFormat:
                 len = edit.TextLength;
-                max = name ? 160 : 210;
-                edit.BackColor = len > max ? Color.LightPink : BackColor;
-                Status.Text = len > max ? $"Надо сократить {len - max}" : $"Готово ({len}/{max})";
+                max = name
+                    ? 160
+                    : 210;
+                edit.BackColor = len > max 
+                    ? Color.LightPink 
+                    : BackColor;
+                Status.Text = len > max 
+                    ? $"Надо сократить {len - max}" 
+                    : $"Готово ({len}/{max})";
                 break;
 
             case Config.SwiftFormat:
-                len = Lat(edit.Text).Length;
-                max = name ? Config.SwiftNameLimit : 210;
-                edit.BackColor = len > max ? Color.LightPink : BackColor;
-                Status.Text = len > max ? $"Надо сократить {len - max}" : $"Готово ({len}/{max})";
+                string lat = Lat(edit.Text) ?? string.Empty;
+                len = lat.Length;
+                max = name
+                    ? Config.SwiftNameLimit
+                    : 210;
+                edit.BackColor = len > max
+                    ? Color.LightPink
+                    : BackColor;
+                Status.Text = len > max 
+                    ? $"Надо сократить {len - max}" 
+                    : $"Готово ({len}/{max})";
                 break;
         }
     }
@@ -442,54 +518,61 @@ public partial class MainForm : Form
 
     private void NameEdit_KeyUp(object sender, KeyEventArgs e)
     {
-        if (DocsList.SelectedItems.Count != 1) return;
-        var item = DocsList.SelectedItems[0];
-        var ed = _packet.Elements[item.Index];
-
-        if (e.KeyCode == Keys.Enter)
+        if (DocsList.SelectedItems.Count == 1)
         {
-            string prev = ed.PayerName;
-            string name = NameEdit.Text;
-            ed.PayerName = name;
-            item.SubItems[PayerColumn.Index].Text = name;
-            SaveDocItem(item);
+            var item = DocsList.SelectedItems[0];
+            var ed = _packet.Elements[item.Index];
 
-            foreach (ListViewItem doc in DocsList.Items)
+            if (e.KeyCode == Keys.Enter)
             {
-                ed = _packet.Elements[doc.Index];
+                string? prev = ed.PayerName;
+                string name = NameEdit.Text;
+                ed.PayerName = name;
+                item.SubItems[PayerColumn.Index].Text = name;
 
-                if (!ed.Saved && ed.PayerName == prev)
+                SaveDocItem(item);
+
+                foreach (ListViewItem doc in DocsList.Items)
                 {
-                    ed.PayerName = name;
-                    doc.SubItems[PayerColumn.Index].Text = name;
-                    SaveDocItem(doc);
-                }
-            }
+                    ed = _packet.Elements[doc.Index];
 
-            //TODO mark ok in FilesList if all saved
-        }
-        else if (e.KeyCode == Keys.Escape)
-        {
-            NameEdit.Text = ed.PayerName;
+                    if (!ed.Saved && ed.PayerName == prev)
+                    {
+                        ed.PayerName = name;
+                        doc.SubItems[PayerColumn.Index].Text = name;
+
+                        SaveDocItem(doc);
+                    }
+                }
+                SaveFileItem();
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                NameEdit.Text = ed.PayerName;
+            }
         }
     }
 
     private void PurposeEdit_KeyUp(object sender, KeyEventArgs e)
     {
-        if (DocsList.SelectedItems.Count != 1) return;
-        var item = DocsList.SelectedItems[0];
-        var ed = _packet.Elements[item.Index];
+        if (DocsList.SelectedItems.Count == 1)
+        {
+            var item = DocsList.SelectedItems[0];
+            var ed = _packet.Elements[item.Index];
 
-        if (e.KeyCode == Keys.Enter)
-        {
-            string purpose = PurposeEdit.Text;
-            ed.Purpose = purpose;
-            item.SubItems[PurposeColumn.Index].Text = purpose;
-            SaveDocItem(item);
-        }
-        else if (e.KeyCode == Keys.Escape)
-        {
-            PurposeEdit.Text = ed.Purpose;
+            if (e.KeyCode == Keys.Enter)
+            {
+                string purpose = PurposeEdit.Text;
+                ed.Purpose = purpose;
+                item.SubItems[PurposeColumn.Index].Text = purpose;
+
+                SaveDocItem(item);
+                SaveFileItem();
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                PurposeEdit.Text = ed.Purpose;
+            }
         }
     }
 }

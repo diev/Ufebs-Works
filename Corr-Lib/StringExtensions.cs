@@ -24,34 +24,23 @@ namespace CorrLib;
 public static class StringExtensions
 {
     public static bool Empty(this string? value)
-    {
-        return string.IsNullOrWhiteSpace(value);
-    }
+        => string.IsNullOrWhiteSpace(value);
 
     public static bool Exists(this string? value)
-    {
-        return !string.IsNullOrWhiteSpace(value);
-    }
+        => !string.IsNullOrWhiteSpace(value);
 
     public static string AddNotEmpty(this string? value)
-    {
-        return value == null ? string.Empty : $".{value}";
-    }
+        => value == null
+        ? string.Empty
+        : $".{value}";
 
     public static string AddNotEmptyNorZeros(this string? value)
-    {
-        return value == null || value.Length == 0 || value == "0" || value == "000000000"
-            ? string.Empty
-            : $".{value}";
-    }
+        => value == null || value.Length == 0 || value == "0" || value == "000000000"
+        ? string.Empty
+        : $".{value}";
 
     public static StringBuilder AppendLineIf(this StringBuilder @this, bool condition, string value)
-    {
-        if (condition)
-        {
-            @this.AppendLine(value);
-        }
-
-        return @this;
-    }
+        => condition
+        ? @this.AppendLine(value)
+        : @this;
 }

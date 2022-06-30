@@ -1,4 +1,23 @@
-﻿using System.Text;
+﻿#region License
+/*
+Copyright 2022 Dmitrii Evdokimov
+Open source software
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+using System.Text;
 using System.Xml.Linq;
 
 namespace Return_Replace;
@@ -334,10 +353,36 @@ public static class Program
                 Console.WriteLine($"Input \"{inFile}\" unknown type \"{root.Name.LocalName}\"");
                 break;
         }
-        xdoc.Save(outFile);
+
+        int tries = 5;
+
+        while (tries-- > 0)
+        {
+            try
+            {
+                xdoc.Save(outFile);
+                break;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка сохранения файла \"{outFile}\".");
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine($"Еще попыток: {tries} через 2 сек.");
+                Thread.Sleep(2000);
+            }
+        }
 
         Console.WriteLine();
-        Console.WriteLine($"[Output \"{outFile}\" done. Press Spacebar.]");
+
+        if (File.Exists(outFile))
+        {
+            Console.WriteLine($"[Output \"{outFile}\" done. Press Spacebar.]");
+        }
+        else
+        {
+            Console.WriteLine($"[Output \"{outFile}\" FAIL! Press Spacebar.]");
+        }
+
         Console.WriteLine();
     }
 
