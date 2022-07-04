@@ -70,4 +70,9 @@ public partial class Form1 : Form
         _maxLength = 210;
         ColorizeLength();
     }
+
+    private void SwiftSrcText_TextChanged(object sender, EventArgs e)
+    {
+        RusDstText.Text = SwiftTranslit.Cyr(SwiftSrcText.Text);
+    }
 }
