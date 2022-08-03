@@ -50,13 +50,13 @@ public static class SwiftMT
             .Append("{1:F01") // Block 1 identifier : Application identifier
             .Append(Config.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
-            .Append(ed.Id) // Session number
+            .Append(ed.EDNo) // Session number
             .Append('}')
 
             // Application header
             .Append("{2:I103") // Block 2 identifier : In, MT103
-            .Append(Config.CorrSWIFT) // Destination address
-            .Append("XXXXXN}") // Logical terminal address, Message priority (Normal)
+            .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX
+            .Append("N}") // Message priority (Normal)
 
             // User header
             .Append("{3:{113:RUR6}{121:") // Block 3 identifier : Version
@@ -103,7 +103,7 @@ public static class SwiftMT
         // ВНИМАНИЕ! Если плательщиком выступает сам банк-респондент, то указание в поле «50» счета ЛОРО и BIC-кода не допускается.
 
         sb.AppendLine($":50K:/{ed.PayerPersonalAcc}") // или :50F: с адресом и страной
-            .AppendLineIf(ed.PayerINN != null, $"INN{ed.PayerINN}{ed.PayerKPP.AddNotEmptyNorZeros()}");
+            .AppendLineIf(ed.PayerINN != null, $"INN{ed.PayerINN}{ed.PayerKPP.AddKPPNotEmptyNorZeros()}");
 
         // (3*35x!)
         // ООО "Название юрлица"
@@ -159,11 +159,27 @@ public static class SwiftMT
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
+        var bank = ED807Finder.Find(ed.PayeeBIC); //TODO BIC not found
+        {
+            var s = Lat(bank.name).Prepare35();
+
+            for (int i = 0; i < 3; i++)
+            {
+                var s35 = s.Slice(i * 35, 35).TrimEnd();
+
+                if (s35.Length == 0) break;
+
+                sb.AppendLine(s35.ToString());
+            }
+        }
+        
+        sb.AppendLine(Lat(bank.place));
+
         // Бенефициар
         // (клиент, которому будут выплачены средства)
 
         sb.AppendLine($":59:/{ed.PayeePersonalAcc}")
-            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddNotEmptyNorZeros()}");
+            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmptyNorZeros()}");
 
         if (ed.PayeeName != null)
         {
@@ -316,7 +332,7 @@ public static class SwiftMT
         sb.Append("-}")
 
             // Trailers
-            .AppendLine("{5:}"); // Block 5 identifier : 
+            .Append("{5:}"); // Block 5 identifier : NO \n before EOF!!! 
 
         return sb.ToString();
     }
@@ -326,7 +342,7 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT202(this CorrED100 corrED100)
+    public static string ToStringMT202(this CorrED100 corrED100) //TODO
     {
         string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
         var ed = Translit(corrED100);
@@ -341,13 +357,13 @@ public static class SwiftMT
             .Append("{1:F01") // Block 1 identifier : Application identifier
             .Append(Config.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
-            .Append(id) // Session number
+            .Append(ed.EDNo) // Session number (shorten for {1: })
             .Append('}')
 
             // Application header
             .Append("{2:I202") // Block 2 identifier : In, MT202
-            .Append(Config.CorrSWIFT) // Destination address
-            .Append("XXXXXN}") // Logical terminal address, Message priority (Normal)
+            .Append(Config.CorrSWIFT.PadRight(12,'X')) // Destination address with default Logical terminal address XXX
+            .Append("N}") // Message priority (Normal)
 
             // User header
             .Append("{3:{113:RUR6}{121:") // Block 3 identifier : Version
@@ -404,10 +420,12 @@ public static class SwiftMT
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
+        //sb.AppendLine("BANK"); //TODO Название банка и его город по его БИК (пока просто заглушка)
+
         // Банк-Бенефициар
 
         sb.AppendLine($":58D:/{ed.PayeePersonalAcc}")
-            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddNotEmpty()}");
+            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmpty()}");
 
         if (ed.PayeeName != null)
         {
@@ -519,7 +537,7 @@ public static class SwiftMT
         sb.Append("-}")
 
             // Trailers
-            .AppendLine("{5:}"); // Block 5 identifier : 
+            .Append("{5:}"); // Block 5 identifier : NO \n before EOF!!!
 
         return sb.ToString();
     }

@@ -46,6 +46,7 @@ public partial class ConfigForm : Form
         SaveDirEdit.Text = Config.SaveDir;
         SaveMaskEdit.Text = Config.SaveMask;
         SaveFormatChoice.Text = Config.SaveFormat;
+        SelectFileEdit.Text = Config.ED807;
 
         BankInnEdit.Text = Config.BankINN;
         BankKppEdit.Text = Config.BankKPP;
@@ -68,12 +69,14 @@ public partial class ConfigForm : Form
 
     private void SaveConfig()
     {
-        string profile = ProfileChoice.Text;
+        string profile = ProfileChoice.Text.Trim();
 
         if (!ProfileChoice.Items.Contains(profile))
         {
-            var list = new List<string>(Config.Profiles);
-            list.Add(profile);
+            var list = new List<string>(Config.Profiles)
+            {
+                profile
+            };
             Config.Profiles = list.ToArray();
         }
 
@@ -81,22 +84,23 @@ public partial class ConfigForm : Form
 
         // string TextBox
 
-        Config.OpenDir = OpenDirEdit.Text ?? OpenDirEdit.PlaceholderText;
-        Config.OpenMask = OpenMaskEdit.Text ?? OpenDirEdit.PlaceholderText;
+        Config.OpenDir = OpenDirEdit.Text.Trim() ?? OpenDirEdit.PlaceholderText;
+        Config.OpenMask = OpenMaskEdit.Text.Trim() ?? OpenDirEdit.PlaceholderText;
 
-        Config.SaveDir = SaveDirEdit.Text ?? SaveDirEdit.PlaceholderText;
-        Config.SaveMask = SaveMaskEdit.Text ?? SaveMaskEdit.PlaceholderText;
+        Config.SaveDir = SaveDirEdit.Text.Trim() ?? SaveDirEdit.PlaceholderText;
+        Config.SaveMask = SaveMaskEdit.Text.Trim() ?? SaveMaskEdit.PlaceholderText;
         Config.SaveFormat = SaveFormatChoice.Text;
+        Config.ED807 = SelectFileEdit.Text.Trim() ?? SelectFileEdit.PlaceholderText;
 
-        Config.BankINN = BankInnEdit.Text ?? BankInnEdit.PlaceholderText;
-        Config.BankKPP = BankKppEdit.Text ?? BankKppEdit.PlaceholderText;
-        Config.BankSWIFT = BankSwiftEdit.Text ?? BankSwiftEdit.PlaceholderText;
+        Config.BankINN = BankInnEdit.Text.Trim() ?? BankInnEdit.PlaceholderText;
+        Config.BankKPP = BankKppEdit.Text.Trim() ?? BankKppEdit.PlaceholderText;
+        Config.BankSWIFT = BankSwiftEdit.Text.Trim() ?? BankSwiftEdit.PlaceholderText;
 
-        Config.CorrAccount = CorrAccountEdit.Text ?? CorrAccountEdit.PlaceholderText;
-        Config.CorrSWIFT = CorrSwiftEdit.Text ?? CorrSwiftEdit.PlaceholderText;
+        Config.CorrAccount = CorrAccountEdit.Text.Trim() ?? CorrAccountEdit.PlaceholderText;
+        Config.CorrSWIFT = CorrSwiftEdit.Text.Trim() ?? CorrSwiftEdit.PlaceholderText;
 
-        Config.TemplatesName = TemplatesNameEdit.Text ?? TemplatesNameEdit.PlaceholderText;
-        Config.TemplatesPurpose = TemplatesPurposeEdit.Text ?? TemplatesPurposeEdit.PlaceholderText;
+        Config.TemplatesName = TemplatesNameEdit.Text.Trim() ?? TemplatesNameEdit.PlaceholderText;
+        Config.TemplatesPurpose = TemplatesPurposeEdit.Text.Trim() ?? TemplatesPurposeEdit.PlaceholderText;
 
         // string ComboBox
 
@@ -132,6 +136,14 @@ public partial class ConfigForm : Form
         }
     }
 
+    private void SelectFileButton_Click(object sender, EventArgs e)
+    {
+        if (SelectFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            SelectFileEdit.Text = SelectFileDialog.FileName;
+        }
+    }
+
     private void OKButton_Click(object sender, EventArgs e)
     {
         SaveConfig();
@@ -146,15 +158,19 @@ public partial class ConfigForm : Form
     {
         bool on = (sender as ComboBox)?.Text == Config.SwiftFormat;
 
+        SelectFileLabel.Visible = on;
         BankSwiftLabel.Visible = on;
         CorrSwiftLabel.Visible = on;
         SwiftPurposeFieldLabel.Visible = on;
         SwiftNameLimitLabel.Visible = on;
 
+        SelectFileEdit.Visible = on;
         BankSwiftEdit.Visible = on;
         CorrSwiftEdit.Visible = on;
         SwiftPurposeFieldChoice.Visible = on;
         SwiftNameLimitChoice.Visible = on;
+
+        SelectFileButton.Visible = on;
 
         SaveMaskEdit.PlaceholderText = on
             ? "{id}.txt"

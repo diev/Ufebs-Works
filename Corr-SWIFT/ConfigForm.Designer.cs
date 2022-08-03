@@ -59,14 +59,18 @@
             this.AbortButton = new System.Windows.Forms.Button();
             this.TemplatesNameGroup = new System.Windows.Forms.GroupBox();
             this.SwiftNameLimitChoice = new System.Windows.Forms.ComboBox();
-            this.SwiftNameLimitLabel = new System.Windows.Forms.Label();
             this.TemplatesNameEdit = new System.Windows.Forms.TextBox();
+            this.SwiftNameLimitLabel = new System.Windows.Forms.Label();
             this.TemplatesPurposeGroup = new System.Windows.Forms.GroupBox();
             this.SwiftPurposeFieldChoice = new System.Windows.Forms.ComboBox();
             this.SwiftPurposeFieldLabel = new System.Windows.Forms.Label();
             this.TemplatesPurposeEdit = new System.Windows.Forms.TextBox();
             this.ProfileChoice = new System.Windows.Forms.ComboBox();
             this.ProfileLabel = new System.Windows.Forms.Label();
+            this.SelectFileButton = new System.Windows.Forms.Button();
+            this.SelectFileEdit = new System.Windows.Forms.TextBox();
+            this.SelectFileLabel = new System.Windows.Forms.Label();
+            this.SelectFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.OpenBox.SuspendLayout();
             this.SaveBox.SuspendLayout();
             this.BankBox.SuspendLayout();
@@ -147,6 +151,9 @@
             // 
             // SaveBox
             // 
+            this.SaveBox.Controls.Add(this.SelectFileButton);
+            this.SaveBox.Controls.Add(this.SelectFileEdit);
+            this.SaveBox.Controls.Add(this.SelectFileLabel);
             this.SaveBox.Controls.Add(this.SaveFormatChoice);
             this.SaveBox.Controls.Add(this.OutFormatLabel);
             this.SaveBox.Controls.Add(this.SaveMaskEdit);
@@ -156,10 +163,10 @@
             this.SaveBox.Controls.Add(this.SaveDirLabel);
             this.SaveBox.Location = new System.Drawing.Point(9, 96);
             this.SaveBox.Name = "SaveBox";
-            this.SaveBox.Size = new System.Drawing.Size(563, 82);
+            this.SaveBox.Size = new System.Drawing.Size(563, 112);
             this.SaveBox.TabIndex = 1;
             this.SaveBox.TabStop = false;
-            this.SaveBox.Text = "Конечные файлы с {id} или * в маске";
+            this.SaveBox.Text = "Конечные файлы с {id}, {no} или * в маске";
             // 
             // SaveFormatChoice
             // 
@@ -244,7 +251,7 @@
             this.BankBox.Controls.Add(this.BankINNLabel);
             this.BankBox.Controls.Add(this.CorrAccountEdit);
             this.BankBox.Controls.Add(this.CorrAccountLabel);
-            this.BankBox.Location = new System.Drawing.Point(9, 184);
+            this.BankBox.Location = new System.Drawing.Point(9, 214);
             this.BankBox.Name = "BankBox";
             this.BankBox.Size = new System.Drawing.Size(563, 108);
             this.BankBox.TabIndex = 2;
@@ -258,6 +265,7 @@
             this.CorrSwiftEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.CorrSwiftEdit.Location = new System.Drawing.Point(344, 76);
             this.CorrSwiftEdit.Name = "CorrSwiftEdit";
+            this.CorrSwiftEdit.PlaceholderText = "CITVRU2P";
             this.CorrSwiftEdit.Size = new System.Drawing.Size(137, 22);
             this.CorrSwiftEdit.TabIndex = 9;
             // 
@@ -354,7 +362,7 @@
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKButton.Location = new System.Drawing.Point(408, 491);
+            this.OKButton.Location = new System.Drawing.Point(408, 521);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 7;
@@ -366,7 +374,7 @@
             // 
             this.AbortButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AbortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.AbortButton.Location = new System.Drawing.Point(489, 491);
+            this.AbortButton.Location = new System.Drawing.Point(489, 521);
             this.AbortButton.Name = "AbortButton";
             this.AbortButton.Size = new System.Drawing.Size(75, 23);
             this.AbortButton.TabIndex = 8;
@@ -378,7 +386,7 @@
             this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitChoice);
             this.TemplatesNameGroup.Controls.Add(this.TemplatesNameEdit);
             this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitLabel);
-            this.TemplatesNameGroup.Location = new System.Drawing.Point(9, 298);
+            this.TemplatesNameGroup.Location = new System.Drawing.Point(9, 328);
             this.TemplatesNameGroup.Name = "TemplatesNameGroup";
             this.TemplatesNameGroup.Size = new System.Drawing.Size(563, 88);
             this.TemplatesNameGroup.TabIndex = 3;
@@ -398,15 +406,6 @@
             this.SwiftNameLimitChoice.Sorted = true;
             this.SwiftNameLimitChoice.TabIndex = 2;
             // 
-            // SwiftNameLimitLabel
-            // 
-            this.SwiftNameLimitLabel.AutoSize = true;
-            this.SwiftNameLimitLabel.Location = new System.Drawing.Point(264, 55);
-            this.SwiftNameLimitLabel.Name = "SwiftNameLimitLabel";
-            this.SwiftNameLimitLabel.Size = new System.Drawing.Size(134, 15);
-            this.SwiftNameLimitLabel.TabIndex = 1;
-            this.SwiftNameLimitLabel.Text = "Предел длины в SWIFT:";
-            // 
             // TemplatesNameEdit
             // 
             this.TemplatesNameEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -418,12 +417,21 @@
             this.TemplatesNameEdit.Size = new System.Drawing.Size(544, 22);
             this.TemplatesNameEdit.TabIndex = 0;
             // 
+            // SwiftNameLimitLabel
+            // 
+            this.SwiftNameLimitLabel.AutoSize = true;
+            this.SwiftNameLimitLabel.Location = new System.Drawing.Point(264, 55);
+            this.SwiftNameLimitLabel.Name = "SwiftNameLimitLabel";
+            this.SwiftNameLimitLabel.Size = new System.Drawing.Size(134, 15);
+            this.SwiftNameLimitLabel.TabIndex = 1;
+            this.SwiftNameLimitLabel.Text = "Предел длины в SWIFT:";
+            // 
             // TemplatesPurposeGroup
             // 
             this.TemplatesPurposeGroup.Controls.Add(this.SwiftPurposeFieldChoice);
             this.TemplatesPurposeGroup.Controls.Add(this.SwiftPurposeFieldLabel);
             this.TemplatesPurposeGroup.Controls.Add(this.TemplatesPurposeEdit);
-            this.TemplatesPurposeGroup.Location = new System.Drawing.Point(9, 392);
+            this.TemplatesPurposeGroup.Location = new System.Drawing.Point(9, 422);
             this.TemplatesPurposeGroup.Name = "TemplatesPurposeGroup";
             this.TemplatesPurposeGroup.Size = new System.Drawing.Size(563, 88);
             this.TemplatesPurposeGroup.TabIndex = 4;
@@ -466,7 +474,7 @@
             // ProfileChoice
             // 
             this.ProfileChoice.FormattingEnabled = true;
-            this.ProfileChoice.Location = new System.Drawing.Point(115, 492);
+            this.ProfileChoice.Location = new System.Drawing.Point(115, 521);
             this.ProfileChoice.Name = "ProfileChoice";
             this.ProfileChoice.Size = new System.Drawing.Size(137, 23);
             this.ProfileChoice.Sorted = true;
@@ -476,11 +484,48 @@
             // ProfileLabel
             // 
             this.ProfileLabel.AutoSize = true;
-            this.ProfileLabel.Location = new System.Drawing.Point(20, 495);
+            this.ProfileLabel.Location = new System.Drawing.Point(20, 524);
             this.ProfileLabel.Name = "ProfileLabel";
             this.ProfileLabel.Size = new System.Drawing.Size(62, 15);
             this.ProfileLabel.TabIndex = 5;
             this.ProfileLabel.Text = "Профиль:";
+            // 
+            // SelectFileButton
+            // 
+            this.SelectFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SelectFileButton.Location = new System.Drawing.Point(482, 77);
+            this.SelectFileButton.Name = "SelectFileButton";
+            this.SelectFileButton.Size = new System.Drawing.Size(75, 23);
+            this.SelectFileButton.TabIndex = 9;
+            this.SelectFileButton.Text = "Выбор...";
+            this.SelectFileButton.UseVisualStyleBackColor = true;
+            this.SelectFileButton.Click += new System.EventHandler(this.SelectFileButton_Click);
+            // 
+            // SelectFileEdit
+            // 
+            this.SelectFileEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SelectFileEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SelectFileEdit.Location = new System.Drawing.Point(106, 78);
+            this.SelectFileEdit.Name = "SelectFileEdit";
+            this.SelectFileEdit.PlaceholderText = "C:\\TEMP\\ED807.xml";
+            this.SelectFileEdit.Size = new System.Drawing.Size(370, 22);
+            this.SelectFileEdit.TabIndex = 8;
+            // 
+            // SelectFileLabel
+            // 
+            this.SelectFileLabel.AutoSize = true;
+            this.SelectFileLabel.Location = new System.Drawing.Point(11, 81);
+            this.SelectFileLabel.Name = "SelectFileLabel";
+            this.SelectFileLabel.Size = new System.Drawing.Size(61, 15);
+            this.SelectFileLabel.TabIndex = 7;
+            this.SelectFileLabel.Text = "Спр. БИК:";
+            // 
+            // SelectFileDialog
+            // 
+            this.SelectFileDialog.DefaultExt = "xml";
+            this.SelectFileDialog.FileName = "ED807.xml";
+            this.SelectFileDialog.SupportMultiDottedExtensions = true;
             // 
             // ConfigForm
             // 
@@ -488,7 +533,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.AbortButton;
-            this.ClientSize = new System.Drawing.Size(584, 524);
+            this.ClientSize = new System.Drawing.Size(584, 554);
             this.Controls.Add(this.ProfileChoice);
             this.Controls.Add(this.ProfileLabel);
             this.Controls.Add(this.TemplatesPurposeGroup);
@@ -557,5 +602,9 @@
         private TextBox TemplatesPurposeEdit;
         private ComboBox ProfileChoice;
         private Label ProfileLabel;
+        private Button SelectFileButton;
+        private TextBox SelectFileEdit;
+        private Label SelectFileLabel;
+        private OpenFileDialog SelectFileDialog;
     }
 }

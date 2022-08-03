@@ -36,6 +36,12 @@ public static class Config
     // See a lifehack at
     // https://www.strathweb.com/2019/12/runtime-host-configuration-options-and-appcontext-data-in-net-core/
 
+    public static string ED807
+    {
+        get => G(nameof(ED807));
+        set => S(nameof(ED807), value);
+    }
+
     public static string Profile
     {
         get => G(nameof(Profile));
@@ -157,6 +163,10 @@ public static class Config
         {
             switch (p.Name)
             {
+                case nameof(ED807):
+                    entry![nameof(ED807)] = ED807;
+                    break;
+
                 case nameof(Profile):
                     entry![nameof(Profile)] = Profile;
                     break;

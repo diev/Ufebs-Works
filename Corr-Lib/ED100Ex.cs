@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.UFEBS;
+
 using System.Xml;
 using System.Xml.Linq;
 

@@ -19,7 +19,7 @@ limitations under the License.
 
 using System.Xml.Linq;
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 /// <summary>
 /// PacketEPD xmlns="urn:cbr-ru:ed:v2.0"

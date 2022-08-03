@@ -18,6 +18,7 @@ limitations under the License.
 #endregion
 
 using CorrLib;
+using CorrLib.UFEBS;
 
 using System.Text;
 using System.Xml;
@@ -101,7 +102,9 @@ public partial class MainForm : Form
         FormatStatus.Text = $"Format: {Config.SaveFormat}";
         ProfileStatus.Text = $"Profile: {Config.Profile}";
 
-        string mask = Config.SaveMask.Replace("{id}", "*");
+        string mask = Config.SaveMask
+            .Replace("{id}", "*")
+            .Replace("{no}", "*");
 
         FilesList.Items.Clear();
         DocsList.Items.Clear();
@@ -111,9 +114,27 @@ public partial class MainForm : Form
         _selectedFileIndex = -1;
         //_selectedDocIndex = -1;
 
+        if (!Directory.Exists(Config.OpenDir))
+        {
+            MessageBox.Show($"Проверьте настройки пути исходных файлов!",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            ConfigMenuItem.PerformClick();
+            return;
+        }
+
         foreach (var file in new SourceFiles(Config.OpenDir, Config.OpenMask))
         {
             FilesList.Items.Add(new ListViewItem(file));
+        }
+
+        if (!Directory.Exists(Config.SaveDir))
+        {
+            MessageBox.Show($"Проверьте настройки пути выходных файлов!",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            ConfigMenuItem.PerformClick();
+            return;
         }
 
         var saved = Directory.GetFiles(Config.SaveDir, mask);
@@ -390,6 +411,11 @@ public partial class MainForm : Form
                 filename = filename.Replace("{id}", _packet.Id);
             }
 
+            if (filename.Contains("{no}"))
+            {
+                filename = filename.Replace("{no}", _packet.EDNo);
+            }
+
             filename = Path.Combine(Config.SaveDir, filename);
             var settings = new XmlWriterSettings()
             {
@@ -447,7 +473,10 @@ public partial class MainForm : Form
                     return;
                 }
 
-                string path = Path.Combine(Config.SaveDir, Config.SaveMask.Replace("{id}", ed.Id));
+                string path = Path.Combine(Config.SaveDir, Config.SaveMask
+                    .Replace("{id}", ed.Id[2..]) //TODO [2..] ???
+                    .Replace("{no}", ed.EDNo));
+
                 File.WriteAllText(path, ed.ToStringMT103(), Encoding.ASCII);
                 item.SubItems[SavedColumn.Index].Text = path;
                 break;

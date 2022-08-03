@@ -34,10 +34,20 @@ public static class StringExtensions
         ? string.Empty
         : $".{value}";
 
+    public static string AddKPPNotEmpty(this string? value)
+        => value == null
+        ? string.Empty
+        : $".KPP{value}";
+
     public static string AddNotEmptyNorZeros(this string? value)
         => value == null || value.Length == 0 || value == "0" || value == "000000000"
         ? string.Empty
         : $".{value}";
+
+    public static string AddKPPNotEmptyNorZeros(this string? value)
+        => value == null || value.Length == 0 || value == "0" || value == "000000000"
+        ? string.Empty
+        : $".KPP{value}";
 
     public static StringBuilder AppendLineIf(this StringBuilder @this, bool condition, string value)
         => condition

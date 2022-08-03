@@ -19,7 +19,7 @@ limitations under the License.
 
 using System.Xml.Linq;
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 /// <summary>
 /// Базовый комплексный тип для всех электронных платежных сообщений. Содержит реквизиты, общие для всех типов ЭПС.
@@ -315,7 +315,7 @@ public class ED100
     /// <summary>
     /// Наш идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).
     /// </summary>
-    public string Id => $"{EDDate[2..].Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
+    public string Id => $"{EDDate.Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
 
     #endregion Extensions
     #endregion Properties
