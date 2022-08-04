@@ -33,8 +33,11 @@ public class SourceFiles : IReadOnlyList<string[]>
     public int Count
         => _items.Length;
 
-    public SourceFiles(string directory, string mask) //TODO path is empty?
-        : this(Directory.GetFiles(directory, mask))
+    public SourceFiles(string directory, string mask)
+        : this(Directory.GetFiles(directory == string.Empty
+            ? "."
+            : directory,
+            mask))
     { }
 
     public SourceFiles(string[] files)

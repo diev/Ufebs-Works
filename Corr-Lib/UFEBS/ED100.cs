@@ -312,11 +312,6 @@ public class ED100
     /// </summary>
     public bool Tax => DrawerStatus != null;
 
-    /// <summary>
-    /// Наш идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).
-    /// </summary>
-    public string Id => $"{EDDate.Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
-
     #endregion Extensions
     #endregion Properties
 

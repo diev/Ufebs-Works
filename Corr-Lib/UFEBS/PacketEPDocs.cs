@@ -17,11 +17,9 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.UFEBS;
-
 using System.Collections;
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 public class PacketEPDocs : IReadOnlyList<string[]>
 {

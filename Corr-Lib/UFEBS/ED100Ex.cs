@@ -17,12 +17,10 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.UFEBS;
-
 using System.Xml;
 using System.Xml.Linq;
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 public static class ED100Ex
 {
@@ -152,7 +150,7 @@ public static class ED100Ex
         ed.ReqSettlementDate = e.ReqSettlementDate;
         ed.ResField = e.ResField; //23
         ed.Sum = e.Sum; //7
-        ed.SystemCode = e.SystemCode; 
+        ed.SystemCode = e.SystemCode;
         ed.TransKind = e.TransKind; //18
         ed.Xmlns = e.Xmlns;
 
@@ -205,25 +203,25 @@ public static class ED100Ex
 
         if (ed.CodePurpose != null)
             writer.WriteAttributeString("CodePurpose", ed.CodePurpose); //20
-        
+
         writer.WriteAttributeString("EDAuthor", ed.EDAuthor);
         writer.WriteAttributeString("EDDate", ed.EDDate);
         writer.WriteAttributeString("EDNo", ed.EDNo);
-        
+
         if (ed.FileDate != null)
             writer.WriteAttributeString("FileDate", ed.FileDate); //63
-        
+
         if (ed.OperationID != null)
             writer.WriteAttributeString("OperationID", ed.OperationID);
-        
+
         if (ed.PaymentID != null)
             writer.WriteAttributeString("PaymentID", ed.PaymentID); //22
-        
+
         writer.WriteAttributeString("PaymentPrecedence", ed.PaymentPrecedence);
 
         if (ed.PaytKind != null)
             writer.WriteAttributeString("PaytKind", ed.PaytKind); //5
-        
+
         writer.WriteAttributeString("Priority", ed.Priority); //21
         writer.WriteAttributeString("ReceiptDate", ed.ReceiptDate); //62
 
@@ -238,7 +236,7 @@ public static class ED100Ex
         writer.WriteAttributeString("TransKind", ed.TransKind); //18
 
         // AccDoc
-        
+
         writer.WriteStartElement("AccDoc");
         writer.WriteAttributeString("AccDocDate", ed.AccDocDate); //4
         writer.WriteAttributeString("AccDocNo", ed.AccDocNo); //3
@@ -265,7 +263,7 @@ public static class ED100Ex
         writer.WriteEndElement(); // Payer
 
         // Payee
-        
+
         writer.WriteStartElement("Payee");
         writer.WriteAttributeString("INN", ed.PayeeINN); //61
         writer.WriteAttributeString("KPP", ed.PayeeKPP); //103
@@ -280,7 +278,7 @@ public static class ED100Ex
         writer.WriteEndElement(); // Payee
 
         // Purpose
-        
+
         writer.WriteElementString("Purpose", ed.Purpose); //24
 
         if (ed.Tax)

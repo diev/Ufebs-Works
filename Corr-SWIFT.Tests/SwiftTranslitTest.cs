@@ -1,6 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using static CorrLib.SwiftTranslit;
+using static CorrLib.SWIFT.SwiftTranslit;
 
 namespace Corr_SWIFT.Tests;
 

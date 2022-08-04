@@ -18,12 +18,13 @@ limitations under the License.
 #endregion
 
 using CorrLib;
+using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 
 using System.Text;
 using System.Xml;
 
-using static CorrLib.SwiftTranslit;
+using static CorrLib.SWIFT.SwiftTranslit;
 
 namespace CorrSWIFT;
 
@@ -31,7 +32,6 @@ public partial class MainForm : Form
 {
     private PacketEPD _packet;
     private int _selectedFileIndex = -1;
-    //private int _selectedDocIndex = -1;
 
     #region Init
     public MainForm()
@@ -83,22 +83,13 @@ public partial class MainForm : Form
         }
 
         Show();
-
-        if (Config.OpenDir.Length == 0)
-        {
-            MessageBox.Show("Проверьте настройки!",
-                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            ConfigMenuItem.PerformClick();
-        }
-
         ReInitForm();
     }
 
     private void ReInitForm()
     {
         Text = $"{Application.ProductName}";
-        Status.Text = "Загрузка......";
+        Status.Text = "Инициализация...";
         FormatStatus.Text = $"Format: {Config.SaveFormat}";
         ProfileStatus.Text = $"Profile: {Config.Profile}";
 
@@ -112,40 +103,22 @@ public partial class MainForm : Form
         PurposeEdit.Text = string.Empty;
 
         _selectedFileIndex = -1;
-        //_selectedDocIndex = -1;
-
-        if (!Directory.Exists(Config.OpenDir))
-        {
-            MessageBox.Show("Проверьте настройки пути исходных файлов!",
-                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            ConfigMenuItem.PerformClick();
-            return;
-        }
 
         foreach (var file in new SourceFiles(Config.OpenDir, Config.OpenMask))
         {
             FilesList.Items.Add(new ListViewItem(file));
         }
 
-        if (!Directory.Exists(Config.SaveDir))
-        {
-            MessageBox.Show("Проверьте настройки пути выходных файлов!",
-                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            ConfigMenuItem.PerformClick();
-            return;
-        }
-
-        var saved = Directory.GetFiles(Config.SaveDir, mask);
+        var saved = Directory.GetFiles(Config.SaveDir == string.Empty
+            ? "."
+            : Config.SaveDir,
+            mask);
 
         if (saved.Length > 0)
         {
-            var reply = MessageBox.Show(
-                $"В выходной директории\n{Config.SaveDir}\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nУдалить их?",
-                Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-            if (reply == DialogResult.Yes)
+            if (DialogResult.Yes == MessageBox.Show(
+                $"В выходной директории\n\"{Config.SaveDir}\"\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nУдалить их?",
+                Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation))
             {
                 foreach (var file in saved)
                 {
@@ -390,7 +363,7 @@ public partial class MainForm : Form
             //if (i.ForeColor != Color.DarkGreen) //TODO see in collection, not in listview!
             if (i.SubItems[PackSavedColumn.Index].Text.Length == 0) // not '+'
             {
-                Status.Text = "Выберите следующий необработанный файл";
+                Status.Text = "Выберите следующий необработанный файл.";
                 return;
             }
         }
@@ -399,31 +372,18 @@ public partial class MainForm : Form
 
         string GetUfebsFileName()
         {
-            string filename = Config.SaveMask;
+            string path = Path.Combine(Config.SaveDir, Config.SaveMask
+                .Replace("*", Path.GetFileNameWithoutExtension(_packet.Path))
+                .Replace("{id}", _packet.Id)
+                .Replace("{no}", _packet.EDNo));
 
-            if (filename.Contains('*') && _packet.Path != null)
-            {
-                filename = filename.Replace("*", Path.GetFileNameWithoutExtension(_packet.Path));
-            }
-
-            if (filename.Contains("{id}"))
-            {
-                filename = filename.Replace("{id}", _packet.Id);
-            }
-
-            if (filename.Contains("{no}"))
-            {
-                filename = filename.Replace("{no}", _packet.EDNo);
-            }
-
-            filename = Path.Combine(Config.SaveDir, filename);
             var settings = new XmlWriterSettings()
             {
                 Encoding = Encoding.GetEncoding("windows-1251"),
                 Indent = true
             };
 
-            using (var writer = XmlWriter.Create(filename, settings))
+            using (var writer = XmlWriter.Create(path, settings))
             {
                 if (_packet.EDType == "PacketEPD")
                 {
@@ -438,7 +398,7 @@ public partial class MainForm : Form
                 writer.Close();
             }
 
-            return filename;
+            return path;
         }
     }
 
@@ -474,7 +434,8 @@ public partial class MainForm : Form
                 }
 
                 string path = Path.Combine(Config.SaveDir, Config.SaveMask
-                    .Replace("{id}", ed.Id[2..]) //TODO [2..] ???
+                    .Replace("*", Path.GetFileNameWithoutExtension(_packet.Path))
+                    .Replace("{id}", SwiftID.Id(ed))
                     .Replace("{no}", ed.EDNo));
 
                 File.WriteAllText(path, ed.ToStringMT103(), Encoding.ASCII);

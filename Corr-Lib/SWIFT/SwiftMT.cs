@@ -17,12 +17,13 @@ limitations under the License.
 */
 #endregion
 
-using static CorrLib.SwiftHelpers;
-using static CorrLib.SwiftTranslit;
+using static CorrLib.SWIFT.SwiftHelpers;
+using static CorrLib.SWIFT.SwiftTranslit;
 
 using System.Text;
+using CorrLib.UFEBS;
 
-namespace CorrLib;
+namespace CorrLib.SWIFT;
 
 /// <summary>
 /// SWIFT-RUR 6: MT103 ("ОДНОКРАТНОЕ ЗАЧИСЛЕНИЕ КЛИЕНТСКИХ СРЕДСТВ").
@@ -40,7 +41,7 @@ public static class SwiftMT
         string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
         var ed = Translit(corrED100);
 
-        //string id = $"{ed.EDDate}{ed.EDNo.PadLeft(9, '0')}"; //ed.Id (15x)
+        var (Num, Id) = SwiftID.ID(ed);
 
         // Block Structure
 
@@ -50,7 +51,7 @@ public static class SwiftMT
             .Append("{1:F01") // Block 1 identifier : Application identifier
             .Append(Config.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
-            .Append(ed.EDNo) // Session number
+            .Append(Num) // Session number
             .Append('}')
 
             // Application header
@@ -69,9 +70,8 @@ public static class SwiftMT
         #region SWIFT TEXT
 
         // Референс Отправителя (16x)
-        //sb.AppendLine($":20:+{date}-{es.EDNo}F103"); //..F103 is over 16x!
 
-        sb.AppendLine($":20:+{ed.Id}");
+        sb.AppendLine($":20:+{Id}");
 
         // Код банковской операции
 
@@ -212,7 +212,7 @@ public static class SwiftMT
         // Детали расходов
         // Все расходы по данной операции относятся на счет Плательщика
 
-        sb.AppendLine($":71A:OUR");
+        sb.AppendLine(":71A:OUR");
 
         // Информация Отправителя Получателю (6*35x)
         // Используются следующие кодовые слова:
@@ -259,7 +259,7 @@ public static class SwiftMT
         sb.Append(":72:")
             // Реквизиты расчетного документа
             .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate}.{ed.Priority}.{paytKind}{transKind}") //.{ed.ChargeOffDate}.{ed.TransKind}")
-                                                                                                   // Даты из расчетного документа
+            // Даты из расчетного документа
             .AppendLine($"/DAS/{ed.ChargeOffDate}.{ed.ReceiptDate}.000000.000000");
 
         //TODO Реквизиты платежного ордера
@@ -330,7 +330,7 @@ public static class SwiftMT
 
             // Application header
             .Append("{2:I202") // Block 2 identifier : In, MT202
-            .Append(Config.CorrSWIFT.PadRight(12,'X')) // Destination address with default Logical terminal address XXX
+            .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX
             .Append("N}") // Message priority (Normal)
 
             // User header
@@ -358,8 +358,8 @@ public static class SwiftMT
         // Банк-плательщик
 
         sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}") // OurBIC.OurCorrACC
-            .AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
-            .AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
+            .AppendLine(Lat("АО Сити Инвест Банк"))
+            .AppendLine(Lat("г.Санкт-Петербург"));
 
         // Корреспондент Отправителя (реквизиты счета, который должен быть использован при исполнении платежных инструкций)
         // Если Отправитель и Получатель сообщения обслуживают рублевые счета друг друга, и необходимо определить,

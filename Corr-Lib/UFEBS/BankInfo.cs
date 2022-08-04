@@ -17,7 +17,8 @@ limitations under the License.
 */
 #endregion
 
-namespace CorrLib;
+
+namespace CorrLib.UFEBS;
 
 /// <summary>
 /// Название и населенный пункт банка по справочнику БИК.

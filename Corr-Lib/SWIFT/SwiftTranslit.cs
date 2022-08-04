@@ -19,7 +19,7 @@ limitations under the License.
 
 using System.Text;
 
-namespace CorrLib;
+namespace CorrLib.SWIFT;
 
 /// <summary>
 /// SWIFT-RUR
@@ -247,7 +247,7 @@ CR LF Space (Пробел)
         var buff = new StringBuilder();
 
         foreach (var c in value)
-        { 
+        {
             if (rus)
             {
                 if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Contains(c, StringComparison.OrdinalIgnoreCase))

@@ -1,4 +1,4 @@
-using CorrLib;
+using CorrLib.SWIFT;
 
 namespace SwiftTranslator;
 

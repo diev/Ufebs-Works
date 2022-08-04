@@ -19,9 +19,9 @@ limitations under the License.
 
 using System.Xml.Linq;
 
-using static CorrLib.SwiftTranslit;
+using static CorrLib.SWIFT.SwiftTranslit;
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 /// <summary>
 /// Изменения, внесенные в Справочник БИК (Полный Справочник БИК).

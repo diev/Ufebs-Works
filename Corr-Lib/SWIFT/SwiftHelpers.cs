@@ -19,9 +19,9 @@ limitations under the License.
 
 using System.Text;
 
-using static CorrLib.SwiftTranslit;
+using static CorrLib.SWIFT.SwiftTranslit;
 
-namespace CorrLib;
+namespace CorrLib.SWIFT;
 
 public static class SwiftHelpers
 {
@@ -56,15 +56,15 @@ public static class SwiftHelpers
     public static ReadOnlySpan<char> Prepare35(this string value)
         => value.PadRight(210, ' ');
 
-        //for (int i = 0; i < 4; i++) //TODO '-' для первых 4 строк
-        //{
-        //    int pos = i * 35;
+    //for (int i = 0; i < 4; i++) //TODO '-' для первых 4 строк
+    //{
+    //    int pos = i * 35;
 
-        //    if (result[pos] == '-') // prohibited char at beginning of any line
-        //    {
-        //        result = result.Insert(pos, " ");
-        //    }
-        //}
+    //    if (result[pos] == '-') // prohibited char at beginning of any line
+    //    {
+    //        result = result.Insert(pos, " ");
+    //    }
+    //}
 
     public static string Div35(this string value)
     {

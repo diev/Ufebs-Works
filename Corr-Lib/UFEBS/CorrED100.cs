@@ -17,11 +17,9 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.UFEBS;
-
 using System.Xml.Linq;
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 public class CorrED100 : ED100
 {
