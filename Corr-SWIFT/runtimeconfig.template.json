@@ -1,11 +1,11 @@
 {
   "configProperties": {
-    "ED807": "G:/BANK/TEST/CLI/ed807.xml",
+    "ED807": "ED807.xml",
     "Profile": "",
     "Profiles": [],
-    ".OpenDir": "G:\\BANK\\TEST\\OUT",
+    ".OpenDir": "",
     ".OpenMask": "*.xml",
-    ".SaveDir": "G:\\BANK\\TEST\\CLI",
+    ".SaveDir": "",
     ".SaveMask": "{id}.txt",
     ".SaveFormat": "SWIFT",
     ".BankINN": "7831001422",

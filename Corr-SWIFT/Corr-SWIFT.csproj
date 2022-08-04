@@ -9,8 +9,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>ru-RU</NeutralLanguage>
-    <AssemblyVersion>2.2.8.3</AssemblyVersion>
-    <FileVersion>2.2.8.3</FileVersion>
+    <AssemblyVersion>3.2.8.4</AssemblyVersion>
+    <FileVersion>3.2.8.4</FileVersion>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
     <Company>CIBANK</Company>
     <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR.</Description>

@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.OpenBox = new System.Windows.Forms.GroupBox();
+            this.SelectFileButton = new System.Windows.Forms.Button();
+            this.SelectFileEdit = new System.Windows.Forms.TextBox();
+            this.SelectFileLabel = new System.Windows.Forms.Label();
             this.OpenMaskEdit = new System.Windows.Forms.TextBox();
             this.OpenMaskLabel = new System.Windows.Forms.Label();
             this.OpenDirButton = new System.Windows.Forms.Button();
@@ -67,9 +70,6 @@
             this.TemplatesPurposeEdit = new System.Windows.Forms.TextBox();
             this.ProfileChoice = new System.Windows.Forms.ComboBox();
             this.ProfileLabel = new System.Windows.Forms.Label();
-            this.SelectFileButton = new System.Windows.Forms.Button();
-            this.SelectFileEdit = new System.Windows.Forms.TextBox();
-            this.SelectFileLabel = new System.Windows.Forms.Label();
             this.SelectFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.OpenBox.SuspendLayout();
             this.SaveBox.SuspendLayout();
@@ -80,6 +80,9 @@
             // 
             // OpenBox
             // 
+            this.OpenBox.Controls.Add(this.SelectFileButton);
+            this.OpenBox.Controls.Add(this.SelectFileEdit);
+            this.OpenBox.Controls.Add(this.SelectFileLabel);
             this.OpenBox.Controls.Add(this.OpenMaskEdit);
             this.OpenBox.Controls.Add(this.OpenMaskLabel);
             this.OpenBox.Controls.Add(this.OpenDirButton);
@@ -87,10 +90,42 @@
             this.OpenBox.Controls.Add(this.OpenDirLabel);
             this.OpenBox.Location = new System.Drawing.Point(9, 8);
             this.OpenBox.Name = "OpenBox";
-            this.OpenBox.Size = new System.Drawing.Size(563, 82);
+            this.OpenBox.Size = new System.Drawing.Size(563, 115);
             this.OpenBox.TabIndex = 0;
             this.OpenBox.TabStop = false;
-            this.OpenBox.Text = "Исходные файлы";
+            this.OpenBox.Text = "Исходные файлы и Справочник БИК";
+            // 
+            // SelectFileButton
+            // 
+            this.SelectFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SelectFileButton.Location = new System.Drawing.Point(482, 77);
+            this.SelectFileButton.Name = "SelectFileButton";
+            this.SelectFileButton.Size = new System.Drawing.Size(75, 23);
+            this.SelectFileButton.TabIndex = 7;
+            this.SelectFileButton.Text = "Выбор...";
+            this.SelectFileButton.UseVisualStyleBackColor = true;
+            this.SelectFileButton.Click += new System.EventHandler(this.SelectFileButton_Click);
+            // 
+            // SelectFileEdit
+            // 
+            this.SelectFileEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SelectFileEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SelectFileEdit.Location = new System.Drawing.Point(106, 78);
+            this.SelectFileEdit.Name = "SelectFileEdit";
+            this.SelectFileEdit.PlaceholderText = "C:\\TEMP\\ED807.xml";
+            this.SelectFileEdit.Size = new System.Drawing.Size(370, 22);
+            this.SelectFileEdit.TabIndex = 6;
+            this.SelectFileEdit.TextChanged += new System.EventHandler(this.SelectFileEdit_TextChanged);
+            // 
+            // SelectFileLabel
+            // 
+            this.SelectFileLabel.AutoSize = true;
+            this.SelectFileLabel.Location = new System.Drawing.Point(11, 81);
+            this.SelectFileLabel.Name = "SelectFileLabel";
+            this.SelectFileLabel.Size = new System.Drawing.Size(78, 15);
+            this.SelectFileLabel.TabIndex = 5;
+            this.SelectFileLabel.Text = "Справочник:";
             // 
             // OpenMaskEdit
             // 
@@ -131,6 +166,7 @@
             this.OpenDirEdit.PlaceholderText = "C:\\TEMP\\IN";
             this.OpenDirEdit.Size = new System.Drawing.Size(370, 22);
             this.OpenDirEdit.TabIndex = 1;
+            this.OpenDirEdit.TextChanged += new System.EventHandler(this.OpenDirEdit_TextChanged);
             // 
             // OpenDirLabel
             // 
@@ -151,9 +187,6 @@
             // 
             // SaveBox
             // 
-            this.SaveBox.Controls.Add(this.SelectFileButton);
-            this.SaveBox.Controls.Add(this.SelectFileEdit);
-            this.SaveBox.Controls.Add(this.SelectFileLabel);
             this.SaveBox.Controls.Add(this.SaveFormatChoice);
             this.SaveBox.Controls.Add(this.OutFormatLabel);
             this.SaveBox.Controls.Add(this.SaveMaskEdit);
@@ -161,9 +194,9 @@
             this.SaveBox.Controls.Add(this.SaveDirButton);
             this.SaveBox.Controls.Add(this.SaveDirEdit);
             this.SaveBox.Controls.Add(this.SaveDirLabel);
-            this.SaveBox.Location = new System.Drawing.Point(9, 96);
+            this.SaveBox.Location = new System.Drawing.Point(9, 129);
             this.SaveBox.Name = "SaveBox";
-            this.SaveBox.Size = new System.Drawing.Size(563, 112);
+            this.SaveBox.Size = new System.Drawing.Size(563, 79);
             this.SaveBox.TabIndex = 1;
             this.SaveBox.TabStop = false;
             this.SaveBox.Text = "Конечные файлы с {id}, {no} или * в маске";
@@ -175,9 +208,9 @@
             this.SaveFormatChoice.Items.AddRange(new object[] {
             "УФЭБС",
             "SWIFT"});
-            this.SaveFormatChoice.Location = new System.Drawing.Point(344, 48);
+            this.SaveFormatChoice.Location = new System.Drawing.Point(344, 47);
             this.SaveFormatChoice.Name = "SaveFormatChoice";
-            this.SaveFormatChoice.Size = new System.Drawing.Size(132, 23);
+            this.SaveFormatChoice.Size = new System.Drawing.Size(75, 23);
             this.SaveFormatChoice.TabIndex = 6;
             this.SaveFormatChoice.SelectedValueChanged += new System.EventHandler(this.SaveFormatChoice_SelectedValueChanged);
             // 
@@ -229,6 +262,7 @@
             this.SaveDirEdit.PlaceholderText = "C:\\TEMP\\OUT";
             this.SaveDirEdit.Size = new System.Drawing.Size(370, 22);
             this.SaveDirEdit.TabIndex = 1;
+            this.SaveDirEdit.TextChanged += new System.EventHandler(this.SaveDirEdit_TextChanged);
             // 
             // SaveDirLabel
             // 
@@ -256,7 +290,7 @@
             this.BankBox.Size = new System.Drawing.Size(563, 108);
             this.BankBox.TabIndex = 2;
             this.BankBox.TabStop = false;
-            this.BankBox.Text = "Реквизиты Банка и счета у банка-посредника";
+            this.BankBox.Text = "Реквизиты нашего Банка и счета у банка-посредника";
             // 
             // CorrSwiftEdit
             // 
@@ -268,6 +302,7 @@
             this.CorrSwiftEdit.PlaceholderText = "CITVRU2P";
             this.CorrSwiftEdit.Size = new System.Drawing.Size(137, 22);
             this.CorrSwiftEdit.TabIndex = 9;
+            this.CorrSwiftEdit.TextChanged += new System.EventHandler(this.CorrSwiftEdit_TextChanged);
             // 
             // CorrSwiftLabel
             // 
@@ -288,6 +323,7 @@
             this.BankSwiftEdit.PlaceholderText = "CITVRU2P";
             this.BankSwiftEdit.Size = new System.Drawing.Size(137, 22);
             this.BankSwiftEdit.TabIndex = 5;
+            this.BankSwiftEdit.TextChanged += new System.EventHandler(this.BankSwiftEdit_TextChanged);
             // 
             // BankSwiftLabel
             // 
@@ -308,6 +344,7 @@
             this.BankKppEdit.PlaceholderText = "784101001";
             this.BankKppEdit.Size = new System.Drawing.Size(137, 22);
             this.BankKppEdit.TabIndex = 3;
+            this.BankKppEdit.TextChanged += new System.EventHandler(this.BankKppEdit_TextChanged);
             // 
             // BankKPPLabel
             // 
@@ -328,6 +365,7 @@
             this.BankInnEdit.PlaceholderText = "7831001422";
             this.BankInnEdit.Size = new System.Drawing.Size(137, 22);
             this.BankInnEdit.TabIndex = 1;
+            this.BankInnEdit.TextChanged += new System.EventHandler(this.BankInnEdit_TextChanged);
             // 
             // BankINNLabel
             // 
@@ -348,6 +386,7 @@
             this.CorrAccountEdit.PlaceholderText = "30101810600000000702";
             this.CorrAccountEdit.Size = new System.Drawing.Size(211, 22);
             this.CorrAccountEdit.TabIndex = 7;
+            this.CorrAccountEdit.TextChanged += new System.EventHandler(this.CorrAccountEdit_TextChanged);
             // 
             // CorrAccountLabel
             // 
@@ -362,7 +401,7 @@
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKButton.Location = new System.Drawing.Point(408, 521);
+            this.OKButton.Location = new System.Drawing.Point(408, 516);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 7;
@@ -374,7 +413,7 @@
             // 
             this.AbortButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AbortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.AbortButton.Location = new System.Drawing.Point(489, 521);
+            this.AbortButton.Location = new System.Drawing.Point(489, 516);
             this.AbortButton.Name = "AbortButton";
             this.AbortButton.Size = new System.Drawing.Size(75, 23);
             this.AbortButton.TabIndex = 8;
@@ -391,7 +430,7 @@
             this.TemplatesNameGroup.Size = new System.Drawing.Size(563, 88);
             this.TemplatesNameGroup.TabIndex = 3;
             this.TemplatesNameGroup.TabStop = false;
-            this.TemplatesNameGroup.Text = "Шаблон Плательщика за 3 лицо с {name} и {acc}";
+            this.TemplatesNameGroup.Text = "Шаблон Плательщика за 3 лицо с {name} и {acc} клиента";
             // 
             // SwiftNameLimitChoice
             // 
@@ -473,8 +512,9 @@
             // 
             // ProfileChoice
             // 
+            this.ProfileChoice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ProfileChoice.FormattingEnabled = true;
-            this.ProfileChoice.Location = new System.Drawing.Point(115, 521);
+            this.ProfileChoice.Location = new System.Drawing.Point(115, 517);
             this.ProfileChoice.Name = "ProfileChoice";
             this.ProfileChoice.Size = new System.Drawing.Size(137, 23);
             this.ProfileChoice.Sorted = true;
@@ -483,49 +523,20 @@
             // 
             // ProfileLabel
             // 
+            this.ProfileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ProfileLabel.AutoSize = true;
-            this.ProfileLabel.Location = new System.Drawing.Point(20, 524);
+            this.ProfileLabel.Location = new System.Drawing.Point(20, 520);
             this.ProfileLabel.Name = "ProfileLabel";
             this.ProfileLabel.Size = new System.Drawing.Size(62, 15);
             this.ProfileLabel.TabIndex = 5;
             this.ProfileLabel.Text = "Профиль:";
-            // 
-            // SelectFileButton
-            // 
-            this.SelectFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectFileButton.Location = new System.Drawing.Point(482, 77);
-            this.SelectFileButton.Name = "SelectFileButton";
-            this.SelectFileButton.Size = new System.Drawing.Size(75, 23);
-            this.SelectFileButton.TabIndex = 9;
-            this.SelectFileButton.Text = "Выбор...";
-            this.SelectFileButton.UseVisualStyleBackColor = true;
-            this.SelectFileButton.Click += new System.EventHandler(this.SelectFileButton_Click);
-            // 
-            // SelectFileEdit
-            // 
-            this.SelectFileEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectFileEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SelectFileEdit.Location = new System.Drawing.Point(106, 78);
-            this.SelectFileEdit.Name = "SelectFileEdit";
-            this.SelectFileEdit.PlaceholderText = "C:\\TEMP\\ED807.xml";
-            this.SelectFileEdit.Size = new System.Drawing.Size(370, 22);
-            this.SelectFileEdit.TabIndex = 8;
-            // 
-            // SelectFileLabel
-            // 
-            this.SelectFileLabel.AutoSize = true;
-            this.SelectFileLabel.Location = new System.Drawing.Point(11, 81);
-            this.SelectFileLabel.Name = "SelectFileLabel";
-            this.SelectFileLabel.Size = new System.Drawing.Size(61, 15);
-            this.SelectFileLabel.TabIndex = 7;
-            this.SelectFileLabel.Text = "Спр. БИК:";
             // 
             // SelectFileDialog
             // 
             this.SelectFileDialog.DefaultExt = "xml";
             this.SelectFileDialog.FileName = "ED807.xml";
             this.SelectFileDialog.SupportMultiDottedExtensions = true;
+            this.SelectFileDialog.Title = "Укажите Справочник БИК";
             // 
             // ConfigForm
             // 
@@ -533,7 +544,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.AbortButton;
-            this.ClientSize = new System.Drawing.Size(584, 554);
+            this.ClientSize = new System.Drawing.Size(584, 549);
             this.Controls.Add(this.ProfileChoice);
             this.Controls.Add(this.ProfileLabel);
             this.Controls.Add(this.TemplatesPurposeGroup);
@@ -602,9 +613,9 @@
         private TextBox TemplatesPurposeEdit;
         private ComboBox ProfileChoice;
         private Label ProfileLabel;
+        private OpenFileDialog SelectFileDialog;
         private Button SelectFileButton;
         private TextBox SelectFileEdit;
         private Label SelectFileLabel;
-        private OpenFileDialog SelectFileDialog;
     }
 }

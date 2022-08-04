@@ -19,6 +19,8 @@ limitations under the License.
 
 using System.Xml.Linq;
 
+using static CorrLib.SwiftTranslit;
+
 namespace CorrLib;
 
 /// <summary>
@@ -36,17 +38,21 @@ public static class ED807Finder
     */
 
     private static XElement? _ed807 = null;
+    private static Dictionary<string, BankInfo> _cache = new();
 
-    public static (string name, string place) Find(string bic)
+    /// <summary>
+    /// Поиск наименования и населенного пункта банка по его БИК.
+    /// </summary>
+    /// <param name="bic">БИК банка.</param>
+    /// <param name="translit">Надо ли транслитерировать в SWIFT-RUR сразу.</param>
+    /// <returns>Наименование и населенный пункт банка по Справочнику БИК.</returns>
+    public static BankInfo? Find(string bic, bool translit = false)
     {
-        string name = "Банк";
-        string place = "г";
-
         if (_ed807 == null)
         {
             if (!File.Exists(Config.ED807))
             {
-                return (name, place);
+                return null;
             }
 
             try
@@ -56,13 +62,18 @@ public static class ED807Finder
             }
             catch
             {
-                return (name, place);
+                return null;
             }
 
             if (_ed807 == null)
             {
-                return (name, place);
+                return null;
             }
+        }
+
+        if (_cache.TryGetValue(bic, out BankInfo? bankInfo))
+        {
+            return bankInfo;
         }
 
         //var entry = from e in _ed807.Root.Elements()
@@ -82,17 +93,21 @@ public static class ED807Finder
             {
                 var info = item.Elements().First();
 
-                name = info.Attribute("NameP")!.Value; //required
-
-                string tnp = info.Attribute("Tnp")?.Value ?? string.Empty;
+                string name = info.Attribute("NameP")?.Value ?? "Банк";
+                string tnp = info.Attribute("Tnp")?.Value ?? "г";
                 string nnp = info.Attribute("Nnp")?.Value ?? string.Empty;
+                string place = $"{tnp} {nnp}".Trim();
 
-                place = $"{tnp} {nnp}".Trim();
+                bankInfo = translit
+                    ? new BankInfo(Lat(name), Lat(place))
+                    : new BankInfo(name, place);
 
-                return (name, place);
+                _cache.Add(bic, bankInfo);
+
+                return bankInfo;
             }
         }
 
-        return (name, place);
+        return null;
     }
 }

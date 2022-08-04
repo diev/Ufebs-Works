@@ -66,6 +66,23 @@ public static class SwiftHelpers
         //    }
         //}
 
+    public static string Div35(this string value)
+    {
+        var s = value.Prepare35();
+        StringBuilder sb = new(260);
+
+        for (int i = 0; i < 3; i++)
+        {
+            var s35 = s.Slice(i * 35, 35).TrimEnd();
+
+            if (s35.Length == 0) break;
+
+            sb.AppendLine(s35.ToString());
+        }
+
+        return sb.ToString().TrimEnd();
+    }
+
     /// <summary>
     /// Преобразование даты, если она есть, из формата УФЭБС XML в SWIFT-RUR
     /// </summary>

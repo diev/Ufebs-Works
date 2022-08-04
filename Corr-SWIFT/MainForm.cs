@@ -86,7 +86,7 @@ public partial class MainForm : Form
 
         if (Config.OpenDir.Length == 0)
         {
-            MessageBox.Show($"Проверьте настройки!",
+            MessageBox.Show("Проверьте настройки!",
                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             ConfigMenuItem.PerformClick();
@@ -116,7 +116,7 @@ public partial class MainForm : Form
 
         if (!Directory.Exists(Config.OpenDir))
         {
-            MessageBox.Show($"Проверьте настройки пути исходных файлов!",
+            MessageBox.Show("Проверьте настройки пути исходных файлов!",
                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             ConfigMenuItem.PerformClick();
@@ -130,7 +130,7 @@ public partial class MainForm : Form
 
         if (!Directory.Exists(Config.SaveDir))
         {
-            MessageBox.Show($"Проверьте настройки пути выходных файлов!",
+            MessageBox.Show("Проверьте настройки пути выходных файлов!",
                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             ConfigMenuItem.PerformClick();
@@ -218,7 +218,7 @@ public partial class MainForm : Form
     {
         if (Status.Text != "Всё готово.")
         {
-            var reply = MessageBox.Show($"Есть несохраненные файлы! Закрыть программу?",
+            var reply = MessageBox.Show("Есть несохраненные файлы!\nЗакрыть программу?",
                 Application.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 
             switch (reply)

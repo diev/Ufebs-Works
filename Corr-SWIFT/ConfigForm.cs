@@ -31,6 +31,16 @@ public partial class ConfigForm : Form
         ProfileChoice.Items.Add(string.Empty);
         ProfileChoice.Text = Config.Profile;
 
+        string pwd = Directory.GetCurrentDirectory();
+        OpenDirEdit.PlaceholderText = pwd;
+        SaveDirEdit.PlaceholderText = pwd;
+        SelectFileEdit.PlaceholderText = Path.Combine(pwd, "ED807.xml");
+
+        //OpenFolderDialog.InitialDirectory = pwd;
+        //SaveFolderDialog.InitialDirectory = pwd;
+        //SelectFileDialog.InitialDirectory = pwd;
+        //SelectFileDialog.FileName = SelectFileEdit.PlaceholderText;
+
         LoadConfig();
     }
 
@@ -84,23 +94,23 @@ public partial class ConfigForm : Form
 
         // string TextBox
 
-        Config.OpenDir = OpenDirEdit.Text.Trim() ?? OpenDirEdit.PlaceholderText;
-        Config.OpenMask = OpenMaskEdit.Text.Trim() ?? OpenDirEdit.PlaceholderText;
+        Config.OpenDir = OpenDirEdit.Text.Trim(); // ?? OpenDirEdit.PlaceholderText;
+        Config.OpenMask = OpenMaskEdit.Text.Trim(); // ?? OpenDirEdit.PlaceholderText;
 
-        Config.SaveDir = SaveDirEdit.Text.Trim() ?? SaveDirEdit.PlaceholderText;
-        Config.SaveMask = SaveMaskEdit.Text.Trim() ?? SaveMaskEdit.PlaceholderText;
+        Config.SaveDir = SaveDirEdit.Text.Trim(); // ?? SaveDirEdit.PlaceholderText;
+        Config.SaveMask = SaveMaskEdit.Text.Trim(); // ?? SaveMaskEdit.PlaceholderText;
         Config.SaveFormat = SaveFormatChoice.Text;
-        Config.ED807 = SelectFileEdit.Text.Trim() ?? SelectFileEdit.PlaceholderText;
+        Config.ED807 = SelectFileEdit.Text.Trim(); // ?? SelectFileEdit.PlaceholderText;
 
-        Config.BankINN = BankInnEdit.Text.Trim() ?? BankInnEdit.PlaceholderText;
-        Config.BankKPP = BankKppEdit.Text.Trim() ?? BankKppEdit.PlaceholderText;
-        Config.BankSWIFT = BankSwiftEdit.Text.Trim() ?? BankSwiftEdit.PlaceholderText;
+        Config.BankINN = BankInnEdit.Text.Trim(); // ?? BankInnEdit.PlaceholderText;
+        Config.BankKPP = BankKppEdit.Text.Trim(); // ?? BankKppEdit.PlaceholderText;
+        Config.BankSWIFT = BankSwiftEdit.Text.Trim(); // ?? BankSwiftEdit.PlaceholderText;
 
-        Config.CorrAccount = CorrAccountEdit.Text.Trim() ?? CorrAccountEdit.PlaceholderText;
-        Config.CorrSWIFT = CorrSwiftEdit.Text.Trim() ?? CorrSwiftEdit.PlaceholderText;
+        Config.CorrAccount = CorrAccountEdit.Text.Trim(); // ?? CorrAccountEdit.PlaceholderText;
+        Config.CorrSWIFT = CorrSwiftEdit.Text.Trim(); // ?? CorrSwiftEdit.PlaceholderText;
 
-        Config.TemplatesName = TemplatesNameEdit.Text.Trim() ?? TemplatesNameEdit.PlaceholderText;
-        Config.TemplatesPurpose = TemplatesPurposeEdit.Text.Trim() ?? TemplatesPurposeEdit.PlaceholderText;
+        Config.TemplatesName = TemplatesNameEdit.Text.Trim(); // ?? TemplatesNameEdit.PlaceholderText;
+        Config.TemplatesPurpose = TemplatesPurposeEdit.Text.Trim(); // ?? TemplatesPurposeEdit.PlaceholderText;
 
         // string ComboBox
 
@@ -122,6 +132,15 @@ public partial class ConfigForm : Form
 
     private void OpenDirButton_Click(object sender, EventArgs e)
     {
+        try
+        {
+            string path = Path.GetFullPath(OpenDirEdit.Text);
+
+            OpenFolderDialog.InitialDirectory = path;
+            OpenFolderDialog.SelectedPath = path;
+        }
+        catch { }
+
         if (OpenFolderDialog.ShowDialog() == DialogResult.OK)
         {
             OpenDirEdit.Text = OpenFolderDialog.SelectedPath;
@@ -130,6 +149,15 @@ public partial class ConfigForm : Form
 
     private void SaveDirButton_Click(object sender, EventArgs e)
     {
+        try
+        {
+            string path = Path.GetFullPath(SaveDirEdit.Text);
+
+            SaveFolderDialog.InitialDirectory = path;
+            SaveFolderDialog.SelectedPath = path;
+        }
+        catch { }
+
         if (SaveFolderDialog.ShowDialog() == DialogResult.OK)
         {
             SaveDirEdit.Text = SaveFolderDialog.SelectedPath;
@@ -138,6 +166,16 @@ public partial class ConfigForm : Form
 
     private void SelectFileButton_Click(object sender, EventArgs e)
     {
+        try
+        {
+            string file = Path.GetFullPath(SelectFileEdit.Text);
+            string path = Path.GetDirectoryName(file);
+
+            SelectFileDialog.InitialDirectory = path;
+            SelectFileDialog.FileName = Path.GetFileName(file);
+        }
+        catch { }
+
         if (SelectFileDialog.ShowDialog() == DialogResult.OK)
         {
             SelectFileEdit.Text = SelectFileDialog.FileName;
@@ -158,22 +196,108 @@ public partial class ConfigForm : Form
     {
         bool on = (sender as ComboBox)?.Text == Config.SwiftFormat;
 
-        SelectFileLabel.Visible = on;
+        //SelectFileLabel.Visible = on;
         BankSwiftLabel.Visible = on;
         CorrSwiftLabel.Visible = on;
         SwiftPurposeFieldLabel.Visible = on;
         SwiftNameLimitLabel.Visible = on;
 
-        SelectFileEdit.Visible = on;
+        //SelectFileEdit.Visible = on;
         BankSwiftEdit.Visible = on;
         CorrSwiftEdit.Visible = on;
         SwiftPurposeFieldChoice.Visible = on;
         SwiftNameLimitChoice.Visible = on;
 
-        SelectFileButton.Visible = on;
+        //SelectFileButton.Visible = on;
 
         SaveMaskEdit.PlaceholderText = on
             ? "{id}.txt"
             : "*_.xml";
+    }
+
+    private void OpenDirEdit_TextChanged(object sender, EventArgs e)
+    {
+        var edit = sender as TextBox;
+
+        if (edit != null)
+        {
+            edit.BackColor = Directory.Exists(edit.Text)
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void SaveDirEdit_TextChanged(object sender, EventArgs e)
+    {
+        var edit = sender as TextBox;
+
+        if (edit != null)
+        {
+            edit.BackColor = Directory.Exists(edit.Text)
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void SelectFileEdit_TextChanged(object sender, EventArgs e)
+    {
+        var edit = sender as TextBox;
+
+        if (edit != null)
+        {
+            edit.BackColor = File.Exists(edit.Text)
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void BankInnEdit_TextChanged(object sender, EventArgs e)
+    {
+        if (sender is TextBox edit)
+        {
+            edit.BackColor = edit.TextLength == 10
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void BankKppEdit_TextChanged(object sender, EventArgs e)
+    {
+        if (sender is TextBox edit)
+        {
+            edit.BackColor = edit.TextLength == 9
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void BankSwiftEdit_TextChanged(object sender, EventArgs e)
+    {
+        if (sender is TextBox edit)
+        {
+            edit.BackColor = edit.TextLength == 8
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void CorrSwiftEdit_TextChanged(object sender, EventArgs e)
+    {
+        if (sender is TextBox edit)
+        {
+            edit.BackColor = edit.TextLength == 8
+                ? BackColor
+                : Color.LightPink;
+        }
+    }
+
+    private void CorrAccountEdit_TextChanged(object sender, EventArgs e)
+    {
+        if (sender is TextBox edit)
+        {
+            edit.BackColor = edit.TextLength == 20
+                ? BackColor
+                : Color.LightPink;
+        }
     }
 }

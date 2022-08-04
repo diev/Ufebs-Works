@@ -44,7 +44,7 @@ public static class SwiftMT
 
         // Block Structure
 
-        var sb = new StringBuilder();
+        var sb = new StringBuilder(1024);
         sb
             // Basic header
             .Append("{1:F01") // Block 1 identifier : Application identifier
@@ -64,7 +64,7 @@ public static class SwiftMT
             .Append("}}")
 
             // Text
-            .AppendLine("{4:"); // Block 4 identifier : 
+            .AppendLine("{4:"); // Block 4 identifier : TEXT between CRLF and '-' ("-}"?)
 
         #region SWIFT TEXT
 
@@ -103,26 +103,14 @@ public static class SwiftMT
         // ВНИМАНИЕ! Если плательщиком выступает сам банк-респондент, то указание в поле «50» счета ЛОРО и BIC-кода не допускается.
 
         sb.AppendLine($":50K:/{ed.PayerPersonalAcc}") // или :50F: с адресом и страной
-            .AppendLineIf(ed.PayerINN != null, $"INN{ed.PayerINN}{ed.PayerKPP.AddKPPNotEmptyNorZeros()}");
+            .AppendLineIf(ed.PayerINN, $"INN{ed.PayerINN}{ed.PayerKPP.AddKPPNotEmptyNorZeros()}");
 
         // (3*35x!)
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
 
-        if (ed.PayerName != null)
-        {
-            var s = ed.PayerName.Prepare35();
-
-            for (int i = 0; i < 3; i++)
-            {
-                var s35 = s.Slice(i * 35, 35).TrimEnd();
-
-                if (s35.Length == 0) break;
-
-                sb.AppendLine(s35.ToString());
-            }
-        }
+        sb.AppendLineIf(ed.PayerName);
 
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
@@ -159,41 +147,24 @@ public static class SwiftMT
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
-        var bank = ED807Finder.Find(ed.PayeeBIC); //TODO BIC not found
+        var bankInfo = ED807Finder.Find(ed.PayeeBIC, true); //TODO BIC not found
+
+        if (bankInfo != null)
         {
-            var s = Lat(bank.name).Prepare35();
-
-            for (int i = 0; i < 3; i++)
-            {
-                var s35 = s.Slice(i * 35, 35).TrimEnd();
-
-                if (s35.Length == 0) break;
-
-                sb.AppendLine(s35.ToString());
-            }
+            sb.AppendLine(bankInfo.Name.Div35())
+                .AppendLine(bankInfo.Place);
         }
-        
-        sb.AppendLine(Lat(bank.place));
+        else
+        {
+            sb.AppendLine(Lat("Банк"));
+        }
 
         // Бенефициар
         // (клиент, которому будут выплачены средства)
 
         sb.AppendLine($":59:/{ed.PayeePersonalAcc}")
-            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmptyNorZeros()}");
-
-        if (ed.PayeeName != null)
-        {
-            var s = ed.PayeeName.Prepare35();
-
-            for (int i = 0; i < 3; i++)
-            {
-                var s35 = s.Slice(i * 35, 35).TrimEnd();
-
-                if (s35.Length == 0) break;
-
-                sb.AppendLine(s35.ToString());
-            }
-        }
+            .AppendLineIf(ed.PayeeINN, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmptyNorZeros()}")
+            .AppendLineIf(ed.PayeeName, ed.PayeeName!.Div35());
 
         // Информация о платеже (4*35x + :72:/NZP/)
         // При недостаточной размерности поля допускается продолжение информации о назначении платежа в поле 72 с кодовым словом /NZP/.
@@ -295,10 +266,7 @@ public static class SwiftMT
         // .AppendLine($"/RPO/...
 
         // Уникальный Идентификатор Платежа (УИН)
-        if (ed.Tax)
-        {
-            sb.AppendLine($"/UIP/{ed.PaymentID ?? "0"}");
-        }
+        sb.AppendLineIf(ed.Tax, $"/UIP/{ed.PaymentID ?? "0"}");
 
         // Назначение платежа (продолжение поля 70)
         if (!purpose.IsEmpty)
@@ -342,7 +310,7 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT202(this CorrED100 corrED100) //TODO
+    public static string ToStringMT202(this CorrED100 corrED100) //TODO !!!
     {
         string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
         var ed = Translit(corrED100);

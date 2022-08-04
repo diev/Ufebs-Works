@@ -53,4 +53,14 @@ public static class StringExtensions
         => condition
         ? @this.AppendLine(value)
         : @this;
+
+    public static StringBuilder AppendLineIf(this StringBuilder @this, string? conditional, string value)
+        => conditional != null
+        ? @this.AppendLine(value)
+        : @this;
+
+    public static StringBuilder AppendLineIf(this StringBuilder @this, string? value)
+        => value != null
+        ? @this.AppendLine(value)
+        : @this;
 }
