@@ -15,8 +15,8 @@ set packer="C:\Program Files\7-Zip\7z.exe" a %pack% -xr!bin -xr!obj
 if exist %pack% del %pack%
 %1 > build.cmd (
 echo @echo off
-rem echo rem .NET 6 Runtime required
-echo rem .NET 6 WindowsDesktop Runtime required
+echo rem .NET 6 Runtime required
+rem echo rem .NET 6 WindowsDesktop Runtime required
 echo rem Download from get.dot.net
 echo rem Use "dotnet --info" to check
 echo rem Use "dotnet publish" to build

@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Return-Replace", "Return-Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwiftTranslator", "SwiftTranslator\SwiftTranslator.csproj", "{4FF69C80-8CB3-4E25-9C34-CC92997DDFE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corr-SWIFT", "Corr-SWIFT\Corr-SWIFT.csproj", "{A595AAFD-8DBD-47CA-89B7-36E0B735417D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corr-SWIFT", "Corr-SWIFT\Corr-SWIFT.csproj", "{A595AAFD-8DBD-47CA-89B7-36E0B735417D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corr-Lib.Tests", "Corr-SWIFT.Tests\Corr-Lib.Tests.csproj", "{2CD3FC0B-B41D-46AC-94F7-4664873C6DBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corr-Lib.Tests", "Corr-SWIFT.Tests\Corr-Lib.Tests.csproj", "{2CD3FC0B-B41D-46AC-94F7-4664873C6DBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corr-Lib", "Corr-Lib\Corr-Lib.csproj", "{07E81EAE-4B32-4087-AE44-17268C06F8D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Corr-Lib", "Corr-Lib\Corr-Lib.csproj", "{07E81EAE-4B32-4087-AE44-17268C06F8D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Return-SWIFT", "Return-SWIFT\Return-SWIFT.csproj", "{663FEEE3-7CF7-481C-865C-3BA1996C1963}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{07E81EAE-4B32-4087-AE44-17268C06F8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07E81EAE-4B32-4087-AE44-17268C06F8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07E81EAE-4B32-4087-AE44-17268C06F8D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{663FEEE3-7CF7-481C-865C-3BA1996C1963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{663FEEE3-7CF7-481C-865C-3BA1996C1963}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{663FEEE3-7CF7-481C-865C-3BA1996C1963}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{663FEEE3-7CF7-481C-865C-3BA1996C1963}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
