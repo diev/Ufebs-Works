@@ -285,7 +285,7 @@ public partial class ConfigForm : Form
     {
         if (sender is TextBox edit)
         {
-            edit.BackColor = edit.TextLength == 8
+            edit.BackColor = edit.TextLength == 11
                 ? BackColor
                 : Color.LightPink;
         }

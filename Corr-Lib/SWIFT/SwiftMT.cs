@@ -56,7 +56,7 @@ public static class SwiftMT
 
             // Application header
             .Append("{2:I103") // Block 2 identifier : In, MT103
-            .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX
+            .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX X
             .Append("N}") // Message priority (Normal)
 
             // User header
