@@ -17,11 +17,10 @@ limitations under the License.
 */
 #endregion
 
-namespace CorrLib.UFEBS;
+using CorrLib.UFEBS;
 
-public record CorrED100 : ED100
+namespace CorrLib.SWIFT;
+
+public class MT103
 {
-    public string OriginalEDType { get; internal set; } = null!;
-    public string? OriginalPayerName { get; internal set; }
-    public bool Saved { get; set; } = false;
 }

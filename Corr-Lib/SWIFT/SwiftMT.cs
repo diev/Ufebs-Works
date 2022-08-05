@@ -36,12 +36,12 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT103(this CorrED100 corrED100)
+    public static string ToStringMT103(this CorrED100 ed)
     {
-        string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
-        var ed = Translit(corrED100);
-
+        string sum = ed.Sum; // save for BESP if over 100 000 000.00
         var (Num, Id) = SwiftID.ID(ed);
+
+        ed.Translit();
 
         // Block Structure
 
@@ -147,7 +147,7 @@ public static class SwiftMT
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
-        var bankInfo = ED807Finder.Find(ed.PayeeBIC, true); //TODO BIC not found
+        var bankInfo = ED807Finder.Find(ed.PayeeBIC!, true); //TODO BIC not found
 
         if (bankInfo != null)
         {
@@ -310,12 +310,12 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT202(this CorrED100 corrED100) //TODO !!!
+    public static string ToStringMT202(this CorrED100 ed) //TODO !!!
     {
-        string sum = corrED100.Sum; // save for BESP if over 100 000 000.00
-        var ed = Translit(corrED100);
+        string sum = ed.Sum; // save for BESP if over 100 000 000.00
+        var (Num, Id) = SwiftID.ID(ed);
 
-        string id = $"{ed.EDDate}{ed.EDNo.PadLeft(9, '0')}"; //15x
+        ed.Translit();
 
         // Block Structure
 
@@ -325,7 +325,7 @@ public static class SwiftMT
             .Append("{1:F01") // Block 1 identifier : Application identifier
             .Append(Config.BankSWIFT) // Service identifier
             .Append("AXXX") // Logical terminal address
-            .Append(ed.EDNo) // Session number (shorten for {1: })
+            .Append(Num) // Session number (shorten for {1: })
             .Append('}')
 
             // Application header
@@ -345,7 +345,7 @@ public static class SwiftMT
 
         // Референс Отправителя (16x)
 
-        sb.AppendLine($":20:+{id}");
+        sb.AppendLine($":20:+{Id}");
 
         // Связанный референс (16x)
 
@@ -510,28 +510,28 @@ public static class SwiftMT
         return sb.ToString();
     }
 
-    private static CorrED100 Translit(CorrED100 ed) => new(ed)
+    private static void Translit(this CorrED100 ed)
     {
-        PayerName = Lat(ed.PayerName),
-        PayeeName = Lat(ed.PayeeName),
+        ed.PayerName = Lat(ed.PayerName);
+        ed.PayeeName = Lat(ed.PayeeName);
 
-        Sum = XSum(ed.Sum),
+        ed.Sum = XSum(ed.Sum);
 
-        ChargeOffDate = XDate(ed.ChargeOffDate)!,
-        EDDate = XDateX(ed.EDDate),
-        FileDate = XDate(ed.FileDate),
-        ReceiptDate = XDate(ed.ReceiptDate)!,
-        AccDocDate = XDateX(ed.AccDocDate),
-        Purpose = Lat(ed.Purpose),
+        ed.ChargeOffDate = XDate(ed.ChargeOffDate)!;
+        ed.EDDate = XDateX(ed.EDDate);
+        ed.FileDate = XDate(ed.FileDate);
+        ed.ReceiptDate = XDate(ed.ReceiptDate)!;
+        ed.AccDocDate = XDateX(ed.AccDocDate);
+        ed.Purpose = Lat(ed.Purpose);
 
         //if (ed.Tax)
 
-        CBC = Lat(ed.CBC),
-        DocDate = Lat(ed.DocDate),
-        DocNo = Lat(ed.DocNo),
-        OKATO = Lat(ed.OKATO),
-        PaytReason = Lat(ed.PaytReason),
-        TaxPeriod = Lat(ed.TaxPeriod),
-        TaxPaytKind = Lat(ed.TaxPaytKind)
-    };
+        ed.CBC = Lat(ed.CBC);
+        ed.DocDate = Lat(ed.DocDate);
+        ed.DocNo = Lat(ed.DocNo);
+        ed.OKATO = Lat(ed.OKATO);
+        ed.PaytReason = Lat(ed.PaytReason);
+        ed.TaxPeriod = Lat(ed.TaxPeriod);
+        ed.TaxPaytKind = Lat(ed.TaxPaytKind);
+    }
 }

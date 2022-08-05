@@ -24,7 +24,17 @@ namespace CorrLib.UFEBS;
 
 public static class ED100Ex
 {
-    public static void Load(this ED100 ed, XElement x)
+    public static ED100? Load(this ED100 ed, XNode? node)
+    {
+        if (node != null)
+        {
+            return ed.Load((XElement)node);
+        }
+
+        return null;
+    }
+
+    public static ED100 Load(this ED100 ed, XElement x)
     {
         ed.EDType = x.Name.LocalName; // required
 
@@ -128,9 +138,11 @@ public static class ED100Ex
                     break;
             }
         }
+
+        return ed;
     }
 
-    public static void Load(this ED100 ed, ED100 e)
+    public static ED100 Load(this ED100 ed, ED100 e)
     {
         ed.EDType = e.EDType;
 
@@ -186,6 +198,8 @@ public static class ED100Ex
             ed.TaxPeriod = e.TaxPeriod;
             ed.TaxPaytKind = e.TaxPaytKind;
         }
+
+        return ed;
     }
 
     private static string? FixKPP(string? inn, string? kpp)

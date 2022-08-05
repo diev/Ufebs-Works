@@ -53,7 +53,7 @@ public static class PacketEPDEx
             packet.Xmlns = root.Attribute("xmlns")?.Value;
 
             packet.Elements = new CorrED100[1];
-            packet.Elements[0] = new CorrED100(root);
+            packet.Elements[0] = new CorrED100().CorrLoad(new ED100().Load(root));
         }
         else
         {
@@ -75,7 +75,7 @@ public static class PacketEPDEx
 
                     for (int i = 0; i < qty; i++)
                     {
-                        packet.Elements[i] = new CorrED100(node);
+                        packet.Elements[i] = new CorrED100().CorrLoad(new ED100().Load(node)!);
                         node = node?.NextNode;
                     }
 

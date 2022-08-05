@@ -17,15 +17,13 @@ limitations under the License.
 */
 #endregion
 
-using System.Xml.Linq;
-
 namespace CorrLib.UFEBS;
 
 /// <summary>
 /// Базовый комплексный тип для всех электронных платежных сообщений. Содержит реквизиты, общие для всех типов ЭПС.
 /// Сверено с форматом УФЭБС по файлу cbr_ed101_v2022.3.0.xsd
 /// </summary>
-public class ED100
+public record ED100
 {
     #region Properties
 
@@ -315,21 +313,21 @@ public class ED100
     #endregion Extensions
     #endregion Properties
 
-    #region Constructors
+    //#region Constructors
 
-    public ED100(XNode? node)
-    {
-        if (node != null)
-        {
-            this.Load((XElement)node);
-        }
-    }
+    //public ED100(XNode? node)
+    //{
+    //    if (node != null)
+    //    {
+    //        this.Load((XElement)node);
+    //    }
+    //}
 
-    public ED100(XElement element)
-        => this.Load(element);
+    //public ED100(XElement element)
+    //    => this.Load(element);
 
-    public ED100(ED100 ed)
-        => this.Load(ed);
+    //public ED100(ED100 ed)
+    //    => this.Load(ed);
 
-    #endregion Constructors
+    //#endregion Constructors
 }
