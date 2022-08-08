@@ -21,6 +21,7 @@ using CorrLib;
 using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 
+using System.Diagnostics;
 using System.Text;
 using System.Xml;
 
@@ -50,7 +51,7 @@ public partial class MainForm : Form
             (int)(w * 0.8), (int)(h * 0.75));
 
         splitContainer2.SplitterDistance = 
-            splitContainer2.Height - NameEdit.Height - PurposeEdit.Height -
+            splitContainer2.Height - PayerEdit.Height - PayeeEdit.Height - PurposeEdit.Height -
             splitContainer2.SplitterWidth * 3;
 
         // runtimeconfig.template.json > App.runtimeconfig.json
@@ -92,6 +93,8 @@ public partial class MainForm : Form
         Status.Text = "Инициализация...";
         FormatStatus.Text = $"Format: {Config.SaveFormat}";
         ProfileStatus.Text = $"Profile: {Config.Profile}";
+        OpenStatus.Text = $"In: {Config.OpenDir}";
+        SaveStatus.Text = $"Out: {Config.SaveDir}";
 
         string mask = Config.SaveMask
             .Replace("{id}", "*")
@@ -99,7 +102,8 @@ public partial class MainForm : Form
 
         FilesList.Items.Clear();
         DocsList.Items.Clear();
-        NameEdit.Text = string.Empty;
+        PayerEdit.Text = string.Empty;
+        PayeeEdit.Text = string.Empty;
         PurposeEdit.Text = string.Empty;
 
         _selectedFileIndex = -1;
@@ -146,11 +150,12 @@ public partial class MainForm : Form
     private void FontOK()
     {
         var font = FontDialog.Font;
-        NameEdit.Font = font;
+        PayerEdit.Font = font;
+        PayeeEdit.Font = font;
         PurposeEdit.Font = font;
 
         splitContainer2.SplitterDistance =
-            splitContainer2.Height - NameEdit.Height - PurposeEdit.Height -
+            splitContainer2.Height - PayerEdit.Height - PayeeEdit.Height - PurposeEdit.Height -
             splitContainer2.SplitterWidth * 3;
     }
     
@@ -272,7 +277,7 @@ public partial class MainForm : Form
 
     private void FontMenuItem_Click(object sender, EventArgs e)
     {
-        FontDialog.Font = NameEdit.Font;
+        FontDialog.Font = PayerEdit.Font;
         FontDialog.ShowDialog();
     }
 
@@ -409,13 +414,14 @@ public partial class MainForm : Form
 
         var ed = _packet.Elements[item.Index];
 
-        NameEdit.Text = ed.PayerName;
+        PayerEdit.Text = ed.PayerName;
+        PayeeEdit.Text = ed.PayeeName;
         PurposeEdit.Text = ed.Purpose;
 
         switch (Config.SaveFormat)
         {
             case Config.UfebsFormat:
-                if (NameEdit.TextLength > 160 || PurposeEdit.TextLength > 210)
+                if (PayerEdit.TextLength > 160 || PurposeEdit.TextLength > 210)
                 {
                     item.ForeColor = Color.DarkRed;
                     Status.Text = "Необходимо сократить текст!";
@@ -426,7 +432,9 @@ public partial class MainForm : Form
                 break;
 
             case Config.SwiftFormat:
-                if (Lat(NameEdit.Text)?.Length > Config.SwiftNameLimit || Lat(PurposeEdit.Text)?.Length > 210)
+                if (Lat(PayerEdit.Text)?.Length > Config.SwiftNameLimit ||
+                    Lat(PayeeEdit.Text)?.Length > Config.SwiftNameLimit ||
+                    Lat(PurposeEdit.Text)?.Length > 210)
                 {
                     item.ForeColor = Color.DarkRed;
                     Status.Text = "Необходимо сократить текст!";
@@ -462,7 +470,7 @@ public partial class MainForm : Form
     {
         if (edit is null) return;
 
-        bool name = edit.Name == "NameEdit";
+        bool name = edit.Name != nameof(PurposeEdit);
         int len, max;
 
         switch (Config.SaveFormat)
@@ -513,32 +521,62 @@ public partial class MainForm : Form
             var item = DocsList.SelectedItems[0];
             var ed = _packet.Elements[item.Index];
 
+            var edit = sender as TextBox;
+
             if (e.KeyCode == Keys.Enter)
             {
-                string? prev = ed.PayerName;
-                string name = NameEdit.Text;
-                ed.PayerName = name;
-                item.SubItems[PayerColumn.Index].Text = name;
+                string name = edit!.Text;
 
-                SaveDocItem(item);
-
-                foreach (ListViewItem doc in DocsList.Items)
+                if (edit.Name == nameof(PayerEdit))
                 {
-                    ed = _packet.Elements[doc.Index];
+                    string? prev = ed.PayerName;
+                    ed.PayerName = name;
+                    item.SubItems[PayerColumn.Index].Text = name;
 
-                    if (!ed.Saved && ed.PayerName == prev)
+                    SaveDocItem(item);
+
+                    foreach (ListViewItem doc in DocsList.Items)
                     {
-                        ed.PayerName = name;
-                        doc.SubItems[PayerColumn.Index].Text = name;
+                        ed = _packet.Elements[doc.Index];
 
-                        SaveDocItem(doc);
+                        if (!ed.Saved && ed.PayerName == prev)
+                        {
+                            ed.PayerName = name;
+                            doc.SubItems[PayerColumn.Index].Text = name;
+
+                            SaveDocItem(doc);
+                        }
                     }
                 }
+                else
+                {
+                    string? prev = ed.PayeeName;
+                    ed.PayeeName = name;
+                    item.SubItems[PayeeColumn.Index].Text = name;
+
+                    SaveDocItem(item);
+
+                    foreach (ListViewItem doc in DocsList.Items)
+                    {
+                        ed = _packet.Elements[doc.Index];
+
+                        if (!ed.Saved && ed.PayeeName == prev)
+                        {
+                            ed.PayeeName = name;
+                            doc.SubItems[PayeeColumn.Index].Text = name;
+
+                            SaveDocItem(doc);
+                        }
+                    }
+                }
+
                 SaveFileItem();
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                NameEdit.Text = ed.PayerName;
+                edit!.Text = edit.Name == nameof(PayerEdit)
+                    ? ed.PayerName
+                    : ed.PayeeName;
             }
         }
     }
@@ -562,6 +600,42 @@ public partial class MainForm : Form
             else if (e.KeyCode == Keys.Escape)
             {
                 PurposeEdit.Text = ed.Purpose;
+            }
+        }
+    }
+
+    private void FilesList_DoubleClick(object sender, EventArgs e)
+    {
+        var list = (ListView)sender;
+
+        if (list.SelectedItems.Count == 1)
+        {
+            //_selectedDocIndex = list.SelectedItems[0].Index;
+            var item = list.SelectedItems[0];
+            string path = item.SubItems[FileColumn.Index].Text;
+            path = Path.Combine(Config.OpenDir, path);
+
+            if (File.Exists(path))
+            {
+                Process.Start("notepad.exe", path);
+            }
+        }
+    }
+
+    private void DocsList_DoubleClick(object sender, EventArgs e)
+    {
+        var list = (ListView)sender;
+
+        if (list.SelectedItems.Count == 1)
+        {
+            //_selectedDocIndex = list.SelectedItems[0].Index;
+            var item = list.SelectedItems[0];
+            string path = item.SubItems[SavedColumn.Index].Text;
+            path = Path.Combine(Config.SaveDir, path);
+
+            if (File.Exists(path))
+            {
+                Process.Start("notepad.exe", path);
             }
         }
     }

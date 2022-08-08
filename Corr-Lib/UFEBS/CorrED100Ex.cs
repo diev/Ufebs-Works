@@ -17,72 +17,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Xml.Linq;
-
 namespace CorrLib.UFEBS;
 
 public static class CorrED100Ex
 {
-    public static CorrED100 CorrLoad(this CorrED100 ed, ED100 e) //TODO Clone(ED100) 
-    {
-        ed.EDType = e.EDType;
-
-        ed.ChargeOffDate = e.ChargeOffDate; //71
-        ed.CodePurpose = e.CodePurpose; //20
-        ed.EDAuthor = e.EDAuthor;
-        ed.EDDate = e.EDDate;
-        ed.EDNo = e.EDNo;
-        ed.EDReceiver = e.EDReceiver;
-        ed.FileDate = e.FileDate; //63
-        ed.OperationID = e.OperationID;
-        ed.PaymentID = e.PaymentID; //22
-        ed.PaymentPrecedence = e.PaymentPrecedence;
-        ed.PaytKind = e.PaytKind; //5
-        ed.Priority = e.Priority; //21
-        ed.ReceiptDate = e.ReceiptDate; //62
-        ed.ReqSettlementDate = e.ReqSettlementDate;
-        ed.ResField = e.ResField; //23
-        ed.Sum = e.Sum; //7
-        ed.SystemCode = e.SystemCode;
-        ed.TransKind = e.TransKind; //18
-        ed.Xmlns = e.Xmlns;
-
-        //ed.SettleNotEarlier = e.SettleNotEarlier;
-        //ed.SettleNotLater = e.SettleNotLater;
-
-        ed.AccDocDate = e.AccDocDate;
-        ed.AccDocNo = e.AccDocNo;
-
-        ed.PayerINN = e.PayerINN;
-        ed.PayerKPP = e.PayerKPP;
-        ed.PayerPersonalAcc = e.PayerPersonalAcc;
-        ed.PayerName = e.PayerName;
-        ed.PayerBIC = e.PayerBIC;
-        ed.PayerCorrespAcc = e.PayerCorrespAcc;
-
-        ed.PayeeINN = e.PayeeINN;
-        ed.PayeeKPP = e.PayeeKPP;
-        ed.PayeePersonalAcc = e.PayeePersonalAcc;
-        ed.PayeeName = e.PayeeName;
-        ed.PayeeBIC = e.PayeeBIC;
-        ed.PayeeCorrespAcc = e.PayeeCorrespAcc;
-
-        ed.Purpose = e.Purpose;
-
-        ed.CBC = e.CBC;
-        ed.DocDate = e.DocDate;
-        ed.DocNo = e.DocNo;
-        ed.OKATO = e.OKATO;
-        ed.PaytReason = e.PaytReason;
-        ed.TaxPeriod = e.TaxPeriod;
-        ed.TaxPaytKind = e.TaxPaytKind;
-
-        ed.CorrSubst();
-
-        return ed;
-    }
-
-    public static CorrED100 CorrSubst(this CorrED100 ed)
+    public static ED100 CorrSubst(this ED100 ed)
     {
         // Замена всех типов ЭС на Платежное поручение.
 

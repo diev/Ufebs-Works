@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Return-SWIFT": {
+      "commandName": "Project",
+      "commandLineArgs": "*.txt"
+    }
+  }
+}

@@ -33,6 +33,9 @@ partial class MainForm
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.FormatStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.ProfileStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.OpenStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.DirStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.SaveStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,7 +65,8 @@ partial class MainForm
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeEdit = new System.Windows.Forms.TextBox();
-            this.NameEdit = new System.Windows.Forms.TextBox();
+            this.PayerEdit = new System.Windows.Forms.TextBox();
+            this.PayeeEdit = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
             this.StatusBar.SuspendLayout();
@@ -82,32 +86,55 @@ partial class MainForm
             this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Status,
             this.FormatStatus,
-            this.ProfileStatus});
-            this.StatusBar.Location = new System.Drawing.Point(0, 428);
+            this.ProfileStatus,
+            this.OpenStatus,
+            this.DirStatus,
+            this.SaveStatus});
+            this.StatusBar.Location = new System.Drawing.Point(0, 426);
             this.StatusBar.Name = "StatusBar";
-            this.StatusBar.Size = new System.Drawing.Size(930, 22);
+            this.StatusBar.Size = new System.Drawing.Size(930, 24);
             this.StatusBar.TabIndex = 0;
             this.StatusBar.Text = "statusStrip1";
             // 
             // Status
             // 
             this.Status.Name = "Status";
-            this.Status.Size = new System.Drawing.Size(829, 17);
+            this.Status.Size = new System.Drawing.Size(757, 19);
             this.Status.Spring = true;
             this.Status.Text = "Загрузка...";
             this.Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // FormatStatus
             // 
+            this.FormatStatus.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.FormatStatus.Name = "FormatStatus";
-            this.FormatStatus.Size = new System.Drawing.Size(45, 17);
+            this.FormatStatus.Size = new System.Drawing.Size(49, 19);
             this.FormatStatus.Text = "Format";
             // 
             // ProfileStatus
             // 
+            this.ProfileStatus.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.ProfileStatus.Name = "ProfileStatus";
-            this.ProfileStatus.Size = new System.Drawing.Size(41, 17);
+            this.ProfileStatus.Size = new System.Drawing.Size(45, 19);
             this.ProfileStatus.Text = "Profile";
+            // 
+            // OpenStatus
+            // 
+            this.OpenStatus.Name = "OpenStatus";
+            this.OpenStatus.Size = new System.Drawing.Size(17, 19);
+            this.OpenStatus.Text = "In";
+            // 
+            // DirStatus
+            // 
+            this.DirStatus.Name = "DirStatus";
+            this.DirStatus.Size = new System.Drawing.Size(20, 19);
+            this.DirStatus.Text = "->";
+            // 
+            // SaveStatus
+            // 
+            this.SaveStatus.Name = "SaveStatus";
+            this.SaveStatus.Size = new System.Drawing.Size(27, 19);
+            this.SaveStatus.Text = "Out";
             // 
             // MainMenu
             // 
@@ -215,8 +242,8 @@ partial class MainForm
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(930, 404);
-            this.splitContainer1.SplitterDistance = 138;
+            this.splitContainer1.Size = new System.Drawing.Size(930, 402);
+            this.splitContainer1.SplitterDistance = 137;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -235,11 +262,12 @@ partial class MainForm
             this.FilesList.Location = new System.Drawing.Point(0, 4);
             this.FilesList.MultiSelect = false;
             this.FilesList.Name = "FilesList";
-            this.FilesList.Size = new System.Drawing.Size(926, 130);
+            this.FilesList.Size = new System.Drawing.Size(926, 129);
             this.FilesList.TabIndex = 9;
             this.FilesList.UseCompatibleStateImageBehavior = false;
             this.FilesList.View = System.Windows.Forms.View.Details;
             this.FilesList.SelectedIndexChanged += new System.EventHandler(this.FilesList_SelectedIndexChanged);
+            this.FilesList.DoubleClick += new System.EventHandler(this.FilesList_DoubleClick);
             // 
             // FileColumn
             // 
@@ -286,10 +314,11 @@ partial class MainForm
             // 
             this.splitContainer2.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer2.Panel2.Controls.Add(this.PurposeEdit);
-            this.splitContainer2.Panel2.Controls.Add(this.NameEdit);
+            this.splitContainer2.Panel2.Controls.Add(this.PayeeEdit);
+            this.splitContainer2.Panel2.Controls.Add(this.PayerEdit);
             this.splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            this.splitContainer2.Size = new System.Drawing.Size(926, 259);
-            this.splitContainer2.SplitterDistance = 193;
+            this.splitContainer2.Size = new System.Drawing.Size(926, 258);
+            this.splitContainer2.SplitterDistance = 149;
             this.splitContainer2.TabIndex = 3;
             // 
             // DocsList
@@ -308,11 +337,12 @@ partial class MainForm
             this.DocsList.GridLines = true;
             this.DocsList.Location = new System.Drawing.Point(0, 0);
             this.DocsList.Name = "DocsList";
-            this.DocsList.Size = new System.Drawing.Size(926, 193);
+            this.DocsList.Size = new System.Drawing.Size(926, 149);
             this.DocsList.TabIndex = 3;
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
             this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
+            this.DocsList.DoubleClick += new System.EventHandler(this.DocsList_DoubleClick);
             // 
             // NoColumn
             // 
@@ -359,27 +389,40 @@ partial class MainForm
             // 
             this.PurposeEdit.Dock = System.Windows.Forms.DockStyle.Top;
             this.PurposeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PurposeEdit.Location = new System.Drawing.Point(3, 25);
+            this.PurposeEdit.Location = new System.Drawing.Point(3, 47);
             this.PurposeEdit.Name = "PurposeEdit";
             this.PurposeEdit.PlaceholderText = "Назначение платежа";
             this.PurposeEdit.Size = new System.Drawing.Size(920, 22);
-            this.PurposeEdit.TabIndex = 1;
+            this.PurposeEdit.TabIndex = 2;
             this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeEdit_TextChanged);
             this.PurposeEdit.Enter += new System.EventHandler(this.PurposeEdit_Enter);
             this.PurposeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PurposeEdit_KeyUp);
             // 
-            // NameEdit
+            // PayerEdit
             // 
-            this.NameEdit.Dock = System.Windows.Forms.DockStyle.Top;
-            this.NameEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NameEdit.Location = new System.Drawing.Point(3, 3);
-            this.NameEdit.Name = "NameEdit";
-            this.NameEdit.PlaceholderText = "Плательщик";
-            this.NameEdit.Size = new System.Drawing.Size(920, 22);
-            this.NameEdit.TabIndex = 0;
-            this.NameEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
-            this.NameEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
-            this.NameEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
+            this.PayerEdit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.PayerEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PayerEdit.Location = new System.Drawing.Point(3, 3);
+            this.PayerEdit.Name = "PayerEdit";
+            this.PayerEdit.PlaceholderText = "Плательщик";
+            this.PayerEdit.Size = new System.Drawing.Size(920, 22);
+            this.PayerEdit.TabIndex = 0;
+            this.PayerEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
+            this.PayerEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
+            this.PayerEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
+            // 
+            // PayeeEdit
+            // 
+            this.PayeeEdit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.PayeeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PayeeEdit.Location = new System.Drawing.Point(3, 25);
+            this.PayeeEdit.Name = "PayeeEdit";
+            this.PayeeEdit.PlaceholderText = "Получатель";
+            this.PayeeEdit.Size = new System.Drawing.Size(920, 22);
+            this.PayeeEdit.TabIndex = 1;
+            this.PayeeEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
+            this.PayeeEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
+            this.PayeeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
             // 
             // OpenFileDialog
             // 
@@ -463,7 +506,11 @@ partial class MainForm
     private ColumnHeader PurposeColumn;
     private ColumnHeader SavedColumn;
     private TextBox PurposeEdit;
-    private TextBox NameEdit;
+    private TextBox PayerEdit;
     private ToolStripStatusLabel FormatStatus;
     private ToolStripStatusLabel ProfileStatus;
+    private TextBox PayeeEdit;
+    private ToolStripStatusLabel OpenStatus;
+    private ToolStripStatusLabel DirStatus;
+    private ToolStripStatusLabel SaveStatus;
 }

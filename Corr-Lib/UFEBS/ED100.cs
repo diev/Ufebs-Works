@@ -38,7 +38,7 @@ public record ED100
     /// ED110 ЭПС сокращенного формата.
     /// ED111 Мемориальный ордер в электронном виде.
     /// </summary>
-    public string EDType { get; set; } = null!;
+    public string EDType { get; set; } = "ED101";
 
     #region Attributes
 
@@ -90,7 +90,7 @@ public record ED100
     /// <summary>
     /// Приоритет платежа. Две цифры.
     /// </summary>
-    public string PaymentPrecedence { get; set; } = null!; // required (default 79, БЭСП 69)
+    public string PaymentPrecedence { get; set; } = "79"; // required (default 79, БЭСП 69)
 
     /// <summary>
     /// Вид платежа (поле 5). Одна цифра.
@@ -100,12 +100,12 @@ public record ED100
     /// <summary>
     /// Очередность платежа (поле 21).
     /// </summary>
-    public string Priority { get; set; } = null!; // required (default 5)
+    public string Priority { get; set; } = "5"; // required (default 5)
 
     /// <summary>
     /// Поступило в банк плательщика (поле 62).
     /// </summary>
-    public string ReceiptDate { get; set; }
+    public string? ReceiptDate { get; set; }
 
     /// <summary>
     /// Запрошенная (требуемая) дата исполнения распоряжения.
@@ -125,7 +125,7 @@ public record ED100
     /// <summary>
     /// Признак системы обработки.
     /// </summary>
-    public string SystemCode { get; set; } = null!; // required (default 02)
+    public string SystemCode { get; set; } = "02"; // required (default 02)
 
     /// <summary>
     /// Вид операции (поле 18).
@@ -134,12 +134,12 @@ public record ED100
     /// 06 – инкассовое поручение (ED104)
     /// 16 – платежный ордер (ED105)
     /// </summary>
-    public string TransKind { get; set; } = null!; // required (default 01)
+    public string TransKind { get; set; } = "01"; // required (default 01)
 
     /// <summary>
     /// Схема имен УФЭБС XML.
     /// </summary>
-    public string? Xmlns { get; set; } // "urn:cbr-ru:ed:v2.0"
+    public string? Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
 
     #endregion Attributes
 
@@ -309,6 +309,26 @@ public record ED100
     /// Присутствует ведомственная информация (поля 101, 104-110).
     /// </summary>
     public bool Tax => DrawerStatus != null;
+
+    /// <summary>
+    /// Тип документа до корректировки для корсчета.
+    /// </summary>
+    public string? OriginalEDType { get; set; }
+
+    /// <summary>
+    /// Наименование плательщика до корректировки для корсчета.
+    /// </summary>
+    public string? OriginalPayerName { get; set; }
+
+    /// <summary>
+    /// Транслитерирован ли документ для корсчета SWIFT.
+    /// </summary>
+    public bool Lat { get; set; } = false;
+
+    /// <summary>
+    /// Сохранен ли откорректированный документ для корсчета.
+    /// </summary>
+    public bool Saved { get; set; } = false;
 
     #endregion Extensions
     #endregion Properties

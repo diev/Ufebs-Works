@@ -52,8 +52,8 @@ public static class PacketEPDEx
             packet.SystemCode = root.Attribute("SystemCode")!.Value;
             packet.Xmlns = root.Attribute("xmlns")?.Value;
 
-            packet.Elements = new CorrED100[1];
-            packet.Elements[0] = new CorrED100().CorrLoad(new ED100().Load(root));
+            packet.Elements = new ED100[1];
+            packet.Elements[0] = new ED100().Load(root).CorrSubst();
         }
         else
         {
@@ -70,12 +70,12 @@ public static class PacketEPDEx
                     packet.Xmlns = root.Attribute("xmlns")?.Value;
 
                     int qty = int.Parse(packet.EDQuantity);
-                    packet.Elements = new CorrED100[qty];
+                    packet.Elements = new ED100[qty];
                     var node = root.FirstNode;
 
                     for (int i = 0; i < qty; i++)
                     {
-                        packet.Elements[i] = new CorrED100().CorrLoad(new ED100().Load(node)!);
+                        packet.Elements[i] = new ED100().Load(node!).CorrSubst();
                         node = node?.NextNode;
                     }
 
@@ -91,7 +91,7 @@ public static class PacketEPDEx
                     //packet.SystemCode = root.Attribute("SystemCode")?.Value;
                     packet.Xmlns = root.Attribute("xmlns")?.Value;
 
-                    packet.Elements = Array.Empty<CorrED100>();
+                    packet.Elements = Array.Empty<ED100>();
                     //packet.Docs[0] = new ED100(root.FirstNode);
 
                     var container = root.Element(ns + "SWIFTContainer");
@@ -140,7 +140,10 @@ public static class PacketEPDEx
         writer.WriteAttributeString("EDDate", packet.EDDate);
         writer.WriteAttributeString("EDNo", packet.EDNo);
         writer.WriteAttributeString("EDQuantity", packet.EDQuantity);
-        writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
+
+        if (packet.EDReceiver != null)
+            writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
+
         writer.WriteAttributeString("Sum", packet.Sum);
         writer.WriteAttributeString("SystemCode", packet.SystemCode);
         writer.Flush();

@@ -17,8 +17,15 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib;
+using CorrLib.SWIFT;
+using static CorrLib.SWIFT.SwiftHelpers;
+using static CorrLib.SWIFT.SwiftTranslit;
+using CorrLib.UFEBS;
+
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Return_SWIFT;
 
@@ -118,31 +125,38 @@ internal class Program
         switch (mt)
         {
             case "103":
-                ProcessMT103(text, outFile);
+                ProcessMT103(inFile, outFile);
                 break;
 
             case "900":
-                ProcessMT900(text, outFile);
+                ProcessMT900(inFile, outFile);
                 break;
 
             case "950":
-                ProcessMT950(text, outFile);
+                ProcessMT950(inFile, outFile);
                 break;
 
             case "196":
-                ProcessMT196(text, outFile);
+                ProcessMT196(inFile, outFile);
                 break;
 
             case "199":
-                ProcessMT199(text, outFile);
+                ProcessMT199(inFile, outFile);
                 break;
 
             case "299":
-                ProcessMT299(text, outFile);
+                ProcessMT299(inFile, outFile);
                 break;
 
             default:
-                Console.WriteLine($"Unknown MT{mt} in \"{inFile}\"!");
+                if (mt.Length > 0)
+                {
+                    Console.WriteLine($"Unknown MT{mt} in \"{inFile}\"!");
+                }
+                else
+                {
+                    ProcessKvit(inFile, outFile);
+                }
                 break;
         }
 
@@ -162,7 +176,7 @@ internal class Program
         #endregion Files end
     }
 
-    private static void ProcessMT103(string text, string outFile)
+    private static void ProcessMT103(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000003}{2:O1031339220805ALFARUMMXXXX00805156072208051339N}{3:{113:RUR6}{108:1OP1E00033125402}{111:001}{121:37aef0d4-be5b-4a48-8c7e-91cd752c32de}}{4:
@@ -186,9 +200,274 @@ LAGAETSa.
 /DAS/220805.220805.000000.000000
 -}{5:{MAC:00000000}{CHK:0000558B0EB5}}
          */
+
+        ED100 ed = new();
+
+        var lines = File.ReadAllLines(inFile);
+        int n = 0;
+        string line = lines[n];
+        string pattern;
+        Match match;
+
+        // Tax
+
+        while (!line.StartsWith(":32A:"))
+        {
+            line = lines[n++];
+
+            if (line.StartsWith(":26T:"))
+            {
+                pattern = @"^:26T:S(\d*)$";
+                match = Regex.Match(line, pattern);
+
+                ed.DrawerStatus = match.Groups[1].Value;
+            }
+        }
+
+        // Sum
+
+        pattern = @"^:32A:(\d{6})RUB(\d+,\d{0,2})$";
+        match = Regex.Match(line, pattern);
+
+        string date = match.Groups[1].Value;
+        ed.ChargeOffDate = UfebsDate(date);
+        ed.Sum = UfebsSum(match.Groups[2].Value);
+
+        // Payer
+
+        while (!line.StartsWith(":50K:")) line = lines[n++];
+        ed.PayerPersonalAcc = line[^20..];
+
+        line = lines[n++];
+        pattern = @"^INN(\d*)(\.KPP(\d*)){0,1}$";
+        match = Regex.Match(line, pattern);
+
+        ed.PayerINN = match.Groups[1].Value;
+        ed.PayerKPP = match.Groups.Count > 2
+            ? match.Groups[3].Value
+            : null;
+
+        string name = string.Empty;
+        line = lines[n++];
+
+        while (!line.StartsWith(":52D:"))
+        {
+            name += line;
+            line = lines[n++];
+        }
+
+        ed.PayerName = Cyr(name);
+
+        pattern = @"^:52D://RU(\d*)(\.(\d*))$";
+        match = Regex.Match(line, pattern);
+
+        ed.PayerBIC = match.Groups[1].Value;
+        ed.PayerCorrespAcc = match.Groups.Count > 2
+            ? match.Groups[3].Value
+            : null;
+
+        // Payee
+
+        while (!line.StartsWith(":53B:")) line = lines[n++];
+        ed.PayeePersonalAcc = line[^20..];
+
+        while (!line.StartsWith(":59:")) line = lines[n++];
+        pattern = @"^:59:INN(\d*)(\.KPP(\d*)){0,1}$";
+        match = Regex.Match(line, pattern);
+
+        ed.PayeeINN = match.Groups[1].Value;
+        ed.PayeeKPP = match.Groups.Count > 2
+            ? match.Groups[3].Value
+            : null;
+
+        name = string.Empty;
+        line = lines[n++];
+
+        while (!line.StartsWith(":70:"))
+        {
+            name += line;
+            line = lines[n++];
+        }
+
+        ed.PayeeName = Cyr(name);
+
+        // Purpose
+
+        name = line[4..];
+        line = lines[n++];
+
+        while (!line.StartsWith(":71A:"))
+        {
+            name += line;
+            line = lines[n++];
+        }
+
+        // Extra
+        
+        while (!line.StartsWith(":72:")) line = lines[n++];
+        line = line[4..];
+        bool nzp = false;
+
+        while (line.StartsWith('/'))
+        {
+            if (line.StartsWith("/RPP/"))
+            {
+                nzp = false;
+
+                pattern = @"^/RPP/(\d*)\.(\d*)\.(\d)\.(\w{4})\.(\d*)";
+                match = Regex.Match(line, pattern);
+
+                ed.AccDocNo = match.Groups[1].Value;
+                ed.AccDocDate = UfebsDate(match.Groups[2].Value);
+                ed.Priority = match.Groups[3].Value;
+
+                if (match.Groups[4].Value == "BESP")
+                {
+                    ed.PaytKind = "?"; //TODO
+                    ed.PaymentPrecedence = "69";
+                }
+
+                ed.TransKind = match.Groups.Count > 4
+                    ? match.Groups[5].Value
+                    : "01";
+            }
+            else if (line.StartsWith("/DAS/"))
+            {
+                nzp = false;
+
+                pattern = @"^/DAS/(\d*)\.(\d*)";
+                match = Regex.Match(line, pattern);
+
+                //ed.ChargeOffDate = UfebsDate(match.Groups[1].Value);
+                ed.ReceiptDate = UfebsDate(match.Groups[2].Value);
+            }
+            else if (line.StartsWith("/UIP/"))
+            {
+                nzp = false;
+
+                pattern = @"^/UIP/(\d*)";
+                match = Regex.Match(line, pattern);
+
+                ed.PaymentID = match.Groups[1].Value;
+            }
+            else if (line.StartsWith("/NZP/"))
+            {
+                nzp = true;
+                name += line[5..];
+            }
+            else if (line.StartsWith("//") && nzp)
+            {
+                name += line[2..];
+            }
+            else
+            {
+                nzp = false;
+            }
+
+            line = lines[n++];
+        }
+
+        ed.Purpose = Cyr(name);
+
+        if (ed.Tax)
+        {
+            while (!line.StartsWith(":77B:")) line = lines[n++];
+            line = line[5..];
+
+            while (line.StartsWith("/N"))
+            {
+                pattern = @"/N4/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.CBC = Cyr(match.Value);
+                }
+
+                pattern = @"/N5/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.OKATO = Cyr(match.Value);
+                }
+
+                pattern = @"/N6/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.PaytReason = Cyr(match.Value);
+                }
+
+                pattern = @"/N7/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.TaxPeriod = Cyr(match.Value);
+                }
+
+                pattern = @"/N8/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.DocNo = Cyr(match.Value);
+                }
+
+                pattern = @"/N9/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.DocDate = Cyr(match.Value);
+                }
+
+                pattern = @"/N10/([^/]*)";
+                match = Regex.Match(line, pattern);
+
+                if (match.Success)
+                {
+                    ed.TaxPaytKind = Cyr(match.Value);
+                }
+            }
+        }
+
+        ed.CodePurpose = "1";
+        ed.EDAuthor = "452559300"; // ALFA
+        ed.EDDate = ed.ChargeOffDate;
+        ed.EDNo = "1"; //TODO inc
+        ed.EDReceiver = "4030702000";
+
+        ed.PayeeBIC ??= "044525593"; // ALFA
+        ed.PayeeCorrespAcc ??= "30101810200000000593"; // ALFA
+
+        PacketEPD packet = new()
+        {
+            EDAuthor = ed.EDAuthor,
+            EDDate = ed.EDDate,
+            EDNo = "2", //TODO inc
+            EDQuantity = "1",
+            Sum = ed.Sum,
+            SystemCode = ed.SystemCode,
+            Elements = new ED100[1]
+        };
+
+        packet.Elements[0] = ed;
+
+        outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
+
+        var settings = new XmlWriterSettings
+        {
+            Indent = true
+            //NewLineOnAttributes = true
+        };
+        using var writer = XmlWriter.Create(outFile, settings);
+        packet.WriteXML(writer);
     }
 
-    private static void ProcessMT900(string text, string outFile)
+    private static void ProcessMT900(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000001}{2:O9000135220805ALFARUMMXXXX00804219152208050135N}{3:{113:RUR6}{108:1OP1EE0033080923}}{4:
@@ -204,7 +483,7 @@ LAGAETSa.
         */
     }
 
-    private static void ProcessMT950(string text, string outFile)
+    private static void ProcessMT950(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000002}{2:O9500136220805ALFARUMMXXXX00804219572208050136N}{3:{113:RUR6}{108:1OP1EE0033081056}}{4:
@@ -220,9 +499,58 @@ LAGAETSa.
 :64:C220804RUB500,
 -}{5:{MAC:00000000}{CHK:000081FE3115}}
          */
+
+        var lines = File.ReadAllLines(inFile);
+        int n = 0;
+        int max = lines.Length;
+
+        // Счет корреспондентский
+
+        while (!lines[n].StartsWith(":25:")) n++;
+        string ourAcc = lines[n][4..];
+
+        // Входящий остаток
+
+        while (!lines[n].StartsWith(":60F:")) n++;
+        string enterBal = UfebsSum(lines[n][15..]);
+
+        // Пока не исходящий остаток - движения средств
+
+        string chargeOffDate, dc, sum, accDocNo;
+        string outBal;
+        StringBuilder sb = new();
+
+        while (n++ < lines.Length)
+        {
+            string line = lines[n];
+
+            if (line.StartsWith(":62F:"))
+            {
+                outBal = line[15..]; //TODO SwiftSum()
+                break;
+            }
+
+            if (line.StartsWith(":61:"))
+            {
+                string pattern = @"^:61:(\d{6})([CD])(\d+,\d{0,2})";
+                var matches = Regex.Match(line, pattern);
+
+                chargeOffDate = matches.Groups[1].Value;
+                dc = matches.Groups[2].Value;
+                sum = matches.Groups[3].Value;
+            }
+            else
+            {
+                accDocNo = line;
+
+                sb.Append("<TransInfo AccDocNo=");
+            }
+
+        }
+
     }
 
-    private static void ProcessMT196(string text, string outFile)
+    private static void ProcessMT196(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0208000001}{2:O1961654220802AVTBRUMMAXXX02080218312208021654N}{3:{113:RUR6}}{4:
@@ -282,7 +610,7 @@ DETAILS PYMT..PRIVATE PAYMENT
         */
     }
 
-    private static void ProcessMT199(string text, string outFile)
+    private static void ProcessMT199(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0063000001}{2:O1992255220630ALFARUMMXXXX00630219332206302255N}{3:{113:RUR6}{108:1ZLTH00031376433}}{4:
@@ -323,7 +651,7 @@ PRAVOOBLADATELaMI
         */
     }
 
-    private static void ProcessMT299(string text, string outFile)
+    private static void ProcessMT299(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0070000001}{2:O2991651220707ALFARUMMXXXX00707179002207071651N}{3:{113:RUR6}{108:1AO5400031708864}}{4:
@@ -358,6 +686,15 @@ KOMANDA PRODAJ NA FINANSOVYH RYNKAH
 +7 495 7953688, +7 499 6811709
 'FI(AT)ALFABANK.RU'
 -}{5:{MAC:00000000}{CHK:0000CB1282DF}}
+        */
+    }
+
+    private static void ProcessKvit(string inFile, string outFile)
+    {
+        /*
+{1:F21CITVRU2PXXXX0804012157}
+{4:{177:2208041611}
+{451:0}}
         */
     }
 }

@@ -36,12 +36,10 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT103(this CorrED100 ed)
+    public static string ToStringMT103(this ED100 ed)
     {
         string sum = ed.Sum; // save for BESP if over 100 000 000.00
         var (Num, Id) = SwiftID.ID(ed);
-
-        ed.Translit();
 
         // Block Structure
 
@@ -83,7 +81,7 @@ public static class SwiftMT
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
 
-        sb.AppendLine($":32A:{ed.ChargeOffDate}RUB{ed.Sum}");
+        sb.AppendLine($":32A:{SwiftDate(ed.ChargeOffDate)}RUB{SwiftSum(ed.Sum)}");
 
         // Плательщик
 
@@ -105,12 +103,12 @@ public static class SwiftMT
         sb.AppendLine($":50K:/{ed.PayerPersonalAcc}") // или :50F: с адресом и страной
             .AppendLineIf(ed.PayerINN, $"INN{ed.PayerINN}{ed.PayerKPP.AddKPPNotEmptyNorZeros()}");
 
-        // (3*35x!)
+        // (3*35x! ??)
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
 
-        sb.AppendLineIf(ed.PayerName);
+        sb.AppendLineIf(Lat(ed.PayerName)!.Div35(Config.SwiftNameLimit));
 
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
@@ -147,24 +145,16 @@ public static class SwiftMT
         //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
         //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
-        var bankInfo = ED807Finder.Find(ed.PayeeBIC!, true); //TODO BIC not found
-
-        if (bankInfo != null)
-        {
-            sb.AppendLine(bankInfo.Name.Div35())
-                .AppendLine(bankInfo.Place);
-        }
-        else
-        {
-            sb.AppendLine(Lat("Банк"));
-        }
+        var bankInfo = ED807Finder.Find(ed.PayeeBIC!, true) ?? new BankInfo("BANK", "G"); //TODO BIC not found
+        sb.AppendLine(bankInfo.Name.Div35())
+            .AppendLine(bankInfo.Place);
 
         // Бенефициар
         // (клиент, которому будут выплачены средства)
 
         sb.AppendLine($":59:/{ed.PayeePersonalAcc}")
             .AppendLineIf(ed.PayeeINN, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmptyNorZeros()}")
-            .AppendLineIf(ed.PayeeName, ed.PayeeName!.Div35());
+            .AppendLineIf(ed.PayeeName, Lat(ed.PayeeName)!.Div35(Config.SwiftNameLimit));
 
         // Информация о платеже (4*35x + :72:/NZP/)
         // При недостаточной размерности поля допускается продолжение информации о назначении платежа в поле 72 с кодовым словом /NZP/.
@@ -192,7 +182,7 @@ public static class SwiftMT
 
         if (ed.Purpose != null)
         {
-            purpose = ed.Purpose.Prepare35();
+            purpose = Lat(ed.Purpose)!.Prepare35();
 
             if (Config.SwiftPurposeField == "70")
             {
@@ -258,9 +248,9 @@ public static class SwiftMT
 
         sb.Append(":72:")
             // Реквизиты расчетного документа
-            .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate}.{ed.Priority}.{paytKind}{transKind}") //.{ed.ChargeOffDate}.{ed.TransKind}")
+            .AppendLine($"/RPP/{ed.AccDocNo}.{SwiftDate(ed.AccDocDate)}.{ed.Priority}.{paytKind}{transKind}") //.{SwiftDate(ed.ChargeOffDate)}.{ed.TransKind}")
             // Даты из расчетного документа
-            .AppendLine($"/DAS/{ed.ChargeOffDate}.{ed.ReceiptDate}.000000.000000");
+            .AppendLine($"/DAS/{SwiftDate(ed.ChargeOffDate)}.{SwiftDate(ed.ReceiptDate)}.000000.000000");
 
         //TODO Реквизиты платежного ордера
         // .AppendLine($"/RPO/...
@@ -290,9 +280,9 @@ public static class SwiftMT
         if (ed.Tax)
         {
             sb.Append(":77B:")
-                .AppendLine($"/N10/{ed.TaxPaytKind ?? "0"}/N4/{ed.CBC ?? "0"}")
-                .AppendLine($"/N5/{ed.OKATO ?? "0"}/N6/{ed.PaytReason ?? "0"}/N7/{ed.TaxPeriod ?? "0"}")
-                .AppendLine($"/N8/{ed.DocNo ?? "0"}/N9/{ed.DocDate ?? "0"}");
+                .AppendLine($"/N10/{Lat(ed.TaxPaytKind) ?? "0"}/N4/{Lat(ed.CBC) ?? "0"}")
+                .AppendLine($"/N5/{Lat(ed.OKATO) ?? "0"}/N6/{Lat(ed.PaytReason) ?? "0"}/N7/{Lat(ed.TaxPeriod) ?? "0"}")
+                .AppendLine($"/N8/{Lat(ed.DocNo) ?? "0"}/N9/{Lat(ed.DocDate) ?? "0"}");
         }
 
         #endregion SWIFT TEXT
@@ -310,12 +300,12 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT202(this CorrED100 ed) //TODO !!!
+    public static string ToStringMT202(this ED100 ed) //TODO !!!
     {
         string sum = ed.Sum; // save for BESP if over 100 000 000.00
         var (Num, Id) = SwiftID.ID(ed);
 
-        ed.Translit();
+        //ed.Translit(); //TODO !!!
 
         // Block Structure
 
@@ -510,28 +500,32 @@ public static class SwiftMT
         return sb.ToString();
     }
 
-    private static void Translit(this CorrED100 ed)
-    {
-        ed.PayerName = Lat(ed.PayerName);
-        ed.PayeeName = Lat(ed.PayeeName);
+    //private static void Translit(this ED100 ed)
+    //{
+    //    if (ed.Lat) return;
 
-        ed.Sum = XSum(ed.Sum);
+    //    ed.PayerName = Lat(ed.PayerName);
+    //    ed.PayeeName = Lat(ed.PayeeName);
 
-        ed.ChargeOffDate = XDate(ed.ChargeOffDate)!;
-        ed.EDDate = XDateX(ed.EDDate);
-        ed.FileDate = XDate(ed.FileDate);
-        ed.ReceiptDate = XDate(ed.ReceiptDate)!;
-        ed.AccDocDate = XDateX(ed.AccDocDate);
-        ed.Purpose = Lat(ed.Purpose);
+    //    ed.Sum = SwiftSum(ed.Sum);
 
-        //if (ed.Tax)
+    //    ed.ChargeOffDate = SwiftDate(ed.ChargeOffDate)!;
+    //    ed.EDDate = SwiftDate(ed.EDDate);
+    //    ed.FileDate = SwiftDate(ed.FileDate);
+    //    ed.ReceiptDate = SwiftDate(ed.ReceiptDate)!;
+    //    ed.AccDocDate = SwiftDate(ed.AccDocDate);
+    //    ed.Purpose = Lat(ed.Purpose);
 
-        ed.CBC = Lat(ed.CBC);
-        ed.DocDate = Lat(ed.DocDate);
-        ed.DocNo = Lat(ed.DocNo);
-        ed.OKATO = Lat(ed.OKATO);
-        ed.PaytReason = Lat(ed.PaytReason);
-        ed.TaxPeriod = Lat(ed.TaxPeriod);
-        ed.TaxPaytKind = Lat(ed.TaxPaytKind);
-    }
+    //    //if (ed.Tax)
+
+    //    ed.CBC = Lat(ed.CBC);
+    //    ed.DocDate = Lat(ed.DocDate);
+    //    ed.DocNo = Lat(ed.DocNo);
+    //    ed.OKATO = Lat(ed.OKATO);
+    //    ed.PaytReason = Lat(ed.PaytReason);
+    //    ed.TaxPeriod = Lat(ed.TaxPeriod);
+    //    ed.TaxPaytKind = Lat(ed.TaxPaytKind);
+
+    //    ed.Lat = true;
+    //}
 }

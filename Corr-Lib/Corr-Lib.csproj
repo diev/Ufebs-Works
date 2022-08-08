@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Copyright>Dmitrii Evdokimov</Copyright>
-    <AssemblyVersion>2.2.6.30</AssemblyVersion>
-    <FileVersion>2.2.6.30</FileVersion>
+    <AssemblyVersion>2.22.8.8</AssemblyVersion>
+    <FileVersion>2.22.8.8</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

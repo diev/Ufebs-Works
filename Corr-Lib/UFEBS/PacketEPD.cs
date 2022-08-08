@@ -88,7 +88,7 @@ public class PacketEPD
     /// <summary>
     /// Массив платежных документов.
     /// </summary>
-    public CorrED100[] Elements { get; set; } = Array.Empty<CorrED100>();
+    public ED100[] Elements { get; set; } = Array.Empty<ED100>();
 
     /// <summary>
     /// Иия файла, из которого загружен пакет.
@@ -105,6 +105,10 @@ public class PacketEPD
     #endregion Properties
 
     #region Constructors
+
+    public PacketEPD()
+    {
+    }
 
     public PacketEPD(string path)
     {
