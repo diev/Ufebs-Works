@@ -26,11 +26,22 @@ using CorrLib.UFEBS;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using CorrLib.UFEBS.DTO;
 
 namespace Return_SWIFT;
 
 internal class Program
 {
+    static Dictionary<string, TransInfo> _d = new();
+    static Dictionary<string, TransInfo> _c = new();
+    static string? _o950;
+
+    static readonly XmlWriterSettings _xmlSettings = new()
+    {
+        Encoding = Encoding.GetEncoding(1251),
+        Indent = true
+    };
+
     static void Main(string[] args)
     {
         string path, outPath;
@@ -89,14 +100,19 @@ internal class Program
             Console.WriteLine($"Input \"{path}\" not found");
         }
 
-        #region finish
-        while (true)
+        if (_o950 != null)
         {
-            if (Console.ReadKey().Key == ConsoleKey.Spacebar)
-            {
-                break;
-            }
+            ProcessO950(_o950, outPath + ".O950.ED211");
         }
+
+        #region finish
+        //while (true)
+        //{
+        //    if (Console.ReadKey().Key == ConsoleKey.Spacebar)
+        //    {
+        //        break;
+        //    }
+        //}
         #endregion finish
     }
 
@@ -119,39 +135,44 @@ internal class Program
         //TODO
 
         string text = File.ReadAllText(inFile);
-        string pattern = @"{2:O(\d{3})";
+        string pattern = @"{2:([IO]\d{3})";
         string mt = Regex.Match(text, pattern).Groups[1].Value;
 
         switch (mt)
         {
-            case "103":
-                ProcessMT103(inFile, outFile);
+            case "I103":
+                ProcessI103(inFile, $"{outFile}.{mt}.ED101");
                 break;
 
-            case "900":
-                ProcessMT900(inFile, outFile);
+            case "O103":
+                ProcessO103(inFile, $"{outFile}.{mt}.ED101");
                 break;
 
-            case "950":
-                ProcessMT950(inFile, outFile);
+            case "O900":
+                ProcessO900(inFile, $"{outFile}.{mt}.ED206");
                 break;
 
-            case "196":
-                ProcessMT196(inFile, outFile);
+            case "O950":
+                _o950 = inFile;
+                //ProcessO950(inFile, $"{outFile}.{mt}.ED211");
                 break;
 
-            case "199":
-                ProcessMT199(inFile, outFile);
+            case "O196":
+                ProcessO196(inFile, $"{outFile}.{mt}.Note");
                 break;
 
-            case "299":
-                ProcessMT299(inFile, outFile);
+            case "O199":
+                ProcessO199(inFile, $"{outFile}.{mt}.Note");
+                break;
+
+            case "O299":
+                ProcessO299(inFile, $"{outFile}.{mt}.Note");
                 break;
 
             default:
                 if (mt.Length > 0)
                 {
-                    Console.WriteLine($"Unknown MT{mt} in \"{inFile}\"!");
+                    Console.WriteLine($"Unknown {mt} in \"{inFile}\"!");
                 }
                 else
                 {
@@ -161,22 +182,22 @@ internal class Program
         }
 
         #region Files end
-        Console.WriteLine();
+        //Console.WriteLine();
 
-        if (File.Exists(outFile))
-        {
-            Console.WriteLine($"[Output \"{outFile}\" done. Press Spacebar.]");
-        }
-        else
-        {
-            Console.WriteLine($"[Output \"{outFile}\" FAIL! Press Spacebar.]");
-        }
+        //if (File.Exists(outFile))
+        //{
+        //    Console.WriteLine($"[Output \"{outFile}\" done. Press Spacebar.]");
+        //}
+        //else
+        //{
+        //    Console.WriteLine($"[Output \"{outFile}\" FAIL! Press Spacebar.]"); //TODO add if .O900.ED206
+        //}
 
-        Console.WriteLine();
+        //Console.WriteLine();
         #endregion Files end
     }
 
-    private static void ProcessMT103(string inFile, string outFile)
+    private static void ProcessI103(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000003}{2:O1031339220805ALFARUMMXXXX00805156072208051339N}{3:{113:RUR6}{108:1OP1E00033125402}{111:001}{121:37aef0d4-be5b-4a48-8c7e-91cd752c32de}}{4:
@@ -201,247 +222,21 @@ LAGAETSa.
 -}{5:{MAC:00000000}{CHK:0000558B0EB5}}
          */
 
-        ED100 ed = new();
-
         var lines = File.ReadAllLines(inFile);
-        int n = 0;
-        string line = lines[n];
-        string pattern;
-        Match match;
-
-        // Tax
-
-        while (!line.StartsWith(":32A:"))
+        ED100 ed = new(lines) //TODO load a source XML file!
         {
-            line = lines[n++];
-
-            if (line.StartsWith(":26T:"))
-            {
-                pattern = @"^:26T:S(\d*)$";
-                match = Regex.Match(line, pattern);
-
-                ed.DrawerStatus = match.Groups[1].Value;
-            }
-        }
-
-        // Sum
-
-        pattern = @"^:32A:(\d{6})RUB(\d+,\d{0,2})$";
-        match = Regex.Match(line, pattern);
-
-        string date = match.Groups[1].Value;
-        ed.ChargeOffDate = UfebsDate(date);
-        ed.Sum = UfebsSum(match.Groups[2].Value);
-
-        // Payer
-
-        while (!line.StartsWith(":50K:")) line = lines[n++];
-        ed.PayerPersonalAcc = line[^20..];
-
-        line = lines[n++];
-        pattern = @"^INN(\d*)(\.KPP(\d*)){0,1}$";
-        match = Regex.Match(line, pattern);
-
-        ed.PayerINN = match.Groups[1].Value;
-        ed.PayerKPP = match.Groups.Count > 2
-            ? match.Groups[3].Value
-            : null;
-
-        string name = string.Empty;
-        line = lines[n++];
-
-        while (!line.StartsWith(":52D:"))
-        {
-            name += line;
-            line = lines[n++];
-        }
-
-        ed.PayerName = Cyr(name);
-
-        pattern = @"^:52D://RU(\d*)(\.(\d*))$";
-        match = Regex.Match(line, pattern);
-
-        ed.PayerBIC = match.Groups[1].Value;
-        ed.PayerCorrespAcc = match.Groups.Count > 2
-            ? match.Groups[3].Value
-            : null;
-
-        // Payee
-
-        while (!line.StartsWith(":53B:")) line = lines[n++];
-        ed.PayeePersonalAcc = line[^20..];
-
-        while (!line.StartsWith(":59:")) line = lines[n++];
-        pattern = @"^:59:INN(\d*)(\.KPP(\d*)){0,1}$";
-        match = Regex.Match(line, pattern);
-
-        ed.PayeeINN = match.Groups[1].Value;
-        ed.PayeeKPP = match.Groups.Count > 2
-            ? match.Groups[3].Value
-            : null;
-
-        name = string.Empty;
-        line = lines[n++];
-
-        while (!line.StartsWith(":70:"))
-        {
-            name += line;
-            line = lines[n++];
-        }
-
-        ed.PayeeName = Cyr(name);
-
-        // Purpose
-
-        name = line[4..];
-        line = lines[n++];
-
-        while (!line.StartsWith(":71A:"))
-        {
-            name += line;
-            line = lines[n++];
-        }
-
-        // Extra
-        
-        while (!line.StartsWith(":72:")) line = lines[n++];
-        line = line[4..];
-        bool nzp = false;
-
-        while (line.StartsWith('/'))
-        {
-            if (line.StartsWith("/RPP/"))
-            {
-                nzp = false;
-
-                pattern = @"^/RPP/(\d*)\.(\d*)\.(\d)\.(\w{4})\.(\d*)";
-                match = Regex.Match(line, pattern);
-
-                ed.AccDocNo = match.Groups[1].Value;
-                ed.AccDocDate = UfebsDate(match.Groups[2].Value);
-                ed.Priority = match.Groups[3].Value;
-
-                if (match.Groups[4].Value == "BESP")
-                {
-                    ed.PaytKind = "?"; //TODO
-                    ed.PaymentPrecedence = "69";
-                }
-
-                ed.TransKind = match.Groups.Count > 4
-                    ? match.Groups[5].Value
-                    : "01";
-            }
-            else if (line.StartsWith("/DAS/"))
-            {
-                nzp = false;
-
-                pattern = @"^/DAS/(\d*)\.(\d*)";
-                match = Regex.Match(line, pattern);
-
-                //ed.ChargeOffDate = UfebsDate(match.Groups[1].Value);
-                ed.ReceiptDate = UfebsDate(match.Groups[2].Value);
-            }
-            else if (line.StartsWith("/UIP/"))
-            {
-                nzp = false;
-
-                pattern = @"^/UIP/(\d*)";
-                match = Regex.Match(line, pattern);
-
-                ed.PaymentID = match.Groups[1].Value;
-            }
-            else if (line.StartsWith("/NZP/"))
-            {
-                nzp = true;
-                name += line[5..];
-            }
-            else if (line.StartsWith("//") && nzp)
-            {
-                name += line[2..];
-            }
-            else
-            {
-                nzp = false;
-            }
-
-            line = lines[n++];
-        }
-
-        ed.Purpose = Cyr(name);
-
-        if (ed.Tax)
-        {
-            while (!line.StartsWith(":77B:")) line = lines[n++];
-            line = line[5..];
-
-            while (line.StartsWith("/N"))
-            {
-                pattern = @"/N4/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.CBC = Cyr(match.Value);
-                }
-
-                pattern = @"/N5/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.OKATO = Cyr(match.Value);
-                }
-
-                pattern = @"/N6/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.PaytReason = Cyr(match.Value);
-                }
-
-                pattern = @"/N7/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.TaxPeriod = Cyr(match.Value);
-                }
-
-                pattern = @"/N8/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.DocNo = Cyr(match.Value);
-                }
-
-                pattern = @"/N9/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.DocDate = Cyr(match.Value);
-                }
-
-                pattern = @"/N10/([^/]*)";
-                match = Regex.Match(line, pattern);
-
-                if (match.Success)
-                {
-                    ed.TaxPaytKind = Cyr(match.Value);
-                }
-            }
-        }
-
-        ed.CodePurpose = "1";
-        ed.EDAuthor = "452559300"; // ALFA
+            CodePurpose = "1", //TODO ??
+            EDAuthor = "4525593000", //TODO ALFA
+            EDNo = "1", //TODO inc
+            EDReceiver = "4030702000"
+        };
         ed.EDDate = ed.ChargeOffDate;
-        ed.EDNo = "1"; //TODO inc
-        ed.EDReceiver = "4030702000";
 
-        ed.PayeeBIC ??= "044525593"; // ALFA
-        ed.PayeeCorrespAcc ??= "30101810200000000593"; // ALFA
+        ed.PayeeBIC ??= "044525593"; //TODO ALFA
+        ed.PayeeCorrespAcc ??= "30101810200000000593"; //TODO ALFA
+
+        TransInfo ti = new(ed, "1");
+        _d.Add(ed.SwiftId!, ti);
 
         PacketEPD packet = new()
         {
@@ -456,10 +251,11 @@ LAGAETSa.
 
         packet.Elements[0] = ed;
 
-        outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
+        //outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
 
         var settings = new XmlWriterSettings
         {
+            Encoding = Encoding.GetEncoding(1251),
             Indent = true
             //NewLineOnAttributes = true
         };
@@ -467,7 +263,67 @@ LAGAETSa.
         packet.WriteXML(writer);
     }
 
-    private static void ProcessMT900(string inFile, string outFile)
+    private static void ProcessO103(string inFile, string outFile)
+    {
+        /*
+{1:F01CITVRU2PXXXX0080000003}{2:O1031339220805ALFARUMMXXXX00805156072208051339N}{3:{113:RUR6}{108:1OP1E00033125402}{111:001}{121:37aef0d4-be5b-4a48-8c7e-91cd752c32de}}{4:
+:20:+OP1ED285001G0KM
+:23B:CRED
+:32A:220805RUB6000,
+:50K:/30109810300000000063
+INN7831001422.KPP784101001
+AO mSITI INVEST BANKm 
+:52D://RU044525769.30101810745250000769
+BBR BANK (AO)
+G MOSKVA
+:53B:/C/30109810200000000654
+:59:INN7831001422.KPP784101001
+AO mSITI INVEST BANKm 
+:70:PODKREPLENIE KORRESPONDENTSKOGO ScE
+TA AO mSITI INVEST BANKm. NDS NE OB
+LAGAETSa. 
+:71A:SHA
+:72:/RPP/3273.220805.5.ELEK.01
+/DAS/220805.220805.000000.000000
+-}{5:{MAC:00000000}{CHK:0000558B0EB5}}
+         */
+
+        var lines = File.ReadAllLines(inFile);
+        ED100 ed = new(lines)
+        {
+            CodePurpose = "1",
+            EDAuthor = "4525593000" //TODO ALFA
+        };
+        ed.EDDate = ed.ChargeOffDate;
+        ed.EDNo = "1"; //TODO inc
+        ed.EDReceiver = "4030702000";
+
+        ed.PayeeBIC ??= "044525593"; //TODO ALFA
+        ed.PayeeCorrespAcc ??= "30101810200000000593"; //TODO ALFA
+
+        TransInfo ti = new(ed, "2");
+        _c.Add(ed.SwiftId!, ti);
+
+        PacketEPD packet = new()
+        {
+            EDAuthor = ed.EDAuthor,
+            EDDate = ed.EDDate,
+            EDNo = "2", //TODO inc
+            EDQuantity = "1",
+            Sum = ed.Sum,
+            SystemCode = ed.SystemCode,
+            Elements = new ED100[1]
+        };
+
+        packet.Elements[0] = ed;
+
+        //outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
+
+        using var writer = XmlWriter.Create(outFile, _xmlSettings);
+        packet.WriteXML(writer);
+    }
+
+    private static void ProcessO900(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000001}{2:O9000135220805ALFARUMMXXXX00804219152208050135N}{3:{113:RUR6}{108:1OP1EE0033080923}}{4:
@@ -481,9 +337,11 @@ LAGAETSa.
 //2022G. BEZ NDS.
 -}{5:{MAC:00000000}{CHK:00002A77E432}}
         */
+
+        File.Copy(inFile, outFile, true);
     }
 
-    private static void ProcessMT950(string inFile, string outFile)
+    private static void ProcessO950(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000002}{2:O9500136220805ALFARUMMXXXX00804219572208050136N}{3:{113:RUR6}{108:1OP1EE0033081056}}{4:
@@ -502,55 +360,152 @@ LAGAETSa.
 
         var lines = File.ReadAllLines(inFile);
         int n = 0;
-        int max = lines.Length;
+        string line = lines[n];
+        string pattern;
+        Match match;
+
+        ED211 ed = new();
 
         // Счет корреспондентский
 
-        while (!lines[n].StartsWith(":25:")) n++;
-        string ourAcc = lines[n][4..];
+        while (!line.StartsWith(":25:")) line = lines[n++];
+        ed.Acc = line[4..];
 
         // Входящий остаток
 
-        while (!lines[n].StartsWith(":60F:")) n++;
-        string enterBal = UfebsSum(lines[n][15..]);
+        while (!line.StartsWith(":60F:")) line = lines[n++];
+        //string enterBal = UfebsSum(line[15..]);
+        pattern = @"^:60F:([CD])(\d{6})RUB(\d+,\d{0,2})";
+        match = Regex.Match(line, pattern);
 
-        // Пока не исходящий остаток - движения средств
+        //match.Groups[1].Value //Debit|Credit
+        //edDate = UfebsDate(match.Groups[2].Value);
+        ed.EnterBal = UfebsSum(match.Groups[3].Value);
 
-        string chargeOffDate, dc, sum, accDocNo;
-        string outBal;
-        StringBuilder sb = new();
+        // Подсчитываем число движений
 
-        while (n++ < lines.Length)
+        int qty = 0;
+
+        while (!line.StartsWith(":62F:"))
         {
-            string line = lines[n];
-
-            if (line.StartsWith(":62F:"))
-            {
-                outBal = line[15..]; //TODO SwiftSum()
-                break;
-            }
-
             if (line.StartsWith(":61:"))
             {
-                string pattern = @"^:61:(\d{6})([CD])(\d+,\d{0,2})";
-                var matches = Regex.Match(line, pattern);
-
-                chargeOffDate = matches.Groups[1].Value;
-                dc = matches.Groups[2].Value;
-                sum = matches.Groups[3].Value;
-            }
-            else
-            {
-                accDocNo = line;
-
-                sb.Append("<TransInfo AccDocNo=");
+                qty++;
             }
 
+            line = lines[n++];
         }
 
+        // Исходящий остаток (использовать 62F или 64?)
+
+        while (!line.StartsWith(":62F:")) line = lines[n++];
+        //string outBal = UfebsSum(line[15..]);
+        pattern = @"^:62F:([CD])(\d{6})RUB(\d+,\d{0,2})";
+        match = Regex.Match(line, pattern);
+
+        //match.Groups[1].Value //Debit|Credit
+        ed.AbstractDate = UfebsDate(match.Groups[2].Value);
+        ed.OutBal = UfebsSum(match.Groups[3].Value);
+
+        // Движения средств (имея итоги, читаем заново)
+
+        ed.Elements = new TransInfo[qty];
+
+        PacketESID packet = new();
+        packet.Elements = new ED206[qty];
+
+        qty = 0;
+        n = 0;
+        line = lines[n++];
+
+        while (!line.StartsWith(":62F:"))
+        {
+            if (line.StartsWith(":61:"))
+            {
+                pattern = @"^:61:(\d{6})([CD])(\d+,\d{0,2})([^/]+)//(.+)$";
+                match = Regex.Match(line, pattern);
+
+                //chargeOffDate = UfebsDate(match.Groups[1].Value);
+                string dc = match.Groups[2].Value == "D" ? "1" : "2";
+                string sum = UfebsSum(match.Groups[3].Value);
+                string ourId = match.Groups[4].Value[4..]; //NONREF | +220804000012157
+                string corrId = match.Groups[5].Value;
+                string accDocNo;
+
+                TransInfo ti = new();
+                bool found = false;
+
+                ED206 ed206 = new();
+
+                if (dc == "1" && _d.TryGetValue(ourId, out TransInfo di))
+                {
+                    found = true;
+                    ti = di with { };
+
+                    ed206 = new(ti);
+                    //packet.Elements[qty] = ed206;
+                }
+                else if (dc == "2" && _c.TryGetValue(corrId, out TransInfo ci))
+                {
+                    found = true;
+                    ti = ci with { };
+                }
+
+                if (!found) //TODO
+                {
+                    line = lines[n++];
+                    accDocNo = line;
+
+                    ti.AccDocNo = accDocNo;
+                    ti.DC = dc;
+                    ti.Sum = sum;
+                }
+
+                ed.Elements[qty] = ti;
+
+                ed206.ActualReceiver = "4030702000"; //TODO
+                ed206.Acc = "30109810200000000654"; //TODO ALFA
+
+                packet.Elements[qty] = ed206; //TODO
+                qty++;
+            }
+
+            line = lines[n++];
+        }
+
+        ed.BIC = "044525593"; //TODO ALFA
+        ed.EDAuthor = "4525593000"; //TODO ALFA
+        ed.EDDate = ed.AbstractDate;
+        ed.EDNo = "6"; //TODO inc
+
+        packet.EDAuthor = ed.EDAuthor;
+        packet.EDDate = ed.EDDate;
+        packet.EDNo = "7"; //TODO inc
+        packet.EDReceiver = "4030702000"; //TODO
+
+        //TODO ED211
+        //File.WriteAllText(outFile, "ED211", Encoding.GetEncoding(1251));
+
+        using var writer = XmlWriter.Create(outFile + ".ED211", _xmlSettings); //TODO outFile name
+        ed.WriteXML(writer);
+
+        using var writer2 = XmlWriter.Create(outFile + ".ED206", _xmlSettings); //TODO outFile name
+        packet.WriteXML(writer2);
+
+        /*
+<?xml version="1.0" encoding="windows-1251"?>
+<ED211 xmlns="urn:cbr-ru:ed:v2.0" EDNo="5" EDDate="2022-08-05" EDAuthor="4525593000" EDReceiver="4030702000" CreditSum="600000" DebetSum="588000" OutBal="62000" EnterBal="50000" BIC="044525593" Acc="30109810200000000654" EndTime="01:08:28" AbstractDate="2022-08-05" LastMovetDate="2022-08-05" AbstractKind="0">
+  <TransInfo AccDocNo="3268" BICCorr="046577952" DC="1" PayeePersonalAcc="40702810400280008837" PayerPersonalAcc="60311810000000000665" Sum="588000" TransKind="01" TurnoverKind="1">
+    <EDRefID EDNo="10285" EDDate="2022-08-05" EDAuthor="4030702000" />
+  </TransInfo>
+  <TransInfo AccDocNo="3273" BICCorr="044525769" DC="2" PayeePersonalAcc="30109810200000000654" PayerPersonalAcc="30109810300000000063" Sum="600000" TransKind="01" TurnoverKind="1">
+    <EDRefID EDNo="10286?" EDDate="2022-08-05" EDAuthor="4030702000" />
+  </TransInfo>
+</ED211>
+        */
     }
 
-    private static void ProcessMT196(string inFile, string outFile)
+    private static void ProcessO196(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0208000001}{2:O1961654220802AVTBRUMMAXXX02080218312208021654N}{3:{113:RUR6}}{4:
@@ -608,9 +563,11 @@ DETAILS PYMT..PRIVATE PAYMENT
 '
 -}{5:}
         */
+
+        File.Copy(inFile, outFile, true);
     }
 
-    private static void ProcessMT199(string inFile, string outFile)
+    private static void ProcessO199(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0063000001}{2:O1992255220630ALFARUMMXXXX00630219332206302255N}{3:{113:RUR6}{108:1ZLTH00031376433}}{4:
@@ -649,9 +606,25 @@ PORaDKE ISPOLNENIa OBaZATELXSTV PERED NEKOTORYMI
 PRAVOOBLADATELaMI
 -}{5:{MAC:00000000}{CHK:0000ACD24BFC}}
         */
+
+        var lines = File.ReadAllLines(inFile);
+        int n = 0;
+        string line = lines[n];
+
+        while (!line.StartsWith(":79:")) line = lines[n++];
+        StringBuilder sb = new(line[4..]);
+        line = lines[n++];
+
+        while (!line.StartsWith("-}"))
+        {
+            sb.AppendLine(Cyr(line));
+            line = lines[n++];
+        }
+
+        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
     }
 
-    private static void ProcessMT299(string inFile, string outFile)
+    private static void ProcessO299(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0070000001}{2:O2991651220707ALFARUMMXXXX00707179002207071651N}{3:{113:RUR6}{108:1AO5400031708864}}{4:
@@ -687,6 +660,22 @@ KOMANDA PRODAJ NA FINANSOVYH RYNKAH
 'FI(AT)ALFABANK.RU'
 -}{5:{MAC:00000000}{CHK:0000CB1282DF}}
         */
+
+        var lines = File.ReadAllLines(inFile);
+        int n = 0;
+        string line = lines[n];
+
+        while (!line.StartsWith(":79:")) line = lines[n++];
+        StringBuilder sb = new(line[4..]);
+        line = lines[n++];
+
+        while (!line.StartsWith("-}"))
+        {
+            sb.AppendLine(Cyr(line));
+            line = lines[n++];
+        }
+
+        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
     }
 
     private static void ProcessKvit(string inFile, string outFile)
@@ -696,5 +685,7 @@ KOMANDA PRODAJ NA FINANSOVYH RYNKAH
 {4:{177:2208041611}
 {451:0}}
         */
+
+        File.Copy(inFile, outFile, true);
     }
 }

@@ -19,34 +19,31 @@ limitations under the License.
 
 using CorrLib.UFEBS.DTO;
 
-using System.Collections;
+using System.Xml;
 
 namespace CorrLib.UFEBS;
 
-public class PacketEPDocs : IReadOnlyList<string[]>
+public static class PacketESIDEx
 {
-    private readonly PacketEPD _packet;
-
-    public string[] this[int index]
-        => _packet.DataRow(index);
-
-    public int Count
-        => _packet.Elements.Length;
-
-    public PacketEPDocs(PacketEPD packet)
-        => _packet = packet;
-
-    public PacketEPDocs(string path)
-        => _packet = new PacketEPD(path);
-
-    IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
-
-    public IEnumerator<string[]> GetEnumerator()
+    public static void WriteXML(this PacketESID packet, XmlWriter writer)
     {
-        for (int i = 0; i < _packet.Elements.Length; i++)
+        writer.WriteStartElement(nameof(PacketESID), "urn:cbr-ru:ed:v2.0");
+
+        writer.WriteAttributeString("EDAuthor", packet.EDAuthor);
+        writer.WriteAttributeString("EDDate", packet.EDDate);
+        writer.WriteAttributeString("EDNo", packet.EDNo);
+
+        if (packet.EDReceiver != null)
+            writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
+
+        writer.Flush();
+
+        foreach (var item in packet.Elements)
         {
-            yield return _packet.DataRow(i);
+            item.WriteXML(writer);
         }
+
+        writer.WriteEndElement();
+        writer.Flush();
     }
 }

@@ -20,6 +20,7 @@ limitations under the License.
 using CorrLib;
 using CorrLib.SWIFT;
 using CorrLib.UFEBS;
+using CorrLib.UFEBS.DTO;
 
 using System.Diagnostics;
 using System.Text;

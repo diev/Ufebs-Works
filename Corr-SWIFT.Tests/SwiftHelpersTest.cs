@@ -205,4 +205,106 @@ public class SwiftHelpersTest
 
         Assert.AreEqual(expected, result);
     }
+
+    [TestMethod]
+    public void ParseDrawerStatusTest()
+    {
+        string text = "S08";
+        string expected = "08";
+
+        var result = ParseDrawerStatus(text);
+
+        Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    public void ParseINNKPPTest()
+    {
+        string text = "INN17831001422.KPP784101001";
+        string expectedINN = "17831001422";
+        string expectedKPP = "784101001";
+
+        var (INN, KPP) = ParseINNKPP(text);
+
+        Assert.AreEqual(expectedINN, INN);
+        Assert.AreEqual(expectedKPP, KPP);
+    }
+
+    [TestMethod]
+    public void ParseINNKPP0Test()
+    {
+        string text = "INN17831001422.KPP0";
+        string expectedINN = "17831001422";
+        string expectedKPP = "0";
+
+        var (INN, KPP) = ParseINNKPP(text);
+
+        Assert.AreEqual(expectedINN, INN);
+        Assert.AreEqual(expectedKPP, KPP);
+    }
+
+    [TestMethod]
+    public void ParseINNTest()
+    {
+        string text = "INN17831001422";
+        string expectedINN = "17831001422";
+        string? expectedKPP = null;
+
+        var (INN, KPP) = ParseINNKPP(text);
+
+        Assert.AreEqual(expectedINN, INN);
+        Assert.AreEqual(expectedKPP, KPP);
+    }
+
+    [TestMethod]
+    public void ParseINN0Test()
+    {
+        string text = "INN0";
+        string expectedINN = "0";
+        string? expectedKPP = null;
+
+        var (INN, KPP) = ParseINNKPP(text);
+
+        Assert.AreEqual(expectedINN, INN);
+        Assert.AreEqual(expectedKPP, KPP);
+    }
+
+    [TestMethod]
+    public void ParseDateSumTest()
+    {
+        string text = "220808RUB130,";
+        string expectedDate = "220808";
+        string expectedSum = "130,";
+
+        var (date, sum) = ParseDateSum(text);
+
+        Assert.AreEqual(expectedDate, date);
+        Assert.AreEqual(expectedSum, sum);
+    }
+
+    [TestMethod]
+    public void ParseBICAccTest()
+    {
+        string text = "//RU044030702.30101810600000000702";
+        string expectedBIC = "044030702";
+        string expectedAcc = "30101810600000000702";
+
+        var (BIC, Acc) = ParseBICAcc(text);
+
+        Assert.AreEqual(expectedBIC, BIC);
+        Assert.AreEqual(expectedAcc, Acc);
+    }
+
+    [TestMethod]
+    public void ParseBICTest()
+    {
+        string text = "//RU044030702";
+        string expectedBIC = "044030702";
+        string? expectedAcc = null;
+
+        var (BIC, Acc) = ParseBICAcc(text);
+
+        Assert.AreEqual(expectedBIC, BIC);
+        Assert.AreEqual(expectedAcc, Acc);
+    }
 }

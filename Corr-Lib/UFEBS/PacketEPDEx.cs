@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.UFEBS.DTO;
+
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -53,7 +55,7 @@ public static class PacketEPDEx
             packet.Xmlns = root.Attribute("xmlns")?.Value;
 
             packet.Elements = new ED100[1];
-            packet.Elements[0] = new ED100().Load(root).CorrSubst();
+            packet.Elements[0] = new ED100(root).CorrSubst();
         }
         else
         {
@@ -75,7 +77,7 @@ public static class PacketEPDEx
 
                     for (int i = 0; i < qty; i++)
                     {
-                        packet.Elements[i] = new ED100().Load(node!).CorrSubst();
+                        packet.Elements[i] = new ED100(node!).CorrSubst();
                         node = node?.NextNode;
                     }
 
@@ -154,5 +156,6 @@ public static class PacketEPDEx
         }
 
         writer.WriteEndElement();
+        writer.Flush();
     }
 }

@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.UFEBS.DTO;
+
 using System.Xml.Linq;
 
 using static CorrLib.SWIFT.SwiftTranslit;

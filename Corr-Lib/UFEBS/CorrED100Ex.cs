@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.UFEBS.DTO;
+
 namespace CorrLib.UFEBS;
 
 public static class CorrED100Ex

@@ -17,7 +17,7 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.UFEBS;
+using CorrLib.UFEBS.DTO;
 
 namespace CorrLib.SWIFT;
 

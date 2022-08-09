@@ -22,6 +22,8 @@ using static CorrLib.SWIFT.SwiftTranslit;
 
 using System.Text;
 using CorrLib.UFEBS;
+using CorrLib.UFEBS.DTO;
+using System.Text.RegularExpressions;
 
 namespace CorrLib.SWIFT;
 
@@ -31,6 +33,211 @@ namespace CorrLib.SWIFT;
 /// </summary>
 public static class SwiftMT
 {
+    public static ED100 Load(this ED100 ed, string[] lines)
+    {
+        int n = 0;
+        string line = lines[n];
+
+        while (!line.StartsWith(":20:")) line = lines[n++];
+        ed.SwiftId = line[4..];
+
+        // Tax
+
+        while (!line.StartsWith(":32A:"))
+        {
+            line = lines[n++];
+
+            if (line.StartsWith(":26T:S")) // optional!
+            {
+                ed.DrawerStatus = line[6..]; // Tax
+            }
+        }
+
+        // Sum
+
+        var (date, sum) = ParseDateSum(line[5..]); // :32A:
+        ed.ChargeOffDate = UfebsDate(date);
+        ed.Sum = UfebsSum(sum);
+
+        // Payer
+
+        while (!line.StartsWith(":50K:/")) line = lines[n++];
+        ed.PayerPersonalAcc = line[^20..];
+
+        line = lines[n++];
+        var (INN, KPP) = ParseINNKPP(line);
+        ed.PayerINN = INN;
+        ed.PayerKPP = KPP;
+
+        string name = string.Empty;
+        line = lines[n++];
+
+        while (!line.StartsWith(":52A:") && !line.StartsWith(":52D:"))
+        {
+            name += line;
+            line = lines[n++];
+        }
+
+        ed.PayerName = Cyr(name);
+
+        if (line.Equals(":52A:CITVRU2P")) //TODO BIC, CorrAcc
+        {
+            ed.PayerBIC = "044030702";
+            ed.PayerCorrespAcc = "30101810600000000702";
+        }
+        else
+        {
+            var (bic, acc) = ParseBICAcc(line[5..]); // :52D:
+            ed.PayerBIC = bic;
+            ed.PayerCorrespAcc = acc;
+        }
+
+        // Payee
+
+        while (!line.StartsWith(":53B:")) line = lines[n++];
+        ed.PayeePersonalAcc = line[^20..]; //TODO DC in :53B:/D/30109810200000000654
+
+        while (!line.StartsWith(":59:"))
+        {
+            if (line.StartsWith(":57D:"))
+            {
+                var (bic, acc) = ParseBICAcc(line[5..]); // :57D:
+                ed.PayeeBIC = bic;
+                ed.PayeeCorrespAcc = acc;
+            }
+
+            line = lines[n++];
+        }
+
+        if (line.StartsWith(":59:/"))
+        {
+            ed.PayeePersonalAcc = line[5..];
+            line = lines[n++];
+
+            if (line.StartsWith("INN"))
+            {
+                (INN, KPP) = ParseINNKPP(line);
+                ed.PayeeINN = INN;
+                ed.PayeeKPP = KPP;
+            }
+        }
+        else if (line.StartsWith(":59:INN"))
+        {
+            (INN, KPP) = ParseINNKPP(line[4..]);
+            ed.PayeeINN = INN;
+            ed.PayeeKPP = KPP;
+        }
+
+        name = string.Empty;
+        line = lines[n++];
+
+        while (!line.StartsWith(":70:"))
+        {
+            name += line;
+            line = lines[n++];
+        }
+
+        ed.PayeeName = Cyr(name);
+
+        // Purpose
+
+        name = line[4..];
+        line = lines[n++];
+
+        while (!line.StartsWith(":71A:"))
+        {
+            name += line;
+            line = lines[n++];
+        }
+
+        // Extra
+
+        while (!line.StartsWith(":72:")) line = lines[n++];
+        line = line[4..];
+        bool nzp = false;
+
+        while (line.StartsWith('/'))
+        {
+            if (line.StartsWith("/RPP/"))
+            {
+                nzp = false;
+                var (no, dt, priority, besp, tkind) = ParseRPP(line);
+
+                ed.AccDocNo = no;
+                ed.AccDocDate = UfebsDate(dt);
+                ed.Priority = priority;
+                ed.TransKind = tkind;
+
+                if (besp)
+                {
+                    ed.PaytKind = "?"; //TODO
+                    ed.PaymentPrecedence = "69";
+                }
+            }
+            else if (line.StartsWith("/DAS/"))
+            {
+                nzp = false;
+                ed.ReceiptDate = UfebsDate(line[12..17]);
+            }
+            else if (line.StartsWith("/UIP/"))
+            {
+                nzp = false;
+                ed.PaymentID = line[5..];
+            }
+            else if (line.StartsWith("/NZP/"))
+            {
+                nzp = true;
+                name += line[5..];
+            }
+            else if (line.StartsWith("//") && nzp)
+            {
+                name += line[2..];
+            }
+            else
+            {
+                nzp = false;
+            }
+
+            line = lines[n++];
+        }
+
+        ed.Purpose = Cyr(name);
+
+        if (ed.Tax)
+        {
+            while (!line.StartsWith(":77B:")) line = lines[n++];
+            line = line[5..];
+
+            while (line.StartsWith("/N"))
+            {
+                if (ParseTax(line, "N4", out string n4))
+                    ed.CBC = Cyr(n4);
+
+                if (ParseTax(line, "N5", out string n5))
+                    ed.OKATO = Cyr(n5);
+
+                if (ParseTax(line, "N6", out string n6))
+                    ed.PaytReason = Cyr(n6);
+
+                if (ParseTax(line, "N7", out string n7))
+                    ed.TaxPeriod = Cyr(n7);
+
+                if (ParseTax(line, "N8", out string n8))
+                    ed.DocNo = Cyr(n8);
+
+                if (ParseTax(line, "N9", out string n9))
+                    ed.DocDate = Cyr(n9);
+
+                if (ParseTax(line, "N10", out string n10))
+                    ed.TaxPaytKind = Cyr(n10);
+
+                line = lines[n++];
+            }
+        }
+
+        return ed;
+    }
+
     /// <summary>
     /// SWIFT-RUR 6: MT103 ("ОДНОКРАТНОЕ ЗАЧИСЛЕНИЕ КЛИЕНТСКИХ СРЕДСТВ")
     /// </summary>

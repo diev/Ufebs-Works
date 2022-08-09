@@ -17,7 +17,12 @@ limitations under the License.
 */
 #endregion
 
-namespace CorrLib.UFEBS;
+
+using CorrLib.SWIFT;
+
+using System.Xml.Linq;
+
+namespace CorrLib.UFEBS.DTO;
 
 /// <summary>
 /// Базовый комплексный тип для всех электронных платежных сообщений. Содержит реквизиты, общие для всех типов ЭПС.
@@ -330,24 +335,32 @@ public record ED100
     /// </summary>
     public bool Saved { get; set; } = false;
 
+    public string? SwiftId { get; set; }
+
     #endregion Extensions
     #endregion Properties
 
-    //#region Constructors
+    #region Constructors
 
-    //public ED100(XNode? node)
-    //{
-    //    if (node != null)
-    //    {
-    //        this.Load((XElement)node);
-    //    }
-    //}
+    public ED100()
+    { }
 
-    //public ED100(XElement element)
-    //    => this.Load(element);
+    public ED100(XNode? node)
+    {
+        if (node != null)
+        {
+            this.Load((XElement)node);
+        }
+    }
 
-    //public ED100(ED100 ed)
-    //    => this.Load(ed);
+    public ED100(XElement element)
+        => this.Load(element);
 
-    //#endregion Constructors
+    public ED100(ED100 ed)
+        => this.Load(ed);
+
+    public ED100(string[] lines)
+        => this.Load(lines);
+
+    #endregion Constructors
 }

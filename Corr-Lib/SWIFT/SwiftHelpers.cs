@@ -18,6 +18,7 @@ limitations under the License.
 #endregion
 
 using System.Text;
+using System.Text.RegularExpressions;
 
 using static CorrLib.SWIFT.SwiftTranslit;
 
@@ -162,5 +163,114 @@ public static class SwiftHelpers
         var sum = value.Split(',');
 
         return (sum[0] + sum[1].PadRight(2, '0')).TrimStart('0');
+    }
+
+    /// <summary>
+    /// MT103 :26T:
+    /// </summary>
+    /// <param name="text">S08</param>
+    /// <returns></returns>
+    public static string ParseDrawerStatus(string text)
+    {
+        //string pattern = @"S(\d{2})";
+        //var match = Regex.Match(text, pattern);
+
+        //return match.Groups[1].Value; // Tax
+
+        return text[^2..];
+    }
+
+    /// <summary>
+    /// MT103 :50K:, :59:
+    /// </summary>
+    /// <param name="text">INN17831001422[.KPP784101001]</param>
+    /// <returns></returns>
+    public static (string inn, string? kpp) ParseINNKPP(string text)
+    {
+        string pattern = @"INN(\d*)(\.KPP(\d*)){0,1}";
+        var match = Regex.Match(text, pattern);
+
+        string inn = match.Groups[1].Value;
+        string? kpp = match.Groups[2].Success
+            ? match.Groups[3].Value
+            : null;
+
+        return new(inn, kpp);
+    }
+
+    /// <summary>
+    /// MT103 :32A:
+    /// </summary>
+    /// <param name="text">220808RUB130,</param>
+    /// <returns></returns>
+    public static (string date, string sum) ParseDateSum(string text)
+    {
+        string pattern = @"(\d{6})RUB(\d+,\d{0,2})";
+        var match = Regex.Match(text, pattern);
+
+        string date = match.Groups[1].Value;
+        string sum = match.Groups[2].Value;
+
+        return new(date, sum);
+    }
+
+    /// <summary>
+    /// MT103 :52D:, :57D:
+    /// </summary>
+    /// <param name="text">//RU044030702.30101810600000000702</param>
+    /// <returns></returns>
+    public static (string bic, string? acc) ParseBICAcc(string text)
+    {
+        string pattern = @"//RU(\d{9})(\.(\d{20})){0,1}";
+        var match = Regex.Match(text, pattern);
+
+        string bic = match.Groups[1].Value;
+        string? acc = match.Groups[2].Success
+            ? match.Groups[3].Value
+            : null;
+
+        return new(bic, acc);
+    }
+
+    public static (string no, string date, string priority, bool besp, string tkind) ParseRPP(string text)
+    {
+        string pattern = @"/RPP/(\d*)\.(\d{6})\.(\d)\.(\w{4})(\.\d*)?";
+        var match = Regex.Match(text, pattern);
+
+        string no = match.Groups[1].Value;
+        string date = UfebsDate(match.Groups[2].Value);
+        string priority = match.Groups[3].Value;
+        bool besp = match.Groups[4].Value == "BESP";
+        string tkind = match.Groups[5].Success
+            ? match.Groups[5].Value[1..]
+            : "01";
+
+        return new(no, date, priority, besp, tkind);
+    }
+
+    public static string ParseDAS(string text)
+    {
+        string pattern = @"/DAS/\d{6}\.(\d{6})";
+        var match = Regex.Match(text, pattern);
+
+        //ed.ChargeOffDate = UfebsDate(match.Groups[1].Value);
+        //ed.ReceiptDate = match.Groups[2].Value);
+
+        return match.Groups[1].Value;
+    }
+
+    public static bool ParseTax(string text, string num, out string value)
+    {
+        string pattern = $"/{num}/([^/]*)";
+        var match = Regex.Match(text, pattern);
+
+        if (match.Success)
+        {
+            value = match.Groups[1].Value;
+            return true;
+        }
+
+        value = string.Empty;
+        return false;
     }
 }

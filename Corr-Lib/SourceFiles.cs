@@ -18,6 +18,7 @@ limitations under the License.
 #endregion
 
 using CorrLib.UFEBS;
+using CorrLib.UFEBS.DTO;
 
 using System.Collections;
 

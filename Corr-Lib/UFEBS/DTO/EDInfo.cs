@@ -17,10 +17,12 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.UFEBS;
 
-namespace CorrLib.SWIFT;
+namespace CorrLib.UFEBS.DTO;
 
-public class MT103
-{
-}
+/// <summary>
+/// Дата составления и номер ЭС в течение опердня.
+/// </summary>
+/// <param name="EDDate">Дата составления ЭС.</param>
+/// <param name="EDNo">Номер ЭС в течение опердня.</param>
+public record EDInfo(string EDDate, string EDNo);
