@@ -36,6 +36,8 @@ internal class Program
     static Dictionary<string, TransInfo> _c = new();
     static string? _o950;
 
+    static int _edNo = 0;
+
     static readonly XmlWriterSettings _xmlSettings = new()
     {
         Encoding = Encoding.GetEncoding(1251),
@@ -227,7 +229,7 @@ LAGAETSa.
         {
             CodePurpose = "1", //TODO ??
             EDAuthor = "4525593000", //TODO ALFA
-            EDNo = "1", //TODO inc
+            EDNo = (++_edNo).ToString(),
             EDReceiver = "4030702000"
         };
         ed.EDDate = ed.ChargeOffDate;
@@ -242,7 +244,7 @@ LAGAETSa.
         {
             EDAuthor = ed.EDAuthor,
             EDDate = ed.EDDate,
-            EDNo = "2", //TODO inc
+            EDNo = (++_edNo).ToString(),
             EDQuantity = "1",
             Sum = ed.Sum,
             SystemCode = ed.SystemCode,
@@ -295,7 +297,7 @@ LAGAETSa.
             EDAuthor = "4525593000" //TODO ALFA
         };
         ed.EDDate = ed.ChargeOffDate;
-        ed.EDNo = "1"; //TODO inc
+        ed.EDNo = (++_edNo).ToString();
         ed.EDReceiver = "4030702000";
 
         ed.PayeeBIC ??= "044525593"; //TODO ALFA
@@ -308,8 +310,8 @@ LAGAETSa.
         {
             EDAuthor = ed.EDAuthor,
             EDDate = ed.EDDate,
-            EDNo = "2", //TODO inc
-            EDQuantity = "1",
+            EDNo = (++_edNo).ToString(),
+        EDQuantity = "1",
             Sum = ed.Sum,
             SystemCode = ed.SystemCode,
             Elements = new ED100[1]
@@ -410,11 +412,12 @@ LAGAETSa.
         // Движения средств (имея итоги, читаем заново)
 
         ed.Elements = new TransInfo[qty];
+        int i211 = 0;
 
         PacketESID packet = new();
-        packet.Elements = new ED206[qty];
+        packet.Elements = new ED206[_d.Count];
+        int i206 = 0;
 
-        qty = 0;
         n = 0;
         line = lines[n++];
 
@@ -435,15 +438,15 @@ LAGAETSa.
                 TransInfo ti = new();
                 bool found = false;
 
-                ED206 ed206 = new();
-
                 if (dc == "1" && _d.TryGetValue(ourId, out TransInfo di))
                 {
                     found = true;
                     ti = di with { };
 
-                    ed206 = new(ti);
-                    //packet.Elements[qty] = ed206;
+                    ED206 ed206 = new(ti);
+                    ed206.ActualReceiver = "4030702000"; //TODO
+                    ed206.Acc = "30109810200000000654"; //TODO ALFA
+                    packet.Elements[i206++] = ed206;
                 }
                 else if (dc == "2" && _c.TryGetValue(corrId, out TransInfo ci))
                 {
@@ -461,13 +464,7 @@ LAGAETSa.
                     ti.Sum = sum;
                 }
 
-                ed.Elements[qty] = ti;
-
-                ed206.ActualReceiver = "4030702000"; //TODO
-                ed206.Acc = "30109810200000000654"; //TODO ALFA
-
-                packet.Elements[qty] = ed206; //TODO
-                qty++;
+                ed.Elements[i211++] = ti;
             }
 
             line = lines[n++];
@@ -476,11 +473,11 @@ LAGAETSa.
         ed.BIC = "044525593"; //TODO ALFA
         ed.EDAuthor = "4525593000"; //TODO ALFA
         ed.EDDate = ed.AbstractDate;
-        ed.EDNo = "6"; //TODO inc
+        ed.EDNo = (++_edNo).ToString();
 
         packet.EDAuthor = ed.EDAuthor;
         packet.EDDate = ed.EDDate;
-        packet.EDNo = "7"; //TODO inc
+        packet.EDNo = (++_edNo).ToString();
         packet.EDReceiver = "4030702000"; //TODO
 
         //TODO ED211
