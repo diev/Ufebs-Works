@@ -28,22 +28,15 @@ public static class PacketESIDEx
     public static void WriteXML(this PacketESID packet, XmlWriter writer)
     {
         writer.WriteStartElement(nameof(PacketESID), "urn:cbr-ru:ed:v2.0");
-
         writer.WriteAttributeString("EDAuthor", packet.EDAuthor);
         writer.WriteAttributeString("EDDate", packet.EDDate);
         writer.WriteAttributeString("EDNo", packet.EDNo);
-
-        if (packet.EDReceiver != null)
-            writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
-
+        writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
         writer.Flush();
 
         foreach (var item in packet.Elements)
         {
             item.WriteXML(writer);
         }
-
-        writer.WriteEndElement();
-        writer.Flush();
     }
 }

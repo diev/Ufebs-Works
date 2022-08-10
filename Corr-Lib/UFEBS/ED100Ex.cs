@@ -51,7 +51,6 @@ public static class ED100Ex
         ed.Sum = x.Attribute("Sum")!.Value; // required
         ed.SystemCode = x.Attribute("SystemCode")!.Value; // required
         ed.TransKind = x.Attribute("TransKind")!.Value; // required
-        ed.Xmlns = x.Attribute("xmlns")?.Value;
 
         foreach (var e in x.Elements())
         {
@@ -213,7 +212,7 @@ public static class ED100Ex
     {
         // ED101
 
-        writer.WriteStartElement(ed.EDType, ed.Xmlns);
+        writer.WriteStartElement(ed.EDType, "urn:cbr-ru:ed:v2.0");
         writer.WriteAttributeString("ChargeOffDate", ed.ChargeOffDate); //71
 
         if (ed.CodePurpose != null)

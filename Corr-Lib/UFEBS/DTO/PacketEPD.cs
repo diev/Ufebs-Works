@@ -76,12 +76,7 @@ public class PacketEPD
     /// <summary>
     /// Признак системы обработки.
     /// </summary>
-    public string SystemCode { get; set; } = string.Empty; // required
-
-    /// <summary>
-    /// Схема имен XML.
-    /// </summary>
-    public string? Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
+    public string SystemCode { get; set; } = "02"; // required
 
     #region Extensions
 

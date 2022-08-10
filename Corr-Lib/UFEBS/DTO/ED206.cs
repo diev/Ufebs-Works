@@ -21,7 +21,7 @@ limitations under the License.
 namespace CorrLib.UFEBS.DTO;
 
 /// <summary>
-/// Информация об одной операции по лицевому счету в извещении об операциях по счету.
+/// Подтверждение дебета/кредита.
 /// </summary>
 public record ED206
 {
@@ -33,7 +33,7 @@ public record ED206
     /// <summary>
     /// Уникальный идентификатор получателя ЭС - УИС.
     /// </summary>
-    public string? ActualReceiver { get; set; }
+    public string ActualReceiver { get; } = "4030702000";
 
     /// <summary>
     /// БИК банка корреспондента.
@@ -72,7 +72,7 @@ public record ED206
     /// </summary>
     public string TransDate { get; set; } // required
 
-    public string TransTime { get; set; } = "00:00:00"; // required
+    public string TransTime { get; } = "00:00:00"; // required
 
     #region AccDoc
 
@@ -88,7 +88,7 @@ public record ED206
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDRefAuthor { get; set; }
+    public string EDRefAuthor { get; } = "4030702000";
 
     /// <summary>
     /// Дата составления ЭС.

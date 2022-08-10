@@ -54,39 +54,36 @@ public static class ED206Ex
         e.DC = ti.DC;
         e.Sum = ti.Sum;
         e.TransDate = ti.EDRefDate; //TODO !!!
-        //e.TransTime = "12:34:56"; //TODO ??
-
-        e.EDRefAuthor = ti.EDRefAuthor;
         e.EDRefDate = ti.EDRefDate;
         e.EDRefNo = ti.EDRefNo;
 
         return e;
     }
 
-    public static void WriteXML(this ED206 ti, XmlWriter writer)
+    public static void WriteXML(this ED206 e, XmlWriter writer)
     {
         writer.WriteStartElement(nameof(ED206), "urn:cbr-ru:ed:v2.0");
-        writer.WriteAttributeString("Acc", ti.Acc);
-        writer.WriteAttributeString("ActualReceiver", ti.ActualReceiver);
-        writer.WriteAttributeString("BICCorr", ti.BICCorr);
-        writer.WriteAttributeString("CorrAcc", ti.CorrAcc);
-        writer.WriteAttributeString("DC", ti.DC);
-        writer.WriteAttributeString("EDAuthor", ti.EDAuthor);
-        writer.WriteAttributeString("EDDate", ti.EDDate);
-        writer.WriteAttributeString("EDNo", ti.EDNo);
-        writer.WriteAttributeString("Sum", ti.Sum);
-        writer.WriteAttributeString("TransDate", ti.TransDate);
-        writer.WriteAttributeString("TransTime", ti.TransTime);
+        writer.WriteAttributeString("Acc", e.Acc);
+        writer.WriteAttributeString("ActualReceiver", e.ActualReceiver);
+        writer.WriteAttributeString("BICCorr", e.BICCorr);
+        writer.WriteAttributeString("CorrAcc", e.CorrAcc);
+        writer.WriteAttributeString("DC", e.DC);
+        writer.WriteAttributeString("EDAuthor", e.EDAuthor);
+        writer.WriteAttributeString("EDDate", e.EDDate);
+        writer.WriteAttributeString("EDNo", e.EDNo);
+        writer.WriteAttributeString("Sum", e.Sum);
+        writer.WriteAttributeString("TransDate", e.TransDate);
+        writer.WriteAttributeString("TransTime", e.TransTime);
 
         writer.WriteStartElement("AccDoc");
-        writer.WriteAttributeString("AccDocDate", ti.AccDocDate);
-        writer.WriteAttributeString("AccDocNo", ti.AccDocNo);
+        writer.WriteAttributeString("AccDocDate", e.AccDocDate);
+        writer.WriteAttributeString("AccDocNo", e.AccDocNo);
         writer.WriteEndElement(); // AccDoc
 
         writer.WriteStartElement("EDRefID");
-        writer.WriteAttributeString("EDAuthor", ti.EDRefAuthor);
-        writer.WriteAttributeString("EDDate", ti.EDRefDate);
-        writer.WriteAttributeString("EDNo", ti.EDRefNo);
+        writer.WriteAttributeString("EDAuthor", e.EDRefAuthor);
+        writer.WriteAttributeString("EDDate", e.EDRefDate);
+        writer.WriteAttributeString("EDNo", e.EDRefNo);
         writer.WriteEndElement(); // EDRefID
         writer.WriteEndElement(); // ED206
         writer.Flush();

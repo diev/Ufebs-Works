@@ -29,7 +29,7 @@ public record PacketESID
     /// <summary>
     /// PacketESID
     /// </summary>
-    public string EDType { get; set; } = "PacketESID";
+    public string EDType { get; } = "PacketESID";
 
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
@@ -49,7 +49,7 @@ public record PacketESID
     /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string? EDReceiver { get; set; }
+    public string EDReceiver { get; } = "4030702000";
 
     #region Extensions
 

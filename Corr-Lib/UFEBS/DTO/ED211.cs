@@ -72,12 +72,12 @@ public record ED211
     /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string? EDReceiver { get; set; }
+    public string EDReceiver { get; } = "4030702000";
 
     /// <summary>
     /// Конец периода формирования извещения об операциях по счету.
     /// </summary>
-    public string EndTime { get; set; } = "23:59:59"; // required
+    public string EndTime { get; } = "23:59:59"; // required
 
     /// <summary>
     /// Входящий остаток на счете участника (дебетовый остаток - отрицательный, кредитовый - положительный).

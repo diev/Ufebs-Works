@@ -52,7 +52,6 @@ public static class PacketEPDEx
             packet.EDReceiver = root.Attribute("EDReceiver")?.Value;
             packet.Sum = root.Attribute("Sum")!.Value;
             packet.SystemCode = root.Attribute("SystemCode")!.Value;
-            packet.Xmlns = root.Attribute("xmlns")?.Value;
 
             packet.Elements = new ED100[1];
             packet.Elements[0] = new ED100(root).CorrSubst();
@@ -69,7 +68,6 @@ public static class PacketEPDEx
                     packet.EDReceiver = root.Attribute("EDReceiver")?.Value;
                     packet.Sum = root.Attribute("Sum")!.Value;
                     packet.SystemCode = root.Attribute("SystemCode")!.Value;
-                    packet.Xmlns = root.Attribute("xmlns")?.Value;
 
                     int qty = int.Parse(packet.EDQuantity);
                     packet.Elements = new ED100[qty];
@@ -91,7 +89,6 @@ public static class PacketEPDEx
                     packet.EDReceiver = root.Attribute("ActualReceiver")!.Value;
                     //packet.Sum = root.Attribute("Sum")?.Value;
                     //packet.SystemCode = root.Attribute("SystemCode")?.Value;
-                    packet.Xmlns = root.Attribute("xmlns")?.Value;
 
                     packet.Elements = Array.Empty<ED100>();
                     //packet.Docs[0] = new ED100(root.FirstNode);
@@ -136,16 +133,13 @@ public static class PacketEPDEx
     public static void WriteXML(this PacketEPD packet, XmlWriter writer)
     {
         // PacketEPD
-        writer.WriteStartElement(packet.EDType, packet.Xmlns);
+        writer.WriteStartElement(packet.EDType, "urn:cbr-ru:ed:v2.0");
 
         writer.WriteAttributeString("EDAuthor", packet.EDAuthor);
         writer.WriteAttributeString("EDDate", packet.EDDate);
         writer.WriteAttributeString("EDNo", packet.EDNo);
         writer.WriteAttributeString("EDQuantity", packet.EDQuantity);
-
-        if (packet.EDReceiver != null)
-            writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
-
+        writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
         writer.WriteAttributeString("Sum", packet.Sum);
         writer.WriteAttributeString("SystemCode", packet.SystemCode);
         writer.Flush();
@@ -154,8 +148,5 @@ public static class PacketEPDEx
         {
             item.WriteXML(writer);
         }
-
-        writer.WriteEndElement();
-        writer.Flush();
     }
 }

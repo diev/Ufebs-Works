@@ -29,7 +29,6 @@ public static class TransInfoEx
     {
         ti.AccDocNo = ed.AccDocNo;
         ti.BICCorr = dc == "1" ? ed.PayeeBIC! : ed.PayerBIC!;
-        ti.EDRefAuthor = ed.EDAuthor;
         ti.EDRefDate = ed.EDDate;
         ti.EDRefNo = ed.EDNo;
         ti.DC = dc;
@@ -37,7 +36,7 @@ public static class TransInfoEx
         ti.PayerPersonalAcc = ed.PayerPersonalAcc!;
         ti.Sum = ed.Sum;
         ti.TransKind = ed.TransKind;
-        ti.TurnoverKind = "1"; //TODO ??
+        ti.TurnoverKind = "1";
 
         #region Extensions
 

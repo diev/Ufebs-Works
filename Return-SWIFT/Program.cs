@@ -34,14 +34,17 @@ internal class Program
 {
     static Dictionary<string, TransInfo> _d = new();
     static Dictionary<string, TransInfo> _c = new();
-    static string? _o950;
+    static string? _o950in;
+    static string? _o950out;
 
     static int _edNo = 0;
 
     static readonly XmlWriterSettings _xmlSettings = new()
     {
         Encoding = Encoding.GetEncoding(1251),
-        Indent = true
+        Indent = true, 
+        NamespaceHandling = NamespaceHandling.OmitDuplicates, 
+        WriteEndDocumentOnClose = true
     };
 
     static void Main(string[] args)
@@ -102,9 +105,9 @@ internal class Program
             Console.WriteLine($"Input \"{path}\" not found");
         }
 
-        if (_o950 != null)
+        if (_o950in != null)
         {
-            ProcessO950(_o950, outPath + ".O950.ED211");
+            ProcessO950(_o950in, _o950out);
         }
 
         #region finish
@@ -151,11 +154,12 @@ internal class Program
                 break;
 
             case "O900":
-                ProcessO900(inFile, $"{outFile}.{mt}.ED206");
+                //ProcessO900(inFile, $"{outFile}.{mt}.ED206");
                 break;
 
             case "O950":
-                _o950 = inFile;
+                _o950in = inFile;
+                _o950out = $"{outFile}.{mt}";
                 //ProcessO950(inFile, $"{outFile}.{mt}.ED211");
                 break;
 
@@ -227,7 +231,7 @@ LAGAETSa.
         var lines = File.ReadAllLines(inFile);
         ED100 ed = new(lines) //TODO load a source XML file!
         {
-            CodePurpose = "1", //TODO ??
+            //CodePurpose = "1", //TODO ??
             EDAuthor = "4525593000", //TODO ALFA
             EDNo = (++_edNo).ToString(),
             EDReceiver = "4030702000"
@@ -246,8 +250,9 @@ LAGAETSa.
             EDDate = ed.EDDate,
             EDNo = (++_edNo).ToString(),
             EDQuantity = "1",
+            EDReceiver = "4030702000",
             Sum = ed.Sum,
-            SystemCode = ed.SystemCode,
+            //SystemCode = ed.SystemCode,
             Elements = new ED100[1]
         };
 
@@ -255,13 +260,7 @@ LAGAETSa.
 
         //outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
 
-        var settings = new XmlWriterSettings
-        {
-            Encoding = Encoding.GetEncoding(1251),
-            Indent = true
-            //NewLineOnAttributes = true
-        };
-        using var writer = XmlWriter.Create(outFile, settings);
+        using var writer = XmlWriter.Create(outFile, _xmlSettings);
         packet.WriteXML(writer);
     }
 
@@ -293,7 +292,7 @@ LAGAETSa.
         var lines = File.ReadAllLines(inFile);
         ED100 ed = new(lines)
         {
-            CodePurpose = "1",
+            //CodePurpose = "1",
             EDAuthor = "4525593000" //TODO ALFA
         };
         ed.EDDate = ed.ChargeOffDate;
@@ -311,9 +310,8 @@ LAGAETSa.
             EDAuthor = ed.EDAuthor,
             EDDate = ed.EDDate,
             EDNo = (++_edNo).ToString(),
-        EDQuantity = "1",
+            EDQuantity = "1",
             Sum = ed.Sum,
-            SystemCode = ed.SystemCode,
             Elements = new ED100[1]
         };
 
@@ -444,7 +442,6 @@ LAGAETSa.
                     ti = di with { };
 
                     ED206 ed206 = new(ti);
-                    ed206.ActualReceiver = "4030702000"; //TODO
                     ed206.Acc = "30109810200000000654"; //TODO ALFA
                     packet.Elements[i206++] = ed206;
                 }
@@ -470,18 +467,18 @@ LAGAETSa.
             line = lines[n++];
         }
 
+        // ED211 /TransInfo
+
         ed.BIC = "044525593"; //TODO ALFA
         ed.EDAuthor = "4525593000"; //TODO ALFA
         ed.EDDate = ed.AbstractDate;
         ed.EDNo = (++_edNo).ToString();
 
+        // PacketESID / ED206
+
         packet.EDAuthor = ed.EDAuthor;
         packet.EDDate = ed.EDDate;
         packet.EDNo = (++_edNo).ToString();
-        packet.EDReceiver = "4030702000"; //TODO
-
-        //TODO ED211
-        //File.WriteAllText(outFile, "ED211", Encoding.GetEncoding(1251));
 
         using var writer = XmlWriter.Create(outFile + ".ED211", _xmlSettings); //TODO outFile name
         ed.WriteXML(writer);
