@@ -26,6 +26,29 @@ namespace CorrLib.UFEBS;
 
 public static class ED100Ex
 {
+    public static void Load(this ED100 ed, string path)
+    {
+        var xdoc = XDocument.Load(path);
+        var root = xdoc.Root;
+
+        if (root is not null)
+        {
+            if (root.Name.LocalName == "PacketEPD")
+            {
+                if (root.Attribute("EDQuantity")!.Value != "1")
+                {
+                    throw new NotSupportedException("Попытка загрузки PacketEPD c EDQuantity более 1.");
+                }
+
+                ed.Load(root.FirstNode!); //TODO EDQuantity > 1
+            }
+            else
+            {
+                ed.Load(root);
+            }
+        }
+    }
+
     public static ED100 Load(this ED100 ed, XNode node)
     {
         return ed.Load((XElement)node);
@@ -138,70 +161,6 @@ public static class ED100Ex
         return ed;
     }
 
-    public static ED100 Load(this ED100 ed, ED100 e)
-    {
-        //ed.EDType = e.EDType;
-
-        //ed.ChargeOffDate = e.ChargeOffDate; //71
-        //ed.CodePurpose = e.CodePurpose; //20
-        //ed.EDAuthor = e.EDAuthor;
-        //ed.EDDate = e.EDDate;
-        //ed.EDNo = e.EDNo;
-        //ed.EDReceiver = e.EDReceiver;
-        //ed.FileDate = e.FileDate; //63
-        //ed.OperationID = e.OperationID;
-        //ed.PaymentID = e.PaymentID; //22
-        //ed.PaymentPrecedence = e.PaymentPrecedence;
-        //ed.PaytKind = e.PaytKind; //5
-        //ed.Priority = e.Priority; //21
-        //ed.ReceiptDate = e.ReceiptDate; //62
-        //ed.ReqSettlementDate = e.ReqSettlementDate;
-        //ed.ResField = e.ResField; //23
-        //ed.Sum = e.Sum; //7
-        //ed.SystemCode = e.SystemCode;
-        //ed.TransKind = e.TransKind; //18
-        //ed.Xmlns = e.Xmlns;
-
-        ////ed.SettleNotEarlier = e.SettleNotEarlier;
-        ////ed.SettleNotLater = e.SettleNotLater;
-
-        //ed.AccDocDate = e.AccDocDate;
-        //ed.AccDocNo = e.AccDocNo;
-
-        //ed.PayerINN = e.PayerINN;
-        //ed.PayerKPP = FixKPP(e.PayerINN, e.PayerKPP);
-        //ed.PayerPersonalAcc = e.PayerPersonalAcc;
-        //ed.PayerName = e.PayerName;
-        //ed.PayerBIC = e.PayerBIC;
-        //ed.PayerCorrespAcc = e.PayerCorrespAcc;
-
-        //ed.PayeeINN = e.PayeeINN;
-        //ed.PayeeKPP = FixKPP(e.PayeeINN, e.PayeeKPP);
-        //ed.PayeePersonalAcc = e.PayeePersonalAcc;
-        //ed.PayeeName = e.PayeeName;
-        //ed.PayeeBIC = e.PayeeBIC;
-        //ed.PayeeCorrespAcc = e.PayeeCorrespAcc;
-
-        //ed.Purpose = e.Purpose;
-
-        //if (e.Tax)
-        //{
-        //    ed.CBC = e.CBC;
-        //    ed.DocDate = e.DocDate;
-        //    ed.DocNo = e.DocNo;
-        //    ed.OKATO = e.OKATO;
-        //    ed.PaytReason = e.PaytReason;
-        //    ed.TaxPeriod = e.TaxPeriod;
-        //    ed.TaxPaytKind = e.TaxPaytKind;
-        //}
-
-        //return ed;
-
-        ed = e with { };
-
-        return ed;
-    }
-
     private static string? FixKPP(string? inn, string? kpp)
         => inn != null && inn.Length != 12 &&
         kpp != null && kpp.Length > 0 && kpp != "0" && kpp != "000000000"
@@ -212,7 +171,7 @@ public static class ED100Ex
     {
         // ED101
 
-        writer.WriteStartElement(ed.EDType, "urn:cbr-ru:ed:v2.0");
+        writer.WriteStartElement(ed.EDType ?? "ED101", "urn:cbr-ru:ed:v2.0");
         writer.WriteAttributeString("ChargeOffDate", ed.ChargeOffDate); //71
 
         if (ed.CodePurpose != null)

@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.UFEBS.DTO;
+
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -161,8 +163,70 @@ public static class SwiftHelpers
         }
 
         var sum = value.Split(',');
+        string kop = (sum[0] + sum[1].PadRight(2, '0')).TrimStart('0');
 
-        return (sum[0] + sum[1].PadRight(2, '0')).TrimStart('0');
+        if (value[0] == '-')
+        {
+            kop = "-" + kop; //TODO nonsense!
+        }
+
+        return kop;
+    }
+
+    /// <summary>
+    /// MT* {2:...ЧЧММ.}
+    /// </summary>
+    /// <param name="text">{2:...HHMM.}</param>
+    /// <returns>HH:MM:00</returns>
+    public static string ParseTime(string text)
+    {
+        string pattern = @"{2:[^}]+(\d{2})(\d{2})N}";
+        var match = Regex.Match(text, pattern);
+
+        return match.Success
+            ? $"{match.Groups[1].Value}:{match.Groups[2].Value}:00"
+            : "00:00:00";
+    }
+
+    /// <summary>
+    /// MT950 :60F:, :62F:, :64:
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static (string date, string sum) ParseBal(string text)
+    {
+        string pattern = @"([CD])(\d{6})RUB(\d+,\d{0,2})";
+        var match = Regex.Match(text, pattern);
+
+        string dc = match.Groups[1].Value; //Debit|Credit
+        string date = match.Groups[2].Value;
+        string sum = match.Groups[3].Value;
+
+        if (dc == "D")
+        {
+            sum = "-" + sum; //TODO nonsense!
+        }
+
+        return new(date, sum);
+    }
+
+    /// <summary>
+    /// MT950 :61:
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static (string dc, string ourId, string corrId) ParseTrans(string text)
+    {
+        string pattern = @"(\d{6})([CD])(\d+,\d{0,2})([^/]+)//(.+)";
+        var match = Regex.Match(text, pattern);
+
+        //chargeOffDate = match.Groups[1].Value;
+        string dc = match.Groups[2].Value == "D" ? "1" : "2";
+        //string sum = match.Groups[3].Value;
+        string ourId = match.Groups[4].Value[4..]; //NONREF | +220804000012157
+        string corrId = match.Groups[5].Value;
+
+        return new(dc, ourId, corrId);
     }
 
     /// <summary>

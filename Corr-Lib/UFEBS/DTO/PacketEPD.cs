@@ -34,29 +34,9 @@ namespace CorrLib.UFEBS.DTO;
 /// ED110 ЭПС сокращенного формата.
 /// ED111 Мемориальный ордер в электронном виде.
 /// </summary>
-public class PacketEPD
+public record PacketEPD : EDBase
 {
     #region Properties
-
-    /// <summary>
-    /// PacketEPD
-    /// </summary>
-    public string EDType { get; set; } = "PacketEPD";
-
-    /// <summary>
-    /// Уникальный идентификатор составителя ЭС - УИС.
-    /// </summary>
-    public string EDAuthor { get; set; } = null!;
-
-    /// <summary>
-    /// Дата составления ЭС.
-    /// </summary>
-    public string EDDate { get; set; } = null!;
-
-    /// <summary>
-    /// Номер ЭС в течение опердня.
-    /// </summary>
-    public string EDNo { get; set; } = null!;
 
     /// <summary>
     /// Количество ЭПС в пакете.
@@ -103,6 +83,7 @@ public class PacketEPD
 
     public PacketEPD()
     {
+        EDType = nameof(PacketEPD);
     }
 
     public PacketEPD(string path)

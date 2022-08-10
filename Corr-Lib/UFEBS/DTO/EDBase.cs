@@ -19,34 +19,24 @@ limitations under the License.
 
 namespace CorrLib.UFEBS.DTO;
 
-/// <summary>
-/// PacketESID xmlns="urn:cbr-ru:ed:v2.0"
-/// </summary>
-public record PacketESID : EDBase
+public record EDBase
 {
-    #region Properties
+    /// <summary>
+    /// Тип ЭС: Packet..., ED...
+    /// </summary>
+    public string EDType { get; set; } = null!; // required
 
     /// <summary>
-    /// Уникальный идентификатор получателя ЭС.
+    /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDReceiver { get; } = "4030702000";
-
-    #region Extensions
+    public string EDAuthor { get; set; } = null!; // required
+    /// <summary>
+    /// Дата составления ЭС.
+    /// </summary>
+    public string EDDate { get; set; } = null!; // required
 
     /// <summary>
-    /// Массив платежных документов.
+    /// Уникальный номер ЭС в течение опердня.
     /// </summary>
-    public ED206[] Elements { get; set; } = Array.Empty<ED206>();
-
-    #endregion Extensions
-    #endregion Properties
-
-    #region Constructors
-
-    public PacketESID()
-    {
-        EDType = nameof(PacketESID);
-    }
-
-    #endregion Constructors
+    public string EDNo { get; set; } = null!; // required
 }

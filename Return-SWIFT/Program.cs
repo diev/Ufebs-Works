@@ -17,16 +17,17 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib;
 using CorrLib.SWIFT;
-using static CorrLib.SWIFT.SwiftHelpers;
-using static CorrLib.SWIFT.SwiftTranslit;
 using CorrLib.UFEBS;
+using CorrLib.UFEBS.DTO;
 
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using CorrLib.UFEBS.DTO;
+
+using static CorrLib.SWIFT.SwiftHelpers;
+using static CorrLib.SWIFT.SwiftTranslit;
+using static CorrLib.UFEBS.EDHelpers;
 
 namespace Return_SWIFT;
 
@@ -34,10 +35,9 @@ internal class Program
 {
     static Dictionary<string, TransInfo> _d = new();
     static Dictionary<string, TransInfo> _c = new();
-    static string? _o950in;
-    static string? _o950out;
-
-    static int _edNo = 0;
+    
+    static List<string> _o950in = new();
+    static List<string> _o950out = new();
 
     static readonly XmlWriterSettings _xmlSettings = new()
     {
@@ -53,7 +53,7 @@ internal class Program
 
         if (args.Length == 0 || args[0] == "/?" || args[0] == "-?") // nothing
         {
-            Console.WriteLine("Usage: Input|* [Output_]");
+            Console.WriteLine("Usage: Input|* [Output_.xml]");
             Console.WriteLine("(Use input mask: 4030702000ED503[dd]*.txt)");
             return;
         }
@@ -75,6 +75,11 @@ internal class Program
         else
         {
             outPath = args[1];
+
+            if (Path.EndsInDirectorySeparator(outPath))
+            {
+                Directory.CreateDirectory(outPath);
+            }
         }
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //enable Windows-1251
@@ -105,9 +110,19 @@ internal class Program
             Console.WriteLine($"Input \"{path}\" not found");
         }
 
-        if (_o950in != null)
+        for (int i = 0; i < _o950in.Count; i++)
         {
-            ProcessO950(_o950in, _o950out);
+            string inFile = _o950in[i];
+            string outFile = _o950out[i];
+
+            try
+            {
+                Process950(inFile, outFile);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка в файле выписки \"{inFile}\". {ex.Message}");
+            }
         }
 
         #region finish
@@ -128,7 +143,8 @@ internal class Program
         {
             var file = new FileInfo(inFile);
             int len = file.Extension.Length;
-            outFile = Path.Combine(outFile, file.Name[..^len] + "_" + file.Extension);
+            //outFile = Path.Combine(outFile, file.Name[..^len] + "_" + file.Extension);
+            outFile = Path.Combine(outFile, file.Name[..^len]);
         }
 
         if (File.Exists(outFile))
@@ -138,53 +154,52 @@ internal class Program
         #endregion Files start
 
         //TODO
-
-        string text = File.ReadAllText(inFile);
-        string pattern = @"{2:([IO]\d{3})";
-        string mt = Regex.Match(text, pattern).Groups[1].Value;
-
-        switch (mt)
+        try
         {
-            case "I103":
-                ProcessI103(inFile, $"{outFile}.{mt}.ED101");
-                break;
+            string text = File.ReadAllText(inFile);
+            string pattern = @"{2:([IO]\d{3})";
+            string mt = Regex.Match(text, pattern).Groups[1].Value;
 
-            case "O103":
-                ProcessO103(inFile, $"{outFile}.{mt}.ED101");
-                break;
+            switch (mt)
+            {
+                case "I103":
+                    Process103(inFile, $"{outFile}_.{mt}.ED101.xml", "1");
+                    break;
 
-            case "O900":
-                //ProcessO900(inFile, $"{outFile}.{mt}.ED206");
-                break;
+                case "O103":
+                    Process103(inFile, $"{outFile}_.{mt}.ED101.xml", "2");
+                    break;
 
-            case "O950":
-                _o950in = inFile;
-                _o950out = $"{outFile}.{mt}";
-                //ProcessO950(inFile, $"{outFile}.{mt}.ED211");
-                break;
+                case "O900":
+                    //ProcessO900(inFile, $"{outFile}.{mt}.ED206");
+                    break;
 
-            case "O196":
-                ProcessO196(inFile, $"{outFile}.{mt}.Note");
-                break;
+                case "O950":
+                    _o950in.Add(inFile);
+                    _o950out.Add($"{outFile}_.{mt}");
+                    break;
 
-            case "O199":
-                ProcessO199(inFile, $"{outFile}.{mt}.Note");
-                break;
+                case "O196":
+                case "O199":
+                case "O299":
+                    Process199(inFile, $"{outFile}_.{mt}.txt");
+                    break;
 
-            case "O299":
-                ProcessO299(inFile, $"{outFile}.{mt}.Note");
-                break;
-
-            default:
-                if (mt.Length > 0)
-                {
-                    Console.WriteLine($"Unknown {mt} in \"{inFile}\"!");
-                }
-                else
-                {
-                    ProcessKvit(inFile, outFile);
-                }
-                break;
+                default:
+                    if (mt.Length > 0)
+                    {
+                        Console.WriteLine($"Unknown {mt} in \"{inFile}\"!");
+                    }
+                    else
+                    {
+                        ProcessKvit(inFile, $"{outFile}_.kvit.txt");
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка в файле \"{inFile}\".\n{ex.Message}");
         }
 
         #region Files end
@@ -203,114 +218,50 @@ internal class Program
         #endregion Files end
     }
 
-    private static void ProcessI103(string inFile, string outFile)
+    private static void Process103(string inFile, string outFile, string dc)
     {
-        /*
-{1:F01CITVRU2PXXXX0080000003}{2:O1031339220805ALFARUMMXXXX00805156072208051339N}{3:{113:RUR6}{108:1OP1E00033125402}{111:001}{121:37aef0d4-be5b-4a48-8c7e-91cd752c32de}}{4:
-:20:+OP1ED285001G0KM
-:23B:CRED
-:32A:220805RUB6000,
-:50K:/30109810300000000063
-INN7831001422.KPP784101001
-AO mSITI INVEST BANKm 
-:52D://RU044525769.30101810745250000769
-BBR BANK (AO)
-G MOSKVA
-:53B:/C/30109810200000000654
-:59:INN7831001422.KPP784101001
-AO mSITI INVEST BANKm 
-:70:PODKREPLENIE KORRESPONDENTSKOGO ScE
-TA AO mSITI INVEST BANKm. NDS NE OB
-LAGAETSa. 
-:71A:SHA
-:72:/RPP/3273.220805.5.ELEK.01
-/DAS/220805.220805.000000.000000
--}{5:{MAC:00000000}{CHK:0000558B0EB5}}
-         */
+        Console.WriteLine($"Документ {inFile}");
 
-        var lines = File.ReadAllLines(inFile);
-        ED100 ed = new(lines) //TODO load a source XML file!
-        {
-            //CodePurpose = "1", //TODO ??
-            EDAuthor = "4525593000", //TODO ALFA
-            EDNo = (++_edNo).ToString(),
-            EDReceiver = "4030702000"
-        };
-        ed.EDDate = ed.ChargeOffDate;
-
-        ed.PayeeBIC ??= "044525593"; //TODO ALFA
-        ed.PayeeCorrespAcc ??= "30101810200000000593"; //TODO ALFA
-
-        TransInfo ti = new(ed, "1");
-        _d.Add(ed.SwiftId!, ti);
-
-        PacketEPD packet = new()
-        {
-            EDAuthor = ed.EDAuthor,
-            EDDate = ed.EDDate,
-            EDNo = (++_edNo).ToString(),
-            EDQuantity = "1",
-            EDReceiver = "4030702000",
-            Sum = ed.Sum,
-            //SystemCode = ed.SystemCode,
-            Elements = new ED100[1]
-        };
-
-        packet.Elements[0] = ed;
-
-        //outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
-
-        using var writer = XmlWriter.Create(outFile, _xmlSettings);
-        packet.WriteXML(writer);
-    }
-
-    private static void ProcessO103(string inFile, string outFile)
-    {
-        /*
-{1:F01CITVRU2PXXXX0080000003}{2:O1031339220805ALFARUMMXXXX00805156072208051339N}{3:{113:RUR6}{108:1OP1E00033125402}{111:001}{121:37aef0d4-be5b-4a48-8c7e-91cd752c32de}}{4:
-:20:+OP1ED285001G0KM
-:23B:CRED
-:32A:220805RUB6000,
-:50K:/30109810300000000063
-INN7831001422.KPP784101001
-AO mSITI INVEST BANKm 
-:52D://RU044525769.30101810745250000769
-BBR BANK (AO)
-G MOSKVA
-:53B:/C/30109810200000000654
-:59:INN7831001422.KPP784101001
-AO mSITI INVEST BANKm 
-:70:PODKREPLENIE KORRESPONDENTSKOGO ScE
-TA AO mSITI INVEST BANKm. NDS NE OB
-LAGAETSa. 
-:71A:SHA
-:72:/RPP/3273.220805.5.ELEK.01
-/DAS/220805.220805.000000.000000
--}{5:{MAC:00000000}{CHK:0000558B0EB5}}
-         */
+        string packNo = NextEDNo();
 
         var lines = File.ReadAllLines(inFile);
         ED100 ed = new(lines)
         {
             //CodePurpose = "1",
-            EDAuthor = "4525593000" //TODO ALFA
+            EDAuthor = "4525593000", //TODO ALFA
+            EDReceiver = "4030702000",
         };
-        ed.EDDate = ed.ChargeOffDate;
-        ed.EDNo = (++_edNo).ToString();
-        ed.EDReceiver = "4030702000";
+
+        if (ed.DC == "2")
+        {
+            ed.EDDate = ed.ChargeOffDate;
+            ed.EDNo = NextEDNo();
+        }
 
         ed.PayeeBIC ??= "044525593"; //TODO ALFA
         ed.PayeeCorrespAcc ??= "30101810200000000593"; //TODO ALFA
 
-        TransInfo ti = new(ed, "2");
-        _c.Add(ed.SwiftId!, ti);
+        TransInfo ti = new(ed, dc);
+        //string swiftId = SwiftID.Id(ed);
+
+        Console.WriteLine($"  {ed.SwiftId} -> {dc}");
+
+        if (dc == "1")
+        {
+            _d.Add(ed.SwiftId, ti);
+        }
+        else
+        {
+            _c.Add(ed.SwiftId, ti);
+        }
 
         PacketEPD packet = new()
         {
             EDAuthor = ed.EDAuthor,
             EDDate = ed.EDDate,
-            EDNo = (++_edNo).ToString(),
+            EDNo = packNo,
             EDQuantity = "1",
+            EDReceiver = "4030702000",
             Sum = ed.Sum,
             Elements = new ED100[1]
         };
@@ -323,7 +274,7 @@ LAGAETSa.
         packet.WriteXML(writer);
     }
 
-    private static void ProcessO900(string inFile, string outFile)
+    private static void Process900(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000001}{2:O9000135220805ALFARUMMXXXX00804219152208050135N}{3:{113:RUR6}{108:1OP1EE0033080923}}{4:
@@ -341,7 +292,7 @@ LAGAETSa.
         File.Copy(inFile, outFile, true);
     }
 
-    private static void ProcessO950(string inFile, string outFile)
+    private static void Process950(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000002}{2:O9500136220805ALFARUMMXXXX00804219572208050136N}{3:{113:RUR6}{108:1OP1EE0033081056}}{4:
@@ -358,32 +309,29 @@ LAGAETSa.
 -}{5:{MAC:00000000}{CHK:000081FE3115}}
          */
 
+        Console.WriteLine($"Выписка {inFile}");
+
         var lines = File.ReadAllLines(inFile);
         int n = 0;
-        string line = lines[n];
-        string pattern;
-        Match match;
+        string line = lines[n++];
+        
+        string time = ParseTime(line);
 
-        ED211 ed = new();
+        ED211 ed211 = new();
 
         // Счет корреспондентский
 
         while (!line.StartsWith(":25:")) line = lines[n++];
-        ed.Acc = line[4..];
+        ed211.Acc = line[4..];
 
         // Входящий остаток
 
         while (!line.StartsWith(":60F:")) line = lines[n++];
-        //string enterBal = UfebsSum(line[15..]);
-        pattern = @"^:60F:([CD])(\d{6})RUB(\d+,\d{0,2})";
-        match = Regex.Match(line, pattern);
-
-        //match.Groups[1].Value //Debit|Credit
-        //edDate = UfebsDate(match.Groups[2].Value);
-        ed.EnterBal = UfebsSum(match.Groups[3].Value);
+        ed211.EnterBal = UfebsSum(ParseBal(line[5..]).sum);
 
         // Подсчитываем число движений
 
+        int startN = n;
         int qty = 0;
 
         while (!line.StartsWith(":62F:"))
@@ -396,278 +344,135 @@ LAGAETSa.
             line = lines[n++];
         }
 
-        // Исходящий остаток (использовать 62F или 64?)
+        // Исходящий остаток
 
         while (!line.StartsWith(":62F:")) line = lines[n++];
-        //string outBal = UfebsSum(line[15..]);
-        pattern = @"^:62F:([CD])(\d{6})RUB(\d+,\d{0,2})";
-        match = Regex.Match(line, pattern);
+        int finishN = n - 1;
 
-        //match.Groups[1].Value //Debit|Credit
-        ed.AbstractDate = UfebsDate(match.Groups[2].Value);
-        ed.OutBal = UfebsSum(match.Groups[3].Value);
+        var (date, bal) = ParseBal(line[5..]);
+        ed211.AbstractDate = UfebsDate(date);
+        ed211.OutBal = UfebsSum(bal);
 
         // Движения средств (имея итоги, читаем заново)
 
-        ed.Elements = new TransInfo[qty];
-        int i211 = 0;
+        ed211.Elements = new TransInfo[qty];
+        qty = 0;
 
-        PacketESID packet = new();
-        packet.Elements = new ED206[_d.Count];
-        int i206 = 0;
-
-        n = 0;
-        line = lines[n++];
-
-        while (!line.StartsWith(":62F:"))
+        for (n = startN; n < finishN; n++)
         {
+            line = lines[n];
+
             if (line.StartsWith(":61:"))
             {
-                pattern = @"^:61:(\d{6})([CD])(\d+,\d{0,2})([^/]+)//(.+)$";
-                match = Regex.Match(line, pattern);
-
-                //chargeOffDate = UfebsDate(match.Groups[1].Value);
-                string dc = match.Groups[2].Value == "D" ? "1" : "2";
-                string sum = UfebsSum(match.Groups[3].Value);
-                string ourId = match.Groups[4].Value[4..]; //NONREF | +220804000012157
-                string corrId = match.Groups[5].Value;
-                string accDocNo;
-
+                var (dc, ourId, corrId) = ParseTrans(line[4..]);
                 TransInfo ti = new();
-                bool found = false;
 
-                if (dc == "1" && _d.TryGetValue(ourId, out TransInfo di))
+                if (dc == "1")
                 {
-                    found = true;
-                    ti = di with { };
+                    if (_d.TryGetValue(ourId, out TransInfo di))
+                    {
+                        ti = di with { };
 
-                    ED206 ed206 = new(ti);
-                    ed206.Acc = "30109810200000000654"; //TODO ALFA
-                    packet.Elements[i206++] = ed206;
+                        Console.WriteLine($"  {ourId} -> {dc}: {ti.AccDocNo} на {ti.Sum}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"    {ourId} -> {dc}: ? (строка {n + 1})");
+                        // throw new ArgumentException($"Документ из строки {n + 1} не найден.", ourId);
+                    }
                 }
-                else if (dc == "2" && _c.TryGetValue(corrId, out TransInfo ci))
+                else
                 {
-                    found = true;
-                    ti = ci with { };
+                    if (_c.TryGetValue(corrId, out TransInfo ci))
+                    {
+                        ti = ci with { };
+
+                        Console.WriteLine($"  {corrId} -> {dc}: {ti.AccDocNo} на {ti.Sum}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"    {corrId} -> {dc}: ? (строка {n + 1})");
+                        // throw new ArgumentException($"Документ из строки {n + 1} не найден.", corrId);
+                    }
                 }
 
-                if (!found) //TODO
-                {
-                    line = lines[n++];
-                    accDocNo = line;
-
-                    ti.AccDocNo = accDocNo;
-                    ti.DC = dc;
-                    ti.Sum = sum;
-                }
-
-                ed.Elements[i211++] = ti;
+                ed211.Elements[qty++] = ti;
             }
-
-            line = lines[n++];
         }
 
         // ED211 /TransInfo
 
-        ed.BIC = "044525593"; //TODO ALFA
-        ed.EDAuthor = "4525593000"; //TODO ALFA
-        ed.EDDate = ed.AbstractDate;
-        ed.EDNo = (++_edNo).ToString();
+        ed211.BIC = "044525593"; //TODO ALFA
+        ed211.EDAuthor = "4525593000"; //TODO ALFA
+        ed211.EDDate = ed211.AbstractDate;
+        ed211.EDNo = NextEDNo();
+        ed211.EndTime = time;
+        ed211.EDReceiver = "4030702000";
+
+        using var writer = XmlWriter.Create(outFile + ".ED211.xml", _xmlSettings);
+        ed211.WriteXML(writer);
+        writer.Close();
 
         // PacketESID / ED206
 
-        packet.EDAuthor = ed.EDAuthor;
-        packet.EDDate = ed.EDDate;
-        packet.EDNo = (++_edNo).ToString();
+        PacketESID packetESID = new()
+        {
+            EDAuthor = ed211.EDAuthor,
+            EDDate = ed211.EDDate,
+            EDNo = NextEDNo()
+        };
 
-        using var writer = XmlWriter.Create(outFile + ".ED211", _xmlSettings); //TODO outFile name
-        ed.WriteXML(writer);
+        using var writer2 = XmlWriter.Create(outFile + ".ED206.xml", _xmlSettings);
+        packetESID.WriteXML(writer2, false);
 
-        using var writer2 = XmlWriter.Create(outFile + ".ED206", _xmlSettings); //TODO outFile name
-        packet.WriteXML(writer2);
+        foreach (var ti in ed211.Elements)
+        {
+            if (ti.DC == "1")
+            {
+                ED206 ed206 = new(ti)
+                {
+                    Acc = "30109810200000000654", //TODO ALFA
+                    EDAuthor = packetESID.EDAuthor,
+                    EDDate = packetESID.EDDate,
+                    EDNo = NextEDNo(),
+                    EDRefAuthor = "4030702000",
+                    TransDate = ed211.AbstractDate,
+                    TransTime = time
+                };
+                ed206.WriteXML(writer2);
+            }
+        }
 
-        /*
-<?xml version="1.0" encoding="windows-1251"?>
-<ED211 xmlns="urn:cbr-ru:ed:v2.0" EDNo="5" EDDate="2022-08-05" EDAuthor="4525593000" EDReceiver="4030702000" CreditSum="600000" DebetSum="588000" OutBal="62000" EnterBal="50000" BIC="044525593" Acc="30109810200000000654" EndTime="01:08:28" AbstractDate="2022-08-05" LastMovetDate="2022-08-05" AbstractKind="0">
-  <TransInfo AccDocNo="3268" BICCorr="046577952" DC="1" PayeePersonalAcc="40702810400280008837" PayerPersonalAcc="60311810000000000665" Sum="588000" TransKind="01" TurnoverKind="1">
-    <EDRefID EDNo="10285" EDDate="2022-08-05" EDAuthor="4030702000" />
-  </TransInfo>
-  <TransInfo AccDocNo="3273" BICCorr="044525769" DC="2" PayeePersonalAcc="30109810200000000654" PayerPersonalAcc="30109810300000000063" Sum="600000" TransKind="01" TurnoverKind="1">
-    <EDRefID EDNo="10286?" EDDate="2022-08-05" EDAuthor="4030702000" />
-  </TransInfo>
-</ED211>
-        */
+        writer2.Close();
     }
 
-    private static void ProcessO196(string inFile, string outFile)
+    private static void Process199(string inFile, string outFile)
     {
-        /*
-{1:F01CITVRU2PXXXX0208000001}{2:O1961654220802AVTBRUMMAXXX02080218312208021654N}{3:{113:RUR6}}{4:
-:20:+XCIT22080225732
-:21:220622-289F195
-:76:'ATTN. INVESTIGATIONS DEPT.
-RE YOUR MT195 DD 220622 WITH REF
-AS ABOVE STATED CONC. YOUR MT103
-FOR USD 8575.00 DD 220601 WITH REF
-010622-259F103'
-:77A:'PLEASE BE INFORMED WE RECEIVED
-FOLLOWING REQUEST FROM IRVTUS3N.
-PLEASE PROVIDE ADD INFO AS
-REQUESTED AND SCANNED COPIES OF
-THE SUPPORTING DOCUMENTS TO
-FUNDSTRANSFER(AT)URALSIB.RU.
-YOU NEED TO SPECIFY THE PHRASE':
-'HEREWITH WE CONFIRM OUR CONSENT FO
-R
-PROCESSING OF DATA AND ALSO FOR
-TRANSFER OF DATA AND SUPPORTING
-DOCUMENTS TO THIRD PARTIES UNDER
-THIS PAYMENT.
-BEST REGARDS,
-INVESTIGATIONS/ POPOVA EKATERINA,
-URALSIB BANK , MOSCOW RU'
-:11R:199
-220706
-:79:20:'BKI-220616004067
-':21:'CPIRVT2206010971
-':79:'ATTN INVESTIGATIONS
-BOFAUS3N STATES QUOTE
-20 BML220615-003495 21 F5S2206019600500 79 ATTN.
-ATTN OFAC DEPT OUR REF. 2022060100405029 YR PYMT
-VAL 06/01/2022 AMT USD 8575.00 0048809 REQUIRE
-ADDL DETAILS PLEASE PROVIDE A DETAILED PURPOSE OF
-PAYMENT AND ALL INVOICES WITH THIS TRANSACTION.
-REGARDS,
-FT - OFAC
-BNYM TRN..F5S2206019600500
-ORGREF..CPIRVT2206010971
-UETR..30104E46-BC0A-4C2A-8C84-756DF988E1DB
-CHIPS SSN..404939
-INSTR DATE..22/06/01 VALUE DATE..22/06/01
-AMOUNT..8,575.00/USD
-ORD CUST..40817840800000000634
-ORD BANK..ABIC/CITVRU2PXXX
-DR PARTY..URALSIB BANK
-DR ADDRESS..MOSCOW 119048, RUSSIA
-CR PARTY..BANK OF AMERICA N.A.
-CR ADDRESS..NEW YORK, N.Y. 10001
-BENE/BENE BNK..002424968997
-BENE/BENE BNK..ALEXANDER SOIBEL
-DETAILS PYMT..PRIVATE PAYMENT
-'
--}{5:}
-        */
-
-        File.Copy(inFile, outFile, true);
-    }
-
-    private static void ProcessO199(string inFile, string outFile)
-    {
-        /*
-{1:F01CITVRU2PXXXX0063000001}{2:O1992255220630ALFARUMMXXXX00630219332206302255N}{3:{113:RUR6}{108:1ZLTH00031376433}}{4:
-:20:010222A710200070
-:21:NONREF
-:79:UVEDOMLENIE O PRINaTII REQENIa OB OSUqESTVLENII
-DEaTELXNOSTI UPOLNOMOcENNOGO BANKA V CELaH
-ISPOLNENIa UKAZA PREZIDENTA ROSSIiSKOi FEDERACII
-OT 27.05.2022n 322 O VREMENNOM PORaDKE ISPOLNENIa
-OBaZATELXSTV PERED NEKOTORYMI PRAVOOBLADATELaMI
-.
-NASTOaqIM AKCIONERNOE OBqESTVO ALXFA-BANK V
-SOOTVETSTVII S ABZACEM TRETXIM PUNKTA 1
-POSTANOVLENIa PRAVITELXSTVA RF OT 06.06.2022 n
-1031  O REALIZACII NEKOTORYH POLOJENIi UKAZA
-PREZIDENTA ROSSIiSKOi FEDERACII OT 27 MAa 2022 G.
-'N 322 'O VREMENNOM PORaDKE ISPOLNENIa OBaZATELXST
-V PERED NEKOTORYMI PRAVOOBLADATELaMI  I VNESENII
-IZMENENIi V PRAVILA VYDAcI PRAVITELXSTVENNOi
-KOMISSIEi PO KONTROLu ZA OSUqESTVLENIEM
-INOSTRANNYH INVESTICIi V ROSSIiSKOi FEDERACII
-RAZREQENIi V CELaH REALIZACII DOPOLNITELXNYH
-VREMENNYH MER eKONOMIcESKOGO HARAKTERA PO
-OBESPEcENIu FINANSOVOi STABILXNOSTI ROSSIiSKOi
-FEDERACII I INYH RAZREQENIi, PREDUSMOTRENNYH
-OTDELXNYMI UKAZAMI PREZIDENTA ROSSIiSKOi FEDERACII
-UVEDOMLaET O PRINaTII REQENIa OSUqESTVLaTX
-DEaTELXNOSTX UPOLNOMOcENNOGO BANKA V CELaH
-OTKRYTIa SPECIALXNYH ScETOV TIPA O DLa ISPOLNENIa
-DOLJNIKAMI DENEJNYH OBaZATELXSTV,
-SVaZANNYH S ISPOLXZOVANIEM IMI REZULXTATOV
-INTELLEKTUALXNOi DEaTELXNOSTI I (ILI) SREDSTV
-INDIVIDUALIZACII, V CELaH ISPOLNENIa UKAZA
-PREZIDENTA RF OT 27.05.2022 n 322 O VREMENNOM
-PORaDKE ISPOLNENIa OBaZATELXSTV PERED NEKOTORYMI
-PRAVOOBLADATELaMI
--}{5:{MAC:00000000}{CHK:0000ACD24BFC}}
-        */
-
         var lines = File.ReadAllLines(inFile);
         int n = 0;
-        string line = lines[n];
+        string line = lines[n++];
+        StringBuilder sb = new();
 
-        while (!line.StartsWith(":79:")) line = lines[n++];
-        StringBuilder sb = new(line[4..]);
+        while (!line.StartsWith(":76:") && !line.StartsWith(":79:"))
+        {
+            sb.AppendLine(line);
+            line = lines[n++];
+        }
+
+        sb.Append(line[..4]);
+
+        StringBuilder sc = new();
+        sc.AppendLine(line[4..]);
         line = lines[n++];
 
         while (!line.StartsWith("-}"))
         {
-            sb.AppendLine(Cyr(line));
+            sc.AppendLine(line);
             line = lines[n++];
         }
 
-        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
-    }
-
-    private static void ProcessO299(string inFile, string outFile)
-    {
-        /*
-{1:F01CITVRU2PXXXX0070000001}{2:O2991651220707ALFARUMMXXXX00707179002207071651N}{3:{113:RUR6}{108:1AO5400031708864}}{4:
-:20:AO54D2277000000O
-:21:NONREF
-:79:VNIMANIu: KORRESPONDENTSKIE ScETA,
-MEJDUNARODNYE RAScETY
-TEMA: NOVAa REDAKCIa TARIFOV RAScETNO-
-KASSOVOGO OBSLUJIVANIa KREDITNYH
-ORGANIZACIi OT 01.08.2022
-.
-AO ALXFA-BANK UVEDOMLaET O TOM, cTO 01.08.2022
-VSTUPAET V DEiSTVIE NOVAa REDAKCIa TARIFOV
-RAScETNO-KASSOVOGO OBSLUJIVANIa KREDITNYH
-ORGANIZACIi.
-V TARIFY VNESENY SLEDUuqIE IZMENENIa:
-(A) USTANOVLEN TARIF ZA PEREVOD SO ScETA TIPA
-mSm (P. 2.2.1.2)v
-(B) TARIFY ZA VNEQNIE PEREVODY V 'CNY ('P. 2.2.2.3
-) I RASSLEDOVANIa (P. 2.2.2.6) USTANOVLENY V
-VALuTE 'CNY'v
-(V) ISKLucENY TARIFY NA USLUGI, KOTORYE
-BANK NE OKAZYVAET V NASTOaqEE VREMa.
-.
-NOVAa REDAKCIa TARIFOV RAZMEqENA NA SAiTE
-'ALFABANK.RU 'V RAZDELE FINANSOVYM
-ORGANIZACIaM-KORRESPONDENTSKIE ScETA V
-ALXFA BANKE.
-.
-S UVAJENIEM,
-KOMANDA PRODAJ NA FINANSOVYH RYNKAH
-+7 495 7953688, +7 499 6811709
-'FI(AT)ALFABANK.RU'
--}{5:{MAC:00000000}{CHK:0000CB1282DF}}
-        */
-
-        var lines = File.ReadAllLines(inFile);
-        int n = 0;
-        string line = lines[n];
-
-        while (!line.StartsWith(":79:")) line = lines[n++];
-        StringBuilder sb = new(line[4..]);
-        line = lines[n++];
-
-        while (!line.StartsWith("-}"))
-        {
-            sb.AppendLine(Cyr(line));
-            line = lines[n++];
-        }
+        sb.Append(Cyr(sc.ToString()));
+        sb.AppendLine(line);
 
         File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
     }

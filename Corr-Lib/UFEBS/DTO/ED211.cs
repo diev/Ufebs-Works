@@ -22,7 +22,7 @@ namespace CorrLib.UFEBS.DTO;
 /// <summary>
 /// Извещение об операциях по счету.
 /// </summary>
-public record ED211
+public record ED211 : EDBase
 {
     /// <summary>
     /// Дата, на которую формируется извещение об операциях по счету.
@@ -55,29 +55,14 @@ public record ED211
     public string? DebetSum { get; set; }
 
     /// <summary>
-    /// Уникальный идентификатор составителя ЭС - УИС.
-    /// </summary>
-    public string EDAuthor { get; set; }
-
-    /// <summary>
-    /// Дата составления ЭС.
-    /// </summary>
-    public string EDDate { get; set; }
-
-    /// <summary>
-    /// Номер ЭС в течение опердня.
-    /// </summary>
-    public string EDNo { get; set; }
-
-    /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string EDReceiver { get; } = "4030702000";
+    public string? EDReceiver { get; set; }
 
     /// <summary>
     /// Конец периода формирования извещения об операциях по счету.
     /// </summary>
-    public string EndTime { get; } = "23:59:59"; // required
+    public string EndTime { get; set; } // required
 
     /// <summary>
     /// Входящий остаток на счете участника (дебетовый остаток - отрицательный, кредитовый - положительный).
@@ -103,4 +88,13 @@ public record ED211
     public TransInfo[] Elements { get; set; } = Array.Empty<TransInfo>();
 
     #endregion Extensions
+
+    #region Constructors
+
+    public ED211()
+    {
+        EDType = nameof(ED211);
+    }
+
+    #endregion Constructors
 }

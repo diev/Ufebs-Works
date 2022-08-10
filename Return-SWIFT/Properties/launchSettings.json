@@ -2,7 +2,7 @@
   "profiles": {
     "Return-SWIFT": {
       "commandName": "Project",
-      "commandLineArgs": "*.txt"
+      "commandLineArgs": "in\\*.txt out\\"
     }
   }
 }

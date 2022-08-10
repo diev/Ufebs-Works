@@ -130,10 +130,10 @@ public static class PacketEPDEx
         };
     }
 
-    public static void WriteXML(this PacketEPD packet, XmlWriter writer)
+    public static void WriteXML(this PacketEPD packet, XmlWriter writer, bool elements = true)
     {
         // PacketEPD
-        writer.WriteStartElement(packet.EDType, "urn:cbr-ru:ed:v2.0");
+        writer.WriteStartElement(packet.EDType ?? nameof(PacketEPD), "urn:cbr-ru:ed:v2.0");
 
         writer.WriteAttributeString("EDAuthor", packet.EDAuthor);
         writer.WriteAttributeString("EDDate", packet.EDDate);
@@ -144,9 +144,12 @@ public static class PacketEPDEx
         writer.WriteAttributeString("SystemCode", packet.SystemCode);
         writer.Flush();
 
-        foreach (var item in packet.Elements)
+        if (elements)
         {
-            item.WriteXML(writer);
+            foreach (var item in packet.Elements)
+            {
+                item.WriteXML(writer);
+            }
         }
     }
 }

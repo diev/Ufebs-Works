@@ -55,7 +55,7 @@ public static class SwiftID
     /// Получение нашего идентификатора документа в системе SWIFT.
     /// </summary>
     /// <param name="ed">Электронный документ формата ED100+.</param>
-    /// <returns>Идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).</returns>
+    /// <returns>Идентификатор документа в формате +ГГММДД000000001 из EDDate и EDNo (15 цифр, 16 знаков).</returns>
     public static string Id(ED100 ed)
         => Id(ed.EDDate, ed.EDNo);
 
@@ -63,7 +63,7 @@ public static class SwiftID
     /// Получение нашего идентификатора документа в системе SWIFT.
     /// </summary>
     /// <param name="info">Дата составления и номер ЭС в течение опердня.</param>
-    /// <returns>Идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).</returns>
+    /// <returns>Идентификатор документа в формате +ГГММДД000000001 из EDDate и EDNo (15 цифр, 16 знаков).</returns>
     public static string Id(EDInfo info)
         => Id(info.EDDate, info.EDNo);
 
@@ -72,9 +72,9 @@ public static class SwiftID
     /// </summary>
     /// <param name="edDate">Дата составления ЭС.</param>
     /// <param name="edNo">Номер ЭС в течение опердня.</param>
-    /// <returns>Идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).</returns>
+    /// <returns>Идентификатор документа в формате +ГГММДД000000001 из EDDate и EDNo (15 цифр, 16 знаков).</returns>
     public static string Id(string edDate, string edNo)
-        => edDate.Replace("-", "")[^6..] + edNo.PadLeft(9, '0')[^9..]; //15x
+        => "+" + edDate.Replace("-", "")[^6..] + edNo.PadLeft(9, '0')[^9..]; //16x (+15x)
 
     /// <summary>
     /// Получение номера сессии для идентификации в системе СПФС и нашего идентификатора документа в системе SWIFT.
@@ -91,7 +91,7 @@ public static class SwiftID
     /// <returns>Дата составления и номер ЭС в течение опердня.</returns>
     public static EDInfo Num(string num)
         => new(
-            $"{DateTime.Today:yyyy}-{num[..2]}-{num.Substring(2, 2)}",
+            $"{DateTime.Today:yyyy}-{num[..2]}-{num[2..4]}",
             num[4..].TrimStart('0'));
 
     /// <summary>
@@ -101,6 +101,6 @@ public static class SwiftID
     /// <returns>Дата составления и номер ЭС в течение опердня.</returns>
     public static EDInfo Id(string id)
         => new(
-            $"20{id[..2]}-{id.Substring(2, 2)}-{id.Substring(4, 2)}",
-            id[6..].TrimStart('0'));
+            $"20{id[1..3]}-{id[3..5]}-{id[5..7]}",
+            id[7..].TrimStart('0'));
 }

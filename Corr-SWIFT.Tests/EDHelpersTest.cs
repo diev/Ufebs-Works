@@ -1,5 +1,4 @@
-﻿using CorrLib;
-
+﻿using CorrLib.UFEBS;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Corr_SWIFT.Tests;

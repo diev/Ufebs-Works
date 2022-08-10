@@ -23,7 +23,7 @@ namespace CorrLib.UFEBS.DTO;
 /// <summary>
 /// Подтверждение дебета/кредита.
 /// </summary>
-public record ED206
+public record ED206 : EDBase
 {
     /// <summary>
     /// Номер расчетного документа.
@@ -48,21 +48,6 @@ public record ED206
     public string DC { get; set; } = "1"; // required
 
     /// <summary>
-    /// Уникальный идентификатор составителя ЭС - УИС.
-    /// </summary>
-    public string EDAuthor { get; set; } = null!; // required "4030702000";
-
-    /// <summary>
-    /// Дата составления ЭС.
-    /// </summary>
-    public string EDDate { get; set; } = null!; // required
-
-    /// <summary>
-    /// Номер ЭС в течение опердня.
-    /// </summary>
-    public string EDNo { get; set; } = null!; // required
-
-    /// <summary>
     /// Сумма ЭПС.
     /// </summary>
     public string Sum { get; set; } = "0"; // required
@@ -72,7 +57,7 @@ public record ED206
     /// </summary>
     public string TransDate { get; set; } // required
 
-    public string TransTime { get; } = "00:00:00"; // required
+    public string TransTime { get; set; } // required
 
     #region AccDoc
 
@@ -88,7 +73,7 @@ public record ED206
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDRefAuthor { get; } = "4030702000";
+    public string EDRefAuthor { get; set; }
 
     /// <summary>
     /// Дата составления ЭС.
@@ -105,7 +90,9 @@ public record ED206
     #region Constructors
 
     public ED206()
-    { }
+    {
+        EDType = nameof(ED206);
+    }
 
     public ED206(TransInfo ti)
         => this.Load(ti);

@@ -25,9 +25,9 @@ namespace CorrLib.UFEBS;
 
 public static class ED211Ex
 {
-    public static void WriteXML(this ED211 packet, XmlWriter writer)
+    public static void WriteXML(this ED211 packet, XmlWriter writer, bool elements = true)
     {
-        writer.WriteStartElement(nameof(ED211), "urn:cbr-ru:ed:v2.0");
+        writer.WriteStartElement(packet.EDType ?? nameof(ED211), "urn:cbr-ru:ed:v2.0");
 
         writer.WriteAttributeString("AbstractDate", packet.AbstractDate);
         writer.WriteAttributeString("AbstractKind", packet.AbstractKind);
@@ -59,12 +59,12 @@ public static class ED211Ex
 
         writer.Flush();
 
-        foreach (var item in packet.Elements)
+        if (elements)
         {
-            item.WriteXML(writer);
+            foreach (var item in packet.Elements)
+            {
+                item.WriteXML(writer);
+            }
         }
-
-        writer.WriteEndElement();
-        writer.Flush();
     }
 }

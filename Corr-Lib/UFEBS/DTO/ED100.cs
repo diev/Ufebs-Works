@@ -17,7 +17,6 @@ limitations under the License.
 */
 #endregion
 
-
 using CorrLib.SWIFT;
 
 using System.Xml.Linq;
@@ -27,23 +26,19 @@ namespace CorrLib.UFEBS.DTO;
 /// <summary>
 /// Базовый комплексный тип для всех электронных платежных сообщений. Содержит реквизиты, общие для всех типов ЭПС.
 /// Сверено с форматом УФЭБС по файлу cbr_ed101_v2022.3.0.xsd
+/// ED101 Платежное поручение.
+/// ED103 Платежное требование.
+/// ED104 Инкассовое поручение.
+/// ED105 Платежный ордер.
+/// ED107 Поручение банка.
+/// ED108 Платежное поручение на общую сумму с реестром.
+/// ED109 Банковский ордер.
+/// ED110 ЭПС сокращенного формата.
+/// ED111 Мемориальный ордер в электронном виде.
 /// </summary>
-public record ED100
+public record ED100 : EDBase
 {
     #region Properties
-
-    /// <summary>
-    /// ED101 Платежное поручение.
-    /// ED103 Платежное требование.
-    /// ED104 Инкассовое поручение.
-    /// ED105 Платежный ордер.
-    /// ED107 Поручение банка.
-    /// ED108 Платежное поручение на общую сумму с реестром.
-    /// ED109 Банковский ордер.
-    /// ED110 ЭПС сокращенного формата.
-    /// ED111 Мемориальный ордер в электронном виде.
-    /// </summary>
-    public string EDType { get; set; } = "ED101";
 
     #region Attributes
 
@@ -56,21 +51,6 @@ public record ED100
     /// Назначение платежа кодовое (поле 20). До 35 символов.
     /// </summary>
     public string? CodePurpose { get; set; }
-
-    /// <summary>
-    /// Уникальный идентификатор составителя ЭС - УИС.
-    /// </summary>
-    public string EDAuthor { get; set; } = null!; // required "4030702000";
-
-    /// <summary>
-    /// Дата составления ЭС.
-    /// </summary>
-    public string EDDate { get; set; } = null!; // required
-
-    /// <summary>
-    /// Номер ЭС в течение опердня.
-    /// </summary>
-    public string EDNo { get; set; } = null!; // required
 
     /// <summary>
     /// Уникальный идентификатор получателя ЭС - УИС.
@@ -140,11 +120,6 @@ public record ED100
     /// 16 – платежный ордер (ED105)
     /// </summary>
     public string TransKind { get; set; } = "01"; // required (default 01)
-
-    /// <summary>
-    /// Схема имен УФЭБС XML.
-    /// </summary>
-    public string? Xmlns { get; set; } = "urn:cbr-ru:ed:v2.0";
 
     #endregion Attributes
 
@@ -311,9 +286,14 @@ public record ED100
     #region Extensions
 
     /// <summary>
-    /// Присутствует ведомственная информация (поля 101, 104-110).
+    /// Признак дебета/кредита.
     /// </summary>
-    public bool Tax => DrawerStatus != null;
+    public string? DC { get; set; }
+
+    /// <summary>
+    /// Транслитерирован ли документ для корсчета SWIFT.
+    /// </summary>
+    public bool Lat { get; set; } = false;
 
     /// <summary>
     /// Тип документа до корректировки для корсчета.
@@ -326,16 +306,19 @@ public record ED100
     public string? OriginalPayerName { get; set; }
 
     /// <summary>
-    /// Транслитерирован ли документ для корсчета SWIFT.
-    /// </summary>
-    public bool Lat { get; set; } = false;
-
-    /// <summary>
     /// Сохранен ли откорректированный документ для корсчета.
     /// </summary>
     public bool Saved { get; set; } = false;
 
+    /// <summary>
+    /// MT103 :20:
+    /// </summary>
     public string? SwiftId { get; set; }
+
+    /// <summary>
+    /// Присутствует ведомственная информация (поля 101, 104-110).
+    /// </summary>
+    public bool Tax => DrawerStatus != null;
 
     #endregion Extensions
     #endregion Properties
@@ -343,7 +326,14 @@ public record ED100
     #region Constructors
 
     public ED100()
-    { }
+    {
+        EDType = "ED101";
+    }
+
+    public ED100(string path)
+    {
+        this.Load(path);
+    }
 
     public ED100(XNode? node)
     {
@@ -354,13 +344,14 @@ public record ED100
     }
 
     public ED100(XElement element)
-        => this.Load(element);
-
-    public ED100(ED100 ed)
-        => this.Load(ed);
+    {
+        this.Load(element);
+    }
 
     public ED100(string[] lines)
-        => this.Load(lines);
+    {
+        this.Load(lines);
+    }
 
     #endregion Constructors
 }

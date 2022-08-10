@@ -25,18 +25,21 @@ namespace CorrLib.UFEBS;
 
 public static class PacketESIDEx
 {
-    public static void WriteXML(this PacketESID packet, XmlWriter writer)
+    public static void WriteXML(this PacketESID packet, XmlWriter writer, bool elements = true)
     {
-        writer.WriteStartElement(nameof(PacketESID), "urn:cbr-ru:ed:v2.0");
+        writer.WriteStartElement(packet.EDType ?? nameof(PacketESID), "urn:cbr-ru:ed:v2.0");
         writer.WriteAttributeString("EDAuthor", packet.EDAuthor);
         writer.WriteAttributeString("EDDate", packet.EDDate);
         writer.WriteAttributeString("EDNo", packet.EDNo);
         writer.WriteAttributeString("EDReceiver", packet.EDReceiver);
         writer.Flush();
 
-        foreach (var item in packet.Elements)
+        if (elements)
         {
-            item.WriteXML(writer);
+            foreach (var item in packet.Elements)
+            {
+                item.WriteXML(writer);
+            }
         }
     }
 }

@@ -17,10 +17,33 @@ limitations under the License.
 */
 #endregion
 
-namespace CorrLib;
+namespace CorrLib.UFEBS;
 
 public static class EDHelpers
 {
+    private static int _EDNo = 1;
+    private static string _EDDate = DateTime.Today.ToString("yyyy-MM-dd");
+
+    public static string NextEDNo(string? value = null)
+    {
+        if (value != null)
+        {
+            _EDNo = int.Parse(value);
+        }
+
+        return _EDNo++.ToString();
+    }
+
+    public static string EDToday(string? value = null)
+    {
+        if (value != null)
+        {
+            _EDDate = value;
+        }
+
+        return _EDDate;
+    }
+
     public static string DisplaySum(this string value)
     {
         if (value is null || value == "0")

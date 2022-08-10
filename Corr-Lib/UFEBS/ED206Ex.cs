@@ -27,13 +27,15 @@ public static class ED206Ex
 {
     public static ED206 Load(this ED206 e, ED100 ed, string dc)
     {
+        e.EDType = nameof(ED206);
+
         e.AccDocDate = ed.AccDocDate;
         e.AccDocNo = ed.AccDocNo;
         e.BICCorr = ed.PayeeBIC!;
         e.CorrAcc = ed.PayeeCorrespAcc!;
-        e.EDAuthor = ed.EDAuthor;
-        e.EDDate = ed.EDDate;
-        e.EDNo = ed.EDNo;
+        e.EDRefAuthor = ed.EDAuthor;
+        e.EDRefDate = ed.EDDate;
+        e.EDRefNo = ed.EDNo;
         e.DC = dc;
         e.Sum = ed.Sum;
         e.TransDate = ed.EDDate;
@@ -44,16 +46,14 @@ public static class ED206Ex
 
     public static ED206 Load(this ED206 e, TransInfo ti) //TODO !!!
     {
+        e.EDType = nameof(ED206);
+
         e.AccDocDate = ti.AccDocDate ?? ti.EDRefDate; //TODO !!!
         e.AccDocNo = ti.AccDocNo;
         e.BICCorr = ti.BICCorr;
         e.CorrAcc = ti.CorrAcc!;
-        e.EDAuthor = ti.EDRefAuthor; //TODO !!!
-        e.EDDate = ti.EDRefDate; //TODO !!!
-        e.EDNo = ti.EDRefNo; //TODO !!!
         e.DC = ti.DC;
         e.Sum = ti.Sum;
-        e.TransDate = ti.EDRefDate; //TODO !!!
         e.EDRefDate = ti.EDRefDate;
         e.EDRefNo = ti.EDRefNo;
 
@@ -62,7 +62,7 @@ public static class ED206Ex
 
     public static void WriteXML(this ED206 e, XmlWriter writer)
     {
-        writer.WriteStartElement(nameof(ED206), "urn:cbr-ru:ed:v2.0");
+        writer.WriteStartElement(e.EDType ?? nameof(ED206), "urn:cbr-ru:ed:v2.0");
         writer.WriteAttributeString("Acc", e.Acc);
         writer.WriteAttributeString("ActualReceiver", e.ActualReceiver);
         writer.WriteAttributeString("BICCorr", e.BICCorr);

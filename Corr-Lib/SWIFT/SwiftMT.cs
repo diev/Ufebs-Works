@@ -17,13 +17,13 @@ limitations under the License.
 */
 #endregion
 
-using static CorrLib.SWIFT.SwiftHelpers;
-using static CorrLib.SWIFT.SwiftTranslit;
-
-using System.Text;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
-using System.Text.RegularExpressions;
+
+using System.Text;
+
+using static CorrLib.SWIFT.SwiftHelpers;
+using static CorrLib.SWIFT.SwiftTranslit;
 
 namespace CorrLib.SWIFT;
 
@@ -95,7 +95,16 @@ public static class SwiftMT
         // Payee
 
         while (!line.StartsWith(":53B:")) line = lines[n++];
-        ed.PayeePersonalAcc = line[^20..]; //TODO DC in :53B:/D/30109810200000000654
+        ed.DC = line[6] == 'D' ? "1" : "2"; // :53B:/D/30109810200000000654
+
+        if (ed.DC == "1")
+        {
+            var e = SwiftID.Id(ed.SwiftId);
+            ed.EDDate = e.EDDate;
+            ed.EDNo = e.EDNo;
+        }
+
+        ed.PayeePersonalAcc = line[^20..];
 
         while (!line.StartsWith(":59:"))
         {
@@ -158,7 +167,7 @@ public static class SwiftMT
 
         while (line.StartsWith('/'))
         {
-            if (line.StartsWith("/RPP/"))
+            if (line.StartsWith("/RPP/")) // /RPP/3261.220804.5.ELEK[.01]
             {
                 nzp = false;
                 var (no, dt, priority, besp, tkind) = ParseRPP(line);
@@ -167,6 +176,15 @@ public static class SwiftMT
                 ed.AccDocDate = UfebsDate(dt);
                 ed.Priority = priority;
                 ed.TransKind = tkind;
+
+                ed.EDType = tkind switch
+                {
+                    "01" => "ED101", // 01 – платежное поручение (ED101, default)
+                    "02" => "ED103", // 02 – платежное требование (ED103)
+                    "06" => "ED104", // 06 – инкассовое поручение (ED104)
+                    "16" => "ED105", // 16 – платежный ордер (ED105)
+                    _ => "ED101"
+                };
 
                 if (besp)
                 {
@@ -177,7 +195,7 @@ public static class SwiftMT
             else if (line.StartsWith("/DAS/"))
             {
                 nzp = false;
-                ed.ReceiptDate = UfebsDate(line[12..17]);
+                ed.ReceiptDate = UfebsDate(line[12..18]); // /DAS/220804.220804.000000.000000
             }
             else if (line.StartsWith("/UIP/"))
             {

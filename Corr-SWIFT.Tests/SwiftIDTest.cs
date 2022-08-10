@@ -37,7 +37,7 @@ public class SwiftIDTest
     {
         var date = "2022-08-04";
         var no = "12345678";
-        var expected = "220804012345678"; //15x
+        var expected = "+220804012345678"; //16x
 
         var result = Id(date, no);
 
@@ -49,7 +49,7 @@ public class SwiftIDTest
     {
         var date = "220804";
         var no = "12345678";
-        var expected = "220804012345678"; //15x
+        var expected = "+220804012345678"; //16x
 
         var result = Id(date, no);
 
@@ -74,7 +74,7 @@ public class SwiftIDTest
     {
         var date = "2022-08-04";
         var no = "12345678";
-        var test = "220804012345678"; //15x
+        var test = "+220804012345678"; //16x
 
         var (Date, No) = Id(test);
 
