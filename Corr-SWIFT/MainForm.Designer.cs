@@ -61,6 +61,7 @@ partial class MainForm
             this.SumColumn = new System.Windows.Forms.ColumnHeader();
             this.OrigPayerColumn = new System.Windows.Forms.ColumnHeader();
             this.PayerColumn = new System.Windows.Forms.ColumnHeader();
+            this.OrigPayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
@@ -69,7 +70,6 @@ partial class MainForm
             this.PayerEdit = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
-            this.OrigPayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -100,7 +100,7 @@ partial class MainForm
             // Status
             // 
             this.Status.Name = "Status";
-            this.Status.Size = new System.Drawing.Size(757, 19);
+            this.Status.Size = new System.Drawing.Size(723, 19);
             this.Status.Spring = true;
             this.Status.Text = "Загрузка...";
             this.Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -128,8 +128,8 @@ partial class MainForm
             // DirStatus
             // 
             this.DirStatus.Name = "DirStatus";
-            this.DirStatus.Size = new System.Drawing.Size(20, 19);
-            this.DirStatus.Text = "->";
+            this.DirStatus.Size = new System.Drawing.Size(23, 19);
+            this.DirStatus.Text = ">>";
             // 
             // SaveStatus
             // 
@@ -372,6 +372,11 @@ partial class MainForm
             this.PayerColumn.Text = "Подстава";
             this.PayerColumn.Width = 80;
             // 
+            // OrigPayeeColumn
+            // 
+            this.OrigPayeeColumn.Text = "Получатель";
+            this.OrigPayeeColumn.Width = 80;
+            // 
             // PayeeColumn
             // 
             this.PayeeColumn.Text = "Подстава";
@@ -440,11 +445,6 @@ partial class MainForm
             // FontDialog
             // 
             this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
-            // 
-            // OrigPayeeColumn
-            // 
-            this.OrigPayeeColumn.Text = "Получатель";
-            this.OrigPayeeColumn.Width = 80;
             // 
             // MainForm
             // 

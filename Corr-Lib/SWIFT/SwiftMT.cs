@@ -36,7 +36,9 @@ public static class SwiftMT
     public static ED100 Load(this ED100 ed, string[] lines)
     {
         int n = 0;
-        string line = lines[n];
+        string line = lines[n++];
+
+        // Id
 
         while (!line.StartsWith(":20:")) line = lines[n++];
         ed.SwiftId = line[4..];
@@ -56,10 +58,10 @@ public static class SwiftMT
         // Sum
 
         var (date, sum) = ParseDateSum(line[5..]); // :32A:
-        ed.ChargeOffDate = UfebsDate(date);
-        ed.Sum = UfebsSum(sum);
-
-        // Payer
+        ed.ChargeOffDate = date;
+        ed.Sum = sum;
+         
+        // Payer INN, KPP
 
         while (!line.StartsWith(":50K:/")) line = lines[n++];
         ed.PayerPersonalAcc = line[^20..];
@@ -69,16 +71,20 @@ public static class SwiftMT
         ed.PayerINN = INN;
         ed.PayerKPP = KPP;
 
-        string name = string.Empty;
+        // Payer Name
+
+        string payer = string.Empty;
         line = lines[n++];
 
         while (!line.StartsWith(":52A:") && !line.StartsWith(":52D:"))
         {
-            name += line;
+            payer += line;
             line = lines[n++];
         }
 
-        ed.PayerName = Cyr(name);
+        ed.PayerName = Cyr(payer);
+
+        // Payer Bank
 
         if (line.Equals(":52A:CITVRU2P")) //TODO BIC, CorrAcc
         {
@@ -92,7 +98,7 @@ public static class SwiftMT
             ed.PayerCorrespAcc = acc;
         }
 
-        // Payee
+        // DC, Acc
 
         while (!line.StartsWith(":53B:")) line = lines[n++];
         ed.DC = line[6] == 'D' ? "1" : "2"; // :53B:/D/30109810200000000654
@@ -106,6 +112,8 @@ public static class SwiftMT
 
         ed.PayeePersonalAcc = line[^20..];
 
+        // Payee Bank
+
         while (!line.StartsWith(":59:"))
         {
             if (line.StartsWith(":57D:"))
@@ -117,6 +125,8 @@ public static class SwiftMT
 
             line = lines[n++];
         }
+
+        // Payee INN, KPP
 
         if (line.StartsWith(":59:/"))
         {
@@ -137,26 +147,37 @@ public static class SwiftMT
             ed.PayeeKPP = KPP;
         }
 
-        name = string.Empty;
+        // Payee Name
+
+        string payee = string.Empty;
         line = lines[n++];
 
-        while (!line.StartsWith(":70:"))
+        while (!line.StartsWith(":70:") && !line.StartsWith(":71A:"))
         {
-            name += line;
+            payee += line;
             line = lines[n++];
         }
 
-        ed.PayeeName = Cyr(name);
+        ed.PayeeName = Cyr(payee);
 
         // Purpose
 
-        name = line[4..];
-        line = lines[n++];
+        string purpose;
 
-        while (!line.StartsWith(":71A:"))
+        if (line.StartsWith(":70:"))
         {
-            name += line;
+            purpose = line[4..];
             line = lines[n++];
+
+            while (!line.StartsWith(":71A:"))
+            {
+                purpose += line;
+                line = lines[n++];
+            }
+        }
+        else // :70: not exists, let's see in :72:/NZP/ only
+        {
+            purpose = string.Empty;
         }
 
         // Extra
@@ -167,17 +188,19 @@ public static class SwiftMT
 
         while (line.StartsWith('/'))
         {
+            // RPP: AccDocNo, AccDocDate, Priority, PaytKind, PaymentPrecedence, TransKind, SystemCode
+
             if (line.StartsWith("/RPP/")) // /RPP/3261.220804.5.ELEK[.01]
             {
                 nzp = false;
-                var (no, dt, priority, besp, tkind) = ParseRPP(line);
+                var (accDocNo, accDocDate, priority, besp, transKind) = ParseRPP(line);
 
-                ed.AccDocNo = no;
-                ed.AccDocDate = UfebsDate(dt);
+                ed.AccDocNo = accDocNo;
+                ed.AccDocDate = accDocDate;
                 ed.Priority = priority;
-                ed.TransKind = tkind;
+                ed.TransKind = transKind;
 
-                ed.EDType = tkind switch
+                ed.EDType = transKind switch
                 {
                     "01" => "ED101", // 01 – платежное поручение (ED101, default)
                     "02" => "ED103", // 02 – платежное требование (ED103)
@@ -188,28 +211,38 @@ public static class SwiftMT
 
                 if (besp)
                 {
-                    ed.PaytKind = "?"; //TODO
-                    ed.PaymentPrecedence = "69";
+                    ed.PaytKind = "4";
+                    ed.PaymentPrecedence = "69"; //исх, 63 вх
+                    ed.SystemCode = "05";
                 }
             }
+
+            // DAS: [ChargeOffDate], ReceiptDate
+
             else if (line.StartsWith("/DAS/"))
             {
                 nzp = false;
                 ed.ReceiptDate = UfebsDate(line[12..18]); // /DAS/220804.220804.000000.000000
             }
+
+            // UIP: PaymentID
+
             else if (line.StartsWith("/UIP/"))
             {
                 nzp = false;
                 ed.PaymentID = line[5..];
             }
+
+            // NZP: [+Purpose]
+
             else if (line.StartsWith("/NZP/"))
             {
                 nzp = true;
-                name += line[5..];
+                purpose += line[5..];
             }
             else if (line.StartsWith("//") && nzp)
             {
-                name += line[2..];
+                purpose += line[2..];
             }
             else
             {
@@ -219,7 +252,9 @@ public static class SwiftMT
             line = lines[n++];
         }
 
-        ed.Purpose = Cyr(name);
+        ed.Purpose = Cyr(purpose);
+
+        // DepartmentalInfo
 
         if (ed.Tax)
         {
@@ -294,7 +329,7 @@ public static class SwiftMT
 
         // Референс Отправителя (16x)
 
-        sb.AppendLine($":20:+{Id}");
+        sb.AppendLine($":20:{Id}");
 
         // Код банковской операции
 

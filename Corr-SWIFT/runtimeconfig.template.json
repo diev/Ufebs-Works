@@ -1,8 +1,11 @@
 {
   "configProperties": {
     "ED807": "ED807.xml",
-    "Profile": "",
-    "Profiles": [],
+    "Profile": "ALFA",
+    "Profiles": [
+      "ALFA",
+      "BBR"
+    ],
     ".OpenDir": "",
     ".OpenMask": "*.xml",
     ".SaveDir": "",
@@ -16,6 +19,34 @@
     ".TemplatesName": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
     ".TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
     ".SwiftNameLimit": 105,
-    ".SwiftPurposeField": "70"
+    ".SwiftPurposeField": "70",
+    "ALFA.OpenDir": "O:\\XXIMAIN\\CITY\\_ALFA\\OUT",
+    "ALFA.OpenMask": "*.xml",
+    "ALFA.SaveDir": "O:\\XXIMAIN\\CITY\\_ALFA\\OUT",
+    "ALFA.SaveMask": "*_{id}.txt",
+    "ALFA.SaveFormat": "SWIFT",
+    "ALFA.BankINN": "7831001422",
+    "ALFA.BankKPP": "784101001",
+    "ALFA.BankSWIFT": "CITVRU2P",
+    "ALFA.CorrSWIFT": "ALFARUMMXXX",
+    "ALFA.CorrAccount": "30109810200000000654",
+    "ALFA.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
+    "ALFA.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
+    "ALFA.SwiftNameLimit": 105,
+    "ALFA.SwiftPurposeField": "70",
+    "BBR.OpenDir": "O:\\XXIMAIN\\CITY\\_BBR\\OUT",
+    "BBR.OpenMask": "*.xml",
+    "BBR.SaveDir": "O:\\XXIMAIN\\CITY\\_BBR\\OUT",
+    "BBR.SaveMask": "{id}_.xml",
+    "BBR.SaveFormat": "УФЭБС",
+    "BBR.BankINN": "7831001422",
+    "BBR.BankKPP": "784101001",
+    "BBR.BankSWIFT": "CITVRU2P",
+    "BBR.CorrSWIFT": "BADJRUMM",
+    "BBR.CorrAccount": "30109810300000000063",
+    "BBR.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
+    "BBR.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
+    "BBR.SwiftNameLimit": 105,
+    "BBR.SwiftPurposeField": "70"
   }
 }

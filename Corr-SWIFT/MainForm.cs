@@ -109,6 +109,12 @@ public partial class MainForm : Form
 
         _selectedFileIndex = -1;
 
+        if (!Directory.Exists(Config.OpenDir) || !Directory.Exists(Config.SaveDir))
+        {
+            Status.Text = "Требуется проверить Параметры в меню Файл!";
+            return;
+        }
+
         foreach (var file in new SourceFiles(Config.OpenDir, Config.OpenMask))
         {
             FilesList.Items.Add(new ListViewItem(file));

@@ -178,7 +178,7 @@ internal class Program
                     break;
 
                 case "O900":
-                    //ProcessO900(inFile, $"{outFile}.{mt}.ED206");
+                    Process900(inFile, $"{outFile}.{mt}.ED206.txt");
                     break;
 
                 case "O950":
@@ -245,19 +245,15 @@ internal class Program
         ed.PayeeBIC ??= _bic;
         ed.PayeeCorrespAcc ??= _corr;
 
-        TransInfo ti = new(ed, dc);
-        //string swiftId = SwiftID.Id(ed);
+        TransInfo ti = new(ed, dc)
+        {
+            EDRefAuthor = _receiver!
+        };
 
         Console.WriteLine($"{ed.SwiftId}  {inFile}");
 
-        if (dc == "1")
-        {
-            _d.Add(ed.SwiftId!, ti);
-        }
-        else
-        {
-            _c.Add(ed.SwiftId!, ti);
-        }
+        var dictionary = dc == "1" ? _d : _c;
+        dictionary.Add(ed.SwiftId!, ti);
 
         PacketEPD packet = new()
         {
@@ -293,7 +289,31 @@ internal class Program
 -}{5:{MAC:00000000}{CHK:00002A77E432}}
         */
 
-        File.Copy(inFile, outFile, true);
+        var lines = File.ReadAllLines(inFile);
+        int n = 0;
+        string line = lines[n++];
+        StringBuilder sb = new();
+
+        while (!line.StartsWith(":72:/NZP/"))
+        {
+            sb.AppendLine(line);
+            line = lines[n++];
+        }
+
+        StringBuilder sc = new(line[9..]);
+        line = lines[n++];
+
+        while (line.StartsWith("//"))
+        {
+            sc.Append(line[2..]);
+            line = lines[n++];
+        }
+
+        sb.Append(":72:")
+            .AppendLine(Cyr(sc.ToString()))
+            .AppendLine(line);
+
+        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
     }
 
     private static void Process950(string inFile, string outFile)
@@ -322,6 +342,8 @@ internal class Program
         string time = ParseTime(line);
 
         ED211 ed211 = new();
+        decimal debetSum = 0;
+        decimal creditSum = 0;
 
         // Счет корреспондентский
 
@@ -331,7 +353,7 @@ internal class Program
         // Входящий остаток
 
         while (!line.StartsWith(":60F:")) line = lines[n++];
-        ed211.EnterBal = UfebsSum(ParseBal(line[5..]).sum);
+        ed211.EnterBal = ParseBal(line[5..]).sum;
 
         // Подсчитываем число движений
 
@@ -369,7 +391,8 @@ internal class Program
             if (line.StartsWith(":61:"))
             {
                 var (dc, id) = ParseTrans(line[4..]);
-                bool found = dc == "1"
+                bool debet = dc == "1";
+                bool found = debet
                     ? _d.TryGetValue(id, out TransInfo? ti) // ourId
                     : _c.TryGetValue(id, out ti); // corrId
 
@@ -393,12 +416,23 @@ internal class Program
                         EDRefAuthor = _receiver!,
                         EDRefDate = date,
                         EDRefNo = "0",
-                        PayeePersonalAcc = dc == "1" ? "0" : _acc,
+                        PayeePersonalAcc = debet ? "0" : _acc,
                         PayerPersonalAcc = "0"
                     };
                 }
 
                 ed211.Elements[qty++] = ti!;
+
+                decimal kop = decimal.Parse(ti.Sum);
+
+                if (debet)
+                {
+                    debetSum += kop;
+                }
+                else
+                {
+                    creditSum += kop;
+                }
             }
         }
 
@@ -411,6 +445,9 @@ internal class Program
         ed211.EndTime = time;
         ed211.EDReceiver = _receiver;
 
+        ed211.DebetSum = debetSum > 0 ? debetSum.ToString() : "0";
+        ed211.CreditSum = creditSum > 0 ? creditSum.ToString() : "0";
+
         using var writer = XmlWriter.Create(outFile + ".ED211.xml", _xmlSettings);
         ed211.WriteXML(writer);
         writer.Close();
@@ -419,7 +456,7 @@ internal class Program
 
         PacketESID packetESID = new()
         {
-            EDAuthor = _author,
+            EDAuthor = _author!,
             EDDate = date,
             EDNo = NextEDNo()
         };

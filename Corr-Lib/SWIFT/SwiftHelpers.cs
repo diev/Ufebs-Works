@@ -287,8 +287,8 @@ public static class SwiftHelpers
         string pattern = @"(\d{6})RUB(\d+,\d{0,2})";
         var match = Regex.Match(text, pattern);
 
-        string date = match.Groups[1].Value;
-        string sum = match.Groups[2].Value;
+        string date = UfebsDate(match.Groups[1].Value);
+        string sum = UfebsSum(match.Groups[2].Value);
 
         return new(date, sum);
     }
@@ -311,20 +311,20 @@ public static class SwiftHelpers
         return new(bic, acc);
     }
 
-    public static (string no, string date, string priority, bool besp, string tkind) ParseRPP(string text)
+    public static (string accDocNo, string accDocDate, string priority, bool besp, string transKind) ParseRPP(string text)
     {
         string pattern = @"/RPP/(\d*)\.(\d{6})\.(\d)\.(\w{4})(\.\d*)?";
         var match = Regex.Match(text, pattern);
 
-        string no = match.Groups[1].Value;
-        string date = UfebsDate(match.Groups[2].Value);
+        string accDocNo = match.Groups[1].Value;
+        string accDocDate = UfebsDate(match.Groups[2].Value);
         string priority = match.Groups[3].Value;
         bool besp = match.Groups[4].Value == "BESP";
-        string tkind = match.Groups[5].Success
+        string transKind = match.Groups[5].Success
             ? match.Groups[5].Value[1..]
             : "01";
 
-        return new(no, date, priority, besp, tkind);
+        return new(accDocNo, accDocDate, priority, besp, transKind);
     }
 
     public static string ParseDAS(string text)
