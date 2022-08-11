@@ -3,9 +3,15 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Return_SWIFT</RootNamespace>
+    <RootNamespace>ReturnSWIFT</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>1.22.8.10</AssemblyVersion>
+    <FileVersion>1.22.8.10</FileVersion>
+    <Company>CIBANK</Company>
+    <Copyright>2022 Dmitrii Evdokimov</Copyright>
+    <NeutralLanguage>ru-RU</NeutralLanguage>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

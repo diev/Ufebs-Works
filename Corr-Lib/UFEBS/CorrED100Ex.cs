@@ -31,6 +31,7 @@ public static class CorrED100Ex
         ed.EDType = "ED101";
 
         ed.OriginalPayerName = ed.PayerName;
+        ed.OriginalPayeeName = ed.PayeeName;
 
         // Требуется ли замена реквизитов на оплату за третье лицо (если ИНН Плательщика не собственно Банка).
 

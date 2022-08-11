@@ -549,7 +549,7 @@ public partial class MainForm : Form
                         }
                     }
                 }
-                else
+                else if (edit.Name == nameof(PayeeEdit))
                 {
                     string? prev = ed.PayeeName;
                     ed.PayeeName = name;

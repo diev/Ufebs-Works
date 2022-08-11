@@ -17,27 +17,31 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
 
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 using static CorrLib.SWIFT.SwiftHelpers;
 using static CorrLib.SWIFT.SwiftTranslit;
 using static CorrLib.UFEBS.EDHelpers;
 
-namespace Return_SWIFT;
+namespace ReturnSWIFT;
 
 internal class Program
 {
-    static Dictionary<string, TransInfo> _d = new();
-    static Dictionary<string, TransInfo> _c = new();
+    static readonly Dictionary<string, TransInfo> _d = new();
+    static readonly Dictionary<string, TransInfo> _c = new();
     
-    static List<string> _o950in = new();
-    static List<string> _o950out = new();
+    static readonly List<string> _o950in = new();
+    static readonly List<string> _o950out = new();
+
+    static readonly string? _acc = AppContext.GetData("Acc") as string;
+    static readonly string? _bic = AppContext.GetData("BIC") as string;
+    static readonly string? _corr = AppContext.GetData("Corr") as string;
+    static readonly string? _author = AppContext.GetData("EDAuthor") as string;
+    static readonly string? _receiver = AppContext.GetData("EDReceiver") as string;
 
     static readonly XmlWriterSettings _xmlSettings = new()
     {
@@ -110,6 +114,8 @@ internal class Program
             Console.WriteLine($"Input \"{path}\" not found");
         }
 
+        Console.WriteLine();
+
         for (int i = 0; i < _o950in.Count; i++)
         {
             string inFile = _o950in[i];
@@ -126,13 +132,15 @@ internal class Program
         }
 
         #region finish
-        //while (true)
-        //{
-        //    if (Console.ReadKey().Key == ConsoleKey.Spacebar)
-        //    {
-        //        break;
-        //    }
-        //}
+        Console.WriteLine("\nJob done. Press Spacebar.");
+
+        while (true)
+        {
+            if (Console.ReadKey().Key == ConsoleKey.Spacebar)
+            {
+                break;
+            }
+        }
         #endregion finish
     }
 
@@ -147,18 +155,17 @@ internal class Program
             outFile = Path.Combine(outFile, file.Name[..^len]);
         }
 
-        if (File.Exists(outFile))
-        {
-            Console.WriteLine($"Output \"{outFile}\" overwritten");
-        }
+        //if (File.Exists(outFile))
+        //{
+        //    Console.WriteLine($"Output \"{outFile}\" overwritten");
+        //}
         #endregion Files start
 
         //TODO
         try
         {
             string text = File.ReadAllText(inFile);
-            string pattern = @"{2:([IO]\d{3})";
-            string mt = Regex.Match(text, pattern).Groups[1].Value;
+            string? mt = ParseMT(text);
 
             switch (mt)
             {
@@ -186,7 +193,7 @@ internal class Program
                     break;
 
                 default:
-                    if (mt.Length > 0)
+                    if (mt != null)
                     {
                         Console.WriteLine($"Unknown {mt} in \"{inFile}\"!");
                     }
@@ -220,16 +227,13 @@ internal class Program
 
     private static void Process103(string inFile, string outFile, string dc)
     {
-        Console.WriteLine($"Документ {inFile}");
-
         string packNo = NextEDNo();
 
         var lines = File.ReadAllLines(inFile);
         ED100 ed = new(lines)
         {
-            //CodePurpose = "1",
-            EDAuthor = "4525593000", //TODO ALFA
-            EDReceiver = "4030702000",
+            EDAuthor = _author!,
+            EDReceiver = _receiver,
         };
 
         if (ed.DC == "2")
@@ -238,21 +242,21 @@ internal class Program
             ed.EDNo = NextEDNo();
         }
 
-        ed.PayeeBIC ??= "044525593"; //TODO ALFA
-        ed.PayeeCorrespAcc ??= "30101810200000000593"; //TODO ALFA
+        ed.PayeeBIC ??= _bic;
+        ed.PayeeCorrespAcc ??= _corr;
 
         TransInfo ti = new(ed, dc);
         //string swiftId = SwiftID.Id(ed);
 
-        Console.WriteLine($"  {ed.SwiftId} -> {dc}");
+        Console.WriteLine($"{ed.SwiftId}  {inFile}");
 
         if (dc == "1")
         {
-            _d.Add(ed.SwiftId, ti);
+            _d.Add(ed.SwiftId!, ti);
         }
         else
         {
-            _c.Add(ed.SwiftId, ti);
+            _c.Add(ed.SwiftId!, ti);
         }
 
         PacketEPD packet = new()
@@ -261,7 +265,7 @@ internal class Program
             EDDate = ed.EDDate,
             EDNo = packNo,
             EDQuantity = "1",
-            EDReceiver = "4030702000",
+            EDReceiver = _receiver,
             Sum = ed.Sum,
             Elements = new ED100[1]
         };
@@ -350,8 +354,8 @@ internal class Program
         int finishN = n - 1;
 
         var (date, bal) = ParseBal(line[5..]);
-        ed211.AbstractDate = UfebsDate(date);
-        ed211.OutBal = UfebsSum(bal);
+        ed211.AbstractDate = date;
+        ed211.OutBal = bal;
 
         // Движения средств (имея итоги, читаем заново)
 
@@ -364,50 +368,48 @@ internal class Program
 
             if (line.StartsWith(":61:"))
             {
-                var (dc, ourId, corrId) = ParseTrans(line[4..]);
-                TransInfo ti = new();
+                var (dc, id) = ParseTrans(line[4..]);
+                bool found = dc == "1"
+                    ? _d.TryGetValue(id, out TransInfo? ti) // ourId
+                    : _c.TryGetValue(id, out ti); // corrId
 
-                if (dc == "1")
+                if (found)
                 {
-                    if (_d.TryGetValue(ourId, out TransInfo di))
-                    {
-                        ti = di with { };
-
-                        Console.WriteLine($"  {ourId} -> {dc}: {ti.AccDocNo} на {ti.Sum}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"    {ourId} -> {dc}: ? (строка {n + 1})");
-                        // throw new ArgumentException($"Документ из строки {n + 1} не найден.", ourId);
-                    }
+                    Console.WriteLine($"  {id}  {dc} {ti!.AccDocNo, 9}  на {ti.Sum, 18}");
                 }
                 else
                 {
-                    if (_c.TryGetValue(corrId, out TransInfo ci))
-                    {
-                        ti = ci with { };
+                    string accDocNo = lines[n + 1];
+                    Console.WriteLine($"  {id}  {dc} {accDocNo, 9}  ?  (строка {n + 1})");
+                    // throw new ArgumentException($"Документ не найден.", id);
 
-                        Console.WriteLine($"  {corrId} -> {dc}: {ti.AccDocNo} на {ti.Sum}");
-                    }
-                    else
+                    ti = new()
                     {
-                        Console.WriteLine($"    {corrId} -> {dc}: ? (строка {n + 1})");
-                        // throw new ArgumentException($"Документ из строки {n + 1} не найден.", corrId);
-                    }
+                        AccDocDate = date,
+                        AccDocNo = accDocNo,
+                        BICCorr = "0",
+                        CorrAcc = "0",
+                        DC = dc,
+                        EDRefAuthor = _receiver!,
+                        EDRefDate = date,
+                        EDRefNo = "0",
+                        PayeePersonalAcc = dc == "1" ? "0" : _acc,
+                        PayerPersonalAcc = "0"
+                    };
                 }
 
-                ed211.Elements[qty++] = ti;
+                ed211.Elements[qty++] = ti!;
             }
         }
 
         // ED211 /TransInfo
 
-        ed211.BIC = "044525593"; //TODO ALFA
-        ed211.EDAuthor = "4525593000"; //TODO ALFA
-        ed211.EDDate = ed211.AbstractDate;
+        ed211.BIC = _bic!;
+        ed211.EDAuthor = _author!;
+        ed211.EDDate = date;
         ed211.EDNo = NextEDNo();
         ed211.EndTime = time;
-        ed211.EDReceiver = "4030702000";
+        ed211.EDReceiver = _receiver;
 
         using var writer = XmlWriter.Create(outFile + ".ED211.xml", _xmlSettings);
         ed211.WriteXML(writer);
@@ -417,8 +419,8 @@ internal class Program
 
         PacketESID packetESID = new()
         {
-            EDAuthor = ed211.EDAuthor,
-            EDDate = ed211.EDDate,
+            EDAuthor = _author,
+            EDDate = date,
             EDNo = NextEDNo()
         };
 
@@ -431,12 +433,12 @@ internal class Program
             {
                 ED206 ed206 = new(ti)
                 {
-                    Acc = "30109810200000000654", //TODO ALFA
-                    EDAuthor = packetESID.EDAuthor,
-                    EDDate = packetESID.EDDate,
+                    Acc = _acc,
+                    EDAuthor = _author!,
+                    EDDate = date,
                     EDNo = NextEDNo(),
-                    EDRefAuthor = "4030702000",
-                    TransDate = ed211.AbstractDate,
+                    EDRefAuthor = _receiver!,
+                    TransDate = date,
                     TransTime = time
                 };
                 ed206.WriteXML(writer2);

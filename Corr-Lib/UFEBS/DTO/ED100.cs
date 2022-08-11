@@ -306,6 +306,11 @@ public record ED100 : EDBase
     public string? OriginalPayerName { get; set; }
 
     /// <summary>
+    /// Наименование получателя до корректировки для корсчета.
+    /// </summary>
+    public string? OriginalPayeeName { get; set; }
+
+    /// <summary>
     /// Сохранен ли откорректированный документ для корсчета.
     /// </summary>
     public bool Saved { get; set; } = false;

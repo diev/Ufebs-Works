@@ -248,7 +248,7 @@ public static class Config
                 return Array.Empty<string>();
             }
 
-            return (string[])values;
+            return values;
         }
 
         return (string[])value;

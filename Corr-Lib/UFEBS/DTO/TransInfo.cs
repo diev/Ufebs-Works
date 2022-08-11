@@ -72,7 +72,7 @@ public record TransInfo
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDRefAuthor { get; } = "4030702000";
+    public string EDRefAuthor { get; set; }
 
     /// <summary>
     /// Дата составления ЭС.

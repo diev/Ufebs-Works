@@ -174,6 +174,21 @@ public static class SwiftHelpers
     }
 
     /// <summary>
+    /// MT* {2:T...}
+    /// </summary>
+    /// <param name="text">{2:T...}</param>
+    /// <returns></returns>
+    public static string? ParseMT(string text)
+    {
+        string pattern = @"{2:([IO]\d{3})";
+        var match = Regex.Match(text, pattern);
+
+        return match.Success
+            ? match.Groups[1].Value
+            : null;
+    }
+
+    /// <summary>
     /// MT* {2:...ЧЧММ.}
     /// </summary>
     /// <param name="text">{2:...HHMM.}</param>
@@ -199,8 +214,8 @@ public static class SwiftHelpers
         var match = Regex.Match(text, pattern);
 
         string dc = match.Groups[1].Value; //Debit|Credit
-        string date = match.Groups[2].Value;
-        string sum = match.Groups[3].Value;
+        string date = UfebsDate(match.Groups[2].Value);
+        string sum = UfebsSum(match.Groups[3].Value);
 
         if (dc == "D")
         {
@@ -215,7 +230,7 @@ public static class SwiftHelpers
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
-    public static (string dc, string ourId, string corrId) ParseTrans(string text)
+    public static (string dc, string id) ParseTrans(string text)
     {
         string pattern = @"(\d{6})([CD])(\d+,\d{0,2})([^/]+)//(.+)";
         var match = Regex.Match(text, pattern);
@@ -226,7 +241,7 @@ public static class SwiftHelpers
         string ourId = match.Groups[4].Value[4..]; //NONREF | +220804000012157
         string corrId = match.Groups[5].Value;
 
-        return new(dc, ourId, corrId);
+        return new(dc, dc == "1" ? ourId : corrId);
     }
 
     /// <summary>

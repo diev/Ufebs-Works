@@ -59,16 +59,17 @@ partial class MainForm
             this.NoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
             this.SumColumn = new System.Windows.Forms.ColumnHeader();
-            this.OriginalColumn = new System.Windows.Forms.ColumnHeader();
+            this.OrigPayerColumn = new System.Windows.Forms.ColumnHeader();
             this.PayerColumn = new System.Windows.Forms.ColumnHeader();
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeEdit = new System.Windows.Forms.TextBox();
-            this.PayerEdit = new System.Windows.Forms.TextBox();
             this.PayeeEdit = new System.Windows.Forms.TextBox();
+            this.PayerEdit = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
+            this.OrigPayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.StatusBar.SuspendLayout();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -327,8 +328,9 @@ partial class MainForm
             this.NoColumn,
             this.EDColumn,
             this.SumColumn,
-            this.OriginalColumn,
+            this.OrigPayerColumn,
             this.PayerColumn,
+            this.OrigPayeeColumn,
             this.PayeeColumn,
             this.PurposeColumn,
             this.SavedColumn});
@@ -360,10 +362,10 @@ partial class MainForm
             this.SumColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.SumColumn.Width = 80;
             // 
-            // OriginalColumn
+            // OrigPayerColumn
             // 
-            this.OriginalColumn.Text = "Плательщик";
-            this.OriginalColumn.Width = 160;
+            this.OrigPayerColumn.Text = "Плательщик";
+            this.OrigPayerColumn.Width = 160;
             // 
             // PayerColumn
             // 
@@ -372,8 +374,8 @@ partial class MainForm
             // 
             // PayeeColumn
             // 
-            this.PayeeColumn.Text = "Получатель";
-            this.PayeeColumn.Width = 160;
+            this.PayeeColumn.Text = "Подстава";
+            this.PayeeColumn.Width = 80;
             // 
             // PurposeColumn
             // 
@@ -398,19 +400,6 @@ partial class MainForm
             this.PurposeEdit.Enter += new System.EventHandler(this.PurposeEdit_Enter);
             this.PurposeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PurposeEdit_KeyUp);
             // 
-            // PayerEdit
-            // 
-            this.PayerEdit.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PayerEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PayerEdit.Location = new System.Drawing.Point(3, 3);
-            this.PayerEdit.Name = "PayerEdit";
-            this.PayerEdit.PlaceholderText = "Плательщик";
-            this.PayerEdit.Size = new System.Drawing.Size(920, 22);
-            this.PayerEdit.TabIndex = 0;
-            this.PayerEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
-            this.PayerEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
-            this.PayerEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
-            // 
             // PayeeEdit
             // 
             this.PayeeEdit.Dock = System.Windows.Forms.DockStyle.Top;
@@ -423,6 +412,19 @@ partial class MainForm
             this.PayeeEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
             this.PayeeEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
             this.PayeeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
+            // 
+            // PayerEdit
+            // 
+            this.PayerEdit.Dock = System.Windows.Forms.DockStyle.Top;
+            this.PayerEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PayerEdit.Location = new System.Drawing.Point(3, 3);
+            this.PayerEdit.Name = "PayerEdit";
+            this.PayerEdit.PlaceholderText = "Плательщик";
+            this.PayerEdit.Size = new System.Drawing.Size(920, 22);
+            this.PayerEdit.TabIndex = 0;
+            this.PayerEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
+            this.PayerEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
+            this.PayerEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
             // 
             // OpenFileDialog
             // 
@@ -438,6 +440,11 @@ partial class MainForm
             // FontDialog
             // 
             this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
+            // 
+            // OrigPayeeColumn
+            // 
+            this.OrigPayeeColumn.Text = "Получатель";
+            this.OrigPayeeColumn.Width = 80;
             // 
             // MainForm
             // 
@@ -500,7 +507,7 @@ partial class MainForm
     private ColumnHeader NoColumn;
     private ColumnHeader EDColumn;
     private ColumnHeader SumColumn;
-    private ColumnHeader OriginalColumn;
+    private ColumnHeader OrigPayerColumn;
     private ColumnHeader PayerColumn;
     private ColumnHeader PayeeColumn;
     private ColumnHeader PurposeColumn;
@@ -513,4 +520,5 @@ partial class MainForm
     private ToolStripStatusLabel OpenStatus;
     private ToolStripStatusLabel DirStatus;
     private ToolStripStatusLabel SaveStatus;
+    private ColumnHeader OrigPayeeColumn;
 }

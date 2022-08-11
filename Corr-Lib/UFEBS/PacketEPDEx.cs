@@ -124,6 +124,7 @@ public static class PacketEPDEx
             item.Sum.DisplaySum(),
             item.OriginalPayerName ?? string.Empty,
             item.PayerName ?? string.Empty, //TODO
+            item.OriginalPayeeName ?? string.Empty,
             item.PayeeName ?? string.Empty,
             item.Purpose ?? string.Empty,
             string.Empty //TODO File.Exists?
