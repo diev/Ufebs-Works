@@ -283,6 +283,19 @@ public class SwiftHelpersTest
     }
 
     [TestMethod]
+    public void UParseDateSumTest()
+    {
+        string text = "220808RUB130,";
+        string expectedDate = "2022-08-08";
+        string expectedSum = "13000";
+
+        var (date, sum) = UParseDateSum(text);
+
+        Assert.AreEqual(expectedDate, date);
+        Assert.AreEqual(expectedSum, sum);
+    }
+    [TestMethod]
+
     public void ParseBICAccTest()
     {
         string text = "//RU044030702.30101810600000000702";

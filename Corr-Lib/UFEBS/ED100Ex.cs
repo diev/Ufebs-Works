@@ -42,9 +42,13 @@ public static class ED100Ex
 
                 ed.Load(root.FirstNode!); //TODO EDQuantity > 1
             }
-            else
+            else if (root.Name.LocalName.StartsWith("ED1"))
             {
                 ed.Load(root);
+            }
+            else
+            {
+                Console.WriteLine($"Неплатежный файл {path}");
             }
         }
     }

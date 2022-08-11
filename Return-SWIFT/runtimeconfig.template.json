@@ -1,9 +1,16 @@
 {
   "configProperties": {
-    "Acc": "30109810200000000654",
-    "BIC": "044525593",
-    "Corr": "30101810200000000593",
-    "EDAuthor": "4525593000",
-    "EDReceiver": "4030702000"
+    "CorrBank.BIC": "044525593",
+    "CorrBank.CorrAcc": "30101810200000000593",
+    "CorrBank.EDAuthor": "4525593000",
+    "CorrBank.EDReceiver": "4030702000",
+    "CorrBank.OurAcc": "30109810200000000654",
+
+    "Profile": "ALFA",
+    "ALFA.BankSWIFT": "CITVRU2P",
+    "ALFA.CorrSWIFT": "ALFARUMMXXX",
+    "ALFA.CorrAccount": "30109810200000000654",
+    "ALFA.SwiftNameLimit": 105,
+    "ALFA.SwiftPurposeField": "70"
   }
 }

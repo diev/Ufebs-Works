@@ -57,7 +57,7 @@ public static class SwiftMT
 
         // Sum
 
-        var (date, sum) = ParseDateSum(line[5..]); // :32A:
+        var (date, sum) = UParseDateSum(line[5..]); // :32A:
         ed.ChargeOffDate = date;
         ed.Sum = sum;
          
@@ -193,7 +193,7 @@ public static class SwiftMT
             if (line.StartsWith("/RPP/")) // /RPP/3261.220804.5.ELEK[.01]
             {
                 nzp = false;
-                var (accDocNo, accDocDate, priority, besp, transKind) = ParseRPP(line);
+                var (accDocNo, accDocDate, priority, besp, transKind) = UParseRPP(line);
 
                 ed.AccDocNo = accDocNo;
                 ed.AccDocDate = accDocDate;

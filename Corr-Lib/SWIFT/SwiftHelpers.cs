@@ -17,8 +17,6 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.UFEBS.DTO;
-
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -189,18 +187,21 @@ public static class SwiftHelpers
     }
 
     /// <summary>
-    /// MT* {2:...ЧЧММ.}
+    /// MT* {2:...ГГММДДЧЧММ.}
     /// </summary>
-    /// <param name="text">{2:...HHMM.}</param>
+    /// <param name="text">{2:...ГГММДДЧЧММ.}</param>
     /// <returns>HH:MM:00</returns>
-    public static string ParseTime(string text)
+    public static (string date, string time) UParseDateTime(string text)
     {
-        string pattern = @"{2:[^}]+(\d{2})(\d{2})N}";
+        string pattern = @"{2:[^}]+(\d{6})(\d{2})(\d{2})N}";
         var match = Regex.Match(text, pattern);
 
-        return match.Success
-            ? $"{match.Groups[1].Value}:{match.Groups[2].Value}:00"
+        string date = UfebsDate(match.Groups[1].Value);
+        string time = match.Success
+            ? $"{match.Groups[2].Value}:{match.Groups[3].Value}:00"
             : "00:00:00";
+
+        return (date, time);
     }
 
     /// <summary>
@@ -208,7 +209,7 @@ public static class SwiftHelpers
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
-    public static (string date, string sum) ParseBal(string text)
+    public static (string date, string sum) UParseBal(string text)
     {
         string pattern = @"([CD])(\d{6})RUB(\d+,\d{0,2})";
         var match = Regex.Match(text, pattern);
@@ -222,7 +223,7 @@ public static class SwiftHelpers
             sum = "-" + sum; //TODO nonsense!
         }
 
-        return new(date, sum);
+        return (date, sum);
     }
 
     /// <summary>
@@ -241,7 +242,7 @@ public static class SwiftHelpers
         string ourId = match.Groups[4].Value[4..]; //NONREF | +220804000012157
         string corrId = match.Groups[5].Value;
 
-        return new(dc, dc == "1" ? ourId : corrId);
+        return (dc, dc == "1" ? ourId : corrId);
     }
 
     /// <summary>
@@ -274,7 +275,7 @@ public static class SwiftHelpers
             ? match.Groups[3].Value
             : null;
 
-        return new(inn, kpp);
+        return (inn, kpp);
     }
 
     /// <summary>
@@ -287,10 +288,26 @@ public static class SwiftHelpers
         string pattern = @"(\d{6})RUB(\d+,\d{0,2})";
         var match = Regex.Match(text, pattern);
 
+        string date = match.Groups[1].Value;
+        string sum = match.Groups[2].Value;
+
+        return (date, sum);
+    }
+
+    /// <summary>
+    /// MT103 :32A:
+    /// </summary>
+    /// <param name="text">220808RUB130,</param>
+    /// <returns></returns>
+    public static (string date, string sum) UParseDateSum(string text)
+    {
+        string pattern = @"(\d{6})RUB(\d+,\d{0,2})";
+        var match = Regex.Match(text, pattern);
+
         string date = UfebsDate(match.Groups[1].Value);
         string sum = UfebsSum(match.Groups[2].Value);
 
-        return new(date, sum);
+        return (date, sum);
     }
 
     /// <summary>
@@ -308,10 +325,10 @@ public static class SwiftHelpers
             ? match.Groups[3].Value
             : null;
 
-        return new(bic, acc);
+        return (bic, acc);
     }
 
-    public static (string accDocNo, string accDocDate, string priority, bool besp, string transKind) ParseRPP(string text)
+    public static (string accDocNo, string accDocDate, string priority, bool besp, string transKind) UParseRPP(string text)
     {
         string pattern = @"/RPP/(\d*)\.(\d{6})\.(\d)\.(\w{4})(\.\d*)?";
         var match = Regex.Match(text, pattern);
@@ -324,10 +341,10 @@ public static class SwiftHelpers
             ? match.Groups[5].Value[1..]
             : "01";
 
-        return new(accDocNo, accDocDate, priority, besp, transKind);
+        return (accDocNo, accDocDate, priority, besp, transKind);
     }
 
-    public static string ParseDAS(string text)
+    public static string UParseDAS(string text)
     {
         string pattern = @"/DAS/\d{6}\.(\d{6})";
         var match = Regex.Match(text, pattern);
@@ -335,7 +352,7 @@ public static class SwiftHelpers
         //ed.ChargeOffDate = UfebsDate(match.Groups[1].Value);
         //ed.ReceiptDate = match.Groups[2].Value);
 
-        return match.Groups[1].Value;
+        return UfebsDate(match.Groups[1].Value);
     }
 
     public static bool ParseTax(string text, string num, out string value)

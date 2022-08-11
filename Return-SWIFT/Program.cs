@@ -17,11 +17,16 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib;
+using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
 
+using System.IO;
+using System.Net.Sockets;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 using static CorrLib.SWIFT.SwiftHelpers;
 using static CorrLib.SWIFT.SwiftTranslit;
@@ -33,21 +38,15 @@ internal class Program
 {
     static readonly Dictionary<string, TransInfo> _d = new();
     static readonly Dictionary<string, TransInfo> _c = new();
-    
+
     static readonly List<string> _o950in = new();
     static readonly List<string> _o950out = new();
-
-    static readonly string? _acc = AppContext.GetData("Acc") as string;
-    static readonly string? _bic = AppContext.GetData("BIC") as string;
-    static readonly string? _corr = AppContext.GetData("Corr") as string;
-    static readonly string? _author = AppContext.GetData("EDAuthor") as string;
-    static readonly string? _receiver = AppContext.GetData("EDReceiver") as string;
 
     static readonly XmlWriterSettings _xmlSettings = new()
     {
         Encoding = Encoding.GetEncoding(1251),
-        Indent = true, 
-        NamespaceHandling = NamespaceHandling.OmitDuplicates, 
+        Indent = true,
+        NamespaceHandling = NamespaceHandling.OmitDuplicates,
         WriteEndDocumentOnClose = true
     };
 
@@ -88,8 +87,15 @@ internal class Program
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //enable Windows-1251
 
+        Console.WriteLine($"--- Документы --- {path}");
+
         if (Directory.Exists(path))
         {
+            foreach (string file in Directory.GetFiles(path))
+            {
+                PreprocessFile(file, outPath);
+            }
+
             foreach (string file in Directory.GetFiles(path))
             {
                 ProcessFile(file, outPath);
@@ -100,6 +106,11 @@ internal class Program
             string dir = Path.GetDirectoryName(path) ?? Directory.GetCurrentDirectory();
             string mask = Path.GetFileName(path) ?? "4030702000ED503*.txt";
 
+            foreach (string file in Directory.GetFiles(dir, "*"))
+            {
+                PreprocessFile(file, outPath);
+            }
+
             foreach (string file in Directory.GetFiles(dir, mask))
             {
                 ProcessFile(file, outPath);
@@ -107,14 +118,13 @@ internal class Program
         }
         else if (File.Exists(path))
         {
+            PreprocessFile(path, outPath);
             ProcessFile(path, outPath);
         }
         else
         {
             Console.WriteLine($"Input \"{path}\" not found");
         }
-
-        Console.WriteLine();
 
         for (int i = 0; i < _o950in.Count; i++)
         {
@@ -144,6 +154,89 @@ internal class Program
         #endregion finish
     }
 
+    private static void PreprocessFile(string inFile, string outFile)
+    {
+        #region Files start
+        if (Path.EndsInDirectorySeparator(outFile)) // Directory.Exists(outFile)
+        {
+            var file = new FileInfo(inFile);
+            int len = file.Extension.Length;
+            //outFile = Path.Combine(outFile, file.Name[..^len] + "_" + file.Extension);
+            outFile = Path.Combine(outFile, file.Name[..^len]);
+        }
+        #endregion Files start
+
+        string ext = Path.GetExtension(inFile);
+        string ext2 = ".~" + ext[1..];
+
+        if (ext.StartsWith(".~"))
+        {
+            return;
+        }
+
+        else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        else if (ext.Equals(".SF", StringComparison.OrdinalIgnoreCase))
+        {
+            string inFile2 = inFile + ".ED574.xml";
+            SenObject.Extract(inFile, inFile2);
+            PreprocessFile(inFile2, outFile + ".xml");
+        }
+
+        else if (ext.Equals(".SFD", StringComparison.OrdinalIgnoreCase))
+        {
+            string inFile2 = inFile + ".ED503";
+            SenObject.Extract(inFile, inFile2);
+            PreprocessFile(inFile2, outFile);
+        }
+
+        else if (ext.Equals(".ED503", StringComparison.OrdinalIgnoreCase))
+        {
+            string inFile2 = inFile + ".txt";
+            SenObject.Extract(inFile, inFile2, "SWIFTDocument");
+        }
+
+        //else if (ext.Equals(".ED574", StringComparison.OrdinalIgnoreCase))
+        //{
+        //    string inFile2 = inFile + ".xml";
+        //    SenObject.Extract(inFile, inFile2, "SWIFTDocument");
+        //}
+
+        else if (ext.Equals(".xml", StringComparison.OrdinalIgnoreCase))
+        {
+            var xdoc = XDocument.Load(inFile);
+            var root = xdoc.Root;
+
+            if (root is null)
+            {
+                return;
+            }
+
+            string name = root.Name.LocalName;
+            string date = root.Attribute("EDDate")!.Value;
+            string inFile2 = MakePath(outFile, date, ".xml");
+
+            if (name == "ED574")
+            {
+                File.Copy(inFile, inFile2, true);
+            }
+            else
+            {
+                File.Copy(inFile, inFile2, true);
+
+                inFile2 = inFile + ".txt";
+                ED100 ed = new(inFile);
+                string mt103 = ed.ToStringMT103();
+                File.WriteAllText(inFile2, mt103, Encoding.ASCII);
+            }
+        }
+
+        File.Move(inFile, Path.ChangeExtension(inFile, ext2));
+    }
+
     private static void ProcessFile(string inFile, string outFile)
     {
         #region Files start
@@ -153,6 +246,11 @@ internal class Program
             int len = file.Extension.Length;
             //outFile = Path.Combine(outFile, file.Name[..^len] + "_" + file.Extension);
             outFile = Path.Combine(outFile, file.Name[..^len]);
+        }
+
+        if (Path.GetExtension(inFile).StartsWith(".~"))
+        {
+            return;
         }
 
         //if (File.Exists(outFile))
@@ -178,7 +276,7 @@ internal class Program
                     break;
 
                 case "O900":
-                    Process900(inFile, $"{outFile}.{mt}.ED206.txt");
+                    Process900(inFile, $"{outFile}_.{mt}.ED206.txt");
                     break;
 
                 case "O950":
@@ -232,8 +330,8 @@ internal class Program
         var lines = File.ReadAllLines(inFile);
         ED100 ed = new(lines)
         {
-            EDAuthor = _author!,
-            EDReceiver = _receiver,
+            EDAuthor = CorrBank.EDAuthor!,
+            EDReceiver = CorrBank.EDReceiver,
         };
 
         if (ed.DC == "2")
@@ -242,36 +340,50 @@ internal class Program
             ed.EDNo = NextEDNo();
         }
 
-        ed.PayeeBIC ??= _bic;
-        ed.PayeeCorrespAcc ??= _corr;
+        ed.PayeeBIC ??= CorrBank.BIC;
+        ed.PayeeCorrespAcc ??= CorrBank.CorrAcc;
 
         TransInfo ti = new(ed, dc)
         {
-            EDRefAuthor = _receiver!
+            EDRefAuthor = CorrBank.EDReceiver!
         };
-
-        Console.WriteLine($"{ed.SwiftId}  {inFile}");
 
         var dictionary = dc == "1" ? _d : _c;
-        dictionary.Add(ed.SwiftId!, ti);
+        string id = ed.SwiftId!;
 
-        PacketEPD packet = new()
+        if (dictionary.ContainsKey(id))
         {
-            EDAuthor = ed.EDAuthor,
-            EDDate = ed.EDDate,
-            EDNo = packNo,
-            EDQuantity = "1",
-            EDReceiver = _receiver,
-            Sum = ed.Sum,
-            Elements = new ED100[1]
-        };
+            Console.WriteLine($"{id} !{ed.EDDate} {Path.GetFileName(inFile)} (double)");
+            return;
+        }
 
-        packet.Elements[0] = ed;
+        Console.WriteLine($"{id}  {ed.EDDate} {Path.GetFileName(inFile)}");
 
-        //outFile = $"_{date}_EPD_30109810200000000654_.xml"; // ALFA
+        dictionary.Add(id, ti);
 
-        using var writer = XmlWriter.Create(outFile, _xmlSettings);
-        packet.WriteXML(writer);
+        if (ed.SystemCode == "02") // ELEK
+        {
+            PacketEPD packet = new()
+            {
+                EDAuthor = ed.EDAuthor,
+                EDDate = ed.EDDate,
+                EDNo = packNo,
+                EDQuantity = "1",
+                EDReceiver = CorrBank.EDReceiver,
+                Sum = ed.Sum,
+                Elements = new ED100[1]
+            };
+
+            packet.Elements[0] = ed;
+
+            using var writer = XmlWriter.Create(MakePath(outFile, packet.EDDate), _xmlSettings);
+            packet.WriteXML(writer);
+        }
+        else // BESP
+        {
+            using var writer = XmlWriter.Create(MakePath(outFile, ed.EDDate), _xmlSettings);
+            ed.WriteXML(writer);
+        }
     }
 
     private static void Process900(string inFile, string outFile)
@@ -294,6 +406,14 @@ internal class Program
         string line = lines[n++];
         StringBuilder sb = new();
 
+        while (!line.StartsWith(":21:"))
+        {
+            sb.AppendLine(line);
+            line = lines[n++];
+        }
+
+        var (date, no) = SwiftID.Id(line[4..]);
+
         while (!line.StartsWith(":72:/NZP/"))
         {
             sb.AppendLine(line);
@@ -313,7 +433,7 @@ internal class Program
             .AppendLine(Cyr(sc.ToString()))
             .AppendLine(line);
 
-        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
+        File.WriteAllText(MakePath(outFile, date), sb.ToString(), Encoding.GetEncoding(1251));
     }
 
     private static void Process950(string inFile, string outFile)
@@ -333,17 +453,15 @@ internal class Program
 -}{5:{MAC:00000000}{CHK:000081FE3115}}
          */
 
-        Console.WriteLine($"Выписка {inFile}");
-
         var lines = File.ReadAllLines(inFile);
         int n = 0;
         string line = lines[n++];
         
-        string time = ParseTime(line);
+        string time = UParseDateTime(line).time;
 
         ED211 ed211 = new();
-        decimal debetSum = 0;
-        decimal creditSum = 0;
+        long debetSum = 0;
+        long creditSum = 0;
 
         // Счет корреспондентский
 
@@ -353,7 +471,7 @@ internal class Program
         // Входящий остаток
 
         while (!line.StartsWith(":60F:")) line = lines[n++];
-        ed211.EnterBal = ParseBal(line[5..]).sum;
+        ed211.EnterBal = UParseBal(line[5..]).sum;
 
         // Подсчитываем число движений
 
@@ -362,10 +480,7 @@ internal class Program
 
         while (!line.StartsWith(":62F:"))
         {
-            if (line.StartsWith(":61:"))
-            {
-                qty++;
-            }
+            if (line.StartsWith(":61:")) qty++;
 
             line = lines[n++];
         }
@@ -375,9 +490,11 @@ internal class Program
         while (!line.StartsWith(":62F:")) line = lines[n++];
         int finishN = n - 1;
 
-        var (date, bal) = ParseBal(line[5..]);
+        var (date, bal) = UParseBal(line[5..]);
         ed211.AbstractDate = date;
         ed211.OutBal = bal;
+
+        Console.WriteLine($"\n---- Выписка ---- {date} {Path.GetFileName(inFile)}");
 
         // Движения средств (имея итоги, читаем заново)
 
@@ -398,12 +515,12 @@ internal class Program
 
                 if (found)
                 {
-                    Console.WriteLine($"  {id}  {dc} {ti!.AccDocNo, 9}  на {ti.Sum, 18}");
+                    Console.WriteLine($"{id}  {dc}{ti!.AccDocNo, 9} {ti.Sum.DisplaySum(), 18}");
                 }
                 else
                 {
                     string accDocNo = lines[n + 1];
-                    Console.WriteLine($"  {id}  {dc} {accDocNo, 9}  ?  (строка {n + 1})");
+                    Console.WriteLine($"{id} !{dc}{accDocNo, 9}  ?  (строка {n + 1})");
                     // throw new ArgumentException($"Документ не найден.", id);
 
                     ti = new()
@@ -413,17 +530,17 @@ internal class Program
                         BICCorr = "0",
                         CorrAcc = "0",
                         DC = dc,
-                        EDRefAuthor = _receiver!,
+                        EDRefAuthor = CorrBank.EDReceiver!,
                         EDRefDate = date,
                         EDRefNo = "0",
-                        PayeePersonalAcc = debet ? "0" : _acc,
+                        PayeePersonalAcc = debet ? "0" : CorrBank.OurAcc,
                         PayerPersonalAcc = "0"
                     };
                 }
 
                 ed211.Elements[qty++] = ti!;
 
-                decimal kop = decimal.Parse(ti.Sum);
+                long kop = long.Parse(ti.Sum);
 
                 if (debet)
                 {
@@ -438,17 +555,17 @@ internal class Program
 
         // ED211 /TransInfo
 
-        ed211.BIC = _bic!;
-        ed211.EDAuthor = _author!;
+        ed211.BIC = CorrBank.BIC!;
+        ed211.EDAuthor = CorrBank.EDAuthor!;
         ed211.EDDate = date;
         ed211.EDNo = NextEDNo();
         ed211.EndTime = time;
-        ed211.EDReceiver = _receiver;
+        ed211.EDReceiver = CorrBank.EDReceiver;
 
         ed211.DebetSum = debetSum > 0 ? debetSum.ToString() : "0";
         ed211.CreditSum = creditSum > 0 ? creditSum.ToString() : "0";
 
-        using var writer = XmlWriter.Create(outFile + ".ED211.xml", _xmlSettings);
+        using var writer = XmlWriter.Create(MakePath(outFile, ed211.AbstractDate, ".ED211.xml"), _xmlSettings);
         ed211.WriteXML(writer);
         writer.Close();
 
@@ -456,12 +573,12 @@ internal class Program
 
         PacketESID packetESID = new()
         {
-            EDAuthor = _author!,
+            EDAuthor = CorrBank.EDAuthor!,
             EDDate = date,
             EDNo = NextEDNo()
         };
 
-        using var writer2 = XmlWriter.Create(outFile + ".ED206.xml", _xmlSettings);
+        using var writer2 = XmlWriter.Create(MakePath(outFile, ed211.AbstractDate, ".ED206.xml"), _xmlSettings);
         packetESID.WriteXML(writer2, false);
 
         foreach (var ti in ed211.Elements)
@@ -470,11 +587,11 @@ internal class Program
             {
                 ED206 ed206 = new(ti)
                 {
-                    Acc = _acc,
-                    EDAuthor = _author!,
+                    Acc = ed211.Acc, //CorrBank.OurAcc,
+                    EDAuthor = CorrBank.EDAuthor!,
                     EDDate = date,
                     EDNo = NextEDNo(),
-                    EDRefAuthor = _receiver!,
+                    EDRefAuthor = CorrBank.EDReceiver!,
                     TransDate = date,
                     TransTime = time
                 };
@@ -513,7 +630,7 @@ internal class Program
         sb.Append(Cyr(sc.ToString()));
         sb.AppendLine(line);
 
-        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251));
+        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251)); //TODO
     }
 
     private static void ProcessKvit(string inFile, string outFile)
@@ -524,6 +641,22 @@ internal class Program
 {451:0}}
         */
 
-        File.Copy(inFile, outFile, true);
+        File.Copy(inFile, outFile, true); //TODO
+    }
+
+    private static string MakePath(string path, string date, string ext = "")
+    {
+        string dir = Path.Combine(Path.GetDirectoryName(path)!, date);
+
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+
+        string file = ext == ""
+            ? Path.Combine(dir, Path.GetFileName(path))
+            : Path.Combine(dir, Path.GetFileNameWithoutExtension(path) + ext);
+
+        return file;
     }
 }
