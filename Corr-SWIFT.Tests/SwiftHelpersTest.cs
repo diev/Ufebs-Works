@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using static CorrLib.SWIFT.SwiftHelpers;
+using static CorrLib.SWIFT.SwiftParsers;
 
 namespace Corr_SWIFT.Tests;
 
@@ -14,7 +14,7 @@ public class SwiftHelpersTest
         var date = "2022-08-04";
         var expected = "220804";
 
-        var result = SwiftDate(date);
+        var result = date.ToSwiftDate();
 
         Assert.AreEqual(expected, result);
     }
@@ -25,7 +25,7 @@ public class SwiftHelpersTest
         string? date = null;
         string? expected = null;
 
-        var result = SwiftDate(date);
+        var result = date.ToSwiftDate();
 
         Assert.AreEqual(expected, result);
     }
@@ -36,7 +36,7 @@ public class SwiftHelpersTest
         var sum = "130,";
         var expected = "130,";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -47,7 +47,7 @@ public class SwiftHelpersTest
         var sum = "0";
         var expected = "0,";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -58,7 +58,7 @@ public class SwiftHelpersTest
         var sum = "001";
         var expected = "0,01";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -69,7 +69,7 @@ public class SwiftHelpersTest
         var sum = "010";
         var expected = "0,1";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -80,7 +80,7 @@ public class SwiftHelpersTest
         var sum = "100";
         var expected = "1,";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -91,7 +91,7 @@ public class SwiftHelpersTest
         var sum = "120";
         var expected = "1,2";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -102,7 +102,7 @@ public class SwiftHelpersTest
         var sum = "12000";
         var expected = "120,";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -113,7 +113,7 @@ public class SwiftHelpersTest
         var sum = "12050";
         var expected = "120,5";
 
-        var result = SwiftSum(sum);
+        var result = sum.ToSwiftSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -124,7 +124,7 @@ public class SwiftHelpersTest
         var date = "220804";
         var expected = "2022-08-04";
 
-        var result = UfebsDate(date);
+        var result = date.ToUfebsDate();
 
         Assert.AreEqual(expected, result);
     }

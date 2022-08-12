@@ -30,7 +30,7 @@
     "ALFA.BankSWIFT": "CITVRU2P",
     "ALFA.CorrSWIFT": "ALFARUMMXXX",
     "ALFA.CorrAccount": "30109810200000000654",
-    "ALFA.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
+    "ALFA.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name})",
     "ALFA.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
     "ALFA.SwiftNameLimit": 105,
     "ALFA.SwiftPurposeField": "70",
@@ -47,6 +47,20 @@
     "BBR.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
     "BBR.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
     "BBR.SwiftNameLimit": 105,
-    "BBR.SwiftPurposeField": "70"
+    "BBR.SwiftPurposeField": "70",
+    "TEST.OpenDir": "",
+    "TEST.OpenMask": "*.xml",
+    "TEST.SaveDir": "",
+    "TEST.SaveMask": "*_{id}.txt",
+    "TEST.SaveFormat": "SWIFT",
+    "TEST.BankINN": "7831001422",
+    "TEST.BankKPP": "784101001",
+    "TEST.BankSWIFT": "CITVRU2P",
+    "TEST.CorrSWIFT": "ALFARUMMXXX",
+    "TEST.CorrAccount": "30109810200000000654",
+    "TEST.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
+    "TEST.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
+    "TEST.SwiftNameLimit": 105,
+    "TEST.SwiftPurposeField": "70"
   }
 }
