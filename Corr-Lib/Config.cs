@@ -26,7 +26,8 @@ namespace CorrLib;
 
 public static class Config
 {
-    private static string _profile; //for fast access
+    private static string _profile = 
+        (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';; //for fast access
 
     // Save.Format
     public const string UfebsFormat = "УФЭБС";
@@ -58,92 +59,106 @@ public static class Config
         set => S(nameof(Profiles), value);
     }
 
+    [Profile]
     public static string OpenDir
     {
         get => GP(nameof(OpenDir));
         set => SP(nameof(OpenDir), value);
     }
 
+    [Profile]
     public static string OpenMask
     {
         get => GP(nameof(OpenMask));
         set => SP(nameof(OpenMask), value);
     }
 
+    [Profile]
     public static string SaveDir
     {
         get => GP(nameof(SaveDir));
         set => SP(nameof(SaveDir), value);
     }
 
+    [Profile]
     public static string SaveMask
     {
         get => GP(nameof(SaveMask));
         set => SP(nameof(SaveMask), value);
     }
 
+    [Profile]
     public static string SaveFormat
     {
         get => GP(nameof(SaveFormat));
         set => SP(nameof(SaveFormat), value);
     }
 
+    [Profile]
     public static string BankINN
     {
         get => GP(nameof(BankINN));
         set => SP(nameof(BankINN), value);
     }
 
+    [Profile]
     public static string BankKPP
     {
         get => GP(nameof(BankKPP));
         set => SP(nameof(BankKPP), value);
     }
 
+    [Profile]
     public static string BankSWIFT
     {
         get => GP(nameof(BankSWIFT));
         set => SP(nameof(BankSWIFT), value);
     }
 
+    [Profile]
     public static string CorrSWIFT
     {
         get => GP(nameof(CorrSWIFT));
         set => SP(nameof(CorrSWIFT), value);
     }
 
+    [Profile]
     public static string CorrAccount
     {
         get => GP(nameof(CorrAccount));
         set => SP(nameof(CorrAccount), value);
     }
 
+    [Profile]
     public static string TemplatesName
     {
         get => GP(nameof(TemplatesName));
         set => SP(nameof(TemplatesName), value);
     }
 
+    [Profile]
     public static string TemplatesPurpose
     {
         get => GP(nameof(TemplatesPurpose));
         set => SP(nameof(TemplatesPurpose), value);
     }
 
+    [Profile]
     public static int SwiftNameLimit
     {
         get => GPInt(nameof(SwiftNameLimit));
         set => SP(nameof(SwiftNameLimit), value);
     }
 
+    [Profile]
     public static string SwiftPurposeField
     {
         get => GP(nameof(SwiftPurposeField));
         set => SP(nameof(SwiftPurposeField), value);
     }
 
-    static Config()
-        => _profile = (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';
+    //static Config()
+    //    => _profile = (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';
 
     public static void Save(string appPath)
     {
@@ -163,9 +178,9 @@ public static class Config
         {
             switch (p.Name)
             {
-                case nameof(ED807):
-                    entry![nameof(ED807)] = ED807;
-                    break;
+                //case nameof(ED807):
+                //    entry![nameof(ED807)] = ED807;
+                //    break;
 
                 case nameof(Profile):
                     entry![nameof(Profile)] = Profile;
@@ -183,14 +198,18 @@ public static class Config
                     break;
 
                 default: // with Profile
+                    var info = t.GetProperty(p.Name);
+                    var profiled = Attribute.IsDefined(info!, typeof(ProfileAttribute));
+                    string name = profiled ? _profile + p.Name : p.Name;
+
                     switch (p.PropertyType.Name)
                     {
                         case "String":
-                            entry![_profile + p.Name] = p.GetValue(p) as string;
+                            entry![name] = p.GetValue(p) as string;
                             break;
 
                         case "Int32":
-                            entry![_profile + p.Name] = p.GetValue(p) as int?;
+                            entry![name] = p.GetValue(p) as int?;
                             break;
                     }
                     break;
@@ -273,4 +292,9 @@ public static class Config
         => AppDomain.CurrentDomain.SetData(name, value);
 
     #endregion Setters
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+internal class ProfileAttribute : Attribute
+{
 }
