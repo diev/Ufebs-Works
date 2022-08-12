@@ -21,20 +21,37 @@ namespace CorrLib;
 
 public static class CorrBank
 {
-    const string _class = nameof(CorrBank) + ".";
+    public static string? Profile { get; set; } = 
+        AppContext.GetData(nameof(Profile)) as string;
+
+    //
 
     public static string? BIC
-        => AppContext.GetData(_class + nameof(BIC)) as string;
+        => AppContext.GetData(nameof(BIC)) as string;
 
     public static string? CorrAcc
-        => AppContext.GetData(_class + nameof(CorrAcc)) as string;
+        => AppContext.GetData(nameof(CorrAcc)) as string;
 
-    public static string? EDAuthor
-        => AppContext.GetData(_class + nameof(EDAuthor)) as string;
+    public static string? SWIFT
+       => AppContext.GetData(nameof(SWIFT)) as string;
 
-    public static string? EDReceiver
-        => AppContext.GetData(_class + nameof(EDReceiver)) as string;
+    public static string? UIC
+        => AppContext.GetData(nameof(UIC)) as string;
 
-    public static string? OurAcc
-        => AppContext.GetData(_class + nameof(OurAcc)) as string;
+    //
+
+    public static string? ProfileBIC
+        => AppContext.GetData(Profile + ".BIC") as string;
+
+    public static string? ProfileCorrAcc
+        => AppContext.GetData(Profile + ".CorrAcc") as string;
+
+    public static string? ProfilePayAcc
+        => AppContext.GetData(Profile + ".PayAcc") as string;
+
+    public static string? ProfileSWIFT
+        => AppContext.GetData(Profile + ".SWIFT") as string;
+
+    public static string? ProfileUIC
+        => AppContext.GetData(Profile + ".UIC") as string;
 }

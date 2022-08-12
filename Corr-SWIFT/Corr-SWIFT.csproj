@@ -44,4 +44,6 @@
     <Exec Command="if $(ConfigurationName) == Release call Properties\PostBuild.bat" />
   </Target>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
 </Project>

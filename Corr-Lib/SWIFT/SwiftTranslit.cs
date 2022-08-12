@@ -188,9 +188,7 @@ CR LF Space (Пробел)
     /// <param name="value">Символ на кирилице</param>
     /// <returns>Символ на латинице</returns>
     public static char Lat(char value)
-        => TRANSLAT.TryGetValue(value, out char result)
-        ? result
-        : value;
+        => TRANSLAT.TryGetValue(value, out char result) ? result : value;
 
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
@@ -198,16 +196,14 @@ CR LF Space (Пробел)
     /// <param name="value">Символ на латинице</param>
     /// <returns>Символ на кирилице</returns>
     public static char Cyr(char value)
-        => TRANSCYR.TryGetValue(value, out char result)
-        ? result
-        : value;
+        => TRANSCYR.TryGetValue(value, out char result) ? result : value;
 
     /// <summary>
     /// Транслитерация по правилам SWIFT-RUR
     /// </summary>
     /// <param name="value">Строка на кирилице</param>
     /// <returns>Строка на латинице</returns>
-    public static string? Lat(string? value)
+    public static string? Lat(this string? value)
     {
         if (value is null)
             return null;
@@ -331,7 +327,15 @@ CR LF Space (Пробел)
     /// </summary>
     /// <param name="value">Строка на латинице</param>
     /// <returns>Строка на кирилице</returns>
-    public static string? Cyr(string? value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
+    public static string Cyr(this StringBuilder value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
+        => value.ToString().Cyr();
+
+    /// <summary>
+    /// Транслитерация по правилам SWIFT-RUR
+    /// </summary>
+    /// <param name="value">Строка на латинице</param>
+    /// <returns>Строка на кирилице</returns>
+    public static string? Cyr(this string? value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
     {
         if (value is null)
             return null;

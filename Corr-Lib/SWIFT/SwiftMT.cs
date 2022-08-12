@@ -33,6 +33,9 @@ namespace CorrLib.SWIFT;
 /// </summary>
 public static class SwiftMT
 {
+    private const int _nameLimit = 105; // 3*35x Config.SwiftNameLimit: 105, 160
+    private const bool _purpose70 = true; // Config.SwiftPurposeField: :70:, :72://NZP/
+
     public static ED100 Load(this ED100 ed, string[] lines)
     {
         int n = 0;
@@ -57,7 +60,7 @@ public static class SwiftMT
 
         // Sum
 
-        var (date, sum) = UParseDateSum(line[5..]); // :32A:
+        var (date, sum) = line[5..].UParseDateSum(); // :32A:
         ed.ChargeOffDate = date;
         ed.Sum = sum;
          
@@ -67,7 +70,7 @@ public static class SwiftMT
         ed.PayerPersonalAcc = line[^20..];
 
         line = lines[n++];
-        var (INN, KPP) = ParseINNKPP(line);
+        var (INN, KPP) = line.ParseINNKPP();
         ed.PayerINN = INN;
         ed.PayerKPP = KPP;
 
@@ -82,7 +85,7 @@ public static class SwiftMT
             line = lines[n++];
         }
 
-        ed.PayerName = Cyr(payer);
+        ed.PayerName = payer.Cyr();
 
         // Payer Bank
 
@@ -93,9 +96,9 @@ public static class SwiftMT
         }
         else
         {
-            var (bic, acc) = ParseBICAcc(line[5..]); // :52D:
+            var (bic, correspAcc) = line[5..].ParseBICAcc(); // :52D:
             ed.PayerBIC = bic;
-            ed.PayerCorrespAcc = acc;
+            ed.PayerCorrespAcc = correspAcc;
         }
 
         // DC, Acc
@@ -118,7 +121,7 @@ public static class SwiftMT
         {
             if (line.StartsWith(":57D:"))
             {
-                var (bic, acc) = ParseBICAcc(line[5..]); // :57D:
+                var (bic, acc) = line[5..].ParseBICAcc(); // :57D:
                 ed.PayeeBIC = bic;
                 ed.PayeeCorrespAcc = acc;
             }
@@ -135,14 +138,14 @@ public static class SwiftMT
 
             if (line.StartsWith("INN"))
             {
-                (INN, KPP) = ParseINNKPP(line);
+                (INN, KPP) = line.ParseINNKPP();
                 ed.PayeeINN = INN;
                 ed.PayeeKPP = KPP;
             }
         }
         else if (line.StartsWith(":59:INN"))
         {
-            (INN, KPP) = ParseINNKPP(line[4..]);
+            (INN, KPP) = line[4..].ParseINNKPP();
             ed.PayeeINN = INN;
             ed.PayeeKPP = KPP;
         }
@@ -158,7 +161,7 @@ public static class SwiftMT
             line = lines[n++];
         }
 
-        ed.PayeeName = Cyr(payee);
+        ed.PayeeName = payee.Cyr();
 
         // Purpose
 
@@ -193,7 +196,7 @@ public static class SwiftMT
             if (line.StartsWith("/RPP/")) // /RPP/3261.220804.5.ELEK[.01]
             {
                 nzp = false;
-                var (accDocNo, accDocDate, priority, besp, transKind) = UParseRPP(line);
+                var (accDocNo, accDocDate, priority, besp, transKind) = line.UParseRPP();
 
                 ed.AccDocNo = accDocNo;
                 ed.AccDocDate = accDocDate;
@@ -222,7 +225,7 @@ public static class SwiftMT
             else if (line.StartsWith("/DAS/"))
             {
                 nzp = false;
-                ed.ReceiptDate = UfebsDate(line[12..18]); // /DAS/220804.220804.000000.000000
+                ed.ReceiptDate = line[12..18].ToUfebsDate(); // /DAS/220804.220804.000000.000000
             }
 
             // UIP: PaymentID
@@ -252,7 +255,7 @@ public static class SwiftMT
             line = lines[n++];
         }
 
-        ed.Purpose = Cyr(purpose);
+        ed.Purpose = purpose.Cyr();
 
         // DepartmentalInfo
 
@@ -263,26 +266,26 @@ public static class SwiftMT
 
             while (line.StartsWith("/N"))
             {
-                if (ParseTax(line, "N4", out string n4))
-                    ed.CBC = Cyr(n4);
+                if (line.ParseTax("N4", out string n4))
+                    ed.CBC = n4.Cyr();
 
-                if (ParseTax(line, "N5", out string n5))
-                    ed.OKATO = Cyr(n5);
+                if (line.ParseTax("N5", out string n5))
+                    ed.OKATO = n5.Cyr();
 
-                if (ParseTax(line, "N6", out string n6))
-                    ed.PaytReason = Cyr(n6);
+                if (line.ParseTax("N6", out string n6))
+                    ed.PaytReason = n6.Cyr();
 
-                if (ParseTax(line, "N7", out string n7))
-                    ed.TaxPeriod = Cyr(n7);
+                if (line.ParseTax("N7", out string n7))
+                    ed.TaxPeriod = n7.Cyr();
 
-                if (ParseTax(line, "N8", out string n8))
-                    ed.DocNo = Cyr(n8);
+                if (line.ParseTax("N8", out string n8))
+                    ed.DocNo = n8.Cyr();
 
-                if (ParseTax(line, "N9", out string n9))
-                    ed.DocDate = Cyr(n9);
+                if (line.ParseTax("N9", out string n9))
+                    ed.DocDate = n9.Cyr();
 
-                if (ParseTax(line, "N10", out string n10))
-                    ed.TaxPaytKind = Cyr(n10);
+                if (line.ParseTax("N10", out string n10))
+                    ed.TaxPaytKind = n10.Cyr();
 
                 line = lines[n++];
             }
@@ -295,8 +298,11 @@ public static class SwiftMT
     /// SWIFT-RUR 6: MT103 ("ОДНОКРАТНОЕ ЗАЧИСЛЕНИЕ КЛИЕНТСКИХ СРЕДСТВ")
     /// </summary>
     /// <param name="ed"></param>
+    /// <param name="bankSwift">Service identifier</param>
+    /// <param name="corrSwift">Destination address with default Logical terminal address XXX</param>
+    /// <param name="payAcc"></param>
     /// <returns></returns>
-    public static string ToStringMT103(this ED100 ed)
+    public static string ToStringMT103(this ED100 ed, string bankSwift, string corrSwift, string payAcc)
     {
         string sum = ed.Sum; // save for BESP if over 100 000 000.00
         var (Num, Id) = SwiftID.ID(ed);
@@ -307,14 +313,14 @@ public static class SwiftMT
         sb
             // Basic header
             .Append("{1:F01") // Block 1 identifier : Application identifier
-            .Append(Config.BankSWIFT) // Service identifier
+            .Append(bankSwift) // Service identifier
             .Append("AXXX") // Logical terminal address
             .Append(Num) // Session number
             .Append('}')
 
             // Application header
             .Append("{2:I103") // Block 2 identifier : In, MT103
-            .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX X
+            .Append(corrSwift.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX X
             .Append("N}") // Message priority (Normal)
 
             // User header
@@ -341,7 +347,7 @@ public static class SwiftMT
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
 
-        sb.AppendLine($":32A:{SwiftDate(ed.ChargeOffDate)}RUB{SwiftSum(ed.Sum)}");
+        sb.AppendLine($":32A:{ed.ChargeOffDate.ToSwiftDate()}RUB{ed.Sum.ToSwiftSum()}");
 
         // Плательщик
 
@@ -368,12 +374,12 @@ public static class SwiftMT
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
 
-        sb.AppendLineIf(Lat(ed.PayerName)!.Div35(Config.SwiftNameLimit));
+        sb.AppendLineIf(ed.PayerName.Lat()!.Div35(_nameLimit));
 
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
 
-        sb.AppendLine($":52A:{Config.BankSWIFT}");
+        sb.AppendLine($":52A:{bankSwift}");
         //sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
         //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
         //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
@@ -385,7 +391,7 @@ public static class SwiftMT
         // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
         // если только иное особо не оговорено в двустороннем соглашении.
 
-        sb.AppendLine($":53B:/D/{Config.CorrAccount}"); // Корсчет нашего банка в том банке
+        sb.AppendLine($":53B:/D/{payAcc}"); // Корсчет нашего банка в том банке
 
         // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
         // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.
@@ -414,7 +420,7 @@ public static class SwiftMT
 
         sb.AppendLine($":59:/{ed.PayeePersonalAcc}")
             .AppendLineIf(ed.PayeeINN, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmptyNorZeros()}")
-            .AppendLineIf(ed.PayeeName, Lat(ed.PayeeName)!.Div35(Config.SwiftNameLimit));
+            .AppendLineIf(ed.PayeeName, ed.PayeeName.Lat()!.Div35(_nameLimit));
 
         // Информация о платеже (4*35x + :72:/NZP/)
         // При недостаточной размерности поля допускается продолжение информации о назначении платежа в поле 72 с кодовым словом /NZP/.
@@ -442,9 +448,9 @@ public static class SwiftMT
 
         if (ed.Purpose != null)
         {
-            purpose = Lat(ed.Purpose)!.Prepare35();
+            purpose = ed.Purpose.Lat()!.Prepare35();
 
-            if (Config.SwiftPurposeField == "70")
+            if (_purpose70)
             {
                 sb.Append(":70:");
 
@@ -508,9 +514,9 @@ public static class SwiftMT
 
         sb.Append(":72:")
             // Реквизиты расчетного документа
-            .AppendLine($"/RPP/{ed.AccDocNo}.{SwiftDate(ed.AccDocDate)}.{ed.Priority}.{paytKind}{transKind}") //.{SwiftDate(ed.ChargeOffDate)}.{ed.TransKind}")
+            .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate.ToSwiftDate()}.{ed.Priority}.{paytKind}{transKind}") //.{SwiftDate(ed.ChargeOffDate)}.{ed.TransKind}")
             // Даты из расчетного документа
-            .AppendLine($"/DAS/{SwiftDate(ed.ChargeOffDate)}.{SwiftDate(ed.ReceiptDate)}.000000.000000");
+            .AppendLine($"/DAS/{ed.ChargeOffDate.ToSwiftDate()}.{ed.ReceiptDate.ToSwiftDate()}.000000.000000");
 
         //TODO Реквизиты платежного ордера
         // .AppendLine($"/RPO/...
@@ -540,9 +546,9 @@ public static class SwiftMT
         if (ed.Tax)
         {
             sb.Append(":77B:")
-                .AppendLine($"/N10/{Lat(ed.TaxPaytKind) ?? "0"}/N4/{Lat(ed.CBC) ?? "0"}")
-                .AppendLine($"/N5/{Lat(ed.OKATO) ?? "0"}/N6/{Lat(ed.PaytReason) ?? "0"}/N7/{Lat(ed.TaxPeriod) ?? "0"}")
-                .AppendLine($"/N8/{Lat(ed.DocNo) ?? "0"}/N9/{Lat(ed.DocDate) ?? "0"}");
+                .AppendLine($"/N10/{ed.TaxPaytKind.Lat() ?? "0"}/N4/{ed.CBC.Lat() ?? "0"}")
+                .AppendLine($"/N5/{ed.OKATO.Lat() ?? "0"}/N6/{ed.PaytReason.Lat() ?? "0"}/N7/{ed.TaxPeriod.Lat() ?? "0"}")
+                .AppendLine($"/N8/{ed.DocNo.Lat() ?? "0"}/N9/{ed.DocDate.Lat() ?? "0"}");
         }
 
         #endregion SWIFT TEXT
@@ -560,205 +566,205 @@ public static class SwiftMT
     /// </summary>
     /// <param name="ed"></param>
     /// <returns></returns>
-    public static string ToStringMT202(this ED100 ed) //TODO !!!
-    {
-        string sum = ed.Sum; // save for BESP if over 100 000 000.00
-        var (Num, Id) = SwiftID.ID(ed);
+    //public static string ToStringMT202(this ED100 ed) //TODO !!!
+    //{
+    //    string sum = ed.Sum; // save for BESP if over 100 000 000.00
+    //    var (Num, Id) = SwiftID.ID(ed);
 
-        //ed.Translit(); //TODO !!!
+    //    //ed.Translit(); //TODO !!!
 
-        // Block Structure
+    //    // Block Structure
 
-        var sb = new StringBuilder();
-        sb
-            // Basic header
-            .Append("{1:F01") // Block 1 identifier : Application identifier
-            .Append(Config.BankSWIFT) // Service identifier
-            .Append("AXXX") // Logical terminal address
-            .Append(Num) // Session number (shorten for {1: })
-            .Append('}')
+    //    var sb = new StringBuilder();
+    //    sb
+    //        // Basic header
+    //        .Append("{1:F01") // Block 1 identifier : Application identifier
+    //        .Append(Config.BankSWIFT) // Service identifier
+    //        .Append("AXXX") // Logical terminal address
+    //        .Append(Num) // Session number (shorten for {1: })
+    //        .Append('}')
 
-            // Application header
-            .Append("{2:I202") // Block 2 identifier : In, MT202
-            .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX
-            .Append("N}") // Message priority (Normal)
+    //        // Application header
+    //        .Append("{2:I202") // Block 2 identifier : In, MT202
+    //        .Append(Config.CorrSWIFT.PadRight(12, 'X')) // Destination address with default Logical terminal address XXX
+    //        .Append("N}") // Message priority (Normal)
 
-            // User header
-            .Append("{3:{113:RUR6}{121:") // Block 3 identifier : Version
-            .Append(Guid.NewGuid()) // uuid v4
-            .Append("}}")
+    //        // User header
+    //        .Append("{3:{113:RUR6}{121:") // Block 3 identifier : Version
+    //        .Append(Guid.NewGuid()) // uuid v4
+    //        .Append("}}")
 
-            // Text
-            .AppendLine("{4:"); // Block 4 identifier : 
+    //        // Text
+    //        .AppendLine("{4:"); // Block 4 identifier : 
 
-        #region SWIFT TEXT
+    //    #region SWIFT TEXT
 
-        // Референс Отправителя (16x)
+    //    // Референс Отправителя (16x)
 
-        sb.AppendLine($":20:+{Id}");
+    //    sb.AppendLine($":20:+{Id}");
 
-        // Связанный референс (16x)
+    //    // Связанный референс (16x)
 
-        sb.AppendLine(":21:NONREF");
+    //    sb.AppendLine(":21:NONREF");
 
-        // Дата валютирования/Валюта/Сумма межбанковского расчета
+    //    // Дата валютирования/Валюта/Сумма межбанковского расчета
 
-        sb.AppendLine($":32A:{ed.ChargeOffDate}RUB{ed.Sum}");
+    //    sb.AppendLine($":32A:{ed.ChargeOffDate}RUB{ed.Sum}");
 
-        // Банк-плательщик
+    //    // Банк-плательщик
 
-        sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}") // OurBIC.OurCorrACC
-            .AppendLine(Lat("АО Сити Инвест Банк"))
-            .AppendLine(Lat("г.Санкт-Петербург"));
+    //    sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}") // OurBIC.OurCorrACC
+    //        .AppendLine(Lat("АО Сити Инвест Банк"))
+    //        .AppendLine(Lat("г.Санкт-Петербург"));
 
-        // Корреспондент Отправителя (реквизиты счета, который должен быть использован при исполнении платежных инструкций)
-        // Если Отправитель и Получатель сообщения обслуживают рублевые счета друг друга, и необходимо определить,
-        // будет ли производиться зачисление или списание средств, в данном поле после слеша “/” указывается код операции
-        // (С - кредитование или D - дебетование) и далее следует еще один слеш “/”и номер соответствующего счета.
-        // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
-        // если только иное особо не оговорено в двустороннем соглашении.
+    //    // Корреспондент Отправителя (реквизиты счета, который должен быть использован при исполнении платежных инструкций)
+    //    // Если Отправитель и Получатель сообщения обслуживают рублевые счета друг друга, и необходимо определить,
+    //    // будет ли производиться зачисление или списание средств, в данном поле после слеша “/” указывается код операции
+    //    // (С - кредитование или D - дебетование) и далее следует еще один слеш “/”и номер соответствующего счета.
+    //    // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
+    //    // если только иное особо не оговорено в двустороннем соглашении.
 
-        sb.AppendLine($":53B:/D/{Config.CorrAccount}"); // Корсчет нашего банка в том банке
+    //    sb.AppendLine($":53B:/D/{Config.CorrAccount}"); // Корсчет нашего банка в том банке
 
-        // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
-        // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.
-        //sb.AppendLine($":56D:/{ed.PayeePersonalAcc}") //??
-        //.AppendLine(SwiftTranslit.Lat("ББР"))
-        //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
+    //    // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
+    //    // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.
+    //    //sb.AppendLine($":56D:/{ed.PayeePersonalAcc}") //??
+    //    //.AppendLine(SwiftTranslit.Lat("ББР"))
+    //    //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
 
-        // Банк Бенефициара
-        // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
+    //    // Банк Бенефициара
+    //    // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
 
-        sb.AppendLine($":57D://RU{ed.PayeeBIC}{ed.PayeeCorrespAcc.AddNotEmpty()}");
+    //    sb.AppendLine($":57D://RU{ed.PayeeBIC}{ed.PayeeCorrespAcc.AddNotEmpty()}");
 
-        // Указание местонахождения Банка бенефициара при проведении платежа через расчетную систему Банка России обязательно.
-        // Указание адреса Банка бенефициара является необязательным, при наличии, отделяется запятой от наименования.
+    //    // Указание местонахождения Банка бенефициара при проведении платежа через расчетную систему Банка России обязательно.
+    //    // Указание адреса Банка бенефициара является необязательным, при наличии, отделяется запятой от наименования.
 
-        // 4*32x
-        //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
-        //.AppendLine(SwiftTranslit.Lat("г.Город"));
+    //    // 4*32x
+    //    //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
+    //    //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
-        //sb.AppendLine("BANK"); //TODO Название банка и его город по его БИК (пока просто заглушка)
+    //    //sb.AppendLine("BANK"); //TODO Название банка и его город по его БИК (пока просто заглушка)
 
-        // Банк-Бенефициар
+    //    // Банк-Бенефициар
 
-        sb.AppendLine($":58D:/{ed.PayeePersonalAcc}")
-            .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmpty()}");
+    //    sb.AppendLine($":58D:/{ed.PayeePersonalAcc}")
+    //        .AppendLineIf(ed.PayeeINN != null, $"INN{ed.PayeeINN}{ed.PayeeKPP.AddKPPNotEmpty()}");
 
-        if (ed.PayeeName != null)
-        {
-            var s = ed.PayeeName.Prepare35();
+    //    if (ed.PayeeName != null)
+    //    {
+    //        var s = ed.PayeeName.Prepare35();
 
-            for (int i = 0; i < 3; i++)
-            {
-                var s35 = s.Slice(i * 35, 35).TrimEnd();
+    //        for (int i = 0; i < 3; i++)
+    //        {
+    //            var s35 = s.Slice(i * 35, 35).TrimEnd();
 
-                if (s35.Length == 0) break;
+    //            if (s35.Length == 0) break;
 
-                sb.AppendLine(s35.ToString());
-            }
-        }
+    //            sb.AppendLine(s35.ToString());
+    //        }
+    //    }
 
-        // Информация о платеже (4*35x + :72:/NZP/)
-        // При недостаточной размерности поля допускается продолжение информации о назначении платежа в поле 72 с кодовым словом /NZP/.
-        // Суммарный объем информации о назначении платежа, содержащийся в поле 70 и в поле 72 с кодовым словом /NZP/,
-        // после транслитерации не должен превышать 210 знаков.
-        //
-        // В соответствии с Инструкцией Банка России N117-И от 15.06.2004 г. при составлении платежных инструкций для осуществления расчетов
-        // в российских рублях по валютным операциям в поле 70 должен быть указан код вида валютной операции, и может указываться номер паспорта сделки.
-        // Перед значением кода вида валютной операции проставляется разделительный символ VO, а перед номером паспорта сделки, если он указывается,
-        // - разделительный символ PS. Разделительные символы VO, PS указываются прописными латинскими буквами.
-        // Эта информация должна быть заключена в фигурные скобки и помещена в начале поля «Назначение платежа» в следующем виде:
-        // {VO<код>[PS <номер паспорта сделки>]}. Пробелы внутри фигурных скобок не допускаются.
-        // Однако, символы фигурных скобок не могут содержаться в тексте сообщений SWIFT. Поэтому применяется следующее исключение из правил транслитерации.
-        // Применяется только для поля 70 в сообщениях SWIFT МТ101 и МТ103 и для поля 72 с кодом /NZP/ МТ202 в связи с Инструкцией Банка России N117-И от 15.06.2004г.
-        // На основании разъяснений Банка России символы фигурных скобок, ограничивающие закодированную информацию валютной операции в поле «Назначение платежа»
-        // платежного поручения, процессом транслитерации с кириллицы на латиницу отображаются круглыми скобками в соответствующем поле(поле 70) сообщения SWIFT.
-        // А при обратной транслитерации круглые скобки отображаются символами фигурных скобок. Условием для этого является наличие следующей комбинации,
-        // расположенной, начиная с первой позиции поля 70: апостроф - круглая скобка - VO<код>[PS < номер паспорта сделки >] - круглая скобка - апостроф.
-        // '(VO10010)'OPLATA PO DOGOVORU
-        // '(VO10040PS04060001/0001/0000/1/0)'OPLATA PO DOGOVORU
+    //    // Информация о платеже (4*35x + :72:/NZP/)
+    //    // При недостаточной размерности поля допускается продолжение информации о назначении платежа в поле 72 с кодовым словом /NZP/.
+    //    // Суммарный объем информации о назначении платежа, содержащийся в поле 70 и в поле 72 с кодовым словом /NZP/,
+    //    // после транслитерации не должен превышать 210 знаков.
+    //    //
+    //    // В соответствии с Инструкцией Банка России N117-И от 15.06.2004 г. при составлении платежных инструкций для осуществления расчетов
+    //    // в российских рублях по валютным операциям в поле 70 должен быть указан код вида валютной операции, и может указываться номер паспорта сделки.
+    //    // Перед значением кода вида валютной операции проставляется разделительный символ VO, а перед номером паспорта сделки, если он указывается,
+    //    // - разделительный символ PS. Разделительные символы VO, PS указываются прописными латинскими буквами.
+    //    // Эта информация должна быть заключена в фигурные скобки и помещена в начале поля «Назначение платежа» в следующем виде:
+    //    // {VO<код>[PS <номер паспорта сделки>]}. Пробелы внутри фигурных скобок не допускаются.
+    //    // Однако, символы фигурных скобок не могут содержаться в тексте сообщений SWIFT. Поэтому применяется следующее исключение из правил транслитерации.
+    //    // Применяется только для поля 70 в сообщениях SWIFT МТ101 и МТ103 и для поля 72 с кодом /NZP/ МТ202 в связи с Инструкцией Банка России N117-И от 15.06.2004г.
+    //    // На основании разъяснений Банка России символы фигурных скобок, ограничивающие закодированную информацию валютной операции в поле «Назначение платежа»
+    //    // платежного поручения, процессом транслитерации с кириллицы на латиницу отображаются круглыми скобками в соответствующем поле(поле 70) сообщения SWIFT.
+    //    // А при обратной транслитерации круглые скобки отображаются символами фигурных скобок. Условием для этого является наличие следующей комбинации,
+    //    // расположенной, начиная с первой позиции поля 70: апостроф - круглая скобка - VO<код>[PS < номер паспорта сделки >] - круглая скобка - апостроф.
+    //    // '(VO10010)'OPLATA PO DOGOVORU
+    //    // '(VO10040PS04060001/0001/0000/1/0)'OPLATA PO DOGOVORU
 
-        // Информация Отправителя Получателю (6*35x)
-        // Используются следующие кодовые слова:
+    //    // Информация Отправителя Получателю (6*35x)
+    //    // Используются следующие кодовые слова:
 
-        // /RPP/ — Реквизиты расчетного документа в соответствии с требованиями Банка России.
-        // "Номер расчетного документа.Дата расчетного документа в формате ГГММДД.Очередность платежа.Вид платежа[[.Дата проведения платежа].Вид операции]"
-        // Данное подполе может иметь значение
-        // 01 – платежное поручение (ED101, default)
-        // 02 – платежное требование (ED103)
-        // 06 – инкассовое поручение (ED104)
-        // 16 – платежный ордер (ED105)
-        // Если подполе не используется, то по умолчанию считается, что документ представляет собой платежное поручение.
-        // ?? ed.PaytKind ?? Вид платежа: Используется один из следующих кодов:
-        // POST - почтой
-        // TELG – телеграфом
-        // ELEK – электронными средствами связи
-        // BESP – по системе БЭСП (Использование сервиса срочного перевода является обязательным для платежей на сумму от 100 000 000 рублей!).
+    //    // /RPP/ — Реквизиты расчетного документа в соответствии с требованиями Банка России.
+    //    // "Номер расчетного документа.Дата расчетного документа в формате ГГММДД.Очередность платежа.Вид платежа[[.Дата проведения платежа].Вид операции]"
+    //    // Данное подполе может иметь значение
+    //    // 01 – платежное поручение (ED101, default)
+    //    // 02 – платежное требование (ED103)
+    //    // 06 – инкассовое поручение (ED104)
+    //    // 16 – платежный ордер (ED105)
+    //    // Если подполе не используется, то по умолчанию считается, что документ представляет собой платежное поручение.
+    //    // ?? ed.PaytKind ?? Вид платежа: Используется один из следующих кодов:
+    //    // POST - почтой
+    //    // TELG – телеграфом
+    //    // ELEK – электронными средствами связи
+    //    // BESP – по системе БЭСП (Использование сервиса срочного перевода является обязательным для платежей на сумму от 100 000 000 рублей!).
 
-        // /RPO/ — Реквизиты платежного ордера
-        // "Номер частичного платежа.Шифр расчетного документа.Номер расчетного документа.Дата расчетного документа.Сумма остатка платежа"
-        // Шифр расчетного документа может иметь значение:
-        // 01 – платежное поручение
-        // 02 – платежное требование
-        // 06 – инкассовое поручение
+    //    // /RPO/ — Реквизиты платежного ордера
+    //    // "Номер частичного платежа.Шифр расчетного документа.Номер расчетного документа.Дата расчетного документа.Сумма остатка платежа"
+    //    // Шифр расчетного документа может иметь значение:
+    //    // 01 – платежное поручение
+    //    // 02 – платежное требование
+    //    // 06 – инкассовое поручение
 
-        // /DAS/ — Даты из расчетного документа
-        // Все подполя этого кодового поля представляют собой даты в формате ГГММДД
-        // "Дата списания со счета плательщика (71).Поступило в банк плательщика (62).Отметка банка получателя (48).Дата помещения в картотеку (63)"
-        // 1) Номера полей расчетного документа Банка России приведены согласно Положению о безналичных расчетах в Российской Федерации №2-П от 3 октября 2002г.
-        // 2) В случае, когда формат исходного расчетного документа не содержит каких - либо из указанных полей, либо информация в них отсутствует,
-        // в сообщении SWIFT соответствующие подполя заполняются символом нуль.
-        // 3) Если исходный расчетный документ не содержит информации ни в одном из указанных полей, то в сообщении SWIFT кодовое слово DAS не используется.
-        // /NZP/ Продолжение поля 70 Назначение платежа. Суммарный объем информации о назначении платежа, содержащийся в поле 70 и в поле 72 с кодовым словом /NZP/,
-        // после транслитерации не должен превышать 210 знаков.
+    //    // /DAS/ — Даты из расчетного документа
+    //    // Все подполя этого кодового поля представляют собой даты в формате ГГММДД
+    //    // "Дата списания со счета плательщика (71).Поступило в банк плательщика (62).Отметка банка получателя (48).Дата помещения в картотеку (63)"
+    //    // 1) Номера полей расчетного документа Банка России приведены согласно Положению о безналичных расчетах в Российской Федерации №2-П от 3 октября 2002г.
+    //    // 2) В случае, когда формат исходного расчетного документа не содержит каких - либо из указанных полей, либо информация в них отсутствует,
+    //    // в сообщении SWIFT соответствующие подполя заполняются символом нуль.
+    //    // 3) Если исходный расчетный документ не содержит информации ни в одном из указанных полей, то в сообщении SWIFT кодовое слово DAS не используется.
+    //    // /NZP/ Продолжение поля 70 Назначение платежа. Суммарный объем информации о назначении платежа, содержащийся в поле 70 и в поле 72 с кодовым словом /NZP/,
+    //    // после транслитерации не должен превышать 210 знаков.
 
-        string paytKind = ed.PaytKind != null || sum.Length > 10
-            ? "BESP"
-            : "ELEK";
+    //    string paytKind = ed.PaytKind != null || sum.Length > 10
+    //        ? "BESP"
+    //        : "ELEK";
 
-        string transKind = ed.TransKind == "01"
-            ? string.Empty
-            : $".{ed.TransKind}";
+    //    string transKind = ed.TransKind == "01"
+    //        ? string.Empty
+    //        : $".{ed.TransKind}";
 
-        sb.Append(":72:")
-            // Реквизиты расчетного документа
-            .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate}.{ed.Priority}.{paytKind}{transKind}") //.{ed.ChargeOffDate}.{ed.TransKind}")
-                                                                                                   // Даты из расчетного документа
-            .AppendLine($"/DAS/{ed.ChargeOffDate}.{ed.ReceiptDate}.000000.000000");
+    //    sb.Append(":72:")
+    //        // Реквизиты расчетного документа
+    //        .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate}.{ed.Priority}.{paytKind}{transKind}") //.{ed.ChargeOffDate}.{ed.TransKind}")
+    //                                                                                               // Даты из расчетного документа
+    //        .AppendLine($"/DAS/{ed.ChargeOffDate}.{ed.ReceiptDate}.000000.000000");
 
-        //TODO Реквизиты платежного ордера
-        // .AppendLine($"/RPO/...
+    //    //TODO Реквизиты платежного ордера
+    //    // .AppendLine($"/RPO/...
 
-        // Назначение платежа (в поле 72 только)
-        if (ed.Purpose != null)
-        {
-            string nzp = "/NZP/"; //TODO строка 35 - это с /NZP/ или без? есть разночтения в разных SWIFT-RUR...
-            ReadOnlySpan<char> purpose = ed.Purpose.Prepare35();
+    //    // Назначение платежа (в поле 72 только)
+    //    if (ed.Purpose != null)
+    //    {
+    //        string nzp = "/NZP/"; //TODO строка 35 - это с /NZP/ или без? есть разночтения в разных SWIFT-RUR...
+    //        ReadOnlySpan<char> purpose = ed.Purpose.Prepare35();
 
-            for (int purposeLine = 0; purposeLine < 6; purposeLine++)
-            {
-                var s35 = purpose.Slice(purposeLine * 35, 35).TrimEnd();
+    //        for (int purposeLine = 0; purposeLine < 6; purposeLine++)
+    //        {
+    //            var s35 = purpose.Slice(purposeLine * 35, 35).TrimEnd();
 
-                if (s35.Length == 0) break;
+    //            if (s35.Length == 0) break;
 
-                sb.Append(nzp).AppendLine(s35.ToString());
-                nzp = "//";
-            }
-        }
+    //            sb.Append(nzp).AppendLine(s35.ToString());
+    //            nzp = "//";
+    //        }
+    //    }
 
-        //TODO Дополнительная информация для получателя сообщения
-        // .AppendLine($"/REC/...
+    //    //TODO Дополнительная информация для получателя сообщения
+    //    // .AppendLine($"/REC/...
 
-        #endregion SWIFT TEXT
+    //    #endregion SWIFT TEXT
 
-        sb.Append("-}")
+    //    sb.Append("-}")
 
-            // Trailers
-            .Append("{5:}"); // Block 5 identifier : NO \n before EOF!!!
+    //        // Trailers
+    //        .Append("{5:}"); // Block 5 identifier : NO \n before EOF!!!
 
-        return sb.ToString();
-    }
+    //    return sb.ToString();
+    //}
 
     //private static void Translit(this ED100 ed)
     //{

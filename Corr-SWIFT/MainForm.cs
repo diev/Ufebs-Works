@@ -439,9 +439,9 @@ public partial class MainForm : Form
                 break;
 
             case Config.SwiftFormat:
-                if (Lat(PayerEdit.Text)?.Length > Config.SwiftNameLimit ||
-                    Lat(PayeeEdit.Text)?.Length > Config.SwiftNameLimit ||
-                    Lat(PurposeEdit.Text)?.Length > 210)
+                if (PayerEdit.Text.Lat()?.Length > Config.SwiftNameLimit ||
+                    PayeeEdit.Text.Lat()?.Length > Config.SwiftNameLimit ||
+                    PurposeEdit.Text.Lat()?.Length > 210)
                 {
                     item.ForeColor = Color.DarkRed;
                     Status.Text = "Необходимо сократить текст!";
@@ -453,7 +453,7 @@ public partial class MainForm : Form
                     .Replace("{id}", SwiftID.Id(ed))
                     .Replace("{no}", ed.EDNo));
 
-                File.WriteAllText(path, ed.ToStringMT103(), Encoding.ASCII);
+                File.WriteAllText(path, ed.ToStringMT103(Config.BankSWIFT, Config.CorrSWIFT, Config.CorrAccount), Encoding.ASCII);
                 item.SubItems[SavedColumn.Index].Text = path;
                 break;
         }
@@ -496,7 +496,7 @@ public partial class MainForm : Form
                 break;
 
             case Config.SwiftFormat:
-                string lat = Lat(edit.Text) ?? string.Empty;
+                string lat = edit.Text.Lat() ?? string.Empty;
                 len = lat.Length;
                 max = name
                     ? Config.SwiftNameLimit

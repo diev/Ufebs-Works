@@ -106,14 +106,21 @@ internal class Program
             string dir = Path.GetDirectoryName(path) ?? Directory.GetCurrentDirectory();
             string mask = Path.GetFileName(path) ?? "4030702000ED503*.txt";
 
-            foreach (string file in Directory.GetFiles(dir, "*"))
+            if (Directory.Exists(dir))
             {
-                PreprocessFile(file, outPath);
-            }
+                foreach (string file in Directory.GetFiles(dir, "*"))
+                {
+                    PreprocessFile(file, outPath);
+                }
 
-            foreach (string file in Directory.GetFiles(dir, mask))
+                foreach (string file in Directory.GetFiles(dir, mask))
+                {
+                    ProcessFile(file, outPath);
+                }
+            }
+            else
             {
-                ProcessFile(file, outPath);
+                Console.WriteLine($"Input dir \"{dir}\" not found");
             }
         }
         else if (File.Exists(path))
@@ -123,7 +130,7 @@ internal class Program
         }
         else
         {
-            Console.WriteLine($"Input \"{path}\" not found");
+            Console.WriteLine($"Input file \"{path}\" not found");
         }
 
         for (int i = 0; i < _o950in.Count; i++)
@@ -229,7 +236,9 @@ internal class Program
 
                 inFile2 = inFile + ".txt";
                 ED100 ed = new(inFile);
-                string mt103 = ed.ToStringMT103();
+                string mt103 = ed.ToStringMT103(
+                    CorrBank.SWIFT!, CorrBank.ProfileSWIFT!, CorrBank.ProfilePayAcc!);
+
                 File.WriteAllText(inFile2, mt103, Encoding.ASCII);
             }
         }
@@ -263,7 +272,7 @@ internal class Program
         try
         {
             string text = File.ReadAllText(inFile);
-            string? mt = ParseMT(text);
+            string? mt = text.ParseMT();
 
             switch (mt)
             {
@@ -330,8 +339,8 @@ internal class Program
         var lines = File.ReadAllLines(inFile);
         ED100 ed = new(lines)
         {
-            EDAuthor = CorrBank.EDAuthor!,
-            EDReceiver = CorrBank.EDReceiver,
+            EDAuthor = CorrBank.ProfileUIC!,
+            EDReceiver = CorrBank.UIC,
         };
 
         if (ed.DC == "2")
@@ -345,7 +354,7 @@ internal class Program
 
         TransInfo ti = new(ed, dc)
         {
-            EDRefAuthor = CorrBank.EDReceiver!
+            EDRefAuthor = CorrBank.UIC!
         };
 
         var dictionary = dc == "1" ? _d : _c;
@@ -369,7 +378,7 @@ internal class Program
                 EDDate = ed.EDDate,
                 EDNo = packNo,
                 EDQuantity = "1",
-                EDReceiver = CorrBank.EDReceiver,
+                EDReceiver = CorrBank.UIC,
                 Sum = ed.Sum,
                 Elements = new ED100[1]
             };
@@ -430,7 +439,7 @@ internal class Program
         }
 
         sb.Append(":72:")
-            .AppendLine(Cyr(sc.ToString()))
+            .AppendLine(sc.Cyr())
             .AppendLine(line);
 
         File.WriteAllText(MakePath(outFile, date), sb.ToString(), Encoding.GetEncoding(1251));
@@ -457,7 +466,7 @@ internal class Program
         int n = 0;
         string line = lines[n++];
         
-        string time = UParseDateTime(line).time;
+        string time = line.UParseDateTime().time;
 
         ED211 ed211 = new();
         long debetSum = 0;
@@ -471,7 +480,7 @@ internal class Program
         // Входящий остаток
 
         while (!line.StartsWith(":60F:")) line = lines[n++];
-        ed211.EnterBal = UParseBal(line[5..]).sum;
+        ed211.EnterBal = line[5..].UParseBal().sum;
 
         // Подсчитываем число движений
 
@@ -490,7 +499,7 @@ internal class Program
         while (!line.StartsWith(":62F:")) line = lines[n++];
         int finishN = n - 1;
 
-        var (date, bal) = UParseBal(line[5..]);
+        var (date, bal) = line[5..].UParseBal();
         ed211.AbstractDate = date;
         ed211.OutBal = bal;
 
@@ -507,7 +516,7 @@ internal class Program
 
             if (line.StartsWith(":61:"))
             {
-                var (dc, id) = ParseTrans(line[4..]);
+                var (dc, id) = line[4..].ParseTrans();
                 bool debet = dc == "1";
                 bool found = debet
                     ? _d.TryGetValue(id, out TransInfo? ti) // ourId
@@ -530,10 +539,10 @@ internal class Program
                         BICCorr = "0",
                         CorrAcc = "0",
                         DC = dc,
-                        EDRefAuthor = CorrBank.EDReceiver!,
+                        EDRefAuthor = CorrBank.UIC!,
                         EDRefDate = date,
                         EDRefNo = "0",
-                        PayeePersonalAcc = debet ? "0" : CorrBank.OurAcc,
+                        PayeePersonalAcc = debet ? "0" : CorrBank.ProfilePayAcc,
                         PayerPersonalAcc = "0"
                     };
                 }
@@ -556,11 +565,11 @@ internal class Program
         // ED211 /TransInfo
 
         ed211.BIC = CorrBank.BIC!;
-        ed211.EDAuthor = CorrBank.EDAuthor!;
+        ed211.EDAuthor = CorrBank.ProfileUIC!;
         ed211.EDDate = date;
         ed211.EDNo = NextEDNo();
         ed211.EndTime = time;
-        ed211.EDReceiver = CorrBank.EDReceiver;
+        ed211.EDReceiver = CorrBank.UIC;
 
         ed211.DebetSum = debetSum > 0 ? debetSum.ToString() : "0";
         ed211.CreditSum = creditSum > 0 ? creditSum.ToString() : "0";
@@ -573,7 +582,7 @@ internal class Program
 
         PacketESID packetESID = new()
         {
-            EDAuthor = CorrBank.EDAuthor!,
+            EDAuthor = CorrBank.ProfileUIC!,
             EDDate = date,
             EDNo = NextEDNo()
         };
@@ -588,10 +597,10 @@ internal class Program
                 ED206 ed206 = new(ti)
                 {
                     Acc = ed211.Acc, //CorrBank.OurAcc,
-                    EDAuthor = CorrBank.EDAuthor!,
+                    EDAuthor = CorrBank.ProfileUIC!,
                     EDDate = date,
                     EDNo = NextEDNo(),
-                    EDRefAuthor = CorrBank.EDReceiver!,
+                    EDRefAuthor = CorrBank.UIC!,
                     TransDate = date,
                     TransTime = time
                 };
@@ -627,7 +636,7 @@ internal class Program
             line = lines[n++];
         }
 
-        sb.Append(Cyr(sc.ToString()));
+        sb.Append(sc.Cyr());
         sb.AppendLine(line);
 
         File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251)); //TODO

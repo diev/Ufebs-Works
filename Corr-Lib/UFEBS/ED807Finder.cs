@@ -101,7 +101,7 @@ public static class ED807Finder
                 string place = $"{tnp} {nnp}".Trim();
 
                 bankInfo = translit
-                    ? new BankInfo(Lat(name), Lat(place))
+                    ? new BankInfo(name.Lat(), place.Lat())
                     : new BankInfo(name, place);
 
                 _cache.Add(bic, bankInfo);
