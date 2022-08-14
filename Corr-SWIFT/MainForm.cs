@@ -33,6 +33,7 @@ namespace CorrSWIFT;
 public partial class MainForm : Form
 {
     private PacketEPD _packet;
+    private ED100? _prev, _ed100;
     private int _selectedFileIndex = -1;
 
     #region Init
@@ -51,7 +52,7 @@ public partial class MainForm : Form
             (int)(w * 0.1), (int)(h * 0.15),
             (int)(w * 0.8), (int)(h * 0.75));
 
-        splitContainer2.SplitterDistance = 
+        splitContainer2.SplitterDistance =
             splitContainer2.Height - PayerEdit.Height - PayeeEdit.Height - PurposeEdit.Height -
             splitContainer2.SplitterWidth * 3;
 
@@ -91,6 +92,7 @@ public partial class MainForm : Form
     private void ReInitForm()
     {
         Text = $"{Application.ProductName}";
+
         Status.Text = "Инициализация...";
         FormatStatus.Text = $"Format: {Config.SaveFormat}";
         ProfileStatus.Text = $"Profile: {Config.Profile}";
@@ -103,6 +105,7 @@ public partial class MainForm : Form
 
         FilesList.Items.Clear();
         DocsList.Items.Clear();
+
         PayerEdit.Text = string.Empty;
         PayeeEdit.Text = string.Empty;
         PurposeEdit.Text = string.Empty;
@@ -152,11 +155,14 @@ public partial class MainForm : Form
         {
             FilesList.Items.Add(new ListViewItem(file));
         }
+
+        FilesModel.LoadFiles(OpenFileDialog.FileNames);
     }
 
     private void FontOK()
     {
         var font = FontDialog.Font;
+
         PayerEdit.Font = font;
         PayeeEdit.Font = font;
         PurposeEdit.Font = font;
@@ -165,7 +171,7 @@ public partial class MainForm : Form
             splitContainer2.Height - PayerEdit.Height - PayeeEdit.Height - PurposeEdit.Height -
             splitContainer2.SplitterWidth * 3;
     }
-    
+
     #endregion Dialogs
     #region Actions
 
@@ -193,6 +199,7 @@ public partial class MainForm : Form
         foreach (var ed in docs)
         {
             var doc = DocsList.Items.Add(new ListViewItem(ed));
+            LoadDocItem(doc);
             SaveDocItem(doc); //TODO Cancel* = Abort (foreach break)
         }
 
@@ -305,15 +312,12 @@ public partial class MainForm : Form
 
     private void AboutMenuItem_Click(object sender, EventArgs e)
     {
-        var about = new AboutBox();
-        about.Show();
+        new AboutBox().Show();
     }
 
     private void ConfigMenuItem_Click(object sender, EventArgs e)
     {
-        ConfigForm configForm = new();
-        configForm.ShowDialog();
-
+        new ConfigForm().ShowDialog();
         ReInitForm();
     }
 
@@ -327,7 +331,6 @@ public partial class MainForm : Form
         {
             _selectedFileIndex = list.SelectedItems[0].Index;
             var item = list.SelectedItems[0];
-
             LoadFile(item);
         }
     }
@@ -340,7 +343,7 @@ public partial class MainForm : Form
         {
             //_selectedDocIndex = list.SelectedItems[0].Index;
             var item = list.SelectedItems[0];
-
+            LoadDocItem(item);
             SaveDocItem(item);
         }
     }
@@ -414,7 +417,65 @@ public partial class MainForm : Form
         }
     }
 
-    private void SaveDocItem(ListViewItem item)
+
+    private void UpdateDocItem(ListViewItem item)
+    {
+        int index = DocsList.Items.Count == 1
+            ? 0
+            : DocsList.SelectedItems.Count == 1
+                ? DocsList.SelectedItems[0].Index
+                : -1;
+
+        if (index == -1)
+        {
+            return;
+        }
+
+        var _prev = _packet.Elements[index];
+        var _ed100 = _prev with
+        {
+            PayerName = PayerEdit.Text,
+            PayeeName = PayeeEdit.Text,
+            Purpose = PurposeEdit.Text
+        };
+
+        foreach (ListViewItem doc in DocsList.Items)
+        {
+            var ed = _packet.Elements[doc.Index];
+
+            if (ed.Saved)
+            {
+                continue;
+            }
+            
+            if (ed.PayerName == _prev.PayerName)
+            {
+                string payer = _ed100.PayerName;
+                ed.PayerName = payer;
+                doc.SubItems[PayerColumn.Index].Text = payer;
+            }
+
+            if (ed.PayeeName == _prev.PayeeName)
+            {
+                string payee = _ed100.PayeeName;
+                ed.PayeeName = payee;
+                doc.SubItems[PayeeColumn.Index].Text = payee;
+            }
+
+            if (ed.Purpose == _prev.Purpose)
+            {
+                string purpose = _ed100.Purpose;
+                ed.Purpose = purpose;
+                doc.SubItems[PurposeColumn.Index].Text = purpose;
+            }
+
+            SaveDocItem(doc);
+        }
+
+        SaveFileItem();
+    }
+
+    private void LoadDocItem(ListViewItem item)
     {
         //var item = DocsList.Items[_selectedDocIndex];
         //var ed = _packet.Elements[_selectedDocIndex];
@@ -425,10 +486,27 @@ public partial class MainForm : Form
         PayeeEdit.Text = ed.PayeeName;
         PurposeEdit.Text = ed.Purpose;
 
+        _prev = ed with { };
+    }
+
+    private void SaveDocItem(ListViewItem item)
+    {
+        //var item = DocsList.Items[_selectedDocIndex];
+        //var ed = _packet.Elements[_selectedDocIndex];
+
+//        var ed = _packet.Elements[item.Index];
+
+        var ed = _prev with
+        {
+            PayerName = PayerEdit.Text,
+            PayeeName = PayeeEdit.Text,
+            Purpose = PurposeEdit.Text
+        };
+
         switch (Config.SaveFormat)
         {
             case Config.UfebsFormat:
-                if (PayerEdit.TextLength > 160 || PurposeEdit.TextLength > 210)
+                if (PayerEdit.TextLength > 160 || PayeeEdit.TextLength > 160 || PurposeEdit.TextLength > 210)
                 {
                     item.ForeColor = Color.DarkRed;
                     Status.Text = "Необходимо сократить текст!";
@@ -453,7 +531,12 @@ public partial class MainForm : Form
                     .Replace("{id}", SwiftID.Id(ed))
                     .Replace("{no}", ed.EDNo));
 
-                File.WriteAllText(path, ed.ToStringMT103(Config.BankSWIFT, Config.CorrSWIFT, Config.CorrAccount), Encoding.ASCII);
+                File.WriteAllText(path,
+                    ed.ToStringMT103(
+                        Config.BankSWIFT,
+                        Config.CorrSWIFT,
+                        Config.CorrAccount),
+                    Encoding.ASCII);
                 item.SubItems[SavedColumn.Index].Text = path;
                 break;
         }
@@ -523,91 +606,111 @@ public partial class MainForm : Form
 
     private void NameEdit_KeyUp(object sender, KeyEventArgs e)
     {
-        if (DocsList.SelectedItems.Count == 1)
+        int index = DocsList.Items.Count == 1
+            ? 0
+            : DocsList.SelectedItems.Count == 1
+                ? DocsList.SelectedItems[0].Index
+                : -1;
+
+        if (index == -1)
         {
-            var item = DocsList.SelectedItems[0];
-            var ed = _packet.Elements[item.Index];
+            return;
+        }
 
-            var edit = sender as TextBox;
+        var ed = _packet.Elements[index];
+        var edit = sender as TextBox;
 
-            if (e.KeyCode == Keys.Enter)
-            {
-                string name = edit!.Text;
+        if (e.KeyCode == Keys.Enter)
+        {
+            //string name = edit!.Text;
 
-                if (edit.Name == nameof(PayerEdit))
-                {
-                    string? prev = ed.PayerName;
-                    ed.PayerName = name;
-                    item.SubItems[PayerColumn.Index].Text = name;
+            //if (edit.Name == nameof(PayerEdit))
+            //{
+                //string? prev = ed.PayerName;
+                //ed.PayerName = name;
+                //item.SubItems[PayerColumn.Index].Text = name;
 
-                    SaveDocItem(item);
+                //SaveDocItem(item);
 
-                    foreach (ListViewItem doc in DocsList.Items)
-                    {
-                        ed = _packet.Elements[doc.Index];
+                //foreach (ListViewItem doc in DocsList.Items)
+                //{
+                //    ed = _packet.Elements[doc.Index];
 
-                        if (!ed.Saved && ed.PayerName == prev)
-                        {
-                            ed.PayerName = name;
-                            doc.SubItems[PayerColumn.Index].Text = name;
+                //    if (!ed.Saved && ed.PayerName == prev)
+                //    {
+                //        ed.PayerName = name;
+                //        doc.SubItems[PayerColumn.Index].Text = name;
 
-                            SaveDocItem(doc);
-                        }
-                    }
-                }
-                else if (edit.Name == nameof(PayeeEdit))
-                {
-                    string? prev = ed.PayeeName;
-                    ed.PayeeName = name;
-                    item.SubItems[PayeeColumn.Index].Text = name;
+                //        SaveDocItem(doc);
+                //    }
+                //}
 
-                    SaveDocItem(item);
+            //    UpdateDocItem(DocsList.Items[index]);
+            //}
+            //else if (edit.Name == nameof(PayeeEdit))
+            //{
+                //string? prev = ed.PayeeName;
+                //ed.PayeeName = name;
+                //item.SubItems[PayeeColumn.Index].Text = name;
 
-                    foreach (ListViewItem doc in DocsList.Items)
-                    {
-                        ed = _packet.Elements[doc.Index];
+                //SaveDocItem(item);
 
-                        if (!ed.Saved && ed.PayeeName == prev)
-                        {
-                            ed.PayeeName = name;
-                            doc.SubItems[PayeeColumn.Index].Text = name;
+                //foreach (ListViewItem doc in DocsList.Items)
+                //{
+                //    ed = _packet.Elements[doc.Index];
 
-                            SaveDocItem(doc);
-                        }
-                    }
-                }
+                //    if (!ed.Saved && ed.PayeeName == prev)
+                //    {
+                //        ed.PayeeName = name;
+                //        doc.SubItems[PayeeColumn.Index].Text = name;
 
-                SaveFileItem();
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                edit!.Text = edit.Name == nameof(PayerEdit)
-                    ? ed.PayerName
-                    : ed.PayeeName;
-            }
+                //        SaveDocItem(doc);
+                //    }
+                //}
+
+                UpdateDocItem(DocsList.Items[index]);
+            //}
+
+            SaveFileItem();
+        }
+        else if (e.KeyCode == Keys.Escape)
+        {
+            edit!.Text = edit.Name == nameof(PayerEdit)
+                ? ed.PayerName
+                : ed.PayeeName;
         }
     }
 
     private void PurposeEdit_KeyUp(object sender, KeyEventArgs e)
     {
-        if (DocsList.SelectedItems.Count == 1)
+        int index = DocsList.Items.Count == 1
+            ? 0
+            : DocsList.SelectedItems.Count == 1
+                ? DocsList.SelectedItems[0].Index
+                : -1;
+
+        if (index == -1)
         {
-            var item = DocsList.SelectedItems[0];
-            var ed = _packet.Elements[item.Index];
+            return;
+        }
 
-            if (e.KeyCode == Keys.Enter)
-            {
-                string purpose = PurposeEdit.Text;
-                ed.Purpose = purpose;
-                item.SubItems[PurposeColumn.Index].Text = purpose;
+        var ed = _packet.Elements[index];
 
-                SaveDocItem(item);
-                SaveFileItem();
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                PurposeEdit.Text = ed.Purpose;
-            }
+        if (e.KeyCode == Keys.Enter)
+        {
+            //    var item = DocsList.Items[index];
+            //    string purpose = PurposeEdit.Text;
+            //    ed.Purpose = purpose;
+            //    item.SubItems[PurposeColumn.Index].Text = purpose;
+
+            //    SaveDocItem(item);
+            //    SaveFileItem();
+
+            UpdateDocItem(DocsList.Items[index]);
+        }
+        else if (e.KeyCode == Keys.Escape)
+        {
+            PurposeEdit.Text = ed.Purpose;
         }
     }
 

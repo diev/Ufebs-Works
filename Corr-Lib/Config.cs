@@ -27,7 +27,7 @@ namespace CorrLib;
 public static class Config
 {
     private static string _profile = 
-        (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';; //for fast access
+        (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.'; //for fast access
 
     // Save.Format
     public const string UfebsFormat = "УФЭБС";

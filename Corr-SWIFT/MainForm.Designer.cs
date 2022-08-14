@@ -100,7 +100,7 @@ partial class MainForm
             // Status
             // 
             this.Status.Name = "Status";
-            this.Status.Size = new System.Drawing.Size(723, 19);
+            this.Status.Size = new System.Drawing.Size(749, 19);
             this.Status.Spring = true;
             this.Status.Text = "Загрузка...";
             this.Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -133,6 +133,7 @@ partial class MainForm
             // 
             // SaveStatus
             // 
+            this.SaveStatus.Margin = new System.Windows.Forms.Padding(0, 3, 5, 2);
             this.SaveStatus.Name = "SaveStatus";
             this.SaveStatus.Size = new System.Drawing.Size(27, 19);
             this.SaveStatus.Text = "Out";
@@ -167,32 +168,32 @@ partial class MainForm
             this.OpenFileMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.OpenFileMenuItem.Name = "OpenFileMenuItem";
             this.OpenFileMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenFileMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.OpenFileMenuItem.Size = new System.Drawing.Size(180, 22);
             this.OpenFileMenuItem.Text = "&Открыть...";
             this.OpenFileMenuItem.Click += new System.EventHandler(this.OpenMenuItem_Click);
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(170, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(177, 6);
             // 
             // ConfigMenuItem
             // 
             this.ConfigMenuItem.Name = "ConfigMenuItem";
-            this.ConfigMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.ConfigMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ConfigMenuItem.Text = "П&араметры...";
             this.ConfigMenuItem.Click += new System.EventHandler(this.ConfigMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(170, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // ExitMenuItem
             // 
             this.ExitMenuItem.Name = "ExitMenuItem";
             this.ExitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.ExitMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ExitMenuItem.Text = "Вы&ход";
             this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
             // 
@@ -207,7 +208,7 @@ partial class MainForm
             // FontMenuItem
             // 
             this.FontMenuItem.Name = "FontMenuItem";
-            this.FontMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.FontMenuItem.Size = new System.Drawing.Size(180, 22);
             this.FontMenuItem.Text = "&Шрифт...";
             this.FontMenuItem.Click += new System.EventHandler(this.FontMenuItem_Click);
             // 
@@ -223,7 +224,7 @@ partial class MainForm
             // 
             this.AboutMenuItem.Name = "AboutMenuItem";
             this.AboutMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.AboutMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.AboutMenuItem.Size = new System.Drawing.Size(180, 22);
             this.AboutMenuItem.Text = "&О программе…";
             this.AboutMenuItem.Click += new System.EventHandler(this.AboutMenuItem_Click);
             // 
