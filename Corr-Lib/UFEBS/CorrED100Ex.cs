@@ -27,11 +27,15 @@ public static class CorrED100Ex
     {
         // Замена всех типов ЭС на Платежное поручение.
 
-        ed.OriginalEDType = ed.EDType;
+        //ed.OriginalEDType = ed.EDType;
         ed.EDType = "ED101";
+        ed.ChargeOffDate ??= ed.EDDate;
+        ed.TransKind = "01";
 
-        ed.OriginalPayerName = ed.PayerName;
-        ed.OriginalPayeeName = ed.PayeeName;
+        //ed.OriginalPayerName = ed.PayerName;
+        //ed.OriginalPayeeName = ed.PayeeName;
+        var payerName = ed.PayerName;
+        //var payeeName = ed.PayeeName;
 
         // Требуется ли замена реквизитов на оплату за третье лицо (если ИНН Плательщика не собственно Банка).
 
@@ -42,7 +46,7 @@ public static class CorrED100Ex
 
         // Замена Наименования плательщика в случае оплаты за третье лицо.
 
-        var name = ShortenName(ed.OriginalPayerName);
+        var name = ShortenName(payerName);
 
         ed.PayerName = Config.TemplatesName
             .Replace("{name}", name)

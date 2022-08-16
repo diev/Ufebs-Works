@@ -62,7 +62,7 @@ public static class ED100Ex
     {
         ed.EDType = x.Name.LocalName; // required
 
-        ed.ChargeOffDate = x.Attribute("ChargeOffDate")!.Value;
+        ed.ChargeOffDate = x.Attribute("ChargeOffDate")?.Value; // Нет в ED105
         ed.EDAuthor = x.Attribute("EDAuthor")!.Value; // required
         ed.EDDate = x.Attribute("EDDate")!.Value; // required
         ed.EDNo = x.Attribute("EDNo")!.Value; // required
@@ -72,7 +72,7 @@ public static class ED100Ex
         ed.PaymentPrecedence = x.Attribute("PaymentPrecedence")!.Value; // required
         ed.PaytKind = x.Attribute("PaytKind")?.Value;
         ed.Priority = x.Attribute("Priority")!.Value; // required
-        ed.ReceiptDate = x.Attribute("ReceiptDate")!.Value;
+        ed.ReceiptDate = x.Attribute("ReceiptDate")?.Value; // Нет в ED105
         ed.ReqSettlementDate = x.Attribute("ReqSettlementDate")?.Value;
         ed.ResField = x.Attribute("ResField")?.Value;
         ed.Sum = x.Attribute("Sum")!.Value; // required

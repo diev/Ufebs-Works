@@ -54,7 +54,7 @@ public static class PacketEPDEx
             packet.SystemCode = root.Attribute("SystemCode")!.Value;
 
             packet.Elements = new ED100[1];
-            packet.Elements[0] = new ED100(root).CorrSubst();
+            packet.Elements[0] = new ED100(root); //.CorrSubst();
         }
         else
         {
@@ -75,7 +75,7 @@ public static class PacketEPDEx
 
                     for (int i = 0; i < qty; i++)
                     {
-                        packet.Elements[i] = new ED100(node!).CorrSubst();
+                        packet.Elements[i] = new ED100(node!); //.CorrSubst();
                         node = node?.NextNode;
                     }
 
@@ -122,9 +122,9 @@ public static class PacketEPDEx
             item.EDNo,
             item.EDType,
             item.Sum.DisplaySum(),
-            item.OriginalPayerName ?? string.Empty,
+            //item.OriginalPayerName ?? string.Empty,
             item.PayerName ?? string.Empty, //TODO
-            item.OriginalPayeeName ?? string.Empty,
+            //item.OriginalPayeeName ?? string.Empty,
             item.PayeeName ?? string.Empty,
             item.Purpose ?? string.Empty,
             string.Empty //TODO File.Exists?

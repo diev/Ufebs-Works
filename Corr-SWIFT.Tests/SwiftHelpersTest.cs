@@ -1,4 +1,6 @@
 ﻿
+using CorrLib.SWIFT;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static CorrLib.SWIFT.SwiftParsers;
@@ -135,7 +137,7 @@ public class SwiftHelpersTest
         var sum = "0,";
         var expected = "0";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -146,7 +148,7 @@ public class SwiftHelpersTest
         var sum = "0,01";
         var expected = "1";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -157,7 +159,7 @@ public class SwiftHelpersTest
         var sum = "0,1";
         var expected = "10";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -168,7 +170,7 @@ public class SwiftHelpersTest
         var sum = "1,";
         var expected = "100";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -179,7 +181,7 @@ public class SwiftHelpersTest
         var sum = "1,5";
         var expected = "150";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -190,7 +192,7 @@ public class SwiftHelpersTest
         var sum = "130,";
         var expected = "13000";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -201,7 +203,7 @@ public class SwiftHelpersTest
         var sum = "130,12";
         var expected = "13012";
 
-        var result = UfebsSum(sum);
+        var result = sum.ToUfebsSum();
 
         Assert.AreEqual(expected, result);
     }
@@ -212,7 +214,7 @@ public class SwiftHelpersTest
         string text = "S08";
         string expected = "08";
 
-        var result = ParseDrawerStatus(text);
+        var result = text.ParseDrawerStatus();
 
         Assert.AreEqual(expected, result);
     }
@@ -224,7 +226,7 @@ public class SwiftHelpersTest
         string expectedINN = "17831001422";
         string expectedKPP = "784101001";
 
-        var (INN, KPP) = ParseINNKPP(text);
+        var (INN, KPP) = text.ParseINNKPP();
 
         Assert.AreEqual(expectedINN, INN);
         Assert.AreEqual(expectedKPP, KPP);
@@ -237,7 +239,7 @@ public class SwiftHelpersTest
         string expectedINN = "17831001422";
         string expectedKPP = "0";
 
-        var (INN, KPP) = ParseINNKPP(text);
+        var (INN, KPP) = text.ParseINNKPP();
 
         Assert.AreEqual(expectedINN, INN);
         Assert.AreEqual(expectedKPP, KPP);
@@ -250,7 +252,7 @@ public class SwiftHelpersTest
         string expectedINN = "17831001422";
         string? expectedKPP = null;
 
-        var (INN, KPP) = ParseINNKPP(text);
+        var (INN, KPP) = text.ParseINNKPP();
 
         Assert.AreEqual(expectedINN, INN);
         Assert.AreEqual(expectedKPP, KPP);
@@ -263,7 +265,7 @@ public class SwiftHelpersTest
         string expectedINN = "0";
         string? expectedKPP = null;
 
-        var (INN, KPP) = ParseINNKPP(text);
+        var (INN, KPP) = text.ParseINNKPP();
 
         Assert.AreEqual(expectedINN, INN);
         Assert.AreEqual(expectedKPP, KPP);
@@ -276,7 +278,7 @@ public class SwiftHelpersTest
         string expectedDate = "220808";
         string expectedSum = "130,";
 
-        var (date, sum) = ParseDateSum(text);
+        var (date, sum) = text.ParseDateSum();
 
         Assert.AreEqual(expectedDate, date);
         Assert.AreEqual(expectedSum, sum);
@@ -289,7 +291,7 @@ public class SwiftHelpersTest
         string expectedDate = "2022-08-08";
         string expectedSum = "13000";
 
-        var (date, sum) = UParseDateSum(text);
+        var (date, sum) = text.UParseDateSum();
 
         Assert.AreEqual(expectedDate, date);
         Assert.AreEqual(expectedSum, sum);
@@ -302,7 +304,7 @@ public class SwiftHelpersTest
         string expectedBIC = "044030702";
         string expectedAcc = "30101810600000000702";
 
-        var (BIC, Acc) = ParseBICAcc(text);
+        var (BIC, Acc) = text.ParseBICAcc();
 
         Assert.AreEqual(expectedBIC, BIC);
         Assert.AreEqual(expectedAcc, Acc);
@@ -315,7 +317,7 @@ public class SwiftHelpersTest
         string expectedBIC = "044030702";
         string? expectedAcc = null;
 
-        var (BIC, Acc) = ParseBICAcc(text);
+        var (BIC, Acc) = text.ParseBICAcc();
 
         Assert.AreEqual(expectedBIC, BIC);
         Assert.AreEqual(expectedAcc, Acc);

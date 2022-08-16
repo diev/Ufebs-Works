@@ -54,20 +54,21 @@ partial class MainForm
             this.TotalQtyColumn = new System.Windows.Forms.ColumnHeader();
             this.TotalSumColumn = new System.Windows.Forms.ColumnHeader();
             this.PackSavedColumn = new System.Windows.Forms.ColumnHeader();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.DocsList = new System.Windows.Forms.ListView();
-            this.NoColumn = new System.Windows.Forms.ColumnHeader();
+            this.EDNoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
+            this.DocNoColumn = new System.Windows.Forms.ColumnHeader();
             this.SumColumn = new System.Windows.Forms.ColumnHeader();
-            this.OrigPayerColumn = new System.Windows.Forms.ColumnHeader();
             this.PayerColumn = new System.Windows.Forms.ColumnHeader();
-            this.OrigPayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
-            this.PurposeEdit = new System.Windows.Forms.TextBox();
-            this.PayeeEdit = new System.Windows.Forms.TextBox();
-            this.PayerEdit = new System.Windows.Forms.TextBox();
+            this.NewPayerColumn = new System.Windows.Forms.ColumnHeader();
+            this.NewPayeeColumn = new System.Windows.Forms.ColumnHeader();
+            this.NewPurposeColumn = new System.Windows.Forms.ColumnHeader();
+            this.SwiftPayerColumn = new System.Windows.Forms.ColumnHeader();
+            this.SwiftPayeeColumn = new System.Windows.Forms.ColumnHeader();
+            this.SwiftPurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
             this.StatusBar.SuspendLayout();
@@ -76,10 +77,6 @@ partial class MainForm
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusBar
@@ -168,32 +165,32 @@ partial class MainForm
             this.OpenFileMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.OpenFileMenuItem.Name = "OpenFileMenuItem";
             this.OpenFileMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenFileMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.OpenFileMenuItem.Size = new System.Drawing.Size(173, 22);
             this.OpenFileMenuItem.Text = "&Открыть...";
             this.OpenFileMenuItem.Click += new System.EventHandler(this.OpenMenuItem_Click);
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(170, 6);
             // 
             // ConfigMenuItem
             // 
             this.ConfigMenuItem.Name = "ConfigMenuItem";
-            this.ConfigMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ConfigMenuItem.Size = new System.Drawing.Size(173, 22);
             this.ConfigMenuItem.Text = "П&араметры...";
             this.ConfigMenuItem.Click += new System.EventHandler(this.ConfigMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(170, 6);
             // 
             // ExitMenuItem
             // 
             this.ExitMenuItem.Name = "ExitMenuItem";
             this.ExitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.ExitMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitMenuItem.Size = new System.Drawing.Size(173, 22);
             this.ExitMenuItem.Text = "Вы&ход";
             this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
             // 
@@ -208,7 +205,7 @@ partial class MainForm
             // FontMenuItem
             // 
             this.FontMenuItem.Name = "FontMenuItem";
-            this.FontMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FontMenuItem.Size = new System.Drawing.Size(122, 22);
             this.FontMenuItem.Text = "&Шрифт...";
             this.FontMenuItem.Click += new System.EventHandler(this.FontMenuItem_Click);
             // 
@@ -224,7 +221,7 @@ partial class MainForm
             // 
             this.AboutMenuItem.Name = "AboutMenuItem";
             this.AboutMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.AboutMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.AboutMenuItem.Size = new System.Drawing.Size(177, 22);
             this.AboutMenuItem.Text = "&О программе…";
             this.AboutMenuItem.Click += new System.EventHandler(this.AboutMenuItem_Click);
             // 
@@ -243,7 +240,7 @@ partial class MainForm
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel2.Controls.Add(this.DocsList);
             this.splitContainer1.Size = new System.Drawing.Size(930, 402);
             this.splitContainer1.SplitterDistance = 137;
             this.splitContainer1.SplitterWidth = 3;
@@ -298,64 +295,48 @@ partial class MainForm
             this.PackSavedColumn.Text = "Выходной файл УФЭБС";
             this.PackSavedColumn.Width = 280;
             // 
-            // splitContainer2
-            // 
-            this.splitContainer2.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer2.IsSplitterFixed = true;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.DocsList);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainer2.Panel2.Controls.Add(this.PurposeEdit);
-            this.splitContainer2.Panel2.Controls.Add(this.PayeeEdit);
-            this.splitContainer2.Panel2.Controls.Add(this.PayerEdit);
-            this.splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            this.splitContainer2.Size = new System.Drawing.Size(926, 258);
-            this.splitContainer2.SplitterDistance = 149;
-            this.splitContainer2.TabIndex = 3;
-            // 
             // DocsList
             // 
             this.DocsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.NoColumn,
+            this.EDNoColumn,
             this.EDColumn,
+            this.DocNoColumn,
             this.SumColumn,
-            this.OrigPayerColumn,
             this.PayerColumn,
-            this.OrigPayeeColumn,
             this.PayeeColumn,
             this.PurposeColumn,
-            this.SavedColumn});
+            this.SavedColumn,
+            this.NewPayerColumn,
+            this.NewPayeeColumn,
+            this.NewPurposeColumn,
+            this.SwiftPayerColumn,
+            this.SwiftPayeeColumn,
+            this.SwiftPurposeColumn});
             this.DocsList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DocsList.FullRowSelect = true;
             this.DocsList.GridLines = true;
             this.DocsList.Location = new System.Drawing.Point(0, 0);
             this.DocsList.Name = "DocsList";
-            this.DocsList.Size = new System.Drawing.Size(926, 149);
-            this.DocsList.TabIndex = 3;
+            this.DocsList.Size = new System.Drawing.Size(926, 258);
+            this.DocsList.TabIndex = 4;
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
             this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
             this.DocsList.DoubleClick += new System.EventHandler(this.DocsList_DoubleClick);
             // 
-            // NoColumn
+            // EDNoColumn
             // 
-            this.NoColumn.Text = "No";
-            this.NoColumn.Width = 80;
+            this.EDNoColumn.Text = "EDNo";
             // 
             // EDColumn
             // 
             this.EDColumn.Text = "Тип";
             this.EDColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // DocNoColumn
+            // 
+            this.DocNoColumn.Text = "Номер";
+            this.DocNoColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // SumColumn
             // 
@@ -363,74 +344,55 @@ partial class MainForm
             this.SumColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.SumColumn.Width = 80;
             // 
-            // OrigPayerColumn
-            // 
-            this.OrigPayerColumn.Text = "Плательщик";
-            this.OrigPayerColumn.Width = 160;
-            // 
             // PayerColumn
             // 
-            this.PayerColumn.Text = "Подстава";
-            this.PayerColumn.Width = 80;
-            // 
-            // OrigPayeeColumn
-            // 
-            this.OrigPayeeColumn.Text = "Получатель";
-            this.OrigPayeeColumn.Width = 80;
+            this.PayerColumn.Text = "Плательщик";
+            this.PayerColumn.Width = 160;
             // 
             // PayeeColumn
             // 
-            this.PayeeColumn.Text = "Подстава";
-            this.PayeeColumn.Width = 80;
+            this.PayeeColumn.Text = "Получатель";
+            this.PayeeColumn.Width = 160;
             // 
             // PurposeColumn
             // 
             this.PurposeColumn.Text = "Назначение";
-            this.PurposeColumn.Width = 320;
+            this.PurposeColumn.Width = 210;
             // 
             // SavedColumn
             // 
             this.SavedColumn.Text = "Выходной файл SWIFT";
             this.SavedColumn.Width = 280;
             // 
-            // PurposeEdit
+            // NewPayerColumn
             // 
-            this.PurposeEdit.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PurposeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PurposeEdit.Location = new System.Drawing.Point(3, 47);
-            this.PurposeEdit.Name = "PurposeEdit";
-            this.PurposeEdit.PlaceholderText = "Назначение платежа";
-            this.PurposeEdit.Size = new System.Drawing.Size(920, 22);
-            this.PurposeEdit.TabIndex = 2;
-            this.PurposeEdit.TextChanged += new System.EventHandler(this.PurposeEdit_TextChanged);
-            this.PurposeEdit.Enter += new System.EventHandler(this.PurposeEdit_Enter);
-            this.PurposeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PurposeEdit_KeyUp);
+            this.NewPayerColumn.Text = "Плательщик кор.";
+            this.NewPayerColumn.Width = 160;
             // 
-            // PayeeEdit
+            // NewPayeeColumn
             // 
-            this.PayeeEdit.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PayeeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PayeeEdit.Location = new System.Drawing.Point(3, 25);
-            this.PayeeEdit.Name = "PayeeEdit";
-            this.PayeeEdit.PlaceholderText = "Получатель";
-            this.PayeeEdit.Size = new System.Drawing.Size(920, 22);
-            this.PayeeEdit.TabIndex = 1;
-            this.PayeeEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
-            this.PayeeEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
-            this.PayeeEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
+            this.NewPayeeColumn.Text = "Получатель кор.";
+            this.NewPayeeColumn.Width = 160;
             // 
-            // PayerEdit
+            // NewPurposeColumn
             // 
-            this.PayerEdit.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PayerEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PayerEdit.Location = new System.Drawing.Point(3, 3);
-            this.PayerEdit.Name = "PayerEdit";
-            this.PayerEdit.PlaceholderText = "Плательщик";
-            this.PayerEdit.Size = new System.Drawing.Size(920, 22);
-            this.PayerEdit.TabIndex = 0;
-            this.PayerEdit.TextChanged += new System.EventHandler(this.NameEdit_TextChanged);
-            this.PayerEdit.Enter += new System.EventHandler(this.NameEdit_Enter);
-            this.PayerEdit.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NameEdit_KeyUp);
+            this.NewPurposeColumn.Text = "Назначение кор.";
+            this.NewPurposeColumn.Width = 210;
+            // 
+            // SwiftPayerColumn
+            // 
+            this.SwiftPayerColumn.Text = "Плательщик SWIFT";
+            this.SwiftPayerColumn.Width = 105;
+            // 
+            // SwiftPayeeColumn
+            // 
+            this.SwiftPayeeColumn.Text = "Получатель SWIFT";
+            this.SwiftPayeeColumn.Width = 105;
+            // 
+            // SwiftPurposeColumn
+            // 
+            this.SwiftPurposeColumn.Text = "Назначение SWIFT";
+            this.SwiftPurposeColumn.Width = 210;
             // 
             // OpenFileDialog
             // 
@@ -469,11 +431,6 @@ partial class MainForm
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -496,30 +453,31 @@ partial class MainForm
     private ToolStripMenuItem AboutMenuItem;
     private ToolStripMenuItem ConfigMenuItem;
     private ToolStripSeparator toolStripSeparator1;
-    private ToolStripStatusLabel Status;
-    private ListView FilesList;
-    private ColumnHeader FileColumn;
     private ColumnHeader RootColumn;
     private ColumnHeader TotalQtyColumn;
     private ColumnHeader TotalSumColumn;
-    private ColumnHeader PackSavedColumn;
-    private SplitContainer splitContainer2;
-    private ListView DocsList;
-    private ColumnHeader NoColumn;
-    private ColumnHeader EDColumn;
-    private ColumnHeader SumColumn;
-    private ColumnHeader OrigPayerColumn;
-    private ColumnHeader PayerColumn;
-    private ColumnHeader PayeeColumn;
-    private ColumnHeader PurposeColumn;
-    private ColumnHeader SavedColumn;
-    private TextBox PurposeEdit;
-    private TextBox PayerEdit;
     private ToolStripStatusLabel FormatStatus;
     private ToolStripStatusLabel ProfileStatus;
-    private TextBox PayeeEdit;
     private ToolStripStatusLabel OpenStatus;
     private ToolStripStatusLabel DirStatus;
     private ToolStripStatusLabel SaveStatus;
-    private ColumnHeader OrigPayeeColumn;
+    internal ListView FilesList;
+    internal ToolStripStatusLabel Status;
+    internal ListView DocsList;
+    private ColumnHeader EDNoColumn;
+    private ColumnHeader EDColumn;
+    private ColumnHeader SumColumn;
+    private ColumnHeader PayerColumn;
+    private ColumnHeader PayeeColumn;
+    private ColumnHeader PurposeColumn;
+    internal ColumnHeader SavedColumn;
+    private ColumnHeader NewPayerColumn;
+    private ColumnHeader NewPayeeColumn;
+    private ColumnHeader NewPurposeColumn;
+    private ColumnHeader SwiftPayerColumn;
+    private ColumnHeader SwiftPayeeColumn;
+    private ColumnHeader SwiftPurposeColumn;
+    private ColumnHeader DocNoColumn;
+    internal ColumnHeader FileColumn;
+    internal ColumnHeader PackSavedColumn;
 }

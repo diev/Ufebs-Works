@@ -435,6 +435,7 @@
             // SwiftNameLimitChoice
             // 
             this.SwiftNameLimitChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SwiftNameLimitChoice.Enabled = false;
             this.SwiftNameLimitChoice.FormattingEnabled = true;
             this.SwiftNameLimitChoice.Items.AddRange(new object[] {
             "105",
@@ -459,6 +460,7 @@
             // SwiftNameLimitLabel
             // 
             this.SwiftNameLimitLabel.AutoSize = true;
+            this.SwiftNameLimitLabel.Enabled = false;
             this.SwiftNameLimitLabel.Location = new System.Drawing.Point(264, 55);
             this.SwiftNameLimitLabel.Name = "SwiftNameLimitLabel";
             this.SwiftNameLimitLabel.Size = new System.Drawing.Size(134, 15);
@@ -480,6 +482,7 @@
             // SwiftPurposeFieldChoice
             // 
             this.SwiftPurposeFieldChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SwiftPurposeFieldChoice.Enabled = false;
             this.SwiftPurposeFieldChoice.FormattingEnabled = true;
             this.SwiftPurposeFieldChoice.Items.AddRange(new object[] {
             "70",
@@ -493,6 +496,7 @@
             // SwiftPurposeFieldLabel
             // 
             this.SwiftPurposeFieldLabel.AutoSize = true;
+            this.SwiftPurposeFieldLabel.Enabled = false;
             this.SwiftPurposeFieldLabel.Location = new System.Drawing.Point(264, 56);
             this.SwiftPurposeFieldLabel.Name = "SwiftPurposeFieldLabel";
             this.SwiftPurposeFieldLabel.Size = new System.Drawing.Size(83, 15);

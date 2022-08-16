@@ -25,11 +25,12 @@ namespace CorrLib.UFEBS.DTO;
 
 /// <summary>
 /// Базовый комплексный тип для всех электронных платежных сообщений. Содержит реквизиты, общие для всех типов ЭПС.
-/// Сверено с форматом УФЭБС по файлу cbr_ed101_v2022.3.0.xsd
-/// ED101 Платежное поручение.
-/// ED103 Платежное требование.
-/// ED104 Инкассовое поручение.
-/// ED105 Платежный ордер.
+/// Сверено с форматом УФЭБС по файлу cbr_ed101_v2022.4.0.xsd
+/// ED101 Платежное поручение. TransKind="01".
+/// ED103 Платежное требование. TransKind="02".
+/// ED104 Инкассовое поручение. TransKind="06".
+/// ED105 Платежный ордер. TransKind="16". Допраздел PartialPayt c TransKind="06".
+/// Не попадалось во внешнем обмене:
 /// ED107 Поручение банка.
 /// ED108 Платежное поручение на общую сумму с реестром.
 /// ED109 Банковский ордер.
@@ -43,9 +44,9 @@ public record ED100 : EDBase
     #region Attributes
 
     /// <summary>
-    /// Списано со счета плательщика (поле 71). Дата списания денежных средств со счета плательщика.
+    /// Списано со счета плательщика (поле 71). Дата списания денежных средств со счета плательщика. (Нет в ED105.)
     /// </summary>
-    public string ChargeOffDate { get; set; }
+    public string? ChargeOffDate { get; set; }
 
     /// <summary>
     /// Назначение платежа кодовое (поле 20). До 35 символов.
@@ -68,6 +69,15 @@ public record ED100 : EDBase
     public string? OperationID { get; set; }
 
     /// <summary>
+    /// Подраздел PartialPayt, есть только в ED105.
+    /// </summary>
+    //public string? PartialPayNo { get; set; }
+    //public string? PartialSumResidualPayt { get; set; }
+    //public string? PartialTransKind { get; set; }
+    //public string? PartialAccDocDate { get; set; }
+    //public string? PartialAccDocNo { get; set; }
+
+    /// <summary>
     /// Уникальный идентификатор платежа (УИП), присвоенный получателем средств (поле 22).
     /// </summary>
     public string? PaymentID { get; set; } // required for Tax (default 0)
@@ -76,6 +86,11 @@ public record ED100 : EDBase
     /// Приоритет платежа. Две цифры.
     /// </summary>
     public string PaymentPrecedence { get; set; } = "79"; // required (default 79, БЭСП 69)
+
+    /// <summary>
+    /// Есть только в ED103 ("1").
+    /// </summary>
+    //public string? PaytCondition { get; set; }
 
     /// <summary>
     /// Вид платежа (поле 5). Одна цифра.
@@ -303,12 +318,12 @@ public record ED100 : EDBase
     /// <summary>
     /// Наименование плательщика до корректировки для корсчета.
     /// </summary>
-    public string? OriginalPayerName { get; set; }
+    //public string? OriginalPayerName { get; set; }
 
     /// <summary>
     /// Наименование получателя до корректировки для корсчета.
     /// </summary>
-    public string? OriginalPayeeName { get; set; }
+    //public string? OriginalPayeeName { get; set; }
 
     /// <summary>
     /// Сохранен ли откорректированный документ для корсчета.

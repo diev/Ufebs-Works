@@ -35,7 +35,7 @@ public class SourceFiles : IReadOnlyList<string[]>
         => _items.Length;
 
     public SourceFiles(string directory, string mask)
-        : this(Directory.GetFiles(directory == string.Empty
+        : this(Directory.GetFiles(directory == string.Empty || !Directory.Exists(directory)
             ? "."
             : directory,
             mask))

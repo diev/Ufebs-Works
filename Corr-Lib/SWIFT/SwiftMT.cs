@@ -347,7 +347,7 @@ public static class SwiftMT
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
 
-        sb.AppendLine($":32A:{ed.ChargeOffDate.ToSwiftDate()}RUB{ed.Sum.ToSwiftSum()}");
+        sb.AppendLine($":32A:{ed.ChargeOffDate.ToSwiftDate() ?? ed.EDDate.ToSwiftDate()}RUB{ed.Sum.ToSwiftSum()}");
 
         // Плательщик
 
