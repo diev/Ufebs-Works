@@ -67,14 +67,6 @@ public partial class ConfigForm : Form
 
         TemplatesNameEdit.Text = Config.TemplatesName;
         TemplatesPurposeEdit.Text = Config.TemplatesPurpose;
-
-        SwiftPurposeFieldChoice.Text = Config.SwiftPurposeField;
-
-        // int
-
-        SwiftNameLimitChoice.Text = Config.SwiftNameLimit == 0
-            ? SwiftNameLimitChoice.Items[0].ToString()
-            : Config.SwiftNameLimit.ToString();
     }
 
     private void SaveConfig()
@@ -111,14 +103,6 @@ public partial class ConfigForm : Form
 
         Config.TemplatesName = TemplatesNameEdit.Text.Trim(); // ?? TemplatesNameEdit.PlaceholderText;
         Config.TemplatesPurpose = TemplatesPurposeEdit.Text.Trim(); // ?? TemplatesPurposeEdit.PlaceholderText;
-
-        // string ComboBox
-
-        Config.SwiftPurposeField = SwiftPurposeFieldChoice.Text;
-
-        // int ComboBox
-
-        Config.SwiftNameLimit = int.Parse(SwiftNameLimitChoice.Text);
 
         Config.Save(Application.ExecutablePath);
 
@@ -199,14 +183,10 @@ public partial class ConfigForm : Form
         //SelectFileLabel.Visible = on;
         BankSwiftLabel.Visible = on;
         CorrSwiftLabel.Visible = on;
-        SwiftPurposeFieldLabel.Visible = on;
-        SwiftNameLimitLabel.Visible = on;
 
         //SelectFileEdit.Visible = on;
         BankSwiftEdit.Visible = on;
         CorrSwiftEdit.Visible = on;
-        SwiftPurposeFieldChoice.Visible = on;
-        SwiftNameLimitChoice.Visible = on;
 
         //SelectFileButton.Visible = on;
 

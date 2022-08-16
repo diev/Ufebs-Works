@@ -18,20 +18,11 @@ limitations under the License.
 #endregion
 
 using CorrLib;
-using CorrLib.UFEBS;
-using CorrLib.UFEBS.DTO;
-
-using System.Diagnostics;
-using System.Text;
-using System.Xml;
 
 namespace CorrSWIFT;
 
 public partial class MainForm : Form
 {
-    private PacketEPD _packet;
-    private int _selectedFileIndex = -1;
-
     #region Init
     public MainForm()
     {
@@ -95,14 +86,8 @@ public partial class MainForm : Form
         OpenStatus.Text = Config.OpenDir;
         SaveStatus.Text = Config.SaveDir;
 
-        string mask = Config.SaveMask
-            .Replace("{id}", "*")
-            .Replace("{no}", "*");
-
         FilesList.Items.Clear();
         DocsList.Items.Clear();
-
-        //_selectedFileIndex = -1;
 
         if (!Directory.Exists(Config.OpenDir) || !Directory.Exists(Config.SaveDir))
         {
@@ -110,25 +95,8 @@ public partial class MainForm : Form
             return;
         }
 
+        FilesModel.AskIfCleanSavedFiles();
         FilesModel.LoadFiles(Config.OpenDir, Config.OpenMask, ref FilesList);
-
-        //var saved = Directory.GetFiles(Config.SaveDir == string.Empty
-        //    ? "."
-        //    : Config.SaveDir,
-        //    mask);
-
-        //if (saved.Length > 0)
-        //{
-        //    if (DialogResult.Yes == MessageBox.Show(
-        //        $"В выходной директории\n\"{Config.SaveDir}\"\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nУдалить их?",
-        //        Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation))
-        //    {
-        //        foreach (var file in saved)
-        //        {
-        //            File.Delete(file);
-        //        }
-        //    }
-        //}
 
         Status.Text = "Выберите файл";
     }
@@ -313,74 +281,74 @@ public partial class MainForm : Form
         DocsModel.GetToUpdate(this);
     }
 
-    private void SaveFileItem()
-    {
-        var item = FilesList.Items[_selectedFileIndex];
+    //private void SaveFileItem()
+    //{
+    //    var item = FilesList.Items[_selectedFileIndex];
 
-        foreach (var ed in _packet.Elements)
-        {
-            if (!ed.Saved)
-            {
-                item.ForeColor = Color.DarkRed;
-                Status.Text = "В пакете есть ошибки!";
+    //    foreach (var ed in _packet.Elements)
+    //    {
+    //        if (!ed.Saved)
+    //        {
+    //            item.ForeColor = Color.DarkRed;
+    //            Status.Text = "В пакете есть ошибки!";
 
-                return;
-            }
-        }
+    //            return;
+    //        }
+    //    }
 
-        _ = Config.SaveFormat switch
-        {
-            Config.UfebsFormat => item.SubItems[PackSavedColumn.Index].Text = GetUfebsFileName(),
-            Config.SwiftFormat => item.SubItems[PackSavedColumn.Index].Text = "+",
-            _ => throw new NotImplementedException()
-        };
+    //    _ = Config.SaveFormat switch
+    //    {
+    //        Config.UfebsFormat => item.SubItems[PackSavedColumn.Index].Text = GetUfebsFileName(),
+    //        Config.SwiftFormat => item.SubItems[PackSavedColumn.Index].Text = "+",
+    //        _ => throw new NotImplementedException()
+    //    };
 
-        item.ForeColor = Color.DarkGreen;
-        Status.Text = "Готово. Выберите другой файл.";
+    //    item.ForeColor = Color.DarkGreen;
+    //    Status.Text = "Готово. Выберите другой файл.";
 
-        foreach (ListViewItem i in FilesList.Items)
-        {
-            //if (i.ForeColor != Color.DarkGreen) //TODO see in collection, not in listview!
-            if (i.SubItems[PackSavedColumn.Index].Text.Length == 0) // not '+'
-            {
-                Status.Text = "Выберите следующий необработанный файл.";
-                return;
-            }
-        }
+    //    foreach (ListViewItem i in FilesList.Items)
+    //    {
+    //        //if (i.ForeColor != Color.DarkGreen) //TODO see in collection, not in listview!
+    //        if (i.SubItems[PackSavedColumn.Index].Text.Length == 0) // not '+'
+    //        {
+    //            Status.Text = "Выберите следующий необработанный файл.";
+    //            return;
+    //        }
+    //    }
 
-        Status.Text = "Всё готово.";
+    //    Status.Text = "Всё готово.";
 
-        string GetUfebsFileName()
-        {
-            string path = Path.Combine(Config.SaveDir, Config.SaveMask
-                .Replace("*", Path.GetFileNameWithoutExtension(_packet.Path))
-                .Replace("{id}", _packet.Id)
-                .Replace("{no}", _packet.EDNo));
+    //    string GetUfebsFileName()
+    //    {
+    //        string path = Path.Combine(Config.SaveDir, Config.SaveMask
+    //            .Replace("*", Path.GetFileNameWithoutExtension(_packet.Path))
+    //            .Replace("{id}", _packet.Id)
+    //            .Replace("{no}", _packet.EDNo));
 
-            var settings = new XmlWriterSettings()
-            {
-                Encoding = Encoding.GetEncoding("windows-1251"),
-                Indent = true
-            };
+    //        var settings = new XmlWriterSettings()
+    //        {
+    //            Encoding = Encoding.GetEncoding("windows-1251"),
+    //            Indent = true
+    //        };
 
-            using (var writer = XmlWriter.Create(path, settings))
-            {
-                if (_packet.EDType == "PacketEPD")
-                {
-                    _packet.WriteXML(writer);
-                }
-                else if (_packet.EDType.StartsWith("ED1"))
-                {
-                    _packet.Elements[0].WriteXML(writer);
-                }
-                //TODO ED503
+    //        using (var writer = XmlWriter.Create(path, settings))
+    //        {
+    //            if (_packet.EDType == "PacketEPD")
+    //            {
+    //                _packet.WriteXML(writer);
+    //            }
+    //            else if (_packet.EDType.StartsWith("ED1"))
+    //            {
+    //                _packet.Elements[0].WriteXML(writer);
+    //            }
+    //            //TODO ED503
 
-                writer.Close();
-            }
+    //            writer.Close();
+    //        }
 
-            return path;
-        }
-    }
+    //        return path;
+    //    }
+    //}
 
 
     //private void UpdateDocItem(ListViewItem item)

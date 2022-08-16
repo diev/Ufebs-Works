@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.SWIFT;
+
 using System.Xml.Linq;
 
 namespace CorrLib.UFEBS.DTO;
@@ -72,10 +74,10 @@ public record PacketEPD : EDBase
     public string? Path { get; protected set; }
 
     /// <summary>
-    /// Наш идентификатор документа в формате ГГММДД000000001 из EDDate и EDNo (15 цифр).
+    /// Наш идентификатор документа в формате +ГГММДД000000001 из EDDate и EDNo (15 цифр, 16 знаков).
     /// </summary>
     public string Id
-        => $"{EDDate[2..].Replace("-", "")}{EDNo.PadLeft(9, '0')}"; //15x
+        => SwiftID.Id(EDDate, EDNo);
 
     #endregion Extensions
     #endregion Properties

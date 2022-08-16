@@ -32,6 +32,26 @@ public static class FilesModel
     private static string[] _fileNames;
     private static PacketEPD[] _packets;
 
+    public static void AskIfCleanSavedFiles()
+    {
+        string mask = Config.SaveMask
+            .Replace("{id}", "*")
+            .Replace("{no}", "*");
+
+        var saved = Directory.GetFiles(Config.SaveDir == string.Empty ? "." : Config.SaveDir, mask);
+
+        if (saved.Length > 0 &&
+            DialogResult.Yes == MessageBox.Show(
+                $"В выходной директории\n\"{Config.SaveDir}\"\nуже есть {saved.Length} файлов {Config.SaveMask}.\n\nУдалить их?",
+                Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation))
+        {
+            foreach (var file in saved)
+            {
+                File.Delete(file);
+            }
+        }
+    }
+
     public static void LoadFiles(string directory, string mask, ref ListView list)
     {
         var fileNames = Directory.GetFiles(directory, mask);
@@ -42,12 +62,14 @@ public static class FilesModel
     {
         _fileNames = fileNames;
         list.Items.Clear();
+        int i = 0;
 
         foreach (var file in fileNames)
         {
             var packet = new PacketEPD(file);
             list.Items.Add(new ListViewItem(new string[]
             {
+                (++i).ToString(),
                 Path.GetFileName(file),
                 packet.EDType,
                 packet.EDQuantity,
@@ -89,23 +111,22 @@ public static class FilesModel
         int index = mainForm.FilesList.SelectedIndices.Count == 1
             ? mainForm.FilesList.SelectedIndices[0] : -1;
 
-        if (index > -1)
+        if (index == -1) return;
+
+        string file = mainForm.FilesList.Items[index].SubItems[mainForm.FileColumn.Index].Text;
+        string path = Path.Combine(Config.OpenDir, file);
+
+        if (File.Exists(path))
         {
-            string file = mainForm.FilesList.Items[index].SubItems[mainForm.FileColumn.Index].Text;
-            string path = Path.Combine(Config.OpenDir, file);
+            Process.Start("notepad.exe", path);
+        }
 
-            if (File.Exists(path))
-            {
-                Process.Start("notepad.exe", path);
-            }
+        file = mainForm.FilesList.Items[index].SubItems[mainForm.PackSavedColumn.Index].Text;
+        path = Path.Combine(Config.SaveDir, file);
 
-            file = mainForm.FilesList.Items[index].SubItems[mainForm.PackSavedColumn.Index].Text;
-            path = Path.Combine(Config.SaveDir, file);
-
-            if (File.Exists(path))
-            {
-                Process.Start("notepad.exe", path);
-            }
+        if (File.Exists(path))
+        {
+            Process.Start("notepad.exe", path);
         }
     }
 }

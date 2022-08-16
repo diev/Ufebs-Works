@@ -54,8 +54,8 @@ public static class SwiftHelpers
     public static string? LatWrap35(this string? value)
         => Wrap35(value.Lat());
 
-    public static ReadOnlySpan<char> Prepare35(this string value)
-        => value.PadRight(210, ' ');
+    public static ReadOnlySpan<char> Prepare35(this string value, int width = 210)
+        => value.PadRight(width, ' ');
 
     //for (int i = 0; i < 4; i++) //TODO '-' для первых 4 строк
     //{
@@ -75,7 +75,7 @@ public static class SwiftHelpers
             _ => 260
         };
 
-        var s = value.Prepare35();
+        var s = value.Prepare35(1024); //TODO test
         StringBuilder sb = new(260);
 
         for (int i = 0; i < maxLines; i++)
@@ -88,5 +88,51 @@ public static class SwiftHelpers
         }
 
         return sb.ToString().TrimEnd();
+    }
+
+    public static bool LatNameValid(this string value)
+    {
+        const int rows = 3 * 35;
+        const string pattern = @"^:\d{2}\D{0,1}:";
+
+        string text = value.Lat()!;
+        int len = text.Length;
+
+        if (len > rows) return false;
+
+        for (int i = 0; i < len; i += 35)
+        {
+            if (text[i] == '-')
+                return false;
+
+            if (text[i] == ':' && 
+                Regex.Match(text[i..], pattern).Success)
+                return false;
+        }
+
+        return true;
+    }
+
+    public static bool LatPurposeValid(this string value)
+    {
+        const int rows = 4 * 35; // SWIFT field :70:
+        const string pattern = @"^:\d{2}\D{0,1}:";
+
+        string text = value.Lat()!;
+        int len = text.Length;
+
+        if (len > 210) return false;
+
+        for (int i = 35; i < Math.Min(len, rows); i += 35)
+        {
+            if (text[i] == '-')
+                return false;
+
+            if (text[i] == ':' &&
+                Regex.Match(text[i..], pattern).Success)
+                return false;
+        }
+
+        return true;
     }
 }

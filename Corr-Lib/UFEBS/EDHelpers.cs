@@ -17,6 +17,8 @@ limitations under the License.
 */
 #endregion
 
+using CorrLib.SWIFT;
+
 namespace CorrLib.UFEBS;
 
 public static class EDHelpers

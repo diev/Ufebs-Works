@@ -49,12 +49,14 @@ partial class MainForm
             this.AboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.FilesList = new System.Windows.Forms.ListView();
+            this.CntFileColumn = new System.Windows.Forms.ColumnHeader();
             this.FileColumn = new System.Windows.Forms.ColumnHeader();
             this.RootColumn = new System.Windows.Forms.ColumnHeader();
             this.TotalQtyColumn = new System.Windows.Forms.ColumnHeader();
             this.TotalSumColumn = new System.Windows.Forms.ColumnHeader();
             this.PackSavedColumn = new System.Windows.Forms.ColumnHeader();
             this.DocsList = new System.Windows.Forms.ListView();
+            this.CntDocColumn = new System.Windows.Forms.ColumnHeader();
             this.EDNoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
             this.DocNoColumn = new System.Windows.Forms.ColumnHeader();
@@ -63,12 +65,6 @@ partial class MainForm
             this.PayeeColumn = new System.Windows.Forms.ColumnHeader();
             this.PurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.SavedColumn = new System.Windows.Forms.ColumnHeader();
-            this.NewPayerColumn = new System.Windows.Forms.ColumnHeader();
-            this.NewPayeeColumn = new System.Windows.Forms.ColumnHeader();
-            this.NewPurposeColumn = new System.Windows.Forms.ColumnHeader();
-            this.SwiftPayerColumn = new System.Windows.Forms.ColumnHeader();
-            this.SwiftPayeeColumn = new System.Windows.Forms.ColumnHeader();
-            this.SwiftPurposeColumn = new System.Windows.Forms.ColumnHeader();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.FontDialog = new System.Windows.Forms.FontDialog();
             this.StatusBar.SuspendLayout();
@@ -249,6 +245,7 @@ partial class MainForm
             // FilesList
             // 
             this.FilesList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.CntFileColumn,
             this.FileColumn,
             this.RootColumn,
             this.TotalQtyColumn,
@@ -267,6 +264,12 @@ partial class MainForm
             this.FilesList.View = System.Windows.Forms.View.Details;
             this.FilesList.SelectedIndexChanged += new System.EventHandler(this.FilesList_SelectedIndexChanged);
             this.FilesList.DoubleClick += new System.EventHandler(this.FilesList_DoubleClick);
+            // 
+            // CntFileColumn
+            // 
+            this.CntFileColumn.Text = "N";
+            this.CntFileColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.CntFileColumn.Width = 30;
             // 
             // FileColumn
             // 
@@ -298,20 +301,15 @@ partial class MainForm
             // DocsList
             // 
             this.DocsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.EDNoColumn,
+            this.CntDocColumn,
             this.EDColumn,
+            this.EDNoColumn,
             this.DocNoColumn,
             this.SumColumn,
             this.PayerColumn,
             this.PayeeColumn,
             this.PurposeColumn,
-            this.SavedColumn,
-            this.NewPayerColumn,
-            this.NewPayeeColumn,
-            this.NewPurposeColumn,
-            this.SwiftPayerColumn,
-            this.SwiftPayeeColumn,
-            this.SwiftPurposeColumn});
+            this.SavedColumn});
             this.DocsList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DocsList.FullRowSelect = true;
             this.DocsList.GridLines = true;
@@ -324,9 +322,16 @@ partial class MainForm
             this.DocsList.SelectedIndexChanged += new System.EventHandler(this.DocsList_SelectedIndexChanged);
             this.DocsList.DoubleClick += new System.EventHandler(this.DocsList_DoubleClick);
             // 
+            // CntDocColumn
+            // 
+            this.CntDocColumn.Text = "N";
+            this.CntDocColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.CntDocColumn.Width = 30;
+            // 
             // EDNoColumn
             // 
             this.EDNoColumn.Text = "EDNo";
+            this.EDNoColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // EDColumn
             // 
@@ -363,36 +368,6 @@ partial class MainForm
             // 
             this.SavedColumn.Text = "Выходной файл SWIFT";
             this.SavedColumn.Width = 280;
-            // 
-            // NewPayerColumn
-            // 
-            this.NewPayerColumn.Text = "Плательщик кор.";
-            this.NewPayerColumn.Width = 160;
-            // 
-            // NewPayeeColumn
-            // 
-            this.NewPayeeColumn.Text = "Получатель кор.";
-            this.NewPayeeColumn.Width = 160;
-            // 
-            // NewPurposeColumn
-            // 
-            this.NewPurposeColumn.Text = "Назначение кор.";
-            this.NewPurposeColumn.Width = 210;
-            // 
-            // SwiftPayerColumn
-            // 
-            this.SwiftPayerColumn.Text = "Плательщик SWIFT";
-            this.SwiftPayerColumn.Width = 105;
-            // 
-            // SwiftPayeeColumn
-            // 
-            this.SwiftPayeeColumn.Text = "Получатель SWIFT";
-            this.SwiftPayeeColumn.Width = 105;
-            // 
-            // SwiftPurposeColumn
-            // 
-            this.SwiftPurposeColumn.Text = "Назначение SWIFT";
-            this.SwiftPurposeColumn.Width = 210;
             // 
             // OpenFileDialog
             // 
@@ -471,13 +446,9 @@ partial class MainForm
     private ColumnHeader PayeeColumn;
     private ColumnHeader PurposeColumn;
     internal ColumnHeader SavedColumn;
-    private ColumnHeader NewPayerColumn;
-    private ColumnHeader NewPayeeColumn;
-    private ColumnHeader NewPurposeColumn;
-    private ColumnHeader SwiftPayerColumn;
-    private ColumnHeader SwiftPayeeColumn;
-    private ColumnHeader SwiftPurposeColumn;
     private ColumnHeader DocNoColumn;
     internal ColumnHeader FileColumn;
     internal ColumnHeader PackSavedColumn;
+    private ColumnHeader CntFileColumn;
+    private ColumnHeader CntDocColumn;
 }

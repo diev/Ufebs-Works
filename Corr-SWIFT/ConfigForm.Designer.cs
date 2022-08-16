@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
             this.OpenBox = new System.Windows.Forms.GroupBox();
             this.SelectFileButton = new System.Windows.Forms.Button();
             this.SelectFileEdit = new System.Windows.Forms.TextBox();
@@ -61,12 +62,8 @@
             this.OKButton = new System.Windows.Forms.Button();
             this.AbortButton = new System.Windows.Forms.Button();
             this.TemplatesNameGroup = new System.Windows.Forms.GroupBox();
-            this.SwiftNameLimitChoice = new System.Windows.Forms.ComboBox();
             this.TemplatesNameEdit = new System.Windows.Forms.TextBox();
-            this.SwiftNameLimitLabel = new System.Windows.Forms.Label();
             this.TemplatesPurposeGroup = new System.Windows.Forms.GroupBox();
-            this.SwiftPurposeFieldChoice = new System.Windows.Forms.ComboBox();
-            this.SwiftPurposeFieldLabel = new System.Windows.Forms.Label();
             this.TemplatesPurposeEdit = new System.Windows.Forms.TextBox();
             this.ProfileChoice = new System.Windows.Forms.ComboBox();
             this.ProfileLabel = new System.Windows.Forms.Label();
@@ -401,7 +398,7 @@
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKButton.Location = new System.Drawing.Point(408, 516);
+            this.OKButton.Location = new System.Drawing.Point(408, 456);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 7;
@@ -413,7 +410,7 @@
             // 
             this.AbortButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AbortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.AbortButton.Location = new System.Drawing.Point(489, 516);
+            this.AbortButton.Location = new System.Drawing.Point(489, 456);
             this.AbortButton.Name = "AbortButton";
             this.AbortButton.Size = new System.Drawing.Size(75, 23);
             this.AbortButton.TabIndex = 8;
@@ -422,29 +419,13 @@
             // 
             // TemplatesNameGroup
             // 
-            this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitChoice);
             this.TemplatesNameGroup.Controls.Add(this.TemplatesNameEdit);
-            this.TemplatesNameGroup.Controls.Add(this.SwiftNameLimitLabel);
             this.TemplatesNameGroup.Location = new System.Drawing.Point(9, 328);
             this.TemplatesNameGroup.Name = "TemplatesNameGroup";
-            this.TemplatesNameGroup.Size = new System.Drawing.Size(563, 88);
+            this.TemplatesNameGroup.Size = new System.Drawing.Size(563, 56);
             this.TemplatesNameGroup.TabIndex = 3;
             this.TemplatesNameGroup.TabStop = false;
             this.TemplatesNameGroup.Text = "Шаблон Плательщика за 3 лицо с {name} и {acc} клиента";
-            // 
-            // SwiftNameLimitChoice
-            // 
-            this.SwiftNameLimitChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SwiftNameLimitChoice.Enabled = false;
-            this.SwiftNameLimitChoice.FormattingEnabled = true;
-            this.SwiftNameLimitChoice.Items.AddRange(new object[] {
-            "105",
-            "160"});
-            this.SwiftNameLimitChoice.Location = new System.Drawing.Point(401, 50);
-            this.SwiftNameLimitChoice.Name = "SwiftNameLimitChoice";
-            this.SwiftNameLimitChoice.Size = new System.Drawing.Size(75, 23);
-            this.SwiftNameLimitChoice.Sorted = true;
-            this.SwiftNameLimitChoice.TabIndex = 2;
             // 
             // TemplatesNameEdit
             // 
@@ -457,51 +438,15 @@
             this.TemplatesNameEdit.Size = new System.Drawing.Size(544, 22);
             this.TemplatesNameEdit.TabIndex = 0;
             // 
-            // SwiftNameLimitLabel
-            // 
-            this.SwiftNameLimitLabel.AutoSize = true;
-            this.SwiftNameLimitLabel.Enabled = false;
-            this.SwiftNameLimitLabel.Location = new System.Drawing.Point(264, 55);
-            this.SwiftNameLimitLabel.Name = "SwiftNameLimitLabel";
-            this.SwiftNameLimitLabel.Size = new System.Drawing.Size(134, 15);
-            this.SwiftNameLimitLabel.TabIndex = 1;
-            this.SwiftNameLimitLabel.Text = "Предел длины в SWIFT:";
-            // 
             // TemplatesPurposeGroup
             // 
-            this.TemplatesPurposeGroup.Controls.Add(this.SwiftPurposeFieldChoice);
-            this.TemplatesPurposeGroup.Controls.Add(this.SwiftPurposeFieldLabel);
             this.TemplatesPurposeGroup.Controls.Add(this.TemplatesPurposeEdit);
-            this.TemplatesPurposeGroup.Location = new System.Drawing.Point(9, 422);
+            this.TemplatesPurposeGroup.Location = new System.Drawing.Point(9, 390);
             this.TemplatesPurposeGroup.Name = "TemplatesPurposeGroup";
-            this.TemplatesPurposeGroup.Size = new System.Drawing.Size(563, 88);
+            this.TemplatesPurposeGroup.Size = new System.Drawing.Size(563, 56);
             this.TemplatesPurposeGroup.TabIndex = 4;
             this.TemplatesPurposeGroup.TabStop = false;
             this.TemplatesPurposeGroup.Text = "Шаблон Назначения за 3 лицо с ИНН и КПП Банка, c {name} и {purpose}";
-            // 
-            // SwiftPurposeFieldChoice
-            // 
-            this.SwiftPurposeFieldChoice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.SwiftPurposeFieldChoice.Enabled = false;
-            this.SwiftPurposeFieldChoice.FormattingEnabled = true;
-            this.SwiftPurposeFieldChoice.Items.AddRange(new object[] {
-            "70",
-            "72"});
-            this.SwiftPurposeFieldChoice.Location = new System.Drawing.Point(401, 50);
-            this.SwiftPurposeFieldChoice.Name = "SwiftPurposeFieldChoice";
-            this.SwiftPurposeFieldChoice.Size = new System.Drawing.Size(75, 23);
-            this.SwiftPurposeFieldChoice.Sorted = true;
-            this.SwiftPurposeFieldChoice.TabIndex = 2;
-            // 
-            // SwiftPurposeFieldLabel
-            // 
-            this.SwiftPurposeFieldLabel.AutoSize = true;
-            this.SwiftPurposeFieldLabel.Enabled = false;
-            this.SwiftPurposeFieldLabel.Location = new System.Drawing.Point(264, 56);
-            this.SwiftPurposeFieldLabel.Name = "SwiftPurposeFieldLabel";
-            this.SwiftPurposeFieldLabel.Size = new System.Drawing.Size(83, 15);
-            this.SwiftPurposeFieldLabel.TabIndex = 1;
-            this.SwiftPurposeFieldLabel.Text = "Поле в SWIFT:";
             // 
             // TemplatesPurposeEdit
             // 
@@ -518,7 +463,7 @@
             // 
             this.ProfileChoice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ProfileChoice.FormattingEnabled = true;
-            this.ProfileChoice.Location = new System.Drawing.Point(115, 517);
+            this.ProfileChoice.Location = new System.Drawing.Point(115, 457);
             this.ProfileChoice.Name = "ProfileChoice";
             this.ProfileChoice.Size = new System.Drawing.Size(137, 23);
             this.ProfileChoice.Sorted = true;
@@ -529,7 +474,7 @@
             // 
             this.ProfileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ProfileLabel.AutoSize = true;
-            this.ProfileLabel.Location = new System.Drawing.Point(20, 520);
+            this.ProfileLabel.Location = new System.Drawing.Point(20, 460);
             this.ProfileLabel.Name = "ProfileLabel";
             this.ProfileLabel.Size = new System.Drawing.Size(62, 15);
             this.ProfileLabel.TabIndex = 5;
@@ -548,7 +493,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.AbortButton;
-            this.ClientSize = new System.Drawing.Size(584, 549);
+            this.ClientSize = new System.Drawing.Size(584, 489);
             this.Controls.Add(this.ProfileChoice);
             this.Controls.Add(this.ProfileLabel);
             this.Controls.Add(this.TemplatesPurposeGroup);
@@ -558,7 +503,9 @@
             this.Controls.Add(this.BankBox);
             this.Controls.Add(this.SaveBox);
             this.Controls.Add(this.OpenBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConfigForm";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Параметры";
             this.OpenBox.ResumeLayout(false);
@@ -608,12 +555,8 @@
         private ComboBox SaveFormatChoice;
         private Label OutFormatLabel;
         private GroupBox TemplatesNameGroup;
-        private ComboBox SwiftNameLimitChoice;
-        private Label SwiftNameLimitLabel;
         private TextBox TemplatesNameEdit;
         private GroupBox TemplatesPurposeGroup;
-        private ComboBox SwiftPurposeFieldChoice;
-        private Label SwiftPurposeFieldLabel;
         private TextBox TemplatesPurposeEdit;
         private ComboBox ProfileChoice;
         private Label ProfileLabel;

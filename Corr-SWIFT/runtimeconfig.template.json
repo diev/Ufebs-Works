@@ -1,15 +1,16 @@
 {
   "configProperties": {
     "ED807": "ED807.xml",
-    "Profile": "ALFA",
+    "Profile": "TEST",
     "Profiles": [
       "ALFA",
-      "BBR"
+      "BBR",
+      "TEST"
     ],
     ".OpenDir": "",
     ".OpenMask": "*.xml",
     ".SaveDir": "",
-    ".SaveMask": "*_{id}.txt",
+    ".SaveMask": "*{id}.txt",
     ".SaveFormat": "SWIFT",
     ".BankINN": "7831001422",
     ".BankKPP": "784101001",
@@ -18,12 +19,10 @@
     ".CorrSWIFT": "CITVRU2PXXX",
     ".TemplatesName": "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})",
     ".TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
-    ".SwiftNameLimit": 105,
-    ".SwiftPurposeField": "70",
     "ALFA.OpenDir": "O:\\XXIMAIN\\CITY\\_ALFA\\OUT",
     "ALFA.OpenMask": "*.xml",
     "ALFA.SaveDir": "O:\\XXIMAIN\\CITY\\_ALFA\\OUT",
-    "ALFA.SaveMask": "*_{id}.txt",
+    "ALFA.SaveMask": "*{id}.txt",
     "ALFA.SaveFormat": "SWIFT",
     "ALFA.BankINN": "7831001422",
     "ALFA.BankKPP": "784101001",
@@ -32,8 +31,6 @@
     "ALFA.CorrAccount": "30109810200000000654",
     "ALFA.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name})",
     "ALFA.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
-    "ALFA.SwiftNameLimit": 105,
-    "ALFA.SwiftPurposeField": "70",
     "BBR.OpenDir": "O:\\XXIMAIN\\CITY\\_BBR\\OUT",
     "BBR.OpenMask": "*.xml",
     "BBR.SaveDir": "O:\\XXIMAIN\\CITY\\_BBR\\OUT",
@@ -46,12 +43,10 @@
     "BBR.CorrAccount": "30109810300000000063",
     "BBR.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
     "BBR.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
-    "BBR.SwiftNameLimit": 105,
-    "BBR.SwiftPurposeField": "70",
     "TEST.OpenDir": "",
     "TEST.OpenMask": "*.xml",
     "TEST.SaveDir": "",
-    "TEST.SaveMask": "*_{id}.txt",
+    "TEST.SaveMask": "*{id}.txt",
     "TEST.SaveFormat": "SWIFT",
     "TEST.BankINN": "7831001422",
     "TEST.BankKPP": "784101001",
@@ -59,8 +54,6 @@
     "TEST.CorrSWIFT": "ALFARUMMXXX",
     "TEST.CorrAccount": "30109810200000000654",
     "TEST.TemplatesName": "АО \u0022Сити Инвест Банк\u0022 ИНН 7831001422 ({name} р/с {acc})",
-    "TEST.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}",
-    "TEST.SwiftNameLimit": 105,
-    "TEST.SwiftPurposeField": "70"
+    "TEST.TemplatesPurpose": "//7831001422//784101001//{name}//{purpose}"
   }
 }

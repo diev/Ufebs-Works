@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <AssemblyVersion>2.22.8.9</AssemblyVersion>
-    <FileVersion>2.22.8.9</FileVersion>
+    <AssemblyVersion>2.22.8.16</AssemblyVersion>
+    <FileVersion>2.22.8.16</FileVersion>
     <Company>CIBANK</Company>
   </PropertyGroup>
 

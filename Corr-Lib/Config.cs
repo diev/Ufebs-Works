@@ -143,20 +143,6 @@ public static class Config
         set => SP(nameof(TemplatesPurpose), value);
     }
 
-    [Profile]
-    public static int SwiftNameLimit
-    {
-        get => GPInt(nameof(SwiftNameLimit));
-        set => SP(nameof(SwiftNameLimit), value);
-    }
-
-    [Profile]
-    public static string SwiftPurposeField
-    {
-        get => GP(nameof(SwiftPurposeField));
-        set => SP(nameof(SwiftPurposeField), value);
-    }
-
     //static Config()
     //    => _profile = (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.';
 
@@ -178,10 +164,6 @@ public static class Config
         {
             switch (p.Name)
             {
-                //case nameof(ED807):
-                //    entry![nameof(ED807)] = ED807;
-                //    break;
-
                 case nameof(Profile):
                     entry![nameof(Profile)] = Profile;
                     break;
@@ -199,6 +181,8 @@ public static class Config
 
                 default: // with Profile
                     var info = t.GetProperty(p.Name);
+
+                    // with [Profile] or not
                     var profiled = Attribute.IsDefined(info!, typeof(ProfileAttribute));
                     string name = profiled ? _profile + p.Name : p.Name;
 
@@ -297,4 +281,5 @@ public static class Config
 [AttributeUsage(AttributeTargets.Property)]
 internal class ProfileAttribute : Attribute
 {
+    // [Profile]
 }
