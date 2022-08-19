@@ -57,8 +57,8 @@ partial class MainForm
             this.PackSavedColumn = new System.Windows.Forms.ColumnHeader();
             this.DocsList = new System.Windows.Forms.ListView();
             this.CntDocColumn = new System.Windows.Forms.ColumnHeader();
-            this.EDNoColumn = new System.Windows.Forms.ColumnHeader();
             this.EDColumn = new System.Windows.Forms.ColumnHeader();
+            this.EDNoColumn = new System.Windows.Forms.ColumnHeader();
             this.DocNoColumn = new System.Windows.Forms.ColumnHeader();
             this.SumColumn = new System.Windows.Forms.ColumnHeader();
             this.PayerColumn = new System.Windows.Forms.ColumnHeader();
@@ -238,7 +238,7 @@ partial class MainForm
             // 
             this.splitContainer1.Panel2.Controls.Add(this.DocsList);
             this.splitContainer1.Size = new System.Drawing.Size(930, 402);
-            this.splitContainer1.SplitterDistance = 137;
+            this.splitContainer1.SplitterDistance = 136;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -252,13 +252,12 @@ partial class MainForm
             this.TotalSumColumn,
             this.PackSavedColumn});
             this.FilesList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FilesList.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FilesList.FullRowSelect = true;
             this.FilesList.GridLines = true;
             this.FilesList.Location = new System.Drawing.Point(0, 4);
             this.FilesList.MultiSelect = false;
             this.FilesList.Name = "FilesList";
-            this.FilesList.Size = new System.Drawing.Size(926, 129);
+            this.FilesList.Size = new System.Drawing.Size(926, 128);
             this.FilesList.TabIndex = 9;
             this.FilesList.UseCompatibleStateImageBehavior = false;
             this.FilesList.View = System.Windows.Forms.View.Details;
@@ -315,7 +314,7 @@ partial class MainForm
             this.DocsList.GridLines = true;
             this.DocsList.Location = new System.Drawing.Point(0, 0);
             this.DocsList.Name = "DocsList";
-            this.DocsList.Size = new System.Drawing.Size(926, 258);
+            this.DocsList.Size = new System.Drawing.Size(926, 259);
             this.DocsList.TabIndex = 4;
             this.DocsList.UseCompatibleStateImageBehavior = false;
             this.DocsList.View = System.Windows.Forms.View.Details;
@@ -328,15 +327,15 @@ partial class MainForm
             this.CntDocColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.CntDocColumn.Width = 30;
             // 
-            // EDNoColumn
-            // 
-            this.EDNoColumn.Text = "EDNo";
-            this.EDNoColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // EDColumn
             // 
             this.EDColumn.Text = "Тип";
             this.EDColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // EDNoColumn
+            // 
+            this.EDNoColumn.Text = "EDNo";
+            this.EDNoColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // DocNoColumn
             // 
@@ -382,7 +381,9 @@ partial class MainForm
             // 
             // FontDialog
             // 
-            this.FontDialog.Apply += new System.EventHandler(this.FontDialog_Apply);
+            this.FontDialog.AllowVerticalFonts = false;
+            this.FontDialog.FontMustExist = true;
+            this.FontDialog.ShowEffects = false;
             // 
             // MainForm
             // 

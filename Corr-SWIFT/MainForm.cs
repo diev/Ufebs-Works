@@ -19,6 +19,11 @@ limitations under the License.
 
 using CorrLib;
 
+using static System.Windows.Forms.Design.AxImporter;
+using System.Text.Json;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
+
 namespace CorrSWIFT;
 
 public partial class MainForm : Form
@@ -111,51 +116,36 @@ public partial class MainForm : Form
 
     private void FontOK()
     {
-        var font = FontDialog.Font;
-        FilesList.Font = font;
-        DocsList.Font = font;
-        Status.Font = font;
+        Font = FontDialog.Font;
+
+        int w = Screen.PrimaryScreen.WorkingArea.Width;
+        int h = Screen.PrimaryScreen.WorkingArea.Height;
+
+        SetBounds(
+            (int)(w * 0.1), (int)(h * 0.15),
+            (int)(w * 0.8), (int)(h * 0.75));
+
+        string path = Path.GetDirectoryName(Application.ExecutablePath) ?? ".";
+        string file = Path.Combine(path, "_font.json");
+
+        var options = new JsonSerializerOptions
+        {
+            //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
+        var json = JsonSerializer.SerializeToUtf8Bytes(Font, options);
+        File.WriteAllBytes(file, json);
     }
 
     #endregion Dialogs
     #region Actions
 
-    ////private void LoadFile(string path)
-    //private void LoadFile(ListViewItem item)
-    //{
-    //    string text = item.Text;
-    //    string path = Path.Combine(Config.OpenDir, text);
-
-    //    if (!File.Exists(path))
-    //    {
-    //        MessageBox.Show($"Файл \"{path}\" уже отсутствует на диске!",
-    //            Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-    //        return;
-    //    }
-
-    //    // Заголовок окна
-
-    //    Text = $"{text} - {Application.ProductName}";
-
-    //    //_packet = new PacketEPD(path);
-    //    //var docs = new PacketEPDocs(_packet);
-    //    //DocsList.Items.Clear();
-
-    //    //foreach (var ed in docs)
-    //    //{
-    //    //    var doc = DocsList.Items.Add(new ListViewItem(ed));
-    //    //    LoadDocItem(doc);
-    //    //    SaveDocItem(doc); //TODO Cancel* = Abort (foreach break)
-    //    //}
-
-    //    DocsModel.LoadFile(this, path);
-
-    //    //SaveFileItem();
-    //}
-
     private void TryClose(ref FormClosingEventArgs e)
     {
+        DocsModel.SaveDictionaries();
+
         //if (Status.Text != "Всё готово.")
         //{
         //    var reply = MessageBox.Show("Есть несохраненные файлы!\nЗакрыть программу?",
@@ -239,18 +229,16 @@ public partial class MainForm : Form
 
     private void FontMenuItem_Click(object sender, EventArgs e)
     {
-        FontDialog.Font = FilesList.Font;
-        FontDialog.ShowDialog();
+        FontDialog.Font = Font;
+        if (FontDialog.ShowDialog() == DialogResult.OK)
+        {
+            FontOK();
+        }
     }
 
     private void OpenFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
     {
         OpenFilesOK();
-    }
-
-    private void FontDialog_Apply(object sender, EventArgs e)
-    {
-        FontOK();
     }
 
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)

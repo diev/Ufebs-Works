@@ -85,9 +85,11 @@
             this.OpenBox.Controls.Add(this.OpenDirButton);
             this.OpenBox.Controls.Add(this.OpenDirEdit);
             this.OpenBox.Controls.Add(this.OpenDirLabel);
-            this.OpenBox.Location = new System.Drawing.Point(9, 8);
+            this.OpenBox.Location = new System.Drawing.Point(17, 14);
+            this.OpenBox.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.OpenBox.Name = "OpenBox";
-            this.OpenBox.Size = new System.Drawing.Size(563, 115);
+            this.OpenBox.Padding = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.OpenBox.Size = new System.Drawing.Size(1046, 199);
             this.OpenBox.TabIndex = 0;
             this.OpenBox.TabStop = false;
             this.OpenBox.Text = "Исходные файлы и Справочник БИК";
@@ -95,9 +97,10 @@
             // SelectFileButton
             // 
             this.SelectFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectFileButton.Location = new System.Drawing.Point(482, 77);
+            this.SelectFileButton.Location = new System.Drawing.Point(895, 133);
+            this.SelectFileButton.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SelectFileButton.Name = "SelectFileButton";
-            this.SelectFileButton.Size = new System.Drawing.Size(75, 23);
+            this.SelectFileButton.Size = new System.Drawing.Size(139, 40);
             this.SelectFileButton.TabIndex = 7;
             this.SelectFileButton.Text = "Выбор...";
             this.SelectFileButton.UseVisualStyleBackColor = true;
@@ -107,47 +110,50 @@
             // 
             this.SelectFileEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SelectFileEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SelectFileEdit.Location = new System.Drawing.Point(106, 78);
+            this.SelectFileEdit.Location = new System.Drawing.Point(197, 135);
+            this.SelectFileEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SelectFileEdit.Name = "SelectFileEdit";
             this.SelectFileEdit.PlaceholderText = "C:\\TEMP\\ED807.xml";
-            this.SelectFileEdit.Size = new System.Drawing.Size(370, 22);
+            this.SelectFileEdit.Size = new System.Drawing.Size(684, 32);
             this.SelectFileEdit.TabIndex = 6;
             this.SelectFileEdit.TextChanged += new System.EventHandler(this.SelectFileEdit_TextChanged);
             // 
             // SelectFileLabel
             // 
             this.SelectFileLabel.AutoSize = true;
-            this.SelectFileLabel.Location = new System.Drawing.Point(11, 81);
+            this.SelectFileLabel.Location = new System.Drawing.Point(20, 140);
+            this.SelectFileLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.SelectFileLabel.Name = "SelectFileLabel";
-            this.SelectFileLabel.Size = new System.Drawing.Size(78, 15);
+            this.SelectFileLabel.Size = new System.Drawing.Size(141, 26);
             this.SelectFileLabel.TabIndex = 5;
             this.SelectFileLabel.Text = "Справочник:";
             // 
             // OpenMaskEdit
             // 
-            this.OpenMaskEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OpenMaskEdit.Location = new System.Drawing.Point(106, 48);
+            this.OpenMaskEdit.Location = new System.Drawing.Point(197, 83);
+            this.OpenMaskEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.OpenMaskEdit.Name = "OpenMaskEdit";
             this.OpenMaskEdit.PlaceholderText = "*.xml";
-            this.OpenMaskEdit.Size = new System.Drawing.Size(137, 22);
+            this.OpenMaskEdit.Size = new System.Drawing.Size(251, 32);
             this.OpenMaskEdit.TabIndex = 4;
             // 
             // OpenMaskLabel
             // 
             this.OpenMaskLabel.AutoSize = true;
-            this.OpenMaskLabel.Location = new System.Drawing.Point(11, 51);
+            this.OpenMaskLabel.Location = new System.Drawing.Point(20, 88);
+            this.OpenMaskLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.OpenMaskLabel.Name = "OpenMaskLabel";
-            this.OpenMaskLabel.Size = new System.Drawing.Size(45, 15);
+            this.OpenMaskLabel.Size = new System.Drawing.Size(82, 26);
             this.OpenMaskLabel.TabIndex = 3;
             this.OpenMaskLabel.Text = "Маска:";
             // 
             // OpenDirButton
             // 
             this.OpenDirButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.OpenDirButton.Location = new System.Drawing.Point(482, 18);
+            this.OpenDirButton.Location = new System.Drawing.Point(895, 31);
+            this.OpenDirButton.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.OpenDirButton.Name = "OpenDirButton";
-            this.OpenDirButton.Size = new System.Drawing.Size(75, 23);
+            this.OpenDirButton.Size = new System.Drawing.Size(139, 40);
             this.OpenDirButton.TabIndex = 2;
             this.OpenDirButton.Text = "Выбор...";
             this.OpenDirButton.UseVisualStyleBackColor = true;
@@ -157,20 +163,21 @@
             // 
             this.OpenDirEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OpenDirEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.OpenDirEdit.Location = new System.Drawing.Point(106, 19);
+            this.OpenDirEdit.Location = new System.Drawing.Point(197, 33);
+            this.OpenDirEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.OpenDirEdit.Name = "OpenDirEdit";
             this.OpenDirEdit.PlaceholderText = "C:\\TEMP\\IN";
-            this.OpenDirEdit.Size = new System.Drawing.Size(370, 22);
+            this.OpenDirEdit.Size = new System.Drawing.Size(684, 32);
             this.OpenDirEdit.TabIndex = 1;
             this.OpenDirEdit.TextChanged += new System.EventHandler(this.OpenDirEdit_TextChanged);
             // 
             // OpenDirLabel
             // 
             this.OpenDirLabel.AutoSize = true;
-            this.OpenDirLabel.Location = new System.Drawing.Point(11, 22);
+            this.OpenDirLabel.Location = new System.Drawing.Point(20, 38);
+            this.OpenDirLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.OpenDirLabel.Name = "OpenDirLabel";
-            this.OpenDirLabel.Size = new System.Drawing.Size(76, 15);
+            this.OpenDirLabel.Size = new System.Drawing.Size(140, 26);
             this.OpenDirLabel.TabIndex = 0;
             this.OpenDirLabel.Text = "Директория:";
             // 
@@ -191,9 +198,11 @@
             this.SaveBox.Controls.Add(this.SaveDirButton);
             this.SaveBox.Controls.Add(this.SaveDirEdit);
             this.SaveBox.Controls.Add(this.SaveDirLabel);
-            this.SaveBox.Location = new System.Drawing.Point(9, 129);
+            this.SaveBox.Location = new System.Drawing.Point(17, 224);
+            this.SaveBox.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SaveBox.Name = "SaveBox";
-            this.SaveBox.Size = new System.Drawing.Size(563, 79);
+            this.SaveBox.Padding = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.SaveBox.Size = new System.Drawing.Size(1046, 137);
             this.SaveBox.TabIndex = 1;
             this.SaveBox.TabStop = false;
             this.SaveBox.Text = "Конечные файлы с {id}, {no} или * в маске";
@@ -205,45 +214,49 @@
             this.SaveFormatChoice.Items.AddRange(new object[] {
             "УФЭБС",
             "SWIFT"});
-            this.SaveFormatChoice.Location = new System.Drawing.Point(344, 47);
+            this.SaveFormatChoice.Location = new System.Drawing.Point(639, 81);
+            this.SaveFormatChoice.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SaveFormatChoice.Name = "SaveFormatChoice";
-            this.SaveFormatChoice.Size = new System.Drawing.Size(75, 23);
+            this.SaveFormatChoice.Size = new System.Drawing.Size(136, 34);
             this.SaveFormatChoice.TabIndex = 6;
             this.SaveFormatChoice.SelectedValueChanged += new System.EventHandler(this.SaveFormatChoice_SelectedValueChanged);
             // 
             // OutFormatLabel
             // 
             this.OutFormatLabel.AutoSize = true;
-            this.OutFormatLabel.Location = new System.Drawing.Point(264, 51);
+            this.OutFormatLabel.Location = new System.Drawing.Point(490, 88);
+            this.OutFormatLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.OutFormatLabel.Name = "OutFormatLabel";
-            this.OutFormatLabel.Size = new System.Drawing.Size(53, 15);
+            this.OutFormatLabel.Size = new System.Drawing.Size(99, 26);
             this.OutFormatLabel.TabIndex = 5;
             this.OutFormatLabel.Text = "Формат:";
             // 
             // SaveMaskEdit
             // 
-            this.SaveMaskEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SaveMaskEdit.Location = new System.Drawing.Point(106, 48);
+            this.SaveMaskEdit.Location = new System.Drawing.Point(197, 83);
+            this.SaveMaskEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SaveMaskEdit.Name = "SaveMaskEdit";
             this.SaveMaskEdit.PlaceholderText = "{id}.txt";
-            this.SaveMaskEdit.Size = new System.Drawing.Size(137, 22);
+            this.SaveMaskEdit.Size = new System.Drawing.Size(251, 32);
             this.SaveMaskEdit.TabIndex = 4;
             // 
             // SaveMaskLabel
             // 
             this.SaveMaskLabel.AutoSize = true;
-            this.SaveMaskLabel.Location = new System.Drawing.Point(11, 51);
+            this.SaveMaskLabel.Location = new System.Drawing.Point(20, 88);
+            this.SaveMaskLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.SaveMaskLabel.Name = "SaveMaskLabel";
-            this.SaveMaskLabel.Size = new System.Drawing.Size(45, 15);
+            this.SaveMaskLabel.Size = new System.Drawing.Size(82, 26);
             this.SaveMaskLabel.TabIndex = 3;
             this.SaveMaskLabel.Text = "Маска:";
             // 
             // SaveDirButton
             // 
             this.SaveDirButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveDirButton.Location = new System.Drawing.Point(482, 18);
+            this.SaveDirButton.Location = new System.Drawing.Point(895, 31);
+            this.SaveDirButton.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SaveDirButton.Name = "SaveDirButton";
-            this.SaveDirButton.Size = new System.Drawing.Size(75, 23);
+            this.SaveDirButton.Size = new System.Drawing.Size(139, 40);
             this.SaveDirButton.TabIndex = 2;
             this.SaveDirButton.Text = "Выбор...";
             this.SaveDirButton.UseVisualStyleBackColor = true;
@@ -253,20 +266,21 @@
             // 
             this.SaveDirEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveDirEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.SaveDirEdit.Location = new System.Drawing.Point(106, 19);
+            this.SaveDirEdit.Location = new System.Drawing.Point(197, 33);
+            this.SaveDirEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.SaveDirEdit.Name = "SaveDirEdit";
             this.SaveDirEdit.PlaceholderText = "C:\\TEMP\\OUT";
-            this.SaveDirEdit.Size = new System.Drawing.Size(370, 22);
+            this.SaveDirEdit.Size = new System.Drawing.Size(684, 32);
             this.SaveDirEdit.TabIndex = 1;
             this.SaveDirEdit.TextChanged += new System.EventHandler(this.SaveDirEdit_TextChanged);
             // 
             // SaveDirLabel
             // 
             this.SaveDirLabel.AutoSize = true;
-            this.SaveDirLabel.Location = new System.Drawing.Point(11, 22);
+            this.SaveDirLabel.Location = new System.Drawing.Point(20, 38);
+            this.SaveDirLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.SaveDirLabel.Name = "SaveDirLabel";
-            this.SaveDirLabel.Size = new System.Drawing.Size(76, 15);
+            this.SaveDirLabel.Size = new System.Drawing.Size(140, 26);
             this.SaveDirLabel.TabIndex = 0;
             this.SaveDirLabel.Text = "Директория:";
             // 
@@ -282,9 +296,11 @@
             this.BankBox.Controls.Add(this.BankINNLabel);
             this.BankBox.Controls.Add(this.CorrAccountEdit);
             this.BankBox.Controls.Add(this.CorrAccountLabel);
-            this.BankBox.Location = new System.Drawing.Point(9, 214);
+            this.BankBox.Location = new System.Drawing.Point(17, 371);
+            this.BankBox.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.BankBox.Name = "BankBox";
-            this.BankBox.Size = new System.Drawing.Size(563, 108);
+            this.BankBox.Padding = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.BankBox.Size = new System.Drawing.Size(1046, 187);
             this.BankBox.TabIndex = 2;
             this.BankBox.TabStop = false;
             this.BankBox.Text = "Реквизиты нашего Банка и счета у банка-посредника";
@@ -293,20 +309,21 @@
             // 
             this.CorrSwiftEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrSwiftEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrSwiftEdit.Location = new System.Drawing.Point(344, 76);
+            this.CorrSwiftEdit.Location = new System.Drawing.Point(639, 132);
+            this.CorrSwiftEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.CorrSwiftEdit.Name = "CorrSwiftEdit";
             this.CorrSwiftEdit.PlaceholderText = "CITVRU2P";
-            this.CorrSwiftEdit.Size = new System.Drawing.Size(137, 22);
+            this.CorrSwiftEdit.Size = new System.Drawing.Size(251, 32);
             this.CorrSwiftEdit.TabIndex = 9;
             this.CorrSwiftEdit.TextChanged += new System.EventHandler(this.CorrSwiftEdit_TextChanged);
             // 
             // CorrSwiftLabel
             // 
             this.CorrSwiftLabel.AutoSize = true;
-            this.CorrSwiftLabel.Location = new System.Drawing.Point(264, 79);
+            this.CorrSwiftLabel.Location = new System.Drawing.Point(490, 137);
+            this.CorrSwiftLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.CorrSwiftLabel.Name = "CorrSwiftLabel";
-            this.CorrSwiftLabel.Size = new System.Drawing.Size(69, 15);
+            this.CorrSwiftLabel.Size = new System.Drawing.Size(136, 26);
             this.CorrSwiftLabel.TabIndex = 8;
             this.CorrSwiftLabel.Text = "Кор. SWIFT:";
             // 
@@ -314,20 +331,21 @@
             // 
             this.BankSwiftEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankSwiftEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankSwiftEdit.Location = new System.Drawing.Point(106, 76);
+            this.BankSwiftEdit.Location = new System.Drawing.Point(197, 132);
+            this.BankSwiftEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.BankSwiftEdit.Name = "BankSwiftEdit";
             this.BankSwiftEdit.PlaceholderText = "CITVRU2P";
-            this.BankSwiftEdit.Size = new System.Drawing.Size(137, 22);
+            this.BankSwiftEdit.Size = new System.Drawing.Size(251, 32);
             this.BankSwiftEdit.TabIndex = 5;
             this.BankSwiftEdit.TextChanged += new System.EventHandler(this.BankSwiftEdit_TextChanged);
             // 
             // BankSwiftLabel
             // 
             this.BankSwiftLabel.AutoSize = true;
-            this.BankSwiftLabel.Location = new System.Drawing.Point(11, 79);
+            this.BankSwiftLabel.Location = new System.Drawing.Point(20, 137);
+            this.BankSwiftLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.BankSwiftLabel.Name = "BankSwiftLabel";
-            this.BankSwiftLabel.Size = new System.Drawing.Size(42, 15);
+            this.BankSwiftLabel.Size = new System.Drawing.Size(85, 26);
             this.BankSwiftLabel.TabIndex = 4;
             this.BankSwiftLabel.Text = "SWIFT:";
             // 
@@ -335,20 +353,21 @@
             // 
             this.BankKppEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankKppEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankKppEdit.Location = new System.Drawing.Point(106, 48);
+            this.BankKppEdit.Location = new System.Drawing.Point(197, 83);
+            this.BankKppEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.BankKppEdit.Name = "BankKppEdit";
             this.BankKppEdit.PlaceholderText = "784101001";
-            this.BankKppEdit.Size = new System.Drawing.Size(137, 22);
+            this.BankKppEdit.Size = new System.Drawing.Size(251, 32);
             this.BankKppEdit.TabIndex = 3;
             this.BankKppEdit.TextChanged += new System.EventHandler(this.BankKppEdit_TextChanged);
             // 
             // BankKPPLabel
             // 
             this.BankKPPLabel.AutoSize = true;
-            this.BankKPPLabel.Location = new System.Drawing.Point(11, 51);
+            this.BankKPPLabel.Location = new System.Drawing.Point(20, 88);
+            this.BankKPPLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.BankKPPLabel.Name = "BankKPPLabel";
-            this.BankKPPLabel.Size = new System.Drawing.Size(35, 15);
+            this.BankKPPLabel.Size = new System.Drawing.Size(65, 26);
             this.BankKPPLabel.TabIndex = 2;
             this.BankKPPLabel.Text = "КПП:";
             // 
@@ -356,20 +375,21 @@
             // 
             this.BankInnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.BankInnEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.BankInnEdit.Location = new System.Drawing.Point(106, 19);
+            this.BankInnEdit.Location = new System.Drawing.Point(197, 33);
+            this.BankInnEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.BankInnEdit.Name = "BankInnEdit";
             this.BankInnEdit.PlaceholderText = "7831001422";
-            this.BankInnEdit.Size = new System.Drawing.Size(137, 22);
+            this.BankInnEdit.Size = new System.Drawing.Size(251, 32);
             this.BankInnEdit.TabIndex = 1;
             this.BankInnEdit.TextChanged += new System.EventHandler(this.BankInnEdit_TextChanged);
             // 
             // BankINNLabel
             // 
             this.BankINNLabel.AutoSize = true;
-            this.BankINNLabel.Location = new System.Drawing.Point(11, 22);
+            this.BankINNLabel.Location = new System.Drawing.Point(20, 38);
+            this.BankINNLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.BankINNLabel.Name = "BankINNLabel";
-            this.BankINNLabel.Size = new System.Drawing.Size(37, 15);
+            this.BankINNLabel.Size = new System.Drawing.Size(66, 26);
             this.BankINNLabel.TabIndex = 0;
             this.BankINNLabel.Text = "ИНН:";
             // 
@@ -377,20 +397,21 @@
             // 
             this.CorrAccountEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CorrAccountEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CorrAccountEdit.Location = new System.Drawing.Point(344, 15);
+            this.CorrAccountEdit.Location = new System.Drawing.Point(639, 26);
+            this.CorrAccountEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.CorrAccountEdit.Name = "CorrAccountEdit";
             this.CorrAccountEdit.PlaceholderText = "30101810600000000702";
-            this.CorrAccountEdit.Size = new System.Drawing.Size(211, 22);
+            this.CorrAccountEdit.Size = new System.Drawing.Size(388, 32);
             this.CorrAccountEdit.TabIndex = 7;
             this.CorrAccountEdit.TextChanged += new System.EventHandler(this.CorrAccountEdit_TextChanged);
             // 
             // CorrAccountLabel
             // 
             this.CorrAccountLabel.AutoSize = true;
-            this.CorrAccountLabel.Location = new System.Drawing.Point(264, 22);
+            this.CorrAccountLabel.Location = new System.Drawing.Point(490, 38);
+            this.CorrAccountLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.CorrAccountLabel.Name = "CorrAccountLabel";
-            this.CorrAccountLabel.Size = new System.Drawing.Size(61, 15);
+            this.CorrAccountLabel.Size = new System.Drawing.Size(114, 26);
             this.CorrAccountLabel.TabIndex = 6;
             this.CorrAccountLabel.Text = "Кор. счет:";
             // 
@@ -398,9 +419,10 @@
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OKButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OKButton.Location = new System.Drawing.Point(408, 456);
+            this.OKButton.Location = new System.Drawing.Point(758, 790);
+            this.OKButton.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.OKButton.Name = "OKButton";
-            this.OKButton.Size = new System.Drawing.Size(75, 23);
+            this.OKButton.Size = new System.Drawing.Size(139, 40);
             this.OKButton.TabIndex = 7;
             this.OKButton.Text = "Сохранить";
             this.OKButton.UseVisualStyleBackColor = true;
@@ -410,9 +432,10 @@
             // 
             this.AbortButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.AbortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.AbortButton.Location = new System.Drawing.Point(489, 456);
+            this.AbortButton.Location = new System.Drawing.Point(908, 790);
+            this.AbortButton.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.AbortButton.Name = "AbortButton";
-            this.AbortButton.Size = new System.Drawing.Size(75, 23);
+            this.AbortButton.Size = new System.Drawing.Size(139, 40);
             this.AbortButton.TabIndex = 8;
             this.AbortButton.Text = "Отмена";
             this.AbortButton.UseVisualStyleBackColor = true;
@@ -420,9 +443,11 @@
             // TemplatesNameGroup
             // 
             this.TemplatesNameGroup.Controls.Add(this.TemplatesNameEdit);
-            this.TemplatesNameGroup.Location = new System.Drawing.Point(9, 328);
+            this.TemplatesNameGroup.Location = new System.Drawing.Point(17, 569);
+            this.TemplatesNameGroup.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.TemplatesNameGroup.Name = "TemplatesNameGroup";
-            this.TemplatesNameGroup.Size = new System.Drawing.Size(563, 56);
+            this.TemplatesNameGroup.Padding = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.TemplatesNameGroup.Size = new System.Drawing.Size(1046, 97);
             this.TemplatesNameGroup.TabIndex = 3;
             this.TemplatesNameGroup.TabStop = false;
             this.TemplatesNameGroup.Text = "Шаблон Плательщика за 3 лицо с {name} и {acc} клиента";
@@ -431,19 +456,21 @@
             // 
             this.TemplatesNameEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.TemplatesNameEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.TemplatesNameEdit.Location = new System.Drawing.Point(11, 22);
+            this.TemplatesNameEdit.Location = new System.Drawing.Point(20, 38);
+            this.TemplatesNameEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.TemplatesNameEdit.Name = "TemplatesNameEdit";
             this.TemplatesNameEdit.PlaceholderText = "АО \"Сити Инвест Банк\" ИНН 7831001422 ({name} р/с {acc})";
-            this.TemplatesNameEdit.Size = new System.Drawing.Size(544, 22);
+            this.TemplatesNameEdit.Size = new System.Drawing.Size(1007, 32);
             this.TemplatesNameEdit.TabIndex = 0;
             // 
             // TemplatesPurposeGroup
             // 
             this.TemplatesPurposeGroup.Controls.Add(this.TemplatesPurposeEdit);
-            this.TemplatesPurposeGroup.Location = new System.Drawing.Point(9, 390);
+            this.TemplatesPurposeGroup.Location = new System.Drawing.Point(17, 676);
+            this.TemplatesPurposeGroup.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.TemplatesPurposeGroup.Name = "TemplatesPurposeGroup";
-            this.TemplatesPurposeGroup.Size = new System.Drawing.Size(563, 56);
+            this.TemplatesPurposeGroup.Padding = new System.Windows.Forms.Padding(6, 5, 6, 5);
+            this.TemplatesPurposeGroup.Size = new System.Drawing.Size(1046, 97);
             this.TemplatesPurposeGroup.TabIndex = 4;
             this.TemplatesPurposeGroup.TabStop = false;
             this.TemplatesPurposeGroup.Text = "Шаблон Назначения за 3 лицо с ИНН и КПП Банка, c {name} и {purpose}";
@@ -452,20 +479,21 @@
             // 
             this.TemplatesPurposeEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.TemplatesPurposeEdit.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.TemplatesPurposeEdit.Location = new System.Drawing.Point(11, 22);
+            this.TemplatesPurposeEdit.Location = new System.Drawing.Point(20, 38);
+            this.TemplatesPurposeEdit.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.TemplatesPurposeEdit.Name = "TemplatesPurposeEdit";
             this.TemplatesPurposeEdit.PlaceholderText = "//7831001422//784101001//{name}//{purpose}";
-            this.TemplatesPurposeEdit.Size = new System.Drawing.Size(544, 22);
+            this.TemplatesPurposeEdit.Size = new System.Drawing.Size(1007, 32);
             this.TemplatesPurposeEdit.TabIndex = 0;
             // 
             // ProfileChoice
             // 
             this.ProfileChoice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ProfileChoice.FormattingEnabled = true;
-            this.ProfileChoice.Location = new System.Drawing.Point(115, 457);
+            this.ProfileChoice.Location = new System.Drawing.Point(214, 792);
+            this.ProfileChoice.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.ProfileChoice.Name = "ProfileChoice";
-            this.ProfileChoice.Size = new System.Drawing.Size(137, 23);
+            this.ProfileChoice.Size = new System.Drawing.Size(251, 34);
             this.ProfileChoice.Sorted = true;
             this.ProfileChoice.TabIndex = 6;
             this.ProfileChoice.SelectedValueChanged += new System.EventHandler(this.ProfileChoice_SelectedValueChanged);
@@ -474,9 +502,10 @@
             // 
             this.ProfileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ProfileLabel.AutoSize = true;
-            this.ProfileLabel.Location = new System.Drawing.Point(20, 460);
+            this.ProfileLabel.Location = new System.Drawing.Point(37, 797);
+            this.ProfileLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.ProfileLabel.Name = "ProfileLabel";
-            this.ProfileLabel.Size = new System.Drawing.Size(62, 15);
+            this.ProfileLabel.Size = new System.Drawing.Size(114, 26);
             this.ProfileLabel.TabIndex = 5;
             this.ProfileLabel.Text = "Профиль:";
             // 
@@ -490,10 +519,10 @@
             // ConfigForm
             // 
             this.AcceptButton = this.OKButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.AbortButton;
-            this.ClientSize = new System.Drawing.Size(584, 489);
+            this.ClientSize = new System.Drawing.Size(1085, 848);
             this.Controls.Add(this.ProfileChoice);
             this.Controls.Add(this.ProfileLabel);
             this.Controls.Add(this.TemplatesPurposeGroup);
@@ -504,6 +533,7 @@
             this.Controls.Add(this.SaveBox);
             this.Controls.Add(this.OpenBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(6, 5, 6, 5);
             this.Name = "ConfigForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

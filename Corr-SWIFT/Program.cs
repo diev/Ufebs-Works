@@ -18,6 +18,7 @@ limitations under the License.
 #endregion
 
 using System.Text;
+using System.Text.Json;
 
 namespace CorrSWIFT;
 
@@ -34,6 +35,59 @@ internal static class Program
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
+
+        //Application.SetDefaultFont(new Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
+        string path = Path.GetDirectoryName(Application.ExecutablePath) ?? ".";
+        string file = Path.Combine(path, "_font.json");
+
+        if (File.Exists(file))
+        {
+
+            /*
+{
+  "Size": 9,
+  "Style": 0,
+  "Bold": false,
+  "Italic": false,
+  "Strikeout": false,
+  "Underline": false,
+  "FontFamily": {
+    "Name": "Segoe UI"
+  },
+  "Name": "Segoe UI",
+  "Unit": 3,
+  "GdiCharSet": 1,
+  "GdiVerticalFont": false,
+  "OriginalFontName": null,
+  "SystemFontName": "MessageBoxFont",
+  "IsSystemFont": true,
+  "Height": 16,
+  "SizeInPoints": 9
+}
+            */
+
+            var font = LoadFont(file);
+
+            if (font != null)
+            {
+                Application.SetDefaultFont(font);
+            }
+        }
+        
         Application.Run(new MainForm());
+    }
+
+    private static Font? LoadFont(string file)
+    {
+        var json = File.ReadAllBytes(file);
+
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        var name = root.GetProperty("FontFamily").GetProperty("Name").GetString();
+        var size = root.GetProperty("Size").GetDouble();
+
+        if (name == null) return null;
+
+        return new Font(new FontFamily(name), (float)size);
     }
 }

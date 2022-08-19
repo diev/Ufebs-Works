@@ -24,6 +24,9 @@ using CorrLib.UFEBS.DTO;
 
 using System.Diagnostics;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Xml;
 
 namespace CorrSWIFT;
@@ -419,5 +422,28 @@ public static class DocsModel
         string path = Path.Combine(Config.SaveDir, file);
 
         return (path, file);
+    }
+
+    public static void SaveDictionaries()
+    {
+        string path = Path.GetDirectoryName(Application.ExecutablePath) ?? ".";
+
+        var options = new JsonSerializerOptions {
+            //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true 
+        };
+
+        string file = Path.Combine(path, nameof(_payers) + ".json");
+        var json = JsonSerializer.SerializeToUtf8Bytes(_payers, options);
+        File.WriteAllBytes(file, json);
+
+        file = Path.Combine(path, nameof(_payees) + ".json");
+        json = JsonSerializer.SerializeToUtf8Bytes(_payees, options);
+        File.WriteAllBytes(file, json);
+
+        file = Path.Combine(path, nameof(_purposes) + ".json");
+        json = JsonSerializer.SerializeToUtf8Bytes(_purposes, options);
+        File.WriteAllBytes(file, json);
     }
 }

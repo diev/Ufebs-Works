@@ -145,10 +145,10 @@
             // 
             this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OkButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkButton.Location = new System.Drawing.Point(395, 277);
+            this.OkButton.Location = new System.Drawing.Point(395, 278);
             this.OkButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.OkButton.Name = "OkButton";
-            this.OkButton.Size = new System.Drawing.Size(88, 27);
+            this.OkButton.Size = new System.Drawing.Size(88, 26);
             this.OkButton.TabIndex = 24;
             this.OkButton.Text = "&ОК";
             this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
@@ -167,7 +167,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutBox";
-            this.Padding = new System.Windows.Forms.Padding(10);
+            this.Padding = new System.Windows.Forms.Padding(10, 10, 10, 10);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AboutBox";

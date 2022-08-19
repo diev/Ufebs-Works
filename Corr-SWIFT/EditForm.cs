@@ -48,14 +48,15 @@ public partial class EditForm : Form
 
         if (swiftMode)
         {
-            Height = 264;
-
             PayeeEdit.Visible = true;
             _payeeValid = true; ;
 
             SamplePayer.Visible = true;
             SamplePayee.Visible = true;
             SamplePurpose.Visible = true;
+
+            Height += PayeeEdit.Height + SamplePanel.Height +
+                OKButton.Height + OKButton.Margin.Vertical;
 
             PayeeLabel.Visible = true;
             PayeeStatus.Visible = true;
