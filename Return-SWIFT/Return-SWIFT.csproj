@@ -6,8 +6,8 @@
     <RootNamespace>ReturnSWIFT</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.22.8.12</AssemblyVersion>
-    <FileVersion>1.22.8.12</FileVersion>
+    <AssemblyVersion>1.22.9.5</AssemblyVersion>
+    <FileVersion>1.22.9.5</FileVersion>
     <Company>CIBANK</Company>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
     <NeutralLanguage>ru-RU</NeutralLanguage>

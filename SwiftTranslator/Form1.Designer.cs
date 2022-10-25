@@ -47,12 +47,18 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.RusDstLabel = new System.Windows.Forms.Label();
             this.RusDstText = new System.Windows.Forms.TextBox();
-            this.SwiftSrcLabel = new System.Windows.Forms.Label();
+            this.RusSrcLabel = new System.Windows.Forms.Label();
             this.SwiftSrcText = new System.Windows.Forms.TextBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.SwiftDstLabel = new System.Windows.Forms.Label();
+            this.SwiftDstText35 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.RusSrcText = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -60,6 +66,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -244,7 +251,7 @@
             // 
             this.tabPage3.Controls.Add(this.RusDstLabel);
             this.tabPage3.Controls.Add(this.RusDstText);
-            this.tabPage3.Controls.Add(this.SwiftSrcLabel);
+            this.tabPage3.Controls.Add(this.RusSrcLabel);
             this.tabPage3.Controls.Add(this.SwiftSrcText);
             this.tabPage3.Location = new System.Drawing.Point(4, 24);
             this.tabPage3.Name = "tabPage3";
@@ -277,14 +284,14 @@
             this.RusDstText.TabIndex = 17;
             this.RusDstText.WordWrap = false;
             // 
-            // SwiftSrcLabel
+            // RusSrcLabel
             // 
-            this.SwiftSrcLabel.AutoSize = true;
-            this.SwiftSrcLabel.Location = new System.Drawing.Point(6, 17);
-            this.SwiftSrcLabel.Name = "SwiftSrcLabel";
-            this.SwiftSrcLabel.Size = new System.Drawing.Size(85, 15);
-            this.SwiftSrcLabel.TabIndex = 16;
-            this.SwiftSrcLabel.Text = "Строки SWIFT:";
+            this.RusSrcLabel.AutoSize = true;
+            this.RusSrcLabel.Location = new System.Drawing.Point(6, 17);
+            this.RusSrcLabel.Name = "RusSrcLabel";
+            this.RusSrcLabel.Size = new System.Drawing.Size(73, 15);
+            this.RusSrcLabel.TabIndex = 16;
+            this.RusSrcLabel.Text = "SWIFT текст:";
             // 
             // SwiftSrcText
             // 
@@ -299,6 +306,68 @@
             this.SwiftSrcText.TabIndex = 15;
             this.SwiftSrcText.WordWrap = false;
             this.SwiftSrcText.TextChanged += new System.EventHandler(this.SwiftSrcText_TextChanged);
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.SwiftDstLabel);
+            this.tabPage4.Controls.Add(this.SwiftDstText35);
+            this.tabPage4.Controls.Add(this.label7);
+            this.tabPage4.Controls.Add(this.RusSrcText);
+            this.tabPage4.Location = new System.Drawing.Point(4, 24);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(576, 333);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Rus Text > Swift 35";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // SwiftDstLabel
+            // 
+            this.SwiftDstLabel.AutoSize = true;
+            this.SwiftDstLabel.Location = new System.Drawing.Point(8, 155);
+            this.SwiftDstLabel.Name = "SwiftDstLabel";
+            this.SwiftDstLabel.Size = new System.Drawing.Size(117, 15);
+            this.SwiftDstLabel.TabIndex = 22;
+            this.SwiftDstLabel.Text = "Строки SWIFT по 35:";
+            // 
+            // SwiftDstText35
+            // 
+            this.SwiftDstText35.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SwiftDstText35.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SwiftDstText35.Location = new System.Drawing.Point(6, 173);
+            this.SwiftDstText35.Multiline = true;
+            this.SwiftDstText35.Name = "SwiftDstText35";
+            this.SwiftDstText35.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.SwiftDstText35.Size = new System.Drawing.Size(562, 152);
+            this.SwiftDstText35.TabIndex = 21;
+            this.SwiftDstText35.WordWrap = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 17);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(105, 15);
+            this.label7.TabIndex = 20;
+            this.label7.Text = "Текст на русском:";
+            // 
+            // RusSrcText
+            // 
+            this.RusSrcText.AcceptsReturn = true;
+            this.RusSrcText.AcceptsTab = true;
+            this.RusSrcText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RusSrcText.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.RusSrcText.Location = new System.Drawing.Point(3, 35);
+            this.RusSrcText.Multiline = true;
+            this.RusSrcText.Name = "RusSrcText";
+            this.RusSrcText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.RusSrcText.Size = new System.Drawing.Size(562, 115);
+            this.RusSrcText.TabIndex = 19;
+            this.RusSrcText.WordWrap = false;
+            this.RusSrcText.TextChanged += new System.EventHandler(this.RusSrcText_TextChanged);
             // 
             // Form1
             // 
@@ -317,6 +386,8 @@
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -342,7 +413,12 @@
         private TabPage tabPage3;
         private Label RusDstLabel;
         private TextBox RusDstText;
-        private Label SwiftSrcLabel;
+        private Label RusSrcLabel;
         private TextBox SwiftSrcText;
+        private TabPage tabPage4;
+        private Label SwiftDstLabel;
+        private TextBox SwiftDstText35;
+        private Label label7;
+        private TextBox RusSrcText;
     }
 }

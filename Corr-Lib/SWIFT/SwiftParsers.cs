@@ -162,18 +162,39 @@ public static class SwiftParsers
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
-    public static (string dc, string id) ParseTrans(this string text)
+    public static (string dc, string sum, string id) ParseTrans(this string text)
     {
-        string pattern = @"(\d{6})([CD])(\d+,\d{0,2})([^/]+)//(.+)";
-        var match = Regex.Match(text, pattern);
+        if (text.Contains("//"))
+        {
+            // 220812D3000,S103+220812000010241//OP1ED228C001EZMD
+            // 220812C3000,NTRFNONREF//+OP1ED28C001FCWF
 
-        //chargeOffDate = match.Groups[1].Value;
-        string dc = match.Groups[2].Value == "D" ? "1" : "2";
-        //string sum = match.Groups[3].Value;
-        string ourId = match.Groups[4].Value[4..]; //NONREF | +220804000012157
-        string corrId = match.Groups[5].Value;
+            string pattern = @"(\d{6})([CD])(\d+,\d{0,2})([^/]+)//(.+)";
+            var match = Regex.Match(text, pattern);
 
-        return (dc, dc == "1" ? ourId : corrId);
+            //chargeOffDate = match.Groups[1].Value;
+            string dc = match.Groups[2].Value == "D" ? "1" : "2";
+            string sum = match.Groups[3].Value.ToUfebsSum();
+            string ourId = match.Groups[4].Value[4..]; // NONREF | 220804000012157
+            string corrId = match.Groups[5].Value;
+
+            return (dc, sum, dc == "1" ? ourId : corrId);
+        }
+        else
+        {
+            // Банковский ордер (без id и реквизитов в SWIFT)
+            // 220901D20,NTRFNONREF
+
+            string pattern = @"(\d{6})([CD])(\d+,\d{0,2})(.+)";
+            var match = Regex.Match(text, pattern);
+
+            //chargeOffDate = match.Groups[1].Value;
+            string dc = match.Groups[2].Value == "D" ? "1" : "2";
+            string sum = match.Groups[3].Value.ToUfebsSum();
+            //string ourId = match.Groups[4].Value[4..]; // NONREF
+
+            return (dc, sum, "NONREF");
+        }
     }
 
     /// <summary>

@@ -22,13 +22,10 @@ using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
 
-using System.IO;
-using System.Net.Sockets;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-using static CorrLib.SWIFT.SwiftHelpers;
 using static CorrLib.SWIFT.SwiftTranslit;
 using static CorrLib.UFEBS.EDHelpers;
 
@@ -266,6 +263,15 @@ internal class Program
         //{
         //    Console.WriteLine($"Output \"{outFile}\" overwritten");
         //}
+
+        string p = Path.GetDirectoryName(inFile) ?? Directory.GetCurrentDirectory();
+        string f = Path.GetFileName(inFile);
+
+        string bakPath = Path.Combine(p, "BAK");
+        string errPath = Path.Combine(p, "ERR");
+
+        string bakFile = Path.Combine(bakPath, f);
+        string errFile = Path.Combine(errPath, f);
         #endregion Files start
 
         //TODO
@@ -310,10 +316,25 @@ internal class Program
                     }
                     break;
             }
+
+            if (!Directory.Exists(bakPath))
+            {
+                Directory.CreateDirectory(bakPath);
+            }
+
+            //File.Move(inFile, bakFile, true);
+            File.Copy(inFile, bakFile, true);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Ошибка в файле \"{inFile}\".\n{ex.Message}");
+
+            if (!Directory.Exists(errPath))
+            {
+                Directory.CreateDirectory(errPath);
+            }
+
+            File.Move(inFile, errFile, true);
         }
 
         #region Files end
@@ -421,7 +442,7 @@ internal class Program
             line = lines[n++];
         }
 
-        var (date, no) = SwiftID.Id(line[4..]);
+        var (date, _) = SwiftID.Id(line[4..]);
 
         while (!line.StartsWith(":72:/NZP/"))
         {
@@ -496,7 +517,7 @@ internal class Program
 
         // Исходящий остаток
 
-        while (!line.StartsWith(":62F:")) line = lines[n++];
+        //while (!line.StartsWith(":62F:")) line = lines[n++];
         int finishN = n - 1;
 
         var (date, bal) = line[5..].UParseBal();
@@ -516,34 +537,37 @@ internal class Program
 
             if (line.StartsWith(":61:"))
             {
-                var (dc, id) = line[4..].ParseTrans();
+                var (dc, sum, id) = line[4..].ParseTrans();
                 bool debet = dc == "1";
+                bool order = id == "NONREF"; // Банковский ордер (как вариант)
                 bool found = debet
                     ? _d.TryGetValue(id, out TransInfo? ti) // ourId
                     : _c.TryGetValue(id, out ti); // corrId
 
-                if (found)
+                if (found && !order)
                 {
                     Console.WriteLine($"{id}  {dc}{ti!.AccDocNo, 9} {ti.Sum.DisplaySum(), 18}");
                 }
                 else
                 {
                     string accDocNo = lines[n + 1];
-                    Console.WriteLine($"{id} !{dc}{accDocNo, 9}  ?  (строка {n + 1})");
+                    Console.WriteLine($"{id,16} !{dc}{accDocNo, 9} {sum.DisplaySum(),18} ? (строка {n + 1})");
                     // throw new ArgumentException($"Документ не найден.", id);
 
                     ti = new()
                     {
                         AccDocDate = date,
                         AccDocNo = accDocNo,
-                        BICCorr = "0",
-                        CorrAcc = "0",
+                        BICCorr = CorrBank.ProfileBIC,
+                        CorrAcc = CorrBank.ProfileCorrAcc,
                         DC = dc,
                         EDRefAuthor = CorrBank.UIC!,
                         EDRefDate = date,
-                        EDRefNo = "0",
+                        EDRefNo = accDocNo,
                         PayeePersonalAcc = debet ? "0" : CorrBank.ProfilePayAcc,
-                        PayerPersonalAcc = "0"
+                        PayerPersonalAcc = debet ? CorrBank.ProfilePayAcc : "0",
+                        Sum = sum,
+                        TransKind = order ? "17" : "01"
                     };
                 }
 

@@ -75,4 +75,9 @@ public partial class Form1 : Form
     {
         RusDstText.Text = SwiftTranslit.Cyr(SwiftSrcText.Text);
     }
+
+    private void RusSrcText_TextChanged(object sender, EventArgs e)
+    {
+        SwiftDstText35.Text = SwiftHelpers.LatWrapText35(RusSrcText.Text);
+    }
 }

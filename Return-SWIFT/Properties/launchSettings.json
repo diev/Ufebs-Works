@@ -2,7 +2,7 @@
   "profiles": {
     "Return-SWIFT": {
       "commandName": "Project",
-      "commandLineArgs": "in\\* out\\"
+      "commandLineArgs": "_ALFA\\IN\\"
     }
   }
 }
