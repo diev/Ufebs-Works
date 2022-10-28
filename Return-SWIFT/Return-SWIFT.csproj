@@ -8,14 +8,16 @@
     <Nullable>enable</Nullable>
     <AssemblyVersion>1.22.9.5</AssemblyVersion>
     <FileVersion>1.22.9.5</FileVersion>
-    <Company>CIBANK</Company>
+	<Version>1.22.9.5</Version>
+    <Company>Cibank</Company>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
+    <Description>Преобразование обратных пакетов из SWIFT в ESID UFEBS, полученных из ЦБ по СПФС через корсчет в другом банке.</Description>	  
     <NeutralLanguage>ru-RU</NeutralLanguage>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release call Properties\PostBuild.bat" />
+    <Exec Command="if $(ConfigurationName) == Release call ..\PostBuild.bat" />
   </Target>
 
   <ItemGroup>

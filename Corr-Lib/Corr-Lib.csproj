@@ -7,9 +7,11 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <AssemblyVersion>2.22.8.16</AssemblyVersion>
-    <FileVersion>2.22.8.16</FileVersion>
-    <Company>CIBANK</Company>
+    <AssemblyVersion>2.22.10.25</AssemblyVersion>
+	<FileVersion>2.22.10.25</FileVersion>
+	<Version>2.22.10.25</Version>
+	<Company>Cibank</Company>
+    <Description>Библиотека общих элементов для работы с форматами UFEBS и SWIFT.</Description>
   </PropertyGroup>
 
   <ItemGroup>

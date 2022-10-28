@@ -20,24 +20,33 @@ limitations under the License.
 using System.Text;
 using System.Xml.Linq;
 
-namespace Return_Replace;
+namespace ReturnReplace;
 
 public static class Program
 {
     #region consts
     // Our Bank
-    const string OurINN = "7831001422";
-    const string OurKPP = "784101001";
-    const string OurACC = "30101810600000000702";
-    const string OurNAME = "АО \"Сити Инвест Банк\"";
-    const string OurBIC = "044030702";
+    //const string OurINN = "7831001422";
+    //const string OurKPP = "784101001";
+    //const string OurACC = "30101810600000000702";
+    //const string OurNAME = "АО \"Сити Инвест Банк\"";
+    //const string OurBIC = "044030702";
     const string OurUIC = "4030702000";
 
     // Service Bank
-    const string CorBIC = "044525769";
+    //const string CorBIC = "044525769";
     const string CorACC = "30101810745250000769";
     const string CorACC2 = "30110810700000000769";
     const string CorUIC = "4525769000";
+
+    // Pre-replaces in the incoming XML files
+    static readonly string[,] _replList = new string[,]
+    {
+        {
+            "<Сити Инвест Банк>",
+            "\"Сити Инвест Банк\""
+        }
+    };
     #endregion consts
 
     public static void Main(string[] args)
@@ -120,6 +129,28 @@ public static class Program
         if (File.Exists(outFile))
         {
             Console.WriteLine($"Output \"{outFile}\" overwritten");
+        }
+
+        Encoding encoding = Encoding.GetEncoding(1251);
+        string text = File.ReadAllText(inFile, encoding);
+        int pairs = _replList.Length / 2;
+        bool found = false;
+
+        for (int i = 0; i < pairs; i++)
+        {
+            string s = _replList[i, 0];
+
+            if (text.Contains(s))
+            {
+                found = true;
+                string r = _replList[i, 1];
+                text = text.Replace(s, r);
+            }
+        }
+
+        if (found)  
+        {
+            File.WriteAllText(inFile, text, encoding);
         }
 
         XDocument xdoc = XDocument.Load(inFile);

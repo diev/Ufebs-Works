@@ -21,7 +21,7 @@ using Lib;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Corr_Replace;
+namespace CorrReplace;
 
 public static class Program
 {

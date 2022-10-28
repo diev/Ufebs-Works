@@ -11,9 +11,10 @@
     <NeutralLanguage>ru-RU</NeutralLanguage>
     <AssemblyVersion>4.22.8.19</AssemblyVersion>
     <FileVersion>4.22.8.19</FileVersion>
+	<Version>4.22.8.19</Version>
     <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <Company>CIBANK</Company>
-    <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR.</Description>
+    <Company>Cibank</Company>
+    <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR через СПФС ЦБ.</Description>
     <ApplicationIcon>Oxygen-Icons.org-Oxygen-Actions-svn-commit.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -41,7 +42,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release call Properties\PostBuild.bat" />
+    <Exec Command="if $(ConfigurationName) == Release call ..\PostBuild.bat" />
   </Target>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

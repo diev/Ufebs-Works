@@ -4,9 +4,21 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
-    <RootNamespace>Corr_Replace</RootNamespace>
+    <RootNamespace>CorrReplace</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>1.22.10.28</AssemblyVersion>
+    <FileVersion>1.22.10.28</FileVersion>
+	<Version>1.22.10.28</Version>
+    <Company>Cibank</Company>
+    <Copyright>2022 Dmitrii Evdokimov</Copyright>
+    <Description>Работа с корсчетами разных банков в формате УФЭБС.</Description>
+	<NeutralLanguage>ru-RU</NeutralLanguage>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Release call ..\PostBuild.bat" />
+  </Target>
 
 </Project>
