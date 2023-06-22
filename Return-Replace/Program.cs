@@ -19,7 +19,7 @@ limitations under the License.
 
 using System.Text;
 
-namespace Return_Replace;
+namespace ReturnReplace;
 
 public static class Program
 {

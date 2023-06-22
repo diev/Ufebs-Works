@@ -20,7 +20,7 @@ using System.Xml.Linq;
 
 using Lib;
 
-namespace Corr_Replace;
+namespace CorrReplace;
 
 public static class Worker
 {

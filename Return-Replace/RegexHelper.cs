@@ -19,7 +19,7 @@ limitations under the License.
 
 using System.Text.RegularExpressions;
 
-namespace Return_Replace;
+namespace ReturnReplace;
 
 public static partial class RegexHelper
 {

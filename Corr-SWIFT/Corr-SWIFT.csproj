@@ -10,10 +10,10 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>ru-RU</NeutralLanguage>
     <AssemblyVersion>4.23.6.22</AssemblyVersion>
-    <FileVersion>4.23.5.22</FileVersion>
+    <FileVersion>4.23.6.22</FileVersion>
     <Copyright>2022-2023 Dmitrii Evdokimov</Copyright>
     <Company>diev</Company>
-    <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR.</Description>
+    <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR и через СПФС ЦБ.</Description>
     <ApplicationIcon>Oxygen-Icons.org-Oxygen-Actions-svn-commit.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release call Properties\PostBuild.bat" />
+    <Exec Command="if $(ConfigurationName) == Release call ..\PostBuild.bat" />
   </Target>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

@@ -19,7 +19,7 @@ limitations under the License.
 
 using System.Xml.Linq;
 
-namespace Return_Replace;
+namespace ReturnReplace;
 
 public static class Worker
 {

@@ -18,7 +18,7 @@ limitations under the License.
 
 using System.Text;
 
-namespace Corr_Replace;
+namespace CorrReplace;
 
 public static class Program
 {

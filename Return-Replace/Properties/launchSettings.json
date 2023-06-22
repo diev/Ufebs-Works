@@ -2,7 +2,7 @@
   "profiles": {
     "Return-Replace": {
       "commandName": "Project",
-      "commandLineArgs": "_220623_EPD_30109810300000000063.xml"
+      "commandLineArgs": "*.xml"
     }
   }
 }
