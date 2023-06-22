@@ -1,6 +1,6 @@
 ﻿#region License
 //------------------------------------------------------------------------------
-// Copyright (c) Dmitrii Evdokimov 2013-2022
+// Copyright (c) Dmitrii Evdokimov 2013-2023
 // Source https://github.com/diev/
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,10 +27,10 @@ namespace Lib;
 /// <remarks>
 /// Code is based on http://www.rsdn.ru/forum/src/1898705.flat
 /// 
-/// For NET6 in VS2022 see https://stackoverflow.com/a/70466224
+/// For NET6+ in VS2022 see https://stackoverflow.com/a/70466224
 /// Add following two lines to the Console .csproj file:
 /// <code>
-///     <TargetFramework>net6.0-windows</TargetFramework>
+///     <TargetFramework>net7.0-windows</TargetFramework>
 ///     <UseWindowsForms>true</UseWindowsForms>
 /// </code>
 /// </remarks>

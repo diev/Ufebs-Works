@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>ReturnSWIFT</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.22.9.5</AssemblyVersion>
-    <FileVersion>1.22.9.5</FileVersion>
-    <Company>CIBANK</Company>
-    <Copyright>2022 Dmitrii Evdokimov</Copyright>
+    <AssemblyVersion>1.23.6.22</AssemblyVersion>
+    <FileVersion>1.23.6.22</FileVersion>
+    <Company>diev</Company>
+    <Copyright>2022-2023 Dmitrii Evdokimov</Copyright>
     <NeutralLanguage>ru-RU</NeutralLanguage>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>

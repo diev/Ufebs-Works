@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022 Dmitrii Evdokimov
+Copyright 2022-2023 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ public static class ED807Finder
     */
 
     private static XElement? _ed807 = null;
-    private static Dictionary<string, BankInfo> _cache = new();
+    private static readonly Dictionary<string, BankInfo> _cache = new();
 
     /// <summary>
     /// Поиск наименования и населенного пункта банка по его БИК.

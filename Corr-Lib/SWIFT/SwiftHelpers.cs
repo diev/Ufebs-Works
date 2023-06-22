@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022 Dmitrii Evdokimov
+Copyright 2022-2023 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +20,9 @@ limitations under the License.
 using System.Text;
 using System.Text.RegularExpressions;
 
-using static CorrLib.SWIFT.SwiftTranslit;
-
 namespace CorrLib.SWIFT;
 
-public static class SwiftHelpers
+public static partial class SwiftHelpers
 {
     /// <summary>
     /// Разбиение строки на текст по 35 символов в строке
@@ -124,7 +122,7 @@ public static class SwiftHelpers
     public static bool LatNameValid(this string value)
     {
         const int rows = 3 * 35;
-        const string pattern = @"^:\d{2}\D{0,1}:";
+        //const string pattern = @"^:\d{2}\D{0,1}:";
 
         string text = value.Lat()!;
         int len = text.Length;
@@ -136,8 +134,8 @@ public static class SwiftHelpers
             if (text[i] == '-')
                 return false;
 
-            if (text[i] == ':' && 
-                Regex.Match(text[i..], pattern).Success)
+            if (text[i] == ':' &&
+                RegexLatName().Match(text[i..]).Success)
                 return false;
         }
 
@@ -147,7 +145,7 @@ public static class SwiftHelpers
     public static bool LatPurposeValid(this string value)
     {
         const int rows = 4 * 35; // SWIFT field :70:
-        const string pattern = @"^:\d{2}\D{0,1}:";
+        //const string pattern = @"^:\d{2}\D{0,1}:";
 
         string text = value.Lat()!;
         int len = text.Length;
@@ -160,10 +158,16 @@ public static class SwiftHelpers
                 return false;
 
             if (text[i] == ':' &&
-                Regex.Match(text[i..], pattern).Success)
+                RegexLatPurpose().Match(text[i..]).Success)
                 return false;
         }
 
         return true;
     }
+
+    [GeneratedRegex(@"^:\d{2}\D{0,1}:")]
+    private static partial Regex RegexLatName();
+
+    [GeneratedRegex(@"^:\d{2}\D{0,1}:")]
+    private static partial Regex RegexLatPurpose();
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022 Dmitrii Evdokimov
+Copyright 2022-2023 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +21,6 @@ using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
 
 using System.Text;
-
-using static CorrLib.SWIFT.SwiftHelpers;
-using static CorrLib.SWIFT.SwiftTranslit;
 
 namespace CorrLib.SWIFT;
 

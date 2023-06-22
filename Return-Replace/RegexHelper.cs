@@ -17,11 +17,15 @@ limitations under the License.
 */
 #endregion
 
-namespace CorrLib.UFEBS.DTO;
+using System.Text.RegularExpressions;
 
-/// <summary>
-/// Название и населенный пункт банка по справочнику БИК.
-/// </summary>
-/// <param name="Name">Название банка.</param>
-/// <param name="Place">Населенный пункт банка.</param>
-public record BankInfo(string Name, string Place);
+namespace Return_Replace;
+
+public static partial class RegexHelper
+{
+    [GeneratedRegex(@"(?<!\d)\d{10,12}(?!\d)")]
+    public static partial Regex RegexINN();
+
+    [GeneratedRegex(@"(?<!\d)\d{20}(?!\d)")]
+    public static partial Regex RegexAcc();
+}

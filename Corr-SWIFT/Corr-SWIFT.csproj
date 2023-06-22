@@ -2,17 +2,17 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <RootNamespace>CorrSWIFT</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>ru-RU</NeutralLanguage>
-    <AssemblyVersion>4.22.8.19</AssemblyVersion>
-    <FileVersion>4.22.8.19</FileVersion>
-    <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <Company>CIBANK</Company>
+    <AssemblyVersion>4.23.6.22</AssemblyVersion>
+    <FileVersion>4.23.5.22</FileVersion>
+    <Copyright>2022-2023 Dmitrii Evdokimov</Copyright>
+    <Company>diev</Company>
     <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR.</Description>
     <ApplicationIcon>Oxygen-Icons.org-Oxygen-Actions-svn-commit.ico</ApplicationIcon>
   </PropertyGroup>

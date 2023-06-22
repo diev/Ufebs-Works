@@ -2,17 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>Return_Replace</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <FileVersion>1.3.0.0</FileVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Copyright>2022 Dmitrii Evdokimov</Copyright>
-    <Version>1.2.0$(VersionPrefix)</Version>
-    <Description>Преобразование обратных пакетов ESID, полученных из ЦБ через корсчет в другом банке.</Description>
-    <Company>Cibank</Company>
+    <Copyright>2022-2023 Dmitrii Evdokimov</Copyright>
+    <Version>1.3.0$(VersionPrefix)</Version>
+    <Description>Преобразование обратных пакетов EPD и ESID, полученных из ЦБ через корсчет в другом банке.</Description>
+    <Company>diev</Company>
     <NeutralLanguage>ru-RU</NeutralLanguage>
   </PropertyGroup>
 

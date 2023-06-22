@@ -4,7 +4,7 @@
 
 ## Системные требования
 
- * .NET 6 WindowsDesktop Runtime
+ * .NET 7 WindowsDesktop Runtime
 
 ## License
 

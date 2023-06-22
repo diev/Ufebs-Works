@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022 Dmitrii Evdokimov
+Copyright 2022-2023 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,9 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.SWIFT;
-
 using System.Xml.Linq;
+
+using CorrLib.SWIFT;
 
 namespace CorrLib.UFEBS.DTO;
 

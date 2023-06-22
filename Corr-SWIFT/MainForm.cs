@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright 2022 Dmitrii Evdokimov
+Copyright 2022-2023 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,11 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib;
-
-using static System.Windows.Forms.Design.AxImporter;
-using System.Text.Json;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Unicode;
+
+using CorrLib;
 
 namespace CorrSWIFT;
 
@@ -142,7 +141,7 @@ public partial class MainForm : Form
     #endregion Dialogs
     #region Actions
 
-    private void TryClose(ref FormClosingEventArgs e)
+    private static void TryClose(ref FormClosingEventArgs e)
     {
         DocsModel.SaveDictionaries();
 

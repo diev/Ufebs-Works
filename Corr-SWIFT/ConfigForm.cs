@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022 Dmitrii Evdokimov
+Copyright 2022-2023 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -178,28 +178,29 @@ public partial class ConfigForm : Form
 
     private void SaveFormatChoice_SelectedValueChanged(object sender, EventArgs e)
     {
-        bool on = (sender as ComboBox)?.Text == Config.SwiftFormat;
+        if (sender is ComboBox combo)
+        {
+            bool on = combo.Text == Config.SwiftFormat;
 
-        //SelectFileLabel.Visible = on;
-        BankSwiftLabel.Visible = on;
-        CorrSwiftLabel.Visible = on;
+            //SelectFileLabel.Visible = on;
+            BankSwiftLabel.Visible = on;
+            CorrSwiftLabel.Visible = on;
 
-        //SelectFileEdit.Visible = on;
-        BankSwiftEdit.Visible = on;
-        CorrSwiftEdit.Visible = on;
+            //SelectFileEdit.Visible = on;
+            BankSwiftEdit.Visible = on;
+            CorrSwiftEdit.Visible = on;
 
-        //SelectFileButton.Visible = on;
+            //SelectFileButton.Visible = on;
 
-        SaveMaskEdit.PlaceholderText = on
-            ? "{id}.txt"
-            : "*_.xml";
+            SaveMaskEdit.PlaceholderText = on
+                ? "{id}.txt"
+                : "*_.xml";
+        }
     }
 
     private void OpenDirEdit_TextChanged(object sender, EventArgs e)
     {
-        var edit = sender as TextBox;
-
-        if (edit != null)
+        if (sender is TextBox edit)
         {
             edit.BackColor = Directory.Exists(edit.Text)
                 ? BackColor
@@ -209,9 +210,7 @@ public partial class ConfigForm : Form
 
     private void SaveDirEdit_TextChanged(object sender, EventArgs e)
     {
-        var edit = sender as TextBox;
-
-        if (edit != null)
+        if (sender is TextBox edit)
         {
             edit.BackColor = Directory.Exists(edit.Text)
                 ? BackColor
@@ -221,9 +220,7 @@ public partial class ConfigForm : Form
 
     private void SelectFileEdit_TextChanged(object sender, EventArgs e)
     {
-        var edit = sender as TextBox;
-
-        if (edit != null)
+        if (sender is TextBox edit)
         {
             edit.BackColor = File.Exists(edit.Text)
                 ? BackColor
