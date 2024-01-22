@@ -2,16 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>CorrReplace</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.23.6.22</AssemblyVersion>
-    <FileVersion>1.23.6.22</FileVersion>
-	<Version>1.23.6.22</Version>
-    <Company>Cibank</Company>
-    <Copyright>2022-2023 Dmitrii Evdokimov</Copyright>
+	<Version>8.2024.122.0</Version>
+    <Company>diev</Company>
+    <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
     <Description>Работа с корсчетами разных банков в формате УФЭБС.</Description>
 	<NeutralLanguage>ru-RU</NeutralLanguage>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

@@ -13,9 +13,9 @@ set pub=G:\BankApps
 rem --------------------------------------------------------------------
 for %%i in (.) do set project=%%~nxi
 
-set runtime=.NET 7
-find "<TargetFramework>net7.0-windows</TargetFramework>" %project%.csproj
-if %errorlevel%==0 set runtime=.NET 7 WindowsDesktop
+set runtime=.NET 8
+find "<TargetFramework>net8.0-windows</TargetFramework>" %project%.csproj
+if %errorlevel%==0 set runtime=.NET 8 WindowsDesktop
 
 find "<ProjectReference Include="..\Corr-Lib\Corr-Lib.csproj" />" %project%.csproj
 if %errorlevel%==0 set libs=%libs% Corr-Lib

@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>CorrLib</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Copyright>2022-2023 Dmitrii Evdokimov</Copyright>
-    <AssemblyVersion>2.23.6.22</AssemblyVersion>
-    <FileVersion>2.23.6.22</FileVersion>
+    <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
+    <Version>8.2024.122.0</Version>
     <Company>diev</Company>
     <Description>Библиотека общих элементов для работы с форматами UFEBS и SWIFT.</Description>
   </PropertyGroup>
