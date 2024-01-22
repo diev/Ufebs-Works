@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,13 @@ namespace CorrLib;
 
 public static class Config
 {
+    private static readonly JsonSerializerOptions _options = new()
+    {
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+        //Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+        WriteIndented = true
+    };
+
     private static string _profile = 
         (AppContext.GetData(nameof(Profile)) as string ?? string.Empty) + '.'; //for fast access
 
@@ -200,13 +207,8 @@ public static class Config
             }
         }
 
-        var options = new JsonSerializerOptions
-        {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            //Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
-        json = configNode.ToJsonString(options); //TODO JsonSerializer.Serialize() ?
+        //json = configNode.ToJsonString(_options);
+        json = JsonSerializer.Serialize(configNode, _options);
 
         File.WriteAllText(path, json);
     }
@@ -238,7 +240,7 @@ public static class Config
         
         if (value is null)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         if (value is String)
@@ -248,7 +250,7 @@ public static class Config
 
             if (values is null)
             {
-                return Array.Empty<string>();
+                return [];
             }
 
             return values;
