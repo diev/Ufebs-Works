@@ -9,7 +9,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>ru-RU</NeutralLanguage>
-    <Version>8.2024.122.0</Version>
+    <Version>8.2024.125.0</Version>
     <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
     <Company>diev</Company>
     <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR и через СПФС ЦБ.</Description>

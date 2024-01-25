@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,17 @@ limitations under the License.
 
 using System.Text;
 
+using CorrLib.UFEBS;
+
 namespace ReturnSWIFT;
 
 internal class Program
 {
-    public static List<string> O950in = new();
-    public static List<string> O950out = new();
+    public static List<string> O900in = [];
+    public static List<string> O900out = [];
+
+    public static List<string> O950in = [];
+    public static List<string> O950out = [];
 
     static void Main(string[] args)
     {
@@ -63,6 +68,17 @@ internal class Program
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); //enable Windows-1251
 
+        var ed807 = AppContext.GetData("ED807")?.ToString();
+
+        if (ed807 is null || !File.Exists(ed807))
+        {
+            Console.WriteLine("Укажите в конфиге файл справочника ED807.xml для лучшего заполнения полей.");
+        }
+        else
+        {
+            ED807Finder.ED807File = ed807;
+        }
+
         Console.WriteLine($"--- Документы --- {path}");
 
         if (Directory.Exists(path))
@@ -96,7 +112,7 @@ internal class Program
             }
             else
             {
-                Console.WriteLine($"Input dir \"{dir}\" not found");
+                Console.WriteLine(@$"Input dir ""{dir}"" not found");
             }
         }
         else if (File.Exists(path))
@@ -106,7 +122,22 @@ internal class Program
         }
         else
         {
-            Console.WriteLine($"Input file \"{path}\" not found");
+            Console.WriteLine(@$"Input file ""{path}"" not found");
+        }
+
+        for (int i = 0; i < O900in.Count; i++)
+        {
+            string inFile = O900in[i];
+            string outFile = O900out[i];
+
+            try
+            {
+                Worker.Process900(inFile, outFile);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(@$"Ошибка в файле авизо ""{inFile}"". {ex.Message}");
+            }
         }
 
         for (int i = 0; i < O950in.Count; i++)
@@ -120,7 +151,7 @@ internal class Program
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка в файле выписки \"{inFile}\". {ex.Message}");
+                Console.WriteLine(@$"Ошибка в файле выписки ""{inFile}"". {ex.Message}");
             }
         }
 

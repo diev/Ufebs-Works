@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,12 +30,14 @@ namespace ReturnSWIFT;
 
 public static class Worker
 {
-    static readonly Dictionary<string, TransInfo> _d = new();
-    static readonly Dictionary<string, TransInfo> _c = new();
+    static readonly Dictionary<string, TransInfo> _d = [];
+    static readonly Dictionary<string, TransInfo> _c = [];
+
+    static readonly Encoding _encoding = Encoding.GetEncoding(1251);
 
     static readonly XmlWriterSettings _xmlSettings = new()
     {
-        Encoding = Encoding.GetEncoding(1251),
+        Encoding = _encoding,
         Indent = true,
         NamespaceHandling = NamespaceHandling.OmitDuplicates,
         WriteEndDocumentOnClose = true
@@ -165,19 +167,21 @@ public static class Worker
 
             switch (mt)
             {
-                case "I103":
+                case "I103": // ED101 Платежное поручение
                     Process103(inFile, $"{outFile}_.{mt}.ED101.xml", "1");
                     break;
 
-                case "O103":
+                case "O103": // ED103 Платежное требование
                     Process103(inFile, $"{outFile}_.{mt}.ED101.xml", "2");
                     break;
 
-                case "O900":
-                    Process900(inFile, $"{outFile}_.{mt}.ED206.txt");
+                case "O900": // ED206 Подтверждение дебета/кредита
+                    Process900AsText(inFile, $"{outFile}_.{mt}.ED206.txt");
+                    Program.O900in.Add(inFile);
+                    Program.O900out.Add($"{outFile}_.{mt}");
                     break;
 
-                case "O950":
+                case "O950": // ED211 Извещение об операциях по счету
                     Program.O950in.Add(inFile);
                     Program.O950out.Add($"{outFile}_.{mt}");
                     break;
@@ -249,7 +253,7 @@ public static class Worker
 
         if (ed.DC == "2")
         {
-            ed.EDDate = ed.ChargeOffDate;
+            ed.EDDate = ed.ChargeOffDate!;
             ed.EDNo = EDHelpers.NextEDNo();
         }
 
@@ -279,7 +283,7 @@ public static class Worker
             PacketEPD packet = new()
             {
                 EDAuthor = ed.EDAuthor,
-                EDDate = ed.EDDate,
+                EDDate = ed.EDDate!,
                 EDNo = packNo,
                 EDQuantity = "1",
                 EDReceiver = CorrBank.UIC,
@@ -299,7 +303,7 @@ public static class Worker
         }
     }
 
-    private static void Process900(string inFile, string outFile)
+    public static void Process900AsText(string inFile, string outFile)
     {
         /*
 {1:F01CITVRU2PXXXX0080000001}{2:O9000135220805ALFARUMMXXXX00804219152208050135N}{3:{113:RUR6}{108:1OP1EE0033080923}}{4:
@@ -312,7 +316,9 @@ public static class Worker
 //T 18.10.2016 ScET n 430 OT 31.07.
 //2022G. BEZ NDS.
 -}{5:{MAC:00000000}{CHK:00002A77E432}}
-        */
+         */
+
+        // Text dump
 
         var lines = File.ReadAllLines(inFile);
         int n = 0;
@@ -346,7 +352,97 @@ public static class Worker
             .AppendLine(sc.Cyr())
             .AppendLine(line);
 
-        File.WriteAllText(MakePath(outFile, date), sb.ToString(), Encoding.GetEncoding(1251));
+        File.WriteAllText(MakePath(outFile, date), sb.ToString(), _encoding);
+    }
+
+    public static void Process900(string inFile, string outFile)
+    {
+        /*
+{1:F01CITVRU2PXXXX0080000001}{2:O9000135220805ALFARUMMXXXX00804219152208050135N}{3:{113:RUR6}{108:1OP1EE0033080923}}{4:
+:20:+P1ED2284001JMZC
+:21:+220804000012157
+:25:30109810200000000654
+:32A:220804RUB10000,
+:72:/NZP/OPLATA ZA REPOZITARNYE USLUGI
+//ZA IuLX 2022G. PO DOG. n 2016-6 O
+//T 18.10.2016 ScET n 430 OT 31.07.
+//2022G. BEZ NDS.
+-}{5:{MAC:00000000}{CHK:00002A77E432}}
+         */
+
+        // Text dump
+
+        var lines = File.ReadAllLines(inFile);
+        int n = 0;
+        string line = lines[n++];
+        var (date, time) = line.UParseDateTime();
+
+        // PacketESID / ED206
+
+        PacketESID packetESID = new()
+        {
+            EDAuthor = CorrBank.ProfileUIC!,
+            EDDate = date,
+            EDNo = EDHelpers.NextTimedEDNo()
+        };
+
+        ED206 ed206 = new(lines)
+        {
+            BICCorr = CorrBank.ProfileBIC!,
+            CorrAcc = CorrBank.ProfileCorrAcc!,
+            EDAuthor = CorrBank.ProfileUIC!,
+
+            EDDate = date,
+            EDNo = EDHelpers.NextTimedEDNo(),
+
+            AccDocDate = date,
+            AccDocNo = "1",
+
+            TransTime = time
+        };
+
+        string path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(inFile), @"..\OUT"));
+        string id = ed206.RefSwiftId;
+
+        foreach (var swiftFile in Directory.GetFiles(path, $"*{id}.txt"))
+        {
+            lines = File.ReadAllLines(swiftFile);
+            ED100 swift = new(lines);
+
+            //ed206.Acc = swift.PayeePersonalAcc; // 53B
+
+            string xmlFile = swiftFile.Replace($"{id}.txt", ".xml");
+
+            if (File.Exists(xmlFile))
+            {
+                ED100 xml = new(xmlFile);
+
+                ed206.BICCorr = xml.PayeeBIC ?? string.Empty;
+                ed206.CorrAcc = xml.PayeeCorrespAcc ?? string.Empty;
+
+                ed206.AccDocDate = xml.AccDocDate;
+                ed206.AccDocNo = xml.AccDocNo;
+
+                ed206.EDRefAuthor = xml.EDAuthor;
+                ed206.EDRefDate = xml.EDDate;
+                ed206.EDRefNo = xml.EDNo;
+            }
+            else
+            {
+                ed206.BICCorr = swift.PayeeBIC;
+                ed206.CorrAcc = swift.PayeeCorrespAcc;
+
+                ed206.AccDocDate = swift.AccDocDate;
+                ed206.AccDocNo = swift.AccDocNo;
+
+                ed206.EDRefAuthor = CorrBank.UIC!;
+            }
+        }
+
+        using var writer = XmlWriter.Create(MakePath(outFile, date, ".ED206.xml"), _xmlSettings);
+        packetESID.WriteXML(writer, false);
+        ed206.WriteXML(writer);
+        writer.Close();
     }
 
     public static void Process950(string inFile, string outFile)
@@ -441,14 +537,16 @@ public static class Worker
                     {
                         AccDocDate = date,
                         AccDocNo = accDocNo,
-                        BICCorr = CorrBank.ProfileBIC,
+                        BICCorr = CorrBank.ProfileBIC!,
                         CorrAcc = CorrBank.ProfileCorrAcc,
                         DC = dc,
                         EDRefAuthor = CorrBank.UIC!,
                         EDRefDate = date,
                         EDRefNo = accDocNo,
-                        PayeePersonalAcc = debet ? "0" : CorrBank.ProfilePayAcc,
-                        PayerPersonalAcc = debet ? CorrBank.ProfilePayAcc : "0",
+                        //PayeePersonalAcc = debet ? "0" : CorrBank.ProfilePayAcc!,
+                        //PayerPersonalAcc = debet ? CorrBank.ProfilePayAcc! : "0",
+                        PayeePersonalAcc = debet ? CorrBank.ProfileCorrAcc! : CorrBank.ProfilePayAcc!,
+                        PayerPersonalAcc = debet ? CorrBank.ProfilePayAcc! : CorrBank.ProfileCorrAcc!,
                         Sum = sum,
                         TransKind = order ? "17" : "01"
                     };
@@ -546,7 +644,7 @@ public static class Worker
         sb.Append(sc.Cyr());
         sb.AppendLine(line);
 
-        File.WriteAllText(outFile, sb.ToString(), Encoding.GetEncoding(1251)); //TODO
+        File.WriteAllText(outFile, sb.ToString(), _encoding); //TODO
     }
 
     private static void ProcessKvit(string inFile, string outFile)

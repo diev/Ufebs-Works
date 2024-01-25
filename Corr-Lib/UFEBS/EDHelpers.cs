@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ namespace CorrLib.UFEBS;
 public static class EDHelpers
 {
     private static int _EDNo = 1;
+    private static string _TimedEDNo = DateTime.Now.ToString("Hmmss");
     private static string _EDDate = DateTime.Today.ToString("yyyy-MM-dd");
 
     public static string NextEDNo(string? value = null)
@@ -32,6 +33,18 @@ public static class EDHelpers
         }
 
         return _EDNo++.ToString();
+    }
+
+    public static string NextTimedEDNo()
+    {
+        while (DateTime.Now.ToString("Hmmss") == _TimedEDNo)
+        {
+            Thread.Sleep(100);
+        }
+
+        _TimedEDNo = DateTime.Now.ToString("Hmmss");
+
+        return _TimedEDNo;
     }
 
     public static string EDToday(string? value = null)

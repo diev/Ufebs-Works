@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,7 @@ namespace CorrLib.SWIFT;
 /// <summary>
 /// SWIFT-RUR 6: MT103 ("ОДНОКРАТНОЕ ЗАЧИСЛЕНИЕ КЛИЕНТСКИХ СРЕДСТВ").
 /// SWIFT-RUR 6: MT202 ("ОБЩИЙ МЕЖБАНКОВСКИЙ ПЕРЕВОД").
+/// SWIFT-RUR 6: MT900 ("ДЕБЕТОВОЕ АВИЗО").
 /// </summary>
 public static class SwiftMT
 {
@@ -86,10 +87,23 @@ public static class SwiftMT
 
         // Payer Bank
 
-        if (line.Equals(":52A:CITVRU2P")) //TODO BIC, CorrAcc
+        if (line.StartsWith(":52A:CITVRU2P"))
         {
+            ed.PayerSWBIC = "CITVRU2P";
             ed.PayerBIC = "044030702";
             ed.PayerCorrespAcc = "30101810600000000702";
+        }
+        else if (line.StartsWith(":52A:"))
+        {
+            ed.PayerSWBIC = line[5..];
+
+            var bicInfo = ED807Finder.FindSwift(ed.PayerSWBIC);
+
+            if (bicInfo != null)
+            {
+                ed.PayerBIC = bicInfo.CBRBIC;
+                ed.PayerCorrespAcc = bicInfo.CorrespAcc;
+            }
         }
         else
         {
@@ -116,8 +130,45 @@ public static class SwiftMT
 
         while (!line.StartsWith(":59:"))
         {
+            if (line.StartsWith(":57A:"))
+            {
+                if (line.StartsWith(":57A:/"))
+                {
+                    // :57A:/30101810600000000786
+                    // ALFARUMMXXX
+
+                    ed.PayeeCorrespAcc = line[6..];
+                    line = lines[n++];
+                    ed.PayeeSWBIC = line;
+
+                    var bicInfo = ED807Finder.FindSwift(ed.PayeeSWBIC);
+
+                    if (bicInfo != null)
+                    {
+                        ed.PayeeBIC = bicInfo.CBRBIC;
+                    }
+                }
+                else // :57A:ALFARUMM
+                {
+                    ed.PayeeSWBIC = line[5..];
+
+                    var bicInfo = ED807Finder.FindSwift(ed.PayeeSWBIC);
+
+                    if (bicInfo != null)
+                    {
+                        ed.PayeeBIC = bicInfo.CBRBIC;
+                        ed.PayeeCorrespAcc = bicInfo.CorrespAcc;
+                    }
+                }
+            }
+
             if (line.StartsWith(":57D:"))
             {
+                // :57D://RU044030786.30101810600000000786
+                // FILIAL mSANKT-PETERBURGSKIim AO mAL
+                // XFA - BANKm
+                // G SANKT-PETERBURG
+
                 var (bic, acc) = line[5..].ParseBICAcc(); // :57D:
                 ed.PayeeBIC = bic;
                 ed.PayeeCorrespAcc = acc;
@@ -292,6 +343,70 @@ public static class SwiftMT
     }
 
     /// <summary>
+    /// MT 900 Дебетовое авизо
+    /// </summary>
+    /// <param name="ed"></param>
+    /// <param name="lines"></param>
+    /// <returns></returns>
+    public static ED206 Load(this ED206 ed, string[] lines)
+    {
+        /*
+        Статус Номер поля Название поля Формат/ Опции N
+        О 20 Референс операции 16x 1
+        О 21 Связанный референс 16x 2
+        О 25 Номер счета 35x 3
+        О 32A Дата валютирования, код валюты, сумма 6!n3!a15d 4
+        Н 52а Банк-Плательщик A или D 5
+        Н 72 Информация Отправителя Получателю 6*35x 6
+         * 
+{1:F01CITVRU2PXXXX0123000104}{2:O9000944240123ALFARUMMXXXX01230264502401230944N}{3:{113:RUR6}{108:1OP1E00005509537}}{4:
+:20:+P1ED241M003LDEF
+:21:+240122600010264
+:25:30109810200000000654
+:32A:240123RUB6000000,
+:72:/NZP/cASTIcNYi VOZVRAT OSNOVNOGO DO
+//LGA PO SOGLAQENIu O ZAMENE OBaZAT
+//ELXSTVA B/N OT 11.11.2019G. SUMMA
+// 6000000-00 BEZ NALOGA (NDS)
+-}{5:{MAC:00000000}{CHK:0000F41BF6CB}}
+        */
+
+        int n = 0;
+        string line = lines[n++];
+
+        // Id Референс операции
+
+        while (!line.StartsWith(":20:")) line = lines[n++];
+        ed.SwiftId = line[4..];
+
+        // RefId Связанный референс
+
+        while (!line.StartsWith(":21:")) line = lines[n++];
+        ed.RefSwiftId = line[4..];
+
+        // Acc Номер счета
+
+        while (!line.StartsWith(":25:")) line = lines[n++];
+        ed.Acc = line[^20..];
+
+        // Sum Сумма и т.д.
+
+        while (!line.StartsWith(":32A:")) line = lines[n++];
+        var (date, sum) = line[5..].UParseDateSum(); // :32A:
+        ed.TransDate = date;
+        //ed.TransTime = DateTime.Now.ToString("HH:mm:ss");
+        ed.Sum = sum;
+
+        ed.DC = "1";
+
+        var e = SwiftID.Id(ed.RefSwiftId);
+        ed.EDRefDate = e.EDDate;
+        ed.EDRefNo = e.EDNo;
+
+        return ed;
+    }
+
+    /// <summary>
     /// SWIFT-RUR 6: MT103 ("ОДНОКРАТНОЕ ЗАЧИСЛЕНИЕ КЛИЕНТСКИХ СРЕДСТВ")
     /// </summary>
     /// <param name="ed"></param>
@@ -299,7 +414,7 @@ public static class SwiftMT
     /// <param name="corrSwift">Destination address with default Logical terminal address XXX</param>
     /// <param name="payAcc"></param>
     /// <returns></returns>
-    public static string ToStringMT103(this ED100 ed, string bankSwift, string corrSwift, string payAcc)
+    public static string ToStringMT103(this ED100 ed, string bankSwift, string corrSwift, string payAcc, int mode = 2)
     {
         string sum = ed.Sum; // save for BESP if over 100 000 000.00
         var (Num, Id) = SwiftID.ID(ed);
@@ -399,18 +514,34 @@ public static class SwiftMT
         // Банк Бенефициара
         // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
 
-        sb.AppendLine($":57D://RU{ed.PayeeBIC}{ed.PayeeCorrespAcc.AddNotEmpty()}");
+        if (ed.PayeeBIC.Equals("044525593") || // АО "Альфа-Банк", г.Москва
+            ed.PayeeBIC.Equals("044030786")) // Филиал "Санкт-Петербургский" АО "Альфа-Банк", г.Санкт-Петербург
+        {
+            sb.AppendLine($":57A:ALFARUMM");
+        }
+        else
+        {
+            //1
+            //sb.AppendLine($":57A:{corrSwift[..8]}");
 
-        // Указание местонахождения Банка бенефициара при проведении платежа через расчетную систему Банка России обязательно.
-        // Указание адреса Банка бенефициара является необязательным, при наличии, отделяется запятой от наименования.
+            //2
+            //sb.AppendLine($":57A:/{ed.PayeeCorrespAcc}")
+            //    .AppendLine(corrSwift[..8]);
 
-        // 4*32x
-        //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
-        //.AppendLine(SwiftTranslit.Lat("г.Город"));
+            //3
+            sb.AppendLine($":57D://RU{ed.PayeeBIC}{ed.PayeeCorrespAcc.AddNotEmpty()}");
 
-        var bankInfo = ED807Finder.Find(ed.PayeeBIC!, true) ?? new BankInfo("BANK", "G"); //TODO BIC not found
-        sb.AppendLine(bankInfo.Name.Div35())
-            .AppendLine(bankInfo.Place);
+            // Указание местонахождения Банка бенефициара при проведении платежа через расчетную систему Банка России обязательно.
+            // Указание адреса Банка бенефициара является необязательным, при наличии, отделяется запятой от наименования.
+
+            // 4*32x
+            //.AppendLine(SwiftTranslit.Lat("Какой-то банк получателя,")) // Надо ли брать из Справочника БИК?
+            //.AppendLine(SwiftTranslit.Lat("г.Город"));
+
+            var bankInfo = ED807Finder.Find(ed.PayeeBIC!, true) ?? new BankInfo("BANK", "G"); //TODO BIC not found
+            sb.AppendLine(bankInfo.Name.Div35())
+                .AppendLine(bankInfo.Place);
+        }
 
         // Бенефициар
         // (клиент, которому будут выплачены средства)

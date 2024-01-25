@@ -331,9 +331,19 @@ public record ED100 : EDBase
     public bool Saved { get; set; } = false;
 
     /// <summary>
-    /// MT103 :20:
+    /// MT103 :20: Идентификатор SWIFT
     /// </summary>
     public string? SwiftId { get; set; }
+
+    /// <summary>
+    /// MT103 :52A: SWIFT BIC Плательщика
+    /// </summary>
+    public string? PayerSWBIC { get; set; }
+
+    /// <summary>
+    /// MT103 :57A: SWIFT BIC Получателя
+    /// </summary>
+    public string? PayeeSWBIC { get; set; }
 
     /// <summary>
     /// Присутствует ведомственная информация (поля 101, 104-110).

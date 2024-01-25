@@ -1,5 +1,7 @@
 {
   "configProperties": {
+    "ED807": "ED807.xml",
+
     "BIC": "044030702",
     "CorrAcc": "30101810600000000702",
     "SWIFT": "CITVRU2P",

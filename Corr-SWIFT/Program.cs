@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,12 +56,12 @@ internal static class Program
   },
   "Name": "Segoe UI",
   "Unit": 3,
-  "GdiCharSet": 1,
+  "GdiCharSet": 204, //1
   "GdiVerticalFont": false,
   "OriginalFontName": null,
-  "SystemFontName": "MessageBoxFont",
-  "IsSystemFont": true,
-  "Height": 16,
+  "SystemFontName": "MessageBoxFont", //""
+  "IsSystemFont": true, //false
+  "Height": 16, //24
   "SizeInPoints": 9
 }
             */
@@ -82,9 +82,9 @@ internal static class Program
         var json = File.ReadAllBytes(file);
 
         using var doc = JsonDocument.Parse(json);
-        var root = doc.RootElement;
-        var name = root.GetProperty("FontFamily").GetProperty("Name").GetString();
-        var size = root.GetProperty("Size").GetDouble();
+        var font = doc.RootElement;
+        var name = font.GetProperty("FontFamily").GetProperty("Name").GetString();
+        var size = font.GetProperty("Size").GetDouble();
 
         if (name == null) return null;
 

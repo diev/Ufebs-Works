@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #endregion
+
+using static CorrLib.SWIFT.SwiftMT;
 
 namespace CorrLib.UFEBS.DTO;
 
@@ -54,15 +56,15 @@ public record ED206 : EDBase
     /// <summary>
     /// Вид операции.
     /// </summary>
-    public string TransDate { get; set; } // required
+    public string? TransDate { get; set; } // required
 
-    public string TransTime { get; set; } // required
+    public string? TransTime { get; set; } // required
 
     #region AccDoc
 
-    public string AccDocDate { get; set; }
+    public string? AccDocDate { get; set; }
 
-    public string AccDocNo { get; set; }
+    public string? AccDocNo { get; set; }
 
     #endregion AccDoc
 
@@ -72,19 +74,48 @@ public record ED206 : EDBase
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDRefAuthor { get; set; }
+    public string? EDRefAuthor { get; set; }
 
     /// <summary>
     /// Дата составления ЭС.
     /// </summary>
-    public string EDRefDate { get; set; }
+    public string? EDRefDate { get; set; }
 
     /// <summary>
     /// Номер ЭС в течение опердня.
     /// </summary>
-    public string EDRefNo { get; set; }
+    public string? EDRefNo { get; set; }
 
     #endregion EDRefID
+
+    #region Extensions
+
+    /// <summary>
+    /// Транслитерирован ли документ для корсчета SWIFT.
+    /// </summary>
+    public bool Lat { get; set; } = false;
+
+    /// <summary>
+    /// Тип документа до корректировки для корсчета.
+    /// </summary>
+    public string? OriginalEDType { get; set; }
+
+    /// <summary>
+    /// Сохранен ли откорректированный документ для корсчета.
+    /// </summary>
+    public bool Saved { get; set; } = false;
+
+    /// <summary>
+    /// MT900 :20:
+    /// </summary>
+    public string? SwiftId { get; set; }
+
+    /// <summary>
+    /// MT900 :21:
+    /// </summary>
+    public string? RefSwiftId { get; set; }
+
+    #endregion Extensions
 
     #region Constructors
 
@@ -95,6 +126,11 @@ public record ED206 : EDBase
 
     public ED206(TransInfo ti)
         => this.Load(ti);
+
+    public ED206(string[] lines)
+    {
+        this.Load(lines);
+    }
 
     #endregion Constructors
 }
