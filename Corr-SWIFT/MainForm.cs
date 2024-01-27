@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,13 @@ namespace CorrSWIFT;
 public partial class MainForm : Form
 {
     #region Init
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+        WriteIndented = true
+    };
+
     public MainForm()
     {
         InitializeComponent();
@@ -36,12 +43,17 @@ public partial class MainForm : Form
 
     private void InitForm()
     {
-        int w = Screen.PrimaryScreen.WorkingArea.Width;
-        int h = Screen.PrimaryScreen.WorkingArea.Height;
+        var screen = Screen.PrimaryScreen;
 
-        SetBounds(
-            (int)(w * 0.1), (int)(h * 0.15),
-            (int)(w * 0.8), (int)(h * 0.75));
+        if (screen != null)
+        {
+            int w = screen.WorkingArea.Width;
+            int h = screen.WorkingArea.Height;
+
+            SetBounds(
+                (int)(w * 0.1), (int)(h * 0.15),
+                (int)(w * 0.8), (int)(h * 0.75));
+        }
 
         //splitContainer2.SplitterDistance =
         //    splitContainer2.Height - PayerEdit.Height - PayeeEdit.Height - PurposeEdit.Height -
@@ -117,24 +129,22 @@ public partial class MainForm : Form
     {
         Font = FontDialog.Font;
 
-        int w = Screen.PrimaryScreen.WorkingArea.Width;
-        int h = Screen.PrimaryScreen.WorkingArea.Height;
+        var screen = Screen.PrimaryScreen;
 
-        SetBounds(
-            (int)(w * 0.1), (int)(h * 0.15),
-            (int)(w * 0.8), (int)(h * 0.75));
+        if (screen != null)
+        {
+            int w = screen.WorkingArea.Width;
+            int h = screen.WorkingArea.Height;
+
+            SetBounds(
+                (int)(w * 0.1), (int)(h * 0.15),
+                (int)(w * 0.8), (int)(h * 0.75));
+        }
 
         string path = Path.GetDirectoryName(Application.ExecutablePath) ?? ".";
         string file = Path.Combine(path, "_font.json");
 
-        var options = new JsonSerializerOptions
-        {
-            //Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
-
-        var json = JsonSerializer.SerializeToUtf8Bytes(Font, options);
+        var json = JsonSerializer.SerializeToUtf8Bytes(Font, _jsonOptions);
         File.WriteAllBytes(file, json);
     }
 

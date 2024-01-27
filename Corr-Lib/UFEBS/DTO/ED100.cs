@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,9 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib.SWIFT;
-
 using System.Xml.Linq;
+
+using CorrLib.SWIFT;
 
 namespace CorrLib.UFEBS.DTO;
 
@@ -356,14 +356,10 @@ public record ED100 : EDBase
     #region Constructors
 
     public ED100()
-    {
-        EDType = "ED101";
-    }
+        => EDType = "ED101";
 
     public ED100(string path)
-    {
-        this.Load(path);
-    }
+        => this.Load(path);
 
     public ED100(XNode? node)
     {
@@ -374,14 +370,10 @@ public record ED100 : EDBase
     }
 
     public ED100(XElement element)
-    {
-        this.Load(element);
-    }
+        => this.Load(element);
 
     public ED100(string[] lines)
-    {
-        this.Load(lines);
-    }
+        => this.Load(lines);
 
     #endregion Constructors
 }

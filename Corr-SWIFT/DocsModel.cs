@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,6 @@ limitations under the License.
 */
 #endregion
 
-using CorrLib;
-using CorrLib.SWIFT;
-using CorrLib.UFEBS;
-using CorrLib.UFEBS.DTO;
-
 using System.Diagnostics;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -29,13 +24,20 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Xml;
 
+using CorrLib;
+using CorrLib.SWIFT;
+using CorrLib.UFEBS;
+using CorrLib.UFEBS.DTO;
+
+using Application = System.Windows.Forms.Application;
+
 namespace CorrSWIFT;
 
 public static class DocsModel
 {
-    private static readonly Dictionary<string, string> _payers = new();
-    private static readonly Dictionary<string, string> _payees = new();
-    private static readonly Dictionary<string, string> _purposes = new();
+    private static readonly Dictionary<string, string> _payers = [];
+    private static readonly Dictionary<string, string> _payees = [];
+    private static readonly Dictionary<string, string> _purposes = [];
 
     private static bool _swiftMode;
 
@@ -55,7 +57,8 @@ public static class DocsModel
         {
             if (index == -1) return;
 
-            fileName = Path.Combine(Config.OpenDir, mainForm.FilesList.Items[index].SubItems[mainForm.FileColumn.Index].Text);
+            fileName = Path.Combine(Config.OpenDir, 
+                mainForm.FilesList.Items[index].SubItems[mainForm.FileColumn.Index].Text);
         }
 
         _swiftMode = Config.SaveFormat == "SWIFT";
@@ -68,6 +71,10 @@ public static class DocsModel
 
         mainForm.DocsList.Items.Clear();
         mainForm.Status.Text = $"Готово {_ok} из {_count}";
+
+        // Save the source file in a dated directory
+        string store = Repository.GetOutStoreFile(fileName, _packet.EDDate);
+        File.Copy(fileName, store, true);
 
         for (int i = 0; i < _count; i++)
         {
@@ -83,19 +90,22 @@ public static class DocsModel
 
             if (_swiftMode)
             {
-                if (!payer.LatNameValid() && _payers.ContainsKey(payer))
-                    ced.PayerName = _payers[payer];
+                if (!payer.LatNameValid() &&
+                    _payers.TryGetValue(payer, out string? value1))
+                    ced.PayerName = value1;
 
-                if (!payee.LatNameValid() && _payees.ContainsKey(payee))
-                    ced.PayeeName = _payees[payee];
+                if (!payee.LatNameValid() && 
+                    _payees.TryGetValue(payee, out string? value2))
+                    ced.PayeeName = value2;
 
-                if (!purpose.LatNameValid() && _purposes.ContainsKey(purpose))
-                    ced.Purpose = _purposes[purpose];
+                if (!purpose.LatNameValid() && 
+                    _purposes.TryGetValue(purpose, out string? value3))
+                    ced.Purpose = value3;
 
                 _result.Elements[i] = ced.CorrSubst();
                 var (path, file) = ResultFile(_packet.Elements[i]);
 
-                mainForm.DocsList.Items.Add(new ListViewItem(new String[]
+                mainForm.DocsList.Items.Add(new ListViewItem(new string[]
                 {
                     (i + 1).ToString(),
                     _packet.Elements[i].EDType,
@@ -126,8 +136,11 @@ public static class DocsModel
                         Config.CorrAccount);
 
                     (path, file) = ResultFile(ced);
+                    store = Repository.GetOutStoreFile(path, _packet.EDDate);
 
                     File.WriteAllText(path, text, Encoding.ASCII);
+                    File.WriteAllText(store, text, Encoding.ASCII);
+
                     mainForm.DocsList.Items[i].SubItems[mainForm.SavedColumn.Index].Text = file;
                     mainForm.DocsList.Items[i].ForeColor = Color.DarkGreen;
                     mainForm.Status.Text = $"Готово {++_ok} из {_count}";
@@ -139,14 +152,17 @@ public static class DocsModel
             }
             else // УФЭБС
             {
-                if (payer.Length > 160 && _payers.ContainsKey(payer))
-                    ced.PayerName = _payers[payer];
+                if (payer.Length > 160 &&
+                    _payers.TryGetValue(payer, out string? value1))
+                    ced.PayerName = value1;
 
-                if (purpose.Length > 210 && _purposes.ContainsKey(purpose))
-                    ced.Purpose = _purposes[purpose];
+                if (purpose.Length > 210 &&
+                    _purposes.TryGetValue(purpose, out string? value2))
+                    ced.Purpose = value2;
 
                 _result.Elements[i] = ced.CorrSubst();
-                bool ok = ced.PayerName!.Length <= 160 && ced.Purpose!.Length <= 210;
+                bool ok = ced.PayerName!.Length <= 160 &&
+                    ced.Purpose!.Length <= 210;
 
                 var item = new ListViewItem(new String[]
                 {
@@ -191,7 +207,7 @@ public static class DocsModel
 
         EditForm editForm = new(_swiftMode)
         {
-            Text = $"Файл {Path.GetFileName(_fileName)}, элемент {index + 1} - EDNo=\"{ced.EDNo}\" (Документ номер {ced.AccDocNo} на {ced.Sum.DisplaySum()})"
+            Text = @$"Файл {Path.GetFileName(_fileName)}, элемент {index + 1} - EDNo=""{ced.EDNo}"" (Документ номер {ced.AccDocNo} на {ced.Sum.DisplaySum()})"
         };
 
         editForm.PayerEdit.Text = ced.PayerName;
@@ -251,8 +267,10 @@ public static class DocsModel
                             Config.CorrAccount);
 
                         var (path, file) = ResultFile(ced);
+                        string store = Repository.GetOutStoreFile(path, _packet.EDDate);
 
                         File.WriteAllText(path, text, Encoding.ASCII);
+                        File.WriteAllText(store, text, Encoding.ASCII);
 
                         item.SubItems[mainForm.SavedColumn.Index].Text = file;
                         item.BackColor = mainForm.BackColor;
@@ -347,7 +365,9 @@ public static class DocsModel
         //    }
         //}
 
-        item.SubItems[mainForm.PackSavedColumn.Index].Text = _swiftMode ? "+" : GetUfebsFileName();
+        item.SubItems[mainForm.PackSavedColumn.Index].Text = _swiftMode
+            ? "+"
+            : GetUfebsFileName();
         item.ForeColor = Color.DarkGreen;
         mainForm.Status.Text = "Готово.";
 

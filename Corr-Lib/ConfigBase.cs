@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -125,7 +125,7 @@ public class ConfigBase
 
         if (value is null)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         if (value is String)
@@ -135,7 +135,7 @@ public class ConfigBase
 
             if (values is null)
             {
-                return Array.Empty<string>();
+                return [];
             }
 
             return values;
@@ -160,7 +160,18 @@ public class ConfigBase
     protected static int GPInt(string name, int defValue = 0)
         => GInt(_profile + name, defValue);
 
+#if NET7_0_OR_GREATER
 
+    protected static void S(string name, string value = "")
+        => AppContext.SetData(name, value);
+
+    protected static void S(string name, int value)
+        => AppContext.SetData(name, value);
+
+    protected static void S(string name, string[]? value)
+        => AppContext.SetData(name, value);
+
+#else
     // AppContext.SetData(string name, object? data); // available from .NET 7+
     // See a lifehack at
     // https://www.strathweb.com/2019/12/runtime-host-configuration-options-and-appcontext-data-in-net-core/
@@ -173,6 +184,8 @@ public class ConfigBase
 
     protected static void S(string name, string[]? value)
         => AppDomain.CurrentDomain.SetData(name, value);
+
+#endif
 
     protected static void SP(string name, string value = "")
         => S(_profile + name, value);

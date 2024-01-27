@@ -17,26 +17,37 @@ limitations under the License.
 */
 #endregion
 
-namespace CorrLib.UFEBS.DTO;
+namespace CorrLib.SWIFT;
 
-public record EDBase
+/// <summary>
+/// SWIFT-RUR 6.
+/// </summary>
+public static class SwiftKvit
 {
     /// <summary>
-    /// Тип ЭС: Packet..., ED...
+    /// Kvit.
     /// </summary>
-    public string EDType { get; set; } = "ED"; // required
+    /// <param name="lines"></param>
+    /// <returns></returns>
+    public static (string swiftid, string date, string time) ToTransTime(string[] lines)
+    {
+        /*
+{1:F21CITVRU2PXXXX0804012157}
+{4:{177:2208041611}
+{451:0}}
 
-    /// <summary>
-    /// Уникальный идентификатор составителя ЭС - УИС.
-    /// </summary>
-    public string EDAuthor { get; set; } = null!; // required
-    /// <summary>
-    /// Дата составления ЭС.
-    /// </summary>
-    public string EDDate { get; set; } = null!; // required
+{1:F21CITVRU2PXXXX0125010279}
+{4:{177:2401252315}
+{451:0}}
+        */
 
-    /// <summary>
-    /// Уникальный номер ЭС в течение опердня.
-    /// </summary>
-    public string EDNo { get; set; } = null!; // required
+        int n = 0;
+        string line = lines[n++];
+        string swiftid = line.ParseHeaderSwiftId();
+
+        line = lines[n++];
+        (string date, string time) = line.ParseHeaderTransTime();
+
+        return (swiftid, date, time);
+    }
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +66,7 @@ public record PacketEPD : EDBase
     /// <summary>
     /// Массив платежных документов.
     /// </summary>
-    public ED100[] Elements { get; set; } = Array.Empty<ED100>();
+    public ED100[] Elements { get; set; } = [];
 
     /// <summary>
     /// Иия файла, из которого загружен пакет.
@@ -85,9 +85,7 @@ public record PacketEPD : EDBase
     #region Constructors
 
     public PacketEPD()
-    {
-        EDType = nameof(PacketEPD);
-    }
+        => EDType = nameof(PacketEPD);
 
     public PacketEPD(string path)
     {

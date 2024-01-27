@@ -6,7 +6,7 @@
     <RootNamespace>ReturnSWIFT</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>8.2024.125.0</Version>
+    <Version>8.2024.128.0</Version>
     <Company>diev</Company>
     <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
     <NeutralLanguage>ru-RU</NeutralLanguage>

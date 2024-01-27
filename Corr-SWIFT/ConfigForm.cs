@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -79,7 +79,7 @@ public partial class ConfigForm : Form
             {
                 profile
             };
-            Config.Profiles = list.ToArray();
+            Config.Profiles = [.. list]; // list.ToArray();
         }
 
         Config.Profile = profile;

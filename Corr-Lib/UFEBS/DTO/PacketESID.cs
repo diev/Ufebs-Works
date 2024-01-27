@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,14 +29,14 @@ public record PacketESID : EDBase
     /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string EDReceiver { get; } = "4030702000";
+    public string EDReceiver { get; } = CorrBank.UIC!;
 
     #region Extensions
 
     /// <summary>
     /// Массив платежных документов.
     /// </summary>
-    public ED206[] Elements { get; set; } = Array.Empty<ED206>();
+    public ED206[] Elements { get; set; } = [];
 
     #endregion Extensions
     #endregion Properties
@@ -44,9 +44,7 @@ public record PacketESID : EDBase
     #region Constructors
 
     public PacketESID()
-    {
-        EDType = nameof(PacketESID);
-    }
+        => EDType = nameof(PacketESID);
 
     #endregion Constructors
 }

@@ -17,6 +17,7 @@ limitations under the License.
 */
 #endregion
 
+using System.Net.Sockets;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -26,12 +27,16 @@ using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
 
+using Microsoft.VisualBasic;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace ReturnSWIFT;
 
 public static class Worker
 {
-    static readonly Dictionary<string, TransInfo> _d = [];
-    static readonly Dictionary<string, TransInfo> _c = [];
+    //static readonly Dictionary<string, TransInfo> _d = [];
+    //static readonly Dictionary<string, TransInfo> _c = [];
 
     static readonly Encoding _encoding = Encoding.GetEncoding(1251);
 
@@ -106,20 +111,18 @@ public static class Worker
 
             string name = root.Name.LocalName;
             string date = root.Attribute("EDDate")!.Value;
-            string inFile2 = MakePath(outFile, date, ".xml");
+            string inFile2 = Repository.GetInStoreFile(outFile, date, ".xml");
 
-            if (name == "ED574")
-            {
-                File.Copy(inFile, inFile2, true);
-            }
-            else
-            {
-                File.Copy(inFile, inFile2, true);
+            File.Copy(inFile, inFile2, true);
 
+            if (!name.Equals("ED574"))
+            {
                 inFile2 = inFile + ".txt";
                 ED100 ed = new(inFile);
                 string mt103 = ed.ToStringMT103(
-                    CorrBank.SWIFT!, CorrBank.ProfileSWIFT!, CorrBank.ProfilePayAcc!);
+                    CorrBank.SWIFT!,
+                    CorrBank.ProfileSWIFT!,
+                    CorrBank.ProfilePayAcc!);
 
                 File.WriteAllText(inFile2, mt103, Encoding.ASCII);
             }
@@ -168,38 +171,45 @@ public static class Worker
             switch (mt)
             {
                 case "I103": // ED101 Платежное поручение
-                    Process103(inFile, $"{outFile}_.{mt}.ED101.xml", "1");
+                    string path = outFile + $"_.{mt}.ED101.xml";
+                    Process103(inFile, path, "1");
                     break;
 
                 case "O103": // ED103 Платежное требование
-                    Process103(inFile, $"{outFile}_.{mt}.ED101.xml", "2");
+                    path = outFile + $"_.{mt}.ED101.xml";
+                    Process103(inFile, path, "2");
                     break;
 
                 case "O900": // ED206 Подтверждение дебета/кредита
-                    Process900AsText(inFile, $"{outFile}_.{mt}.ED206.txt");
+                    path = outFile + $"_.{mt}.ED206.txt";
+                    Process900AsText(inFile, path);
                     Program.O900in.Add(inFile);
-                    Program.O900out.Add($"{outFile}_.{mt}");
+                    path = outFile + $"_.{mt}";
+                    Program.O900out.Add(path);
                     break;
 
                 case "O950": // ED211 Извещение об операциях по счету
                     Program.O950in.Add(inFile);
-                    Program.O950out.Add($"{outFile}_.{mt}");
+                    path = outFile + $"_.{mt}";
+                    Program.O950out.Add(path);
                     break;
 
                 case "O196":
                 case "O199":
                 case "O299":
-                    Process199(inFile, $"{outFile}_.{mt}.txt");
+                    path = outFile + $"_.{mt}.txt";
+                    Process199AsText(inFile, path);
                     break;
 
                 default:
                     if (mt != null)
                     {
-                        Console.WriteLine($"Unknown {mt} in \"{inFile}\"!");
+                        Console.WriteLine(@$"Unknown {mt} in ""{inFile}""!");
                     }
                     else
                     {
-                        ProcessKvit(inFile, $"{outFile}_.kvit.txt");
+                        path = outFile + "_.txt";
+                        ProcessKvit(inFile, path);
                     }
                     break;
             }
@@ -214,7 +224,7 @@ public static class Worker
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ошибка в файле \"{inFile}\".\n{ex.Message}");
+            Console.WriteLine(@$"Ошибка в файле ""{inFile}"".{Environment.NewLine}{ex.Message}");
 
             if (!Directory.Exists(errPath))
             {
@@ -265,7 +275,10 @@ public static class Worker
             EDRefAuthor = CorrBank.UIC!
         };
 
-        var dictionary = dc == "1" ? _d : _c;
+        var dictionary = dc == "1"
+            ? TransInfoEx.D
+            : TransInfoEx.C;
+
         string id = ed.SwiftId!;
 
         if (dictionary.ContainsKey(id))
@@ -293,66 +306,31 @@ public static class Worker
 
             packet.Elements[0] = ed;
 
-            using var writer = XmlWriter.Create(MakePath(outFile, packet.EDDate), _xmlSettings);
+            string path = dc == "1"
+                ? Repository.GetOutStoreFile(outFile, packet.EDDate)
+                : Repository.GetInStoreFile(outFile, packet.EDDate);
+
+            using var writer = XmlWriter.Create(path, _xmlSettings);
             packet.WriteXML(writer);
         }
         else // BESP
         {
-            using var writer = XmlWriter.Create(MakePath(outFile, ed.EDDate), _xmlSettings);
+            string path = dc == "1"
+                ? Repository.GetOutStoreFile(outFile, ed.EDDate)
+                : Repository.GetInStoreFile(outFile, ed.EDDate);
+
+            using var writer = XmlWriter.Create(path, _xmlSettings);
             ed.WriteXML(writer);
         }
     }
 
     public static void Process900AsText(string inFile, string outFile)
     {
-        /*
-{1:F01CITVRU2PXXXX0080000001}{2:O9000135220805ALFARUMMXXXX00804219152208050135N}{3:{113:RUR6}{108:1OP1EE0033080923}}{4:
-:20:+P1ED2284001JMZC
-:21:+220804000012157
-:25:30109810200000000654
-:32A:220804RUB10000,
-:72:/NZP/OPLATA ZA REPOZITARNYE USLUGI
-//ZA IuLX 2022G. PO DOG. n 2016-6 O
-//T 18.10.2016 ScET n 430 OT 31.07.
-//2022G. BEZ NDS.
--}{5:{MAC:00000000}{CHK:00002A77E432}}
-         */
-
-        // Text dump
-
         var lines = File.ReadAllLines(inFile);
-        int n = 0;
-        string line = lines[n++];
-        StringBuilder sb = new();
+        var (date, text) = SwiftMT900.ToString(lines);
+        string path = Repository.GetInStoreFile(outFile, date);
 
-        while (!line.StartsWith(":21:"))
-        {
-            sb.AppendLine(line);
-            line = lines[n++];
-        }
-
-        var (date, _) = SwiftID.Id(line[4..]);
-
-        while (!line.StartsWith(":72:/NZP/"))
-        {
-            sb.AppendLine(line);
-            line = lines[n++];
-        }
-
-        StringBuilder sc = new(line[9..]);
-        line = lines[n++];
-
-        while (line.StartsWith("//"))
-        {
-            sc.Append(line[2..]);
-            line = lines[n++];
-        }
-
-        sb.Append(":72:")
-            .AppendLine(sc.Cyr())
-            .AppendLine(line);
-
-        File.WriteAllText(MakePath(outFile, date), sb.ToString(), _encoding);
+        File.WriteAllText(path, text, _encoding);
     }
 
     public static void Process900(string inFile, string outFile)
@@ -373,11 +351,39 @@ public static class Worker
         // Text dump
 
         var lines = File.ReadAllLines(inFile);
-        int n = 0;
-        string line = lines[n++];
-        var (date, time) = line.UParseDateTime();
+        //int n = 0;
+        //string line = lines[n++];
+        //var (date, time) = line.UParseDateTime(); // Плохое время - формирования файла SWIFT MT900
 
         // PacketESID / ED206
+
+        ED206 ed206 = new(lines)
+        {
+            BICCorr = CorrBank.ProfileBIC!,
+            CorrAcc = CorrBank.ProfileCorrAcc!,
+            EDAuthor = CorrBank.ProfileUIC!,
+        };
+
+        string date = ed206.TransDate!;
+
+        //TODO string path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(inFile), @$"..\OUT\{date}"));
+        string id = ed206.SwiftRefId!;
+        string ufebs = Repository.GetOutUfebsFileBySwiftId(id);
+
+        if (File.Exists(ufebs))
+        {
+            ED100 xml = new(ufebs);
+
+            ed206.BICCorr = xml.PayeeBIC ?? string.Empty;
+            ed206.CorrAcc = xml.PayeeCorrespAcc ?? string.Empty;
+
+            ed206.AccDocDate = xml.AccDocDate;
+            ed206.AccDocNo = xml.AccDocNo;
+
+            ed206.EDRefAuthor = xml.EDAuthor;
+            ed206.EDRefDate = xml.EDDate;
+            ed206.EDRefNo = xml.EDNo;
+        }
 
         PacketESID packetESID = new()
         {
@@ -386,61 +392,10 @@ public static class Worker
             EDNo = EDHelpers.NextTimedEDNo()
         };
 
-        ED206 ed206 = new(lines)
-        {
-            BICCorr = CorrBank.ProfileBIC!,
-            CorrAcc = CorrBank.ProfileCorrAcc!,
-            EDAuthor = CorrBank.ProfileUIC!,
-
-            EDDate = date,
-            EDNo = EDHelpers.NextTimedEDNo(),
-
-            AccDocDate = date,
-            AccDocNo = "1",
-
-            TransTime = time
-        };
-
-        string path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(inFile), @"..\OUT"));
-        string id = ed206.RefSwiftId;
-
-        foreach (var swiftFile in Directory.GetFiles(path, $"*{id}.txt"))
-        {
-            lines = File.ReadAllLines(swiftFile);
-            ED100 swift = new(lines);
-
-            //ed206.Acc = swift.PayeePersonalAcc; // 53B
-
-            string xmlFile = swiftFile.Replace($"{id}.txt", ".xml");
-
-            if (File.Exists(xmlFile))
-            {
-                ED100 xml = new(xmlFile);
-
-                ed206.BICCorr = xml.PayeeBIC ?? string.Empty;
-                ed206.CorrAcc = xml.PayeeCorrespAcc ?? string.Empty;
-
-                ed206.AccDocDate = xml.AccDocDate;
-                ed206.AccDocNo = xml.AccDocNo;
-
-                ed206.EDRefAuthor = xml.EDAuthor;
-                ed206.EDRefDate = xml.EDDate;
-                ed206.EDRefNo = xml.EDNo;
-            }
-            else
-            {
-                ed206.BICCorr = swift.PayeeBIC;
-                ed206.CorrAcc = swift.PayeeCorrespAcc;
-
-                ed206.AccDocDate = swift.AccDocDate;
-                ed206.AccDocNo = swift.AccDocNo;
-
-                ed206.EDRefAuthor = CorrBank.UIC!;
-            }
-        }
-
-        using var writer = XmlWriter.Create(MakePath(outFile, date, ".ED206.xml"), _xmlSettings);
+        string path = Repository.GetInStoreFile(outFile, date, ".ED206.xml");
+        using var writer = XmlWriter.Create(path, _xmlSettings);
         packetESID.WriteXML(writer, false);
+        ed206.EDNo = EDHelpers.NextTimedEDNo();
         ed206.WriteXML(writer);
         writer.Close();
     }
@@ -463,123 +418,36 @@ public static class Worker
          */
 
         var lines = File.ReadAllLines(inFile);
-        int n = 0;
-        string line = lines[n++];
+        ED211 ed211 = new(lines);
+        string date = ed211.AbstractDate; //TODO period, not a day only
 
-        string time = line.UParseDateTime().time;
-
-        ED211 ed211 = new();
-        long debetSum = 0;
-        long creditSum = 0;
-
-        // Счет корреспондентский
-
-        while (!line.StartsWith(":25:")) line = lines[n++];
-        ed211.Acc = line[4..];
-
-        // Входящий остаток
-
-        while (!line.StartsWith(":60F:")) line = lines[n++];
-        ed211.EnterBal = line[5..].UParseBal().sum;
-
-        // Подсчитываем число движений
-
-        int startN = n;
-        int qty = 0;
-
-        while (!line.StartsWith(":62F:"))
+        foreach (var ti in ed211.Elements)
         {
-            if (line.StartsWith(":61:")) qty++;
-
-            line = lines[n++];
-        }
-
-        // Исходящий остаток
-
-        //while (!line.StartsWith(":62F:")) line = lines[n++];
-        int finishN = n - 1;
-
-        var (date, bal) = line[5..].UParseBal();
-        ed211.AbstractDate = date;
-        ed211.OutBal = bal;
-
-        Console.WriteLine($"\n---- Выписка ---- {date} {Path.GetFileName(inFile)}");
-
-        // Движения средств (имея итоги, читаем заново)
-
-        ed211.Elements = new TransInfo[qty];
-        qty = 0;
-
-        for (n = startN; n < finishN; n++)
-        {
-            line = lines[n];
-
-            if (line.StartsWith(":61:"))
+            if (ti.DC == "1") //Debet (OUR)
             {
-                var (dc, sum, id) = line[4..].ParseTrans();
-                bool debet = dc == "1";
-                bool order = id == "NONREF"; // Банковский ордер (как вариант)
-                bool found = debet
-                    ? _d.TryGetValue(id, out TransInfo? ti) // ourId
-                    : _c.TryGetValue(id, out ti); // corrId
+                string id = ti.SwiftRefId!;
+                string ufebs = Repository.GetOutUfebsFileBySwiftId(id);
 
-                if (found && !order)
+                if (File.Exists(ufebs))
                 {
-                    Console.WriteLine($"{id}  {dc}{ti!.AccDocNo,9} {ti.Sum.DisplaySum(),18}");
-                }
-                else
-                {
-                    string accDocNo = lines[n + 1];
-                    Console.WriteLine($"{id,16} !{dc}{accDocNo,9} {sum.DisplaySum(),18} ? (строка {n + 1})");
-                    // throw new ArgumentException($"Документ не найден.", id);
+                    ED100 xml = new(ufebs);
 
-                    ti = new()
-                    {
-                        AccDocDate = date,
-                        AccDocNo = accDocNo,
-                        BICCorr = CorrBank.ProfileBIC!,
-                        CorrAcc = CorrBank.ProfileCorrAcc,
-                        DC = dc,
-                        EDRefAuthor = CorrBank.UIC!,
-                        EDRefDate = date,
-                        EDRefNo = accDocNo,
-                        //PayeePersonalAcc = debet ? "0" : CorrBank.ProfilePayAcc!,
-                        //PayerPersonalAcc = debet ? CorrBank.ProfilePayAcc! : "0",
-                        PayeePersonalAcc = debet ? CorrBank.ProfileCorrAcc! : CorrBank.ProfilePayAcc!,
-                        PayerPersonalAcc = debet ? CorrBank.ProfilePayAcc! : CorrBank.ProfileCorrAcc!,
-                        Sum = sum,
-                        TransKind = order ? "17" : "01"
-                    };
-                }
+                    ti.BICCorr = xml.PayeeBIC ?? string.Empty;
+                    ti.CorrAcc = xml.PayeeCorrespAcc ?? string.Empty;
+                    ti.PayeePersonalAcc = xml.PayeePersonalAcc ?? string.Empty;
 
-                ed211.Elements[qty++] = ti!;
+                    ti.AccDocDate = xml.AccDocDate;
+                    ti.AccDocNo = xml.AccDocNo;
 
-                long kop = long.Parse(ti.Sum);
-
-                if (debet)
-                {
-                    debetSum += kop;
-                }
-                else
-                {
-                    creditSum += kop;
+                    ti.EDRefAuthor = xml.EDAuthor;
+                    ti.EDRefDate = xml.EDDate;
+                    ti.EDRefNo = xml.EDNo;
                 }
             }
         }
 
-        // ED211 /TransInfo
-
-        ed211.BIC = CorrBank.BIC!;
-        ed211.EDAuthor = CorrBank.ProfileUIC!;
-        ed211.EDDate = date;
-        ed211.EDNo = EDHelpers.NextEDNo();
-        ed211.EndTime = time;
-        ed211.EDReceiver = CorrBank.UIC;
-
-        ed211.DebetSum = debetSum > 0 ? debetSum.ToString() : "0";
-        ed211.CreditSum = creditSum > 0 ? creditSum.ToString() : "0";
-
-        using var writer = XmlWriter.Create(MakePath(outFile, ed211.AbstractDate, ".ED211.xml"), _xmlSettings);
+        string path = Repository.GetInStoreFile(outFile, date, ".ED211.xml");
+        using var writer = XmlWriter.Create(path, _xmlSettings);
         ed211.WriteXML(writer);
         writer.Close();
 
@@ -592,23 +460,57 @@ public static class Worker
             EDNo = EDHelpers.NextEDNo()
         };
 
-        using var writer2 = XmlWriter.Create(MakePath(outFile, ed211.AbstractDate, ".ED206.xml"), _xmlSettings);
+        path = Repository.GetInStoreFile(outFile, date, ".ED206.xml"); //TODO required?
+        using var writer2 = XmlWriter.Create(path, _xmlSettings);
         packetESID.WriteXML(writer2, false);
 
         foreach (var ti in ed211.Elements)
         {
-            if (ti.DC == "1")
+            if (ti.DC == "1") //Debet (OUR)
             {
+                //string id = ti.SwiftRefId!;
+                //string ufebs = Repository.GetOutUfebsFileBySwiftId(id);
+
+                //if (File.Exists(ufebs))
+                //{
+                //    ED100 xml = new(ufebs);
+                //    ED206 ed206 = new(ti)
+                //    {
+                //        BICCorr = xml.PayeeBIC ?? string.Empty,
+                //        CorrAcc = xml.PayeeCorrespAcc ?? string.Empty,
+
+                //        AccDocDate = xml.AccDocDate,
+                //        AccDocNo = xml.AccDocNo,
+
+                //        EDRefAuthor = xml.EDAuthor, //CorrBank.UIC!,
+                //        EDRefDate = xml.EDDate,
+                //        EDRefNo = xml.EDNo,
+
+                //        Acc = ed211.Acc, //CorrBank.OurAcc,
+
+                //        EDAuthor = CorrBank.ProfileUIC!,
+                //        EDDate = date,
+                //        EDNo = EDHelpers.NextEDNo(),
+
+                //        TransDate = date,
+                //        //TransTime = time
+                //    };
+
+                //    ed206.WriteXML(writer2);
+                //}
+
                 ED206 ed206 = new(ti)
                 {
                     Acc = ed211.Acc, //CorrBank.OurAcc,
+
                     EDAuthor = CorrBank.ProfileUIC!,
                     EDDate = date,
                     EDNo = EDHelpers.NextEDNo(),
-                    EDRefAuthor = CorrBank.UIC!,
-                    TransDate = date,
-                    TransTime = time
+
+                    TransDate = date
+                    //TransTime = time
                 };
+
                 ed206.WriteXML(writer2);
             }
         }
@@ -616,35 +518,15 @@ public static class Worker
         writer2.Close();
     }
 
-    private static void Process199(string inFile, string outFile)
+    private static void Process199AsText(string inFile, string outFile)
     {
         var lines = File.ReadAllLines(inFile);
-        int n = 0;
-        string line = lines[n++];
-        StringBuilder sb = new();
+        string text = SwiftMT199.ToString(lines);
 
-        while (!line.StartsWith(":76:") && !line.StartsWith(":79:"))
-        {
-            sb.AppendLine(line);
-            line = lines[n++];
-        }
+        string date = DateTime.Now.ToString("yyyy-MM-dd");
+        string path = Repository.GetInStoreFile(outFile, date);
 
-        sb.Append(line[..4]);
-
-        StringBuilder sc = new();
-        sc.AppendLine(line[4..]);
-        line = lines[n++];
-
-        while (!line.StartsWith("-}"))
-        {
-            sc.AppendLine(line);
-            line = lines[n++];
-        }
-
-        sb.Append(sc.Cyr());
-        sb.AppendLine(line);
-
-        File.WriteAllText(outFile, sb.ToString(), _encoding); //TODO
+        File.WriteAllText(path, text, _encoding);
     }
 
     private static void ProcessKvit(string inFile, string outFile)
@@ -653,24 +535,24 @@ public static class Worker
 {1:F21CITVRU2PXXXX0804012157}
 {4:{177:2208041611}
 {451:0}}
+
+{1:F21CITVRU2PXXXX0125010279}
+{4:{177:2401252315}
+{451:0}}
         */
 
-        File.Copy(inFile, outFile, true); //TODO
-    }
+        var lines = File.ReadAllLines(inFile);
+        (string swiftid, string date, string time) = SwiftKvit.ToTransTime(lines);
+        (string eddate, string edno) = swiftid.ParseSwiftId();
+        string path = Repository.GetInStoreFile(outFile, date, $".{swiftid}.kvit.txt");
 
-    private static string MakePath(string path, string date, string ext = "")
-    {
-        string dir = Path.Combine(Path.GetDirectoryName(path)!, date);
+        StringBuilder sb = new();
+        sb.AppendLine()
+            .AppendLine(swiftid)
+            .AppendLine(@$"EDDate=""{eddate}"" EDNo=""{edno}""")
+            .AppendLine(@$"TransDate=""{date}"" TransTime=""{time}""");
 
-        if (!Directory.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
-
-        string file = ext == ""
-            ? Path.Combine(dir, Path.GetFileName(path))
-            : Path.Combine(dir, Path.GetFileNameWithoutExtension(path) + ext);
-
-        return file;
+        File.Copy(inFile, path, true);
+        File.AppendAllText(path, sb.ToString(), _encoding);
     }
 }

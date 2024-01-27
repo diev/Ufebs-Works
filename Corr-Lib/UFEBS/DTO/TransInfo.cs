@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +36,7 @@ public record TransInfo
     public string BICCorr { get; set; } = null!; // required
 
     /// <summary>
-    /// Признак дебета/кредита.
+    /// Признак дебета/кредита (1/2).
     /// </summary>
     public string DC { get; set; } = "1"; // required
 
@@ -71,17 +71,17 @@ public record TransInfo
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string EDRefAuthor { get; set; }
+    public string? EDRefAuthor { get; set; }
 
     /// <summary>
     /// Дата составления ЭС.
     /// </summary>
-    public string EDRefDate { get; set; }
+    public string? EDRefDate { get; set; }
 
     /// <summary>
     /// Номер ЭС в течение опердня.
     /// </summary>
-    public string EDRefNo { get; set; }
+    public string? EDRefNo { get; set; }
 
     #endregion EDRefID
 
@@ -89,6 +89,11 @@ public record TransInfo
 
     public string? AccDocDate { get; set; }
     public string? CorrAcc { get; set; }
+
+    /// <summary>
+    /// MT950 :61: Ссылка на исходный идентификатор документа.
+    /// </summary>
+    public string? SwiftRefId { get; set; }
 
     #endregion Extensions
 

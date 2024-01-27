@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #endregion
+
+using static CorrLib.SWIFT.SwiftMT950;
 
 namespace CorrLib.UFEBS.DTO;
 
@@ -57,12 +59,12 @@ public record ED211 : EDBase
     /// <summary>
     /// Уникальный идентификатор получателя ЭС.
     /// </summary>
-    public string? EDReceiver { get; set; }
+    public string EDReceiver { get; set; } = CorrBank.UIC!;
 
     /// <summary>
     /// Конец периода формирования извещения об операциях по счету.
     /// </summary>
-    public string EndTime { get; set; } // required
+    public string EndTime { get; set; } = "23:59:59"; // required
 
     /// <summary>
     /// Входящий остаток на счете участника (дебетовый остаток - отрицательный, кредитовый - положительный).
@@ -85,16 +87,17 @@ public record ED211 : EDBase
     /// Массив, где каждый элемент это:
     /// Информация об одной операции по лицевому счету в извещении об операциях по счету.
     /// </summary>
-    public TransInfo[] Elements { get; set; } = Array.Empty<TransInfo>();
+    public TransInfo[] Elements { get; set; } = [];
 
     #endregion Extensions
 
     #region Constructors
 
     public ED211()
-    {
-        EDType = nameof(ED211);
-    }
+        => EDType = nameof(ED211);
+
+    public ED211(string[] lines)
+    => this.Load(lines);
 
     #endregion Constructors
 }

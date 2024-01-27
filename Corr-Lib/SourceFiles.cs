@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,14 +50,14 @@ public class SourceFiles : IReadOnlyList<string[]>
             string file = files[i];
             var packet = new PacketEPD(file);
 
-            _items[i] = new string[]
-            {
+            _items[i] =
+            [
                 files[i],
                 packet.EDType,
                 packet.EDQuantity,
                 packet.Sum.DisplaySum(),
                 string.Empty //TODO File.Exists?
-            };
+            ];
         }
     }
 

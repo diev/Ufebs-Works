@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
-    <Version>8.2024.125.0</Version>
+    <Version>8.2024.128.0</Version>
     <Company>diev</Company>
     <Description>Библиотека общих элементов для работы с форматами UFEBS и SWIFT.</Description>
   </PropertyGroup>

@@ -25,11 +25,11 @@ namespace ReturnSWIFT;
 
 internal class Program
 {
-    public static List<string> O900in = [];
-    public static List<string> O900out = [];
+    public static List<string> O900in { get; set; } = [];
+    public static List<string> O900out { get; set; } = [];
 
-    public static List<string> O950in = [];
-    public static List<string> O950out = [];
+    public static List<string> O950in { get; set; } = [];
+    public static List<string> O950out { get; set; } = [];
 
     static void Main(string[] args)
     {
@@ -130,6 +130,9 @@ internal class Program
             string inFile = O900in[i];
             string outFile = O900out[i];
 
+#if DEBUG
+            Worker.Process900(inFile, outFile);
+#else
             try
             {
                 Worker.Process900(inFile, outFile);
@@ -138,6 +141,7 @@ internal class Program
             {
                 Console.WriteLine(@$"Ошибка в файле авизо ""{inFile}"". {ex.Message}");
             }
+#endif
         }
 
         for (int i = 0; i < O950in.Count; i++)
@@ -145,6 +149,9 @@ internal class Program
             string inFile = O950in[i];
             string outFile = O950out[i];
 
+#if DEBUG
+            Worker.Process950(inFile, outFile);
+#else
             try
             {
                 Worker.Process950(inFile, outFile);
@@ -153,6 +160,7 @@ internal class Program
             {
                 Console.WriteLine(@$"Ошибка в файле выписки ""{inFile}"". {ex.Message}");
             }
+#endif
         }
 
         #region finish

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,13 +36,19 @@ public partial class EditForm : Form
     public EditForm(bool swiftMode)
     {
         InitializeComponent();
-        int w = Screen.PrimaryScreen.WorkingArea.Width;
-        //int h = Screen.PrimaryScreen.WorkingArea.Height;
 
-        //SetBounds(
-        //    (int)(w * 0.02), (int)(h * 0.5),
-        //    (int)(w * 0.9), Height);
-        Width = (int)(w * 0.9);
+        var screen = Screen.PrimaryScreen;
+
+        if (screen != null)
+        {
+            int w = screen.WorkingArea.Width;
+            //int h = screen.WorkingArea.Height;
+
+            //SetBounds(
+            //    (int)(w * 0.02), (int)(h * 0.5),
+            //    (int)(w * 0.9), Height);
+            Width = (int)(w * 0.9);
+        }
 
         _swiftMode = swiftMode;
 
@@ -230,5 +236,4 @@ public partial class EditForm : Form
     private bool OKEnabled()
         => (PayerEdit.Modified || PayerEdit.Modified || PurposeEdit.Modified) &&
             _payerValid && _payeeValid && _purposeValid;
-
 }

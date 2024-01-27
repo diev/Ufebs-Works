@@ -25,6 +25,9 @@ namespace CorrLib.UFEBS;
 
 public static class TransInfoEx
 {
+    public static Dictionary<string, TransInfo> D { get; set; } = [];
+    public static Dictionary<string, TransInfo> C { get; set; } = [];
+
     public static TransInfo Load(this TransInfo ti, ED100 ed, string dc)
     {
         ti.AccDocNo = ed.AccDocNo;

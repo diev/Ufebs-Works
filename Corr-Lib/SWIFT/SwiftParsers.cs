@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,6 +100,72 @@ public static class SwiftParsers
         }
 
         return kop;
+    }
+
+    /// <summary>
+    /// +240125000010278
+    /// </summary>
+    /// <param name="text">+ГГММДД0000NNNNN</param>
+    /// <returns>ГГГГ-ММ-ДД, NNNNN</returns>
+    public static (string eddate, string edno) ParseSwiftId(this string text)
+    {
+        string pattern = @"\+(\d{6})(\d{9})";
+        var match = Regex.Match(text, pattern);
+
+        string eddate = match.Groups[1].Value.ToUfebsDate();
+        string edno = match.Groups[2].Value.TrimStart('0');
+
+        return (eddate, edno);
+    }
+
+    /// <summary>
+    /// MT* {2:...ГГММДДЧЧММ.}
+    /// </summary>
+    /// <param name="text">{2:...ГГММДДЧЧММ.}</param>
+    /// <returns>HH:MM:00</returns>
+    public static string ParseHeaderSwiftId(this string text)
+    {
+        /*
+{1:F21CITVRU2PXXXX0804012157}
+{4:{177:2208041611}
+{451:0}}
+
+{1:F21CITVRU2PXXXX0125010279}
+{4:{177:2401252315}
+{451:0}}
+        */
+        string pattern = @"XXX(\d{4})(\d{6})}";
+        var match = Regex.Match(text, pattern);
+
+        string date = $"+{DateTime.Now:yy}{match.Groups[1].Value}";
+        string edno = $"000{match.Groups[2].Value}";
+
+        return date + edno;
+    }
+
+    /// <summary>
+    /// MT* {2:...ГГММДДЧЧММ.}
+    /// </summary>
+    /// <param name="text">{2:...ГГММДДЧЧММ.}</param>
+    /// <returns>HH:MM:00</returns>
+    public static (string date, string time) ParseHeaderTransTime(this string text)
+    {
+        /*
+{1:F21CITVRU2PXXXX0804012157}
+{4:{177:2208041611}
+{451:0}}
+
+{1:F21CITVRU2PXXXX0125010279}
+{4:{177:2401252315}
+{451:0}}
+        */
+        string pattern = @"{4:{177:(\d{6})(\d{2})(\d{2})}";
+        var match = Regex.Match(text, pattern);
+
+        string date = match.Groups[1].Value.ToUfebsDate();
+        string time = $"{match.Groups[2].Value}:{match.Groups[3].Value}:00";
+
+        return (date, time);
     }
 
     /// <summary>

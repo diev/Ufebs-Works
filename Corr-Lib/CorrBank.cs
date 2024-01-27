@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +21,8 @@ namespace CorrLib;
 
 public static class CorrBank
 {
-    public static string? Profile { get; set; } = 
-        AppContext.GetData(nameof(Profile)) as string;
+    public static string? Profile { get; set; }
+        = AppContext.GetData(nameof(Profile)) as string;
 
     //
 

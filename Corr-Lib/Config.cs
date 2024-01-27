@@ -40,10 +40,6 @@ public static class Config
     public const string UfebsFormat = "УФЭБС";
     public const string SwiftFormat = "SWIFT";
 
-    // AppContext.SetData(string name, object? data); // available from .NET 7+
-    // See a lifehack at
-    // https://www.strathweb.com/2019/12/runtime-host-configuration-options-and-appcontext-data-in-net-core/
-
     public static string ED807
     {
         get => G(nameof(ED807));
@@ -262,6 +258,28 @@ public static class Config
     #endregion Getters
     #region Setters
 
+#if NET7_0_OR_GREATER
+
+    private static void S(string name, string value = "")
+        => AppContext.SetData(name, value);
+
+    private static void SP(string name, string value = "")
+        => S(_profile + name, value);
+
+    private static void S(string name, int value)
+        => AppContext.SetData(name, value);
+
+    private static void SP(string name, int value)
+        => S(_profile + name, value);
+
+    private static void S(string name, string[]? value)
+        => AppContext.SetData(name, value);
+
+#else
+    // AppContext.SetData(string name, object? data); // available from .NET 7+
+    // See a lifehack at
+    // https://www.strathweb.com/2019/12/runtime-host-configuration-options-and-appcontext-data-in-net-core/
+
     private static void S(string name, string value = "")
         => AppDomain.CurrentDomain.SetData(name, value);
 
@@ -276,6 +294,8 @@ public static class Config
 
     private static void S(string name, string[]? value)
         => AppDomain.CurrentDomain.SetData(name, value);
+
+#endif
 
     #endregion Setters
 }

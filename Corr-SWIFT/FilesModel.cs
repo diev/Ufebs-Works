@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2024 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,8 @@ namespace CorrSWIFT;
 
 public static class FilesModel
 {
-    private static string[] _fileNames;
-    private static PacketEPD[] _packets;
+    private static string[]? _fileNames;
+    private static PacketEPD[]? _packets;
 
     public static void AskIfCleanSavedFiles()
     {

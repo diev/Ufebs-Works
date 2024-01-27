@@ -17,7 +17,7 @@ limitations under the License.
 */
 #endregion
 
-using static CorrLib.SWIFT.SwiftMT;
+using static CorrLib.SWIFT.SwiftMT900;
 
 namespace CorrLib.UFEBS.DTO;
 
@@ -34,7 +34,7 @@ public record ED206 : EDBase
     /// <summary>
     /// Уникальный идентификатор получателя ЭС - УИС.
     /// </summary>
-    public string ActualReceiver { get; } = "4030702000";
+    public string ActualReceiver { get; } = CorrBank.UIC!;
 
     /// <summary>
     /// БИК банка корреспондента.
@@ -44,7 +44,7 @@ public record ED206 : EDBase
     public string CorrAcc { get; set; } = null!; // required
 
     /// <summary>
-    /// Признак дебета/кредита.
+    /// Признак дебета/кредита (1/2).
     /// </summary>
     public string DC { get; set; } = "1"; // required
 
@@ -58,7 +58,7 @@ public record ED206 : EDBase
     /// </summary>
     public string? TransDate { get; set; } // required
 
-    public string? TransTime { get; set; } // required
+    public string TransTime { get; set; } = "23:59:59"; // required
 
     #region AccDoc
 
@@ -74,7 +74,7 @@ public record ED206 : EDBase
     /// <summary>
     /// Уникальный идентификатор составителя ЭС - УИС.
     /// </summary>
-    public string? EDRefAuthor { get; set; }
+    public string EDRefAuthor { get; set; } = CorrBank.UIC!;
 
     /// <summary>
     /// Дата составления ЭС.
@@ -106,31 +106,27 @@ public record ED206 : EDBase
     public bool Saved { get; set; } = false;
 
     /// <summary>
-    /// MT900 :20:
+    /// MT900 :20: Идентификатор документа.
     /// </summary>
     public string? SwiftId { get; set; }
 
     /// <summary>
-    /// MT900 :21:
+    /// MT900 :21: Ссылка на исходный идентификатор документа.
     /// </summary>
-    public string? RefSwiftId { get; set; }
+    public string? SwiftRefId { get; set; }
 
     #endregion Extensions
 
     #region Constructors
 
     public ED206()
-    {
-        EDType = nameof(ED206);
-    }
+        => EDType = nameof(ED206);
 
     public ED206(TransInfo ti)
         => this.Load(ti);
 
     public ED206(string[] lines)
-    {
-        this.Load(lines);
-    }
+        => this.Load(lines);
 
     #endregion Constructors
 }
