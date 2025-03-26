@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2024 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -153,7 +153,7 @@ public partial class ConfigForm : Form
         try
         {
             string file = Path.GetFullPath(SelectFileEdit.Text);
-            string path = Path.GetDirectoryName(file);
+            string path = Path.GetDirectoryName(file) ?? @"\";
 
             SelectFileDialog.InitialDirectory = path;
             SelectFileDialog.FileName = Path.GetFileName(file);

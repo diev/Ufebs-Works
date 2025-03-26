@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2024 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@ limitations under the License.
 */
 #endregion
 
-using System.Net.Sockets;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -26,10 +25,6 @@ using CorrLib;
 using CorrLib.SWIFT;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
-
-using Microsoft.VisualBasic;
-
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ReturnSWIFT;
 
@@ -368,7 +363,7 @@ public static class Worker
 
         //TODO string path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(inFile), @$"..\OUT\{date}"));
         string id = ed206.SwiftRefId!;
-        string ufebs = Repository.GetOutUfebsFileBySwiftId(id);
+        string? ufebs = Repository.GetOutUfebsFileBySwiftId(id);
 
         if (File.Exists(ufebs))
         {
@@ -426,7 +421,7 @@ public static class Worker
             if (ti.DC == "1") //Debet (OUR)
             {
                 string id = ti.SwiftRefId!;
-                string ufebs = Repository.GetOutUfebsFileBySwiftId(id);
+                string? ufebs = Repository.GetOutUfebsFileBySwiftId(id);
 
                 if (File.Exists(ufebs))
                 {

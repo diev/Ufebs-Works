@@ -85,11 +85,11 @@ public class PacketEPD
         EDAuthor = ed.Attribute("EDAuthor")?.Value;
         EDDate = ed.Attribute("EDDate")?.Value;
         EDNo = ed.Attribute("EDNo")?.Value;
-        EDQuantity = ed.Attribute("EDQuantity")?.Value;
+        EDQuantity = ed.Attribute("EDQuantity")!.Value;
         EDReceiver = ed.Attribute("EDReceiver")?.Value;
-        Sum = ed.Attribute("Sum")?.Value;
-        SystemCode = ed.Attribute("SystemCode")?.Value;
-        Sum = ed.Attribute("Sum")?.Value;
+        Sum = ed.Attribute("Sum")!.Value;
+        SystemCode = ed.Attribute("SystemCode")!.Value;
+        Sum = ed.Attribute("Sum")!.Value;
         Xmlns = ed.Attribute("xmlns")?.Value;
     }
 

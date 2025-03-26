@@ -1,4 +1,23 @@
-﻿//Not used
+﻿#region License
+/*
+Copyright 2022-2025 Dmitrii Evdokimov
+Open source software
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+#endregion
+
+//Not used
 
 using System.Xml;
 using System.Xml.Linq;
@@ -248,18 +267,18 @@ public class ED100
         EDType = ed.Name.LocalName;
 
         ChargeOffDate = ed.Attribute("ChargeOffDate")?.Value;
-        EDAuthor = ed.Attribute("EDAuthor").Value;
-        EDDate = ed.Attribute("EDDate").Value;
-        EDNo = ed.Attribute("EDNo").Value;
+        EDAuthor = ed.Attribute("EDAuthor")!.Value;
+        EDDate = ed.Attribute("EDDate")!.Value;
+        EDNo = ed.Attribute("EDNo")!.Value;
         PaymentID = ed.Attribute("PaymentID")?.Value;
         PaymentPrecedence = ed.Attribute("PaymentPrecedence")?.Value;
         PaytKind = ed.Attribute("PaytKind")?.Value;
-        Priority = ed.Attribute("Priority")?.Value;
+        Priority = ed.Attribute("Priority")!.Value;
         ReceiptDate = ed.Attribute("ReceiptDate")?.Value;
-        Sum = ed.Attribute("Sum").Value;
+        Sum = ed.Attribute("Sum")!.Value;
         SystemCode = ed.Attribute("SystemCode")?.Value;
-        TransKind = ed.Attribute("TransKind")?.Value;
-        Xmlns = ed.Attribute("xmlns")?.Value;
+        TransKind = ed.Attribute("TransKind")!.Value;
+        Xmlns = ed.Attribute("xmlns")!.Value;
 
         foreach (var e in ed.Elements())
         {
@@ -284,8 +303,8 @@ public class ED100
                                 break;
 
                             case "Bank":
-                                PayerBIC = p.Attribute("BIC")?.Value;
-                                PayerCorrespAcc = p.Attribute("CorrespAcc")?.Value;
+                                PayerBIC = p.Attribute("BIC")!.Value;
+                                PayerCorrespAcc = p.Attribute("CorrespAcc")!.Value;
                                 break;
 
                             default:
@@ -367,7 +386,7 @@ public class ED100
         writer.WriteStartElement("Payer");
         writer.WriteAttributeString("INN", PayerINN);
 
-        if (PayerINN.Length != 12)
+        if (PayerINN?.Length != 12)
         {
             writer.WriteAttributeString("KPP", PayerKPP);
         }

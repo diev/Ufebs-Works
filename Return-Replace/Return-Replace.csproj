@@ -2,20 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <RootNamespace>Return_Replace</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>8.2024.122.0</Version>
+    <Version>9.2025.326.0</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
+    <Copyright>2022-2025 Dmitrii Evdokimov</Copyright>
     <Description>Преобразование обратных пакетов EPD и ESID, полученных из ЦБ через корсчет в другом банке.</Description>
     <Company>diev</Company>
     <NeutralLanguage>ru-RU</NeutralLanguage>
   </PropertyGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release call ..\PostBuild.bat" />
-  </Target>
 
 </Project>

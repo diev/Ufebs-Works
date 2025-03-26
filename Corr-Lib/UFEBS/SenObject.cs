@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,11 +74,11 @@ public static class SenObject
             writer.Close();
         }
 
-        catch (XmlException ex)
+        catch (XmlException)
         {
             //AppTrace.Warning("{0} не XML файл: {1}", src.FullName, ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //AppTrace.Error("{0} ошибка чтения: {1}", src.FullName, ex.Message);
         }
@@ -91,7 +91,7 @@ public static class SenObject
         {
             ok = dst.Length > 0;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //TODO: UnauthorizedAccessException
             //AppTrace.Error("{0} ошибка доступа: {1}", src.FullName, ex.Message);

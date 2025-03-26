@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFrameworks>net8.0-windows;net9.0-windows</TargetFrameworks>
     <RootNamespace>CorrSWIFT</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>ru-RU</NeutralLanguage>
-    <Version>8.2024.128.0</Version>
-    <Copyright>2022-2024 Dmitrii Evdokimov</Copyright>
+    <Version>9.2025.326.0</Version>
+    <Copyright>2022-2025 Dmitrii Evdokimov</Copyright>
     <Company>diev</Company>
     <Description>Работа с корсчетами разных банков в форматах УФЭБС и SWIFT-RUR и через СПФС ЦБ.</Description>
     <ApplicationIcon>Oxygen-Icons.org-Oxygen-Actions-svn-commit.ico</ApplicationIcon>
@@ -38,11 +38,5 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release call ..\PostBuild.bat" />
-  </Target>
-
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

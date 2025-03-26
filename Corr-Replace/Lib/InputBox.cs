@@ -50,7 +50,7 @@ public class InputBox : Form
     private InputBox(string Caption, string Text)
     {
         const bool wide = true;
-        int width = wide ? (int)(Screen.PrimaryScreen.WorkingArea.Width * 0.7) : 270;
+        int width = wide ? (int)(Screen.PrimaryScreen!.WorkingArea.Width * 0.7) : 270;
 
         _label = new Label();
         _labelLen = new Label();

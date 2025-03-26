@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2024 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,20 +17,17 @@ limitations under the License.
 */
 #endregion
 
+using System.Diagnostics;
+
 using CorrLib;
 using CorrLib.UFEBS;
 using CorrLib.UFEBS.DTO;
-
-using System.Diagnostics;
-using System.Text;
-using System.Xml;
 
 namespace CorrSWIFT;
 
 public static class FilesModel
 {
-    private static string[]? _fileNames;
-    private static PacketEPD[]? _packets;
+    //private static readonly PacketEPD[]? _packets;
 
     public static void AskIfCleanSavedFiles()
     {
@@ -60,7 +57,6 @@ public static class FilesModel
         
     public static void LoadFiles(string[] fileNames, ref ListView list)
     {
-        _fileNames = fileNames;
         list.Items.Clear();
         int i = 0;
 
@@ -79,32 +75,32 @@ public static class FilesModel
         }
     }
 
-    public static void SaveToFile(int index, string path)
-    {
-        var packet = _packets[index];
+    //public static void SaveToFile(int index, string path)
+    //{
+    //    var packet = _packets[index];
 
-        var settings = new XmlWriterSettings()
-        {
-            Encoding = Encoding.GetEncoding("windows-1251"),
-            Indent = true
-        };
+    //    var settings = new XmlWriterSettings()
+    //    {
+    //        Encoding = Encoding.GetEncoding("windows-1251"),
+    //        Indent = true
+    //    };
 
-        using var writer = XmlWriter.Create(path, settings);
+    //    using var writer = XmlWriter.Create(path, settings);
 
-        if (packet.EDType == "PacketEPD")
-        {
-            packet.WriteXML(writer);
-        }
-        else if (packet.EDType.StartsWith("ED1"))
-        {
-            packet.Elements[0].WriteXML(writer);
-        }
-        //TODO ED503
+    //    if (packet.EDType == "PacketEPD")
+    //    {
+    //        packet.WriteXML(writer);
+    //    }
+    //    else if (packet.EDType.StartsWith("ED1"))
+    //    {
+    //        packet.Elements[0].WriteXML(writer);
+    //    }
+    //    //TODO ED503
 
-        writer.Close();
+    //    writer.Close();
 
-        //item.SubItems[SavedColumn.Index].Text = path;
-    }
+    //    //item.SubItems[SavedColumn.Index].Text = path;
+    //}
 
     public static void Start(MainForm mainForm)
     {

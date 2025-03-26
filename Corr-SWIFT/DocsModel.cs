@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2024 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -267,7 +267,7 @@ public static class DocsModel
                             Config.CorrAccount);
 
                         var (path, file) = ResultFile(ced);
-                        string store = Repository.GetOutStoreFile(path, _packet.EDDate);
+                        string store = Repository.GetOutStoreFile(path, _packet!.EDDate);
 
                         File.WriteAllText(path, text, Encoding.ASCII);
                         File.WriteAllText(store, text, Encoding.ASCII);

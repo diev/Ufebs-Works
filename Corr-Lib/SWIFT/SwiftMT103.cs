@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2024 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -375,25 +375,25 @@ public static class SwiftMT103
             .Append("}}")
 
             // Text
-            .AppendLine("{4:"); // Block 4 identifier : TEXT between CRLF and '-' ("-}"?)
+            .AppendLine("{4:") // Block 4 identifier : TEXT between CRLF and '-' ("-}"?)
 
         #region SWIFT TEXT
 
         // Референс Отправителя (16x)
 
-        sb.AppendLine($":20:{Id}");
+            .AppendLine($":20:{Id}")
 
         // Код банковской операции
 
-        sb.AppendLine(":23B:CRED");
+            .AppendLine(":23B:CRED")
 
         // Код типа операции
 
-        sb.AppendLineIf(ed.Tax, $":26T:S{ed.DrawerStatus}");
+            .AppendLineIf(ed.Tax, $":26T:S{ed.DrawerStatus}")
 
         // Дата валютирования/Валюта/Сумма межбанковского расчета
 
-        sb.AppendLine($":32A:{ed.ChargeOffDate.ToSwiftDate() ?? ed.EDDate.ToSwiftDate()}RUB{ed.Sum.ToSwiftSum()}");
+            .AppendLine($":32A:{ed.ChargeOffDate.ToSwiftDate() ?? ed.EDDate.ToSwiftDate()}RUB{ed.Sum.ToSwiftSum()}")
 
         // Плательщик
 
@@ -412,21 +412,21 @@ public static class SwiftMT103
 
         // ВНИМАНИЕ! Если плательщиком выступает сам банк-респондент, то указание в поле «50» счета ЛОРО и BIC-кода не допускается.
 
-        sb.AppendLine($":50K:/{ed.PayerPersonalAcc}") // или :50F: с адресом и страной
-            .AppendLineIf(ed.PayerINN, $"INN{ed.PayerINN}{ed.PayerKPP.AddKPPNotEmptyNorZeros()}");
+            .AppendLine($":50K:/{ed.PayerPersonalAcc}") // или :50F: с адресом и страной
+            .AppendLineIf(ed.PayerINN, $"INN{ed.PayerINN}{ed.PayerKPP.AddKPPNotEmptyNorZeros()}")
 
         // (3*35x! ??)
         // ООО "Название юрлица"
         // или при отсутствии ИНН у физлица:
         // Ф.И.О. полностью//адрес места жительства (регистрации) или места пребывания//
 
-        sb.AppendLineIf(ed.PayerName.Lat()!.Div35(_nameLimit));
+            .AppendLineIf(ed.PayerName.Lat()!.Div35(_nameLimit))
 
         // Банк Плательщика
         // (финансовая организация, обслуживающая Плательщика, в тех случаях, когда она отлична от Отправителя)
 
-        sb.AppendLine($":52A:{bankSwift}");
-        //sb.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
+            .AppendLine($":52A:{bankSwift}")
+        //.AppendLine($":52D://RU{ed.PayerBIC}.{ed.PayerCorrespAcc}"); // OurBIC.OurCorrACC
         //.AppendLine(SwiftTranslit.Lat("АО Сити Инвест Банк"))
         //.AppendLine(SwiftTranslit.Lat("г.Санкт-Петербург"));
 
@@ -437,7 +437,7 @@ public static class SwiftMT103
         // При наличии у Отправителя и Получателя единственного прямого корреспондентского счета в рублях данное поле не используется,
         // если только иное особо не оговорено в двустороннем соглашении.
 
-        sb.AppendLine($":53B:/D/{payAcc}"); // Корсчет нашего банка в том банке
+            .AppendLine($":53B:/D/{payAcc}"); // Корсчет нашего банка в том банке
 
         // Банк-Посредник (опционально в РФ, предпочтительна опция A, а не D)
         // В этом поле определяется сторона между Получателем сообщения и Банком Бенефициара, через которую должна быть проведена операция.
@@ -448,8 +448,8 @@ public static class SwiftMT103
         // Банк Бенефициара
         // (финансовая организация, обслуживающая счет клиента-бенефициара - в том случае, если она отлична от Получателя сообщения)
 
-        if (ed.PayeeBIC.Equals("044525593") || // АО "Альфа-Банк", г.Москва
-            ed.PayeeBIC.Equals("044030786")) // Филиал "Санкт-Петербургский" АО "Альфа-Банк", г.Санкт-Петербург
+        if (ed.PayeeBIC!.Equals("044525593", StringComparison.Ordinal) || // АО "Альфа-Банк", г.Москва
+            ed.PayeeBIC!.Equals("044030786", StringComparison.Ordinal)) // Филиал "Санкт-Петербургский" АО "Альфа-Банк", г.Санкт-Петербург
         {
             sb.AppendLine($":57A:ALFARUMM");
         }
@@ -473,7 +473,7 @@ public static class SwiftMT103
             //.AppendLine(SwiftTranslit.Lat("г.Город"));
 
             var bankInfo = ED807Finder.Find(ed.PayeeBIC!, true) ?? new BankInfo("BANK", "G"); //TODO BIC not found
-            sb.AppendLine(bankInfo.Name.Div35())
+            sb.AppendLine(bankInfo.Name!.Div35())
                 .AppendLine(bankInfo.Place);
         }
 
@@ -578,13 +578,13 @@ public static class SwiftMT103
             // Реквизиты расчетного документа
             .AppendLine($"/RPP/{ed.AccDocNo}.{ed.AccDocDate.ToSwiftDate()}.{ed.Priority}.{paytKind}{transKind}") //.{SwiftDate(ed.ChargeOffDate)}.{ed.TransKind}")
             // Даты из расчетного документа
-            .AppendLine($"/DAS/{ed.ChargeOffDate.ToSwiftDate()}.{ed.ReceiptDate.ToSwiftDate()}.000000.000000");
+            .AppendLine($"/DAS/{ed.ChargeOffDate.ToSwiftDate()}.{ed.ReceiptDate.ToSwiftDate()}.000000.000000")
 
         //TODO Реквизиты платежного ордера
         // .AppendLine($"/RPO/...
 
         // Уникальный Идентификатор Платежа (УИН)
-        sb.AppendLineIf(ed.Tax, $"/UIP/{ed.PaymentID ?? "0"}");
+        .AppendLineIf(ed.Tax, $"/UIP/{ed.PaymentID ?? "0"}");
 
         // Назначение платежа (продолжение поля 70)
         if (!purpose.IsEmpty)

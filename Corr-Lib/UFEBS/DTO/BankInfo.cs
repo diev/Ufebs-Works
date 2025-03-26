@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,4 +24,4 @@ namespace CorrLib.UFEBS.DTO;
 /// </summary>
 /// <param name="Name">Название банка.</param>
 /// <param name="Place">Населенный пункт банка.</param>
-public record BankInfo(string Name, string Place);
+public record BankInfo(string? Name, string? Place);

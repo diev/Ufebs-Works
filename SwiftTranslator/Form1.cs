@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,13 +39,13 @@ public partial class Form1 : Form
     {
         ColorizeLength();
 
-        string s = SwiftTranslit.Lat(RusSourceText.Text);
+        string s = SwiftTranslit.Lat(RusSourceText.Text) ?? string.Empty;
         SwiftDestText35.Text = string.Empty;
         
         while (s.Length > 35)
         {
             SwiftDestText35.Text += s[..34] + "\n";
-            s = s.Remove(0, 34);
+            s = s[34..];
         }
 
         SwiftDestText35.Text += s + "\n";

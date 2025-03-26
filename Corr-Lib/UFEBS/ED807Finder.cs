@@ -178,8 +178,8 @@ public static class ED807Finder
                 {
                     foreach (var accounts in item.Elements(ns + "Accounts"))
                     {
-                        string bic = item.Attribute("BIC").Value;
-                        string acc = accounts.Attribute("Account").Value;
+                        string bic = item.Attribute("BIC")!.Value;
+                        string acc = accounts.Attribute("Account")!.Value;
 
                         bicInfo = new SwiftBicInfo(bic, acc);
                         _swiftCache.Add(swiftbic, bicInfo);

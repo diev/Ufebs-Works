@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright 2022-2023 Dmitrii Evdokimov
+Copyright 2022-2025 Dmitrii Evdokimov
 Open source software
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -327,7 +327,7 @@ CR LF Space (Пробел)
     /// </summary>
     /// <param name="value">Строка на латинице</param>
     /// <returns>Строка на кирилице</returns>
-    public static string Cyr(this StringBuilder value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
+    public static string? Cyr(this StringBuilder value) //TODO Purpose "'(VO12345...)'..." -> "{VO12345...}..."
         => value.ToString().Cyr();
 
     /// <summary>
